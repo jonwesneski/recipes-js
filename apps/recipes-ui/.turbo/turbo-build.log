@@ -1,0 +1,17 @@
+
+> recipes-ui@0.1.0 build C:\Users\mrex8\coding\js\reactplay\recipes-js\apps\recipes-ui
+> next build
+
+   ▲ Next.js 15.3.2
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./src/app/recipe/page.tsx
+Module not found: Can't resolve './_components/NutrionalFacts'
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+> Build failed because of webpack errors
+ ELIFECYCLE  Command failed with exit code 1.

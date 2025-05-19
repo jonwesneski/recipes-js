@@ -1,0 +1,4 @@
+ {
+  "prettier.configPath": "apps/recipes-api/.prettierrc",
+  "editor.formatOnSave": true
+ }

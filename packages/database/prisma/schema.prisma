@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String         @id @default(cuid())
+  name      String?
+  email     String?        @unique
+  password  String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  recipes   Recipe[]
+  favorites UserFavorite[]
+
+  followers  UserFollow[] @relation("UserFollows")
+  followings UserFollow[] @relation("UserFollowings")
+}
+
+model UserFavorite {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+}
+
+model UserFollow {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation("UserFollows", fields: [userId], references: [id])
+  followingId String
+  following   User     @relation("UserFollowings", fields: [followingId], references: [id])
+}
+
+model Recipe {
+  id                       String           @id @default(cuid())
+  name                     String
+  slug                     String           @unique
+  description              String?
+  preparationTimeInMinutes Int?
+  cookingTimeInMinutes     Int?
+  createdAt                DateTime         @default(now())
+  updatedAt                DateTime         @updatedAt
+  steps                    Step[]
+  nutritionalFacts         NutrionalFacts[]
+  userId                   String
+  user                     User             @relation(fields: [userId], references: [id])
+  tags                     RecipeTag[]
+  userFavorites            UserFavorite[]
+}
+
+model NutrionalFacts {
+  id              String   @id @default(cuid())
+  calories        Int?
+  proteinInG      Int?
+  fatInG          Int?
+  carbsInG        Int?
+  fiberInG        Int?
+  sugarInG        Int?
+  sodiumInMg      Int?
+  cholesterolInMg Int?
+  saturatedFatInG Int?
+  transFatInG     Int?
+  potassiumInMg   Int?
+  vitaminAInIU    Int?
+  vitaminCInMg    Int?
+  calciumInMg     Int?
+  ironInMg        Int?
+  vitaminDInIU    Int?
+  vitaminB6InMg   Int?
+  vitaminB12InMg  Int?
+  magnesiumInMg   Int?
+  folateInMcg     Int?
+  thiaminInMg     Int?
+  riboflavinInMg  Int?
+  niacinInMg      Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  recipeId        String
+  recipe          Recipe   @relation(fields: [recipeId], references: [id])
+}
+
+model Step {
+  id          String       @id @default(cuid())
+  ingredients Ingredient[]
+  instruction String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  recipeId    String
+  recipe      Recipe       @relation(fields: [recipeId], references: [id])
+}
+
+model Ingredient {
+  id        String   @id @default(cuid())
+  amount    Float
+  unit      String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stepId    String
+  step      Step     @relation(fields: [stepId], references: [id])
+}
+
+model RecipeTag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  recipes   Recipe[]
+}

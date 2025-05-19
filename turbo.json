@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "tasks": {
+    "prisma:generate": {},
+    "build": {
+      "dependsOn": ["^build", "^prisma:generate"],
+      "outputs": [".next/**", "!.next/cache/**", "apps/recipes-api/dist/**"]
+    },
+    "dev": {
+      "dependsOn": ["^prisma:generate"],
+      "persistent": true,
+      "cache": false
+    }
+  }
+}
