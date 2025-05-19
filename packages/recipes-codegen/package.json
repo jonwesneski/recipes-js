@@ -1,0 +1,33 @@
+{
+  "name": "@repo/recipes-codegen",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./recipes": {
+      "import": "./dist/recipes/recipes.js",
+      "types": "./dist/types/recipes/recipes.d.ts"
+    },
+    "./recipesModel": {
+      "import": "./dist/model/index.js",
+      "types": "./dist/types/model/index.d.ts"
+    },
+    "./recipesMsw": {
+      "import": "./dist/recipes/recipes.msw.js",
+      "types": "./dist/types/recipes/recipes.msw.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "orval && tsc"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/axios": "^0.14.4",
+    "msw": "^2.8.4",
+    "orval": "^7.9.0"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.76.1",
+    "axios": "^1.9.0"
+  }
+}
