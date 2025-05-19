@@ -1,4 +1,4 @@
-import IngredientList, { IngredientType } from "./IngredientList";
+import IngredientList, { IngredientType } from "./IngredientList.tsx";
 
 
 

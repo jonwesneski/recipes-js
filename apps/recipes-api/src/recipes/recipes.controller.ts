@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
-import { CreateRecipeDto } from './dtos';
+import { CreateRecipeDto } from './contracts/recipes/recipes.dto';
+import { RecipeEntity } from './contracts/recipes/recipes.entities';
+import { ApiParam } from '@nestjs/swagger';
 
 @Controller({
   path: 'recipes',
@@ -15,12 +17,13 @@ export class RecipesController {
   }
 
   @Get(':slug')
-  async recipe(@Param() params: { slug: string }) {
-    return this.recipesService.getRecipe(params.slug);
+  @ApiParam({ name: 'slug', type: String, description: 'Slug of recipe' })
+  async recipe(@Param('slug') slug: string): Promise<RecipeEntity> {
+    return this.recipesService.getRecipe(slug);
   }
 
   @Post()
-  async createRecipe(@Body() body: CreateRecipeDto): Promise<any> {
+  async createRecipe(@Body() body: CreateRecipeDto): Promise<RecipeEntity> {
     return this.recipesService.createRecipe(body);
   }
 }

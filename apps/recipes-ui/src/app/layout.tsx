@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
+
 import '../index.css'
 
 export const metadata: Metadata = {
   title: 'React App',
   description: 'Web site created with Next.js.',
 }
+
+
 
 export default function RootLayout({
   children,
@@ -14,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div id="root">{children}</div>
+        <div id="root">
+          {children}
+        </div>
         <div id='modal-root'></div>
       </body>
     </html>

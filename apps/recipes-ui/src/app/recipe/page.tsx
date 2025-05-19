@@ -1,8 +1,9 @@
 'use client';
 
-import { RecipeType } from "./types";
-import {Instructions, NutritionalFacts, RecipeIngredients, RecipeLayout} from "./_components";
-import { useEffect, useState } from "react";
+import { RecipeType } from "./types.ts";
+import {Instructions, NutritionalFacts, RecipeIngredients, RecipeLayout} from "./_components/index.ts";
+import { use, useEffect, useState } from "react";
+import {useRecipesControllerRecipeV1} from '@repo/recipes-codegen/recipes';
 
 // const recipe: RecipeType = {
 //   name: 'Chocolate Cake',
@@ -29,14 +30,24 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
   const [recipe, setRecipe] = useState<RecipeType | null>(null);
+
+  const {data, isSuccess} = useRecipesControllerRecipeV1('tres-leches-cake', {})
+
   
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const res = await fetch('http://localhost:3001/v1/recipes/tres-leches-cake');
+  //     setRecipe(await res.json());
+  //   }
+  //   fetchData();
+  // }, [])
+
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('http://localhost:3001/v1/recipes/tres-leches-cake');
-      setRecipe(await res.json());
+    if (isSuccess) {
+      setRecipe(data);
+      console.log('data', data);
     }
-    fetchData();
-  }, [])
+  }, [data, isSuccess]);
 
   return (
     <>

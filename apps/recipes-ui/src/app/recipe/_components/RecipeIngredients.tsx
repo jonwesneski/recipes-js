@@ -1,5 +1,5 @@
 import React from "react";
-import { StepType } from "./Instructions";
+import { StepType } from "./Instructions.tsx";
 
 export function RecipeIngredients({steps}: {steps: StepType[]}) {
     return (

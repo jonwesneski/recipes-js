@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@repo/database';
-import { CreateRecipeDto } from './dtos';
+import { CreateRecipeDto } from './contracts/recipes/recipes.dto';
 import { PrismaService } from 'src/prisma.service';
 
-type Recipe = Prisma.RecipeGetPayload<{
+export type RecipeType = Prisma.RecipeGetPayload<{
   include: {
     steps: {
       include: {
@@ -19,7 +19,7 @@ type Recipe = Prisma.RecipeGetPayload<{
 export class RecipesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getRecipe(slug: string): Promise<Recipe> {
+  async getRecipe(slug: string): Promise<RecipeType> {
     return this.prisma.recipe.findFirstOrThrow({
       where: {
         slug: slug,
@@ -36,7 +36,7 @@ export class RecipesService {
     });
   }
 
-  async createRecipe(data: CreateRecipeDto): Promise<Recipe> {
+  async createRecipe(data: CreateRecipeDto): Promise<RecipeType> {
     return await this.prisma.recipe.create({
       data: {
         ...data,
@@ -56,7 +56,7 @@ export class RecipesService {
           })),
         },
         nutritionalFacts: {
-          create: data.nutritionalFacts,
+          create: data.nutritionalFacts || {},
         },
         tags: {
           connectOrCreate: data.tags.map((tag) => ({
