@@ -1,10 +1,14 @@
+'use client'
 import React from "react";
-import { StepType } from "./Instructions";
+import type {StepEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/stepEntity';
 
-export function RecipeIngredients({steps}: {steps: StepType[]}) {
+interface RecipeIngredientsProps {
+    steps: StepEntity[];
+}
+export function RecipeIngredients(props: RecipeIngredientsProps) {
     return (
         <ul className="recipe-ingredients">
-            {steps.map((step, stepIdx) => (
+            {props.steps.map((step, stepIdx) => (
                 <React.Fragment key={stepIdx}>
                     {step.ingredients.map((ingredient, idx: number) => (
                         <li key={idx} style={{listStyleType: 'none'}}>

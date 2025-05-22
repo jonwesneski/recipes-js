@@ -1,7 +1,8 @@
-import { NutritionalFactsType } from "../types";
+'use client'
+import type {NutritionalFactsEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/nutritionalFactsEntity';
 
 interface NutritionalFactsProps {
-    nutritionalFacts: NutritionalFactsType;
+    nutritionalFacts: NutritionalFactsEntity;
 }
 export function NutritionalFacts(props: NutritionalFactsProps) {
     const { nutritionalFacts } = props;
@@ -25,7 +26,7 @@ export function NutritionalFacts(props: NutritionalFactsProps) {
                 </tr>
                 <tr>
                     <td style={{ textAlign: 'left' }}>Carbohydrates</td>
-                    <td style={{ textAlign: 'left' }}>{nutritionalFacts.carbohydratesInG ? `${nutritionalFacts.carbohydratesInG} g`: '?'}</td>
+                    <td style={{ textAlign: 'left' }}>{nutritionalFacts.carbsInG ? `${nutritionalFacts.carbsInG} g`: '?'}</td>
                 </tr>
                 <tr>
                     <td style={{ textAlign: 'left' }}>Fiber</td>

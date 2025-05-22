@@ -98,13 +98,13 @@ export class StepEntity
   updatedAt: Date;
   @ApiProperty()
   recipeId: string;
-  @ApiProperty()
+  @ApiProperty({ type: String })
   instruction: string | null;
-  @ApiProperty()
+  @ApiProperty({ type: [IngredientEntity] })
   ingredients: IngredientEntity[];
 }
 
-class TagsType {
+export class TagsType {
   name: string;
 }
 
@@ -114,7 +114,7 @@ export class RecipeEntity implements RecipeType {
   @ApiProperty({ type: NutritionalFactsEntity })
   nutritionalFacts: NutritionalFactsEntity | null;
   @ApiProperty({ type: [TagsType] })
-  tags: { name: string }[];
+  tags: TagsType[];
   @ApiProperty()
   id: string;
   @ApiProperty()

@@ -1,11 +1,5 @@
-import { useState } from "react";
-import ReactDOM from "react-dom";
-
-export type IngredientType = {
-    name: string;
-    amount: number;
-    measurement: string;
-}
+'use client'
+import type {IngredientEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/ingredientEntity';
 
 // function Modal() {
 //     const modalRoot = document.getElementById('modal-root')!;
@@ -34,13 +28,13 @@ export type IngredientType = {
 //     );
 // }
 
-export default function IngredientList({ingredients}: {ingredients: IngredientType[]}) {
+export default function IngredientList({ingredients}: {ingredients: IngredientEntity[]}) {
     return (
         <ul className="ingredient-list">{ingredients.map(
             (ingredient, index) => {
                 return (
                     <li key={index} style={{textAlign: 'left'}}>
-                        <span>{ingredient.amount}</span> <a href="" style={{textDecorationStyle: 'dotted', color: 'black', display: 'inline-block', textUnderlineOffset: '4px'}}>{ingredient.measurement}</a> {ingredient.name}
+                        <span>{ingredient.amount}</span> <a href="" style={{textDecorationStyle: 'dotted', color: 'black', display: 'inline-block', textUnderlineOffset: '4px'}}>{ingredient.unit}</a> {ingredient.name}
                     </li>
                 )
             }
