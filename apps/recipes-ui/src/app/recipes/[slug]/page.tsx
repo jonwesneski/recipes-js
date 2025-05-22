@@ -1,6 +1,6 @@
 'use client';
 
-import {RecipeSteps, NutritionalFacts, RecipeIngredients, RecipeLayout} from "./_components";
+import {RecipeSteps, NutritionalFacts, RecipeIngredientsOverview, RecipeLayout} from "./_components";
 import { useEffect, useState, use } from "react";
 import {useRecipesControllerRecipeV1} from '@repo/recipes-codegen/recipes';
 //import type { RecipeEntity } from '@repo/recipes-codegen/models';
@@ -22,7 +22,7 @@ export default function Page({ params }: { params: Promise<{ slug: string }>  })
     <>
       {recipe && (
         <RecipeLayout title={recipe.name} subtitle={recipe.description}>
-          <RecipeIngredients steps={recipe.steps} />
+          <RecipeIngredientsOverview steps={recipe.steps} />
           <RecipeSteps steps={recipe.steps} />
           <NutritionalFacts nutritionalFacts={recipe.nutritionalFacts} />
         </RecipeLayout>

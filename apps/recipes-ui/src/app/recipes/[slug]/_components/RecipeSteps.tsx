@@ -1,6 +1,7 @@
 'use client'
+
 import type {StepEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/stepEntity';
-import type {IngredientEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/ingredientEntity';
+import IngredientList from './IngredientList';
 
 // function Modal() {
 //     const modalRoot = document.getElementById('modal-root')!;
@@ -29,29 +30,6 @@ import type {IngredientEntity} from '../../../../../node_modules/@repo/recipes-c
 //     );
 // }
 
-interface IngredientListProps {
-    ingredients: IngredientEntity[];
-}
-export default function IngredientList(props: IngredientListProps) {
-    return (
-        <ul className="ingredient-list">{props.ingredients.map(
-            (ingredient, index) => {
-                return (
-                    <li key={index} style={{textAlign: 'left'}}>
-                        <span>{ingredient.amount}</span> <a href="" style={{textDecorationStyle: 'dotted', color: 'black', display: 'inline-block', textUnderlineOffset: '4px'}}>{ingredient.unit}</a> {ingredient.name}
-                    </li>
-                )
-            }
-        )}</ul>
-    )
-}
-
-
-
-
-
-
-
 
 interface RecipeStepsProps {
     steps: StepEntity[];
@@ -78,7 +56,6 @@ export function RecipeSteps(props: RecipeStepsProps) {
                     )
                 })}
             </tbody>
-        </table>
-                
+        </table>     
     )
 }

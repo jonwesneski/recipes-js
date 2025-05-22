@@ -1,5 +1,7 @@
 'use client'
 import type {IngredientEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/ingredientEntity';
+import { useUserStore } from '../../../../providers/use-store-provider';
+import { numberToFraction } from '../../../../utils';
 
 // function Modal() {
 //     const modalRoot = document.getElementById('modal-root')!;
@@ -29,12 +31,15 @@ import type {IngredientEntity} from '../../../../../node_modules/@repo/recipes-c
 // }
 
 export default function IngredientList({ingredients}: {ingredients: IngredientEntity[]}) {
+   const useFractions = useUserStore(state => state.useFractions);
+   console.log('useFractions', useFractions);
+   console.log('aaadfasdfasf')
     return (
         <ul className="ingredient-list">{ingredients.map(
             (ingredient, index) => {
                 return (
                     <li key={index} style={{textAlign: 'left'}}>
-                        <span>{ingredient.amount}</span> <a href="" style={{textDecorationStyle: 'dotted', color: 'black', display: 'inline-block', textUnderlineOffset: '4px'}}>{ingredient.unit}</a> {ingredient.name}
+                        <span>{useFractions ? numberToFraction(ingredient.amount) : ingredient.amount}</span> <a href="" style={{textDecorationStyle: 'dotted', color: 'black', display: 'inline-block', textUnderlineOffset: '4px'}}>{ingredient.unit}</a> {ingredient.name}
                     </li>
                 )
             }
