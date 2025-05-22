@@ -7,11 +7,15 @@ export type RecipeType = Prisma.RecipeGetPayload<{
   include: {
     steps: {
       include: {
-        ingredients: true;
+        ingredients: {
+          omit: { stepId: true; recipeId: true };
+        };
       };
     };
     nutritionalFacts: true;
-    tags: true;
+    tags: {
+      select: { name: true };
+    };
   };
 }>;
 
@@ -31,7 +35,7 @@ export class RecipesService {
           },
         },
         nutritionalFacts: true,
-        tags: true,
+        tags: { select: { name: true } },
       },
     });
   }
@@ -72,7 +76,7 @@ export class RecipesService {
           },
         },
         nutritionalFacts: true,
-        tags: true,
+        tags: { select: { name: true } },
       },
     });
   }

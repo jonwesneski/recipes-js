@@ -129,6 +129,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Recipe_slug_key" ON "Recipe"("slug");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "NutrionalFacts_recipeId_key" ON "NutrionalFacts"("recipeId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "RecipeTag_name_key" ON "RecipeTag"("name");
 
 -- CreateIndex

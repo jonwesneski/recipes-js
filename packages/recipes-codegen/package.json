@@ -8,11 +8,11 @@
       "import": "./dist/recipes/recipes.js",
       "types": "./dist/types/recipes/recipes.d.ts"
     },
-    "./recipesModel": {
+    "./models": {
       "import": "./dist/model/index.js",
       "types": "./dist/types/model/index.d.ts"
     },
-    "./recipesMsw": {
+    "./msw": {
       "import": "./dist/recipes/recipes.msw.js",
       "types": "./dist/types/recipes/recipes.msw.d.ts"
     }
@@ -21,10 +21,11 @@
     "build": "orval && tsc"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@repo/typescript-config": "workspace:*",
-    "@types/axios": "^0.14.4",
     "msw": "^2.8.4",
-    "orval": "^7.9.0"
+    "orval": "^7.9.0",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.76.1",

@@ -9,7 +9,6 @@
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
@@ -28,7 +27,6 @@
     ]
   },
   "include": [
-    "build/types/**/*.ts",
     "src",
     ".next/types/**/*.ts"
   ],

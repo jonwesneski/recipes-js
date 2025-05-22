@@ -1,4 +1,4 @@
-import { NutritionalFactsType } from "../types.ts";
+import { NutritionalFactsType } from "../types";
 
 interface NutritionalFactsProps {
     nutritionalFacts: NutritionalFactsType;
