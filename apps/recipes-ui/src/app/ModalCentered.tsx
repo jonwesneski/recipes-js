@@ -14,7 +14,6 @@ export const ModalCentered = (props: ModalCenteredProps) => {
   }, [])
 
   const handleClick = () => {
-    console.log('buer')
     closeModal()
   }
   
