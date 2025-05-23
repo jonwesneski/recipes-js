@@ -1,4 +1,3 @@
-// src/stores/counter-store.ts
 import { createStore } from 'zustand/vanilla';
 
 export type UserState = {

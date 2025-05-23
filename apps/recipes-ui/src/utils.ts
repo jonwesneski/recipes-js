@@ -1,28 +1,62 @@
-const MILLILITRES_PER_CUP = 236.588;
-const GRAMS_PER_OUNCE = 28.3495;
+const IMPERIAL_VOLUME_CONVERSIONS = {
+  cups: 1,
+  tablespoons: 16,
+  teaspoons: 48,
+  'fluid ounces': 8,
+  pints: 0.5,
+  quarts: 0.25,
+  gallons: 0.0625,
+};
 
-export function cupsToMillilitres(cups: number): number {
-  return cups * MILLILITRES_PER_CUP;
+const METRIC_VOLUME_CONVERSIONS = {
+  milliliters: 236.588,
+  liters: 0.236588,
+};
+
+// Merge for all-units support
+const VOLUME_CONVERSIONS = {
+  ...IMPERIAL_VOLUME_CONVERSIONS,
+  ...METRIC_VOLUME_CONVERSIONS,
+};
+
+type ImperialVolumeUnit = keyof typeof IMPERIAL_VOLUME_CONVERSIONS;
+type MetricVolumeUnit = keyof typeof METRIC_VOLUME_CONVERSIONS;
+type VolumeUnit = ImperialVolumeUnit | MetricVolumeUnit;
+type ConverionsType = {
+  imperial: Record<ImperialVolumeUnit, number>;
+  metric: Record<MetricVolumeUnit, number>;
+};
+
+export function convertVolume(
+  amount: number,
+  from: VolumeUnit,
+  to: VolumeUnit,
+): number {
+  // Convert from source unit to cups (base unit)
+  const inCups = amount / VOLUME_CONVERSIONS[from];
+  // Convert from cups to target unit
+  return inCups * VOLUME_CONVERSIONS[to];
 }
 
-export function millilitresToCups(millilitres: number): number {
-  return millilitres / MILLILITRES_PER_CUP;
-}
-
-// export function cupsToGrams(cups: number, gramsPerCup: number): number {
-//     return cups * gramsPerCup;
-// }
-
-// export function gramsToCups(grams: number, gramsPerCup: number): number {
-//     return grams / gramsPerCup;
-// }
-
-export function ouncesToGrams(ounces: number): number {
-  return ounces * GRAMS_PER_OUNCE;
-}
-
-export function gramsToOunces(grams: number): number {
-  return grams / GRAMS_PER_OUNCE;
+// Example: get all conversions for a given amount in a given unit
+export function getVolumeConversions(amount: number, from: VolumeUnit) {
+  const conversions: ConverionsType = {
+    imperial: {} as any,
+    metric: {} as any,
+  };
+  (Object.keys(IMPERIAL_VOLUME_CONVERSIONS) as ImperialVolumeUnit[]).forEach(
+    (unit) => {
+      conversions.imperial[unit] = convertVolume(amount, from, unit);
+    },
+  );
+  (Object.keys(METRIC_VOLUME_CONVERSIONS) as MetricVolumeUnit[]).forEach(
+    (unit) => {
+      conversions.metric[unit] = convertVolume(amount, from, unit);
+    },
+  );
+  delete conversions.imperial[from as ImperialVolumeUnit]; // Remove the original unit from the conversions
+  delete conversions.metric[from as MetricVolumeUnit];
+  return conversions;
 }
 
 export function numberToFraction(number: number, maxDenominator = 10): string {

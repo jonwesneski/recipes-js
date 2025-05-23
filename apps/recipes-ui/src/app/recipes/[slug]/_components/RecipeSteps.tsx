@@ -2,6 +2,8 @@
 
 import type {StepEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/stepEntity';
 import IngredientList from './IngredientList';
+import type { ReactNode } from 'react';
+import React from 'react';
 
 // function Modal() {
 //     const modalRoot = document.getElementById('modal-root')!;
