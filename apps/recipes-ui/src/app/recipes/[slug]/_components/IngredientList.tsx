@@ -55,7 +55,6 @@ export default function IngredientList({ingredients}: {ingredients: IngredientEn
 
    const handleClick = (e: React.MouseEvent, ingredient: IngredientEntity) => {
         e.preventDefault();
-        console.log('clicked');
         showModal('ingredient-modal', () => <MeasurementModal unitType={ingredient.unit} amount={ingredient.amount} />, {});
     }
 

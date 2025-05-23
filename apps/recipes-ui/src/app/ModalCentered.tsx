@@ -5,7 +5,7 @@ interface ModalCenteredProps {
     children: React.ReactNode
 }
 export const ModalCentered = (props: ModalCenteredProps) => {
-  const divRef = useRef<HTMLElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   const {closeModal} = useCustomModal();
 
