@@ -4,11 +4,11 @@ import type {IngredientEntity} from '../../../../../node_modules/@repo/recipes-c
 import { useUserStore } from '../../../../providers/use-store-provider';
 import { numberToFraction } from '../../../../utils';
 import { useCustomModal } from '../../../hooks/useCustomModal';
-import ModalMeasurementConversions from './ModalMeasurementConversions';
+import { ModalMeasurementConversions } from './ModalMeasurementConversions';
 
 export default function IngredientList({ingredients}: {ingredients: IngredientEntity[]}) {
    const useFractions = useUserStore(state => state.useFractions);
-   const {showModal} = useCustomModal();
+   const { showModal } = useCustomModal();
 
    const handleClick = (e: React.MouseEvent, ingredient: IngredientEntity) => {
         e.preventDefault();
@@ -19,8 +19,8 @@ export default function IngredientList({ingredients}: {ingredients: IngredientEn
         <ul className="ingredient-list">{
             ingredients.map((ingredient, index) => {
                 return (
-                    <li key={index} style={{textAlign: 'left'}}>
-                        <span>{useFractions ? numberToFraction(ingredient.amount) : ingredient.amount}</span> <a href="javascript:void(0)" onClick={(e) => handleClick(e, ingredient)} style={{textDecorationStyle: 'dotted', color: 'black', display: 'inline-block', textUnderlineOffset: '4px'}}>{ingredient.unit}</a> {ingredient.name}
+                    <li key={index} className='text-left'>
+                        <span>{useFractions ? numberToFraction(ingredient.amount) : ingredient.amount}</span> <a href="javascript:void(0)" className={'underline decoration-dotted'} onClick={(e) => handleClick(e, ingredient)} style={{ color: 'black', display: 'inline-block', textUnderlineOffset: '4px'}}>{ingredient.unit}</a> {ingredient.name}
                     </li>
                 )
             }

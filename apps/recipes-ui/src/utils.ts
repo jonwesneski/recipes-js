@@ -1,16 +1,16 @@
 const IMPERIAL_VOLUME_CONVERSIONS = {
   cups: 1,
-  tablespoons: 16,
-  teaspoons: 48,
-  'fluid ounces': 8,
+  tbs: 16,
+  tsp: 48,
+  oz: 8,
   pints: 0.5,
   quarts: 0.25,
   gallons: 0.0625,
 };
 
 const METRIC_VOLUME_CONVERSIONS = {
-  milliliters: 236.588,
-  liters: 0.236588,
+  ml: 236.588,
+  L: 0.236588,
 };
 
 // Merge for all-units support

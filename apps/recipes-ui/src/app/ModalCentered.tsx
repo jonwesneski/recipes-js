@@ -7,18 +7,25 @@ interface ModalCenteredProps {
 export const ModalCentered = (props: ModalCenteredProps) => {
   const divRef = useRef<HTMLDivElement>(null);
 
-  const {closeModal} = useCustomModal();
+  const { closeModal } = useCustomModal();
 
   useEffect(() => {
-    divRef?.current?.focus();
-  }, [])
+    const handleClickOutside = (event: MouseEvent) => {
+      if (divRef.current && !divRef.current.contains(event.target as Node)) {
+        closeModal();
+      }
+    };
 
-  const handleClick = () => {
-    closeModal()
-  }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    divRef?.current?.focus();
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   
   return (
-    <div ref={divRef} style={{ backgroundColor: 'white', pointerEvents: 'all', left: '50%', position: 'inherit', transform: 'translate(-50%, 50%)'}} onBlur={() => handleClick()} tabIndex={0}>
+    <div ref={divRef} className='shadow-lg rounded-3xl border-2 border-solid p-5' style={{ backgroundColor: 'white', pointerEvents: 'all', left: '50%', position: 'inherit', transform: 'translate(-50%, 50%)'}} tabIndex={0}>
       {props.children}
     </div>
   )

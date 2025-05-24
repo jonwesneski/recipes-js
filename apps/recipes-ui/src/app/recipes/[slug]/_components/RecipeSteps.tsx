@@ -2,35 +2,7 @@
 
 import type {StepEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/stepEntity';
 import IngredientList from './IngredientList';
-import type { ReactNode } from 'react';
 import React from 'react';
-
-// function Modal() {
-//     const modalRoot = document.getElementById('modal-root')!;
-//     const [isOpen, setIsOpen] = useState(false);
-
-//     const openModal = () => {
-//         setIsOpen(true);
-//     };
-
-//     const closeModal = () => {
-//         setIsOpen(false);
-//     };
-
-//     return ReactDOM.createPortal(
-//         <div>
-//             <button onClick={openModal}>Open Modal</button>
-//             {isOpen && (
-//                 <div className="modal">
-//                     <h2>Modal Title</h2>
-//                     <p>Modal Content</p>
-//                     <button onClick={closeModal}>Close Modal</button>
-//                 </div>
-//             )}
-//         </div>,
-//         modalRoot
-//     );
-// }
 
 
 interface RecipeStepsProps {
@@ -38,9 +10,9 @@ interface RecipeStepsProps {
 }
 export function RecipeSteps(props: RecipeStepsProps) {
     return (
-        <table className="instructions">
+        <table id="instructions" className='border border-separate rounded-2xl border-gray-800'>
             <thead>
-                <tr key="header">
+                <tr>
                     <th>Ingredients</th>
                     <th>Instructions</th>
                 </tr>
@@ -48,13 +20,15 @@ export function RecipeSteps(props: RecipeStepsProps) {
             <tbody>
                 {props.steps.map((step, index) => {
                     return (
-                        <tr key={index}>
-                            <td>
-                                <p style={{textAlign: 'left'}}>{`step ${index + 1}.`}</p>
-                                <IngredientList ingredients={step.ingredients} />
-                            </td>
-                            <td>{step.instruction}</td>
-                        </tr>
+                        <>
+                        <tr><td colSpan={2} className='border-t-2 border-gray-800'>{`step ${index + 1}.`}</td></tr>
+                            <tr key={index}>
+                                <td className='align-top'>
+                                    <IngredientList ingredients={step.ingredients} />
+                                </td>
+                                <td className='text-left align-top'>{step.instruction}</td>
+                            </tr>
+                        </>
                     )
                 })}
             </tbody>
