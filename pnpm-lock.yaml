@@ -138,6 +138,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tailwindcss/postcss':
         specifier: ^4.1.7
         version: 4.1.7
@@ -293,6 +296,31 @@ importers:
         version: 5.8.3
 
   packages/typescript-config: {}
+
+  packages/ui:
+    dependencies:
+      axios:
+        specifier: ^1.9.0
+        version: 1.9.0
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.1.0(react@19.1.0)
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: ^19.1.4
+        version: 19.1.4
+      '@types/react-dom':
+        specifier: ^19.1.5
+        version: 19.1.5(@types/react@19.1.4)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
 
 packages:
 
