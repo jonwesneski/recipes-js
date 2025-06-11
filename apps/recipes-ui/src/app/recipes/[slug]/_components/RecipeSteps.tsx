@@ -21,9 +21,11 @@ export function RecipeSteps(props: RecipeStepsProps) {
                 {props.steps.map((step, index) => {
                     return (
                         <React.Fragment key={index}>
-                        <tr><td colSpan={2} className='border-t-2 border-gray-800'>{`step ${index + 1}.`}</td></tr>
+                            <tr>
+                                <td colSpan={2} className='border-t-2 border-gray-800'>{`step ${index + 1}.`}</td>
+                            </tr>
                             <tr key={index}>
-                                <td className='align-top'>
+                                <td width={'35%'} className='align-top'>
                                     <IngredientList ingredients={step.ingredients} />
                                 </td>
                                 <td className='text-left align-top'>{step.instruction}</td>
