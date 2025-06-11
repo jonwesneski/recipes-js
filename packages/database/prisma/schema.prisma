@@ -58,6 +58,7 @@ model Recipe {
   createdAt                DateTime        @default(now())
   updatedAt                DateTime        @updatedAt
   steps                    Step[]
+  equipments               Equipment[]
   nutritionalFacts         NutrionalFacts?
   userId                   String
   user                     User            @relation(fields: [userId], references: [id])
@@ -104,6 +105,15 @@ model Step {
   updatedAt   DateTime     @updatedAt
   recipeId    String
   recipe      Recipe       @relation(fields: [recipeId], references: [id])
+}
+
+model Equipment {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
 }
 
 model Ingredient {

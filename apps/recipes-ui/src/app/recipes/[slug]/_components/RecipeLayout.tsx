@@ -1,7 +1,7 @@
 'use client'
 export interface IRecipeLayoutProps {
     title: string;
-    subtitle?: string;
+    subtitle: string | null;
     children: React.ReactNode;
 }
 

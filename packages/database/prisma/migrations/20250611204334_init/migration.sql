@@ -92,6 +92,17 @@ CREATE TABLE "Step" (
 );
 
 -- CreateTable
+CREATE TABLE "Equipment" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "recipeId" TEXT NOT NULL,
+
+    CONSTRAINT "Equipment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Ingredient" (
     "id" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
@@ -132,6 +143,9 @@ CREATE UNIQUE INDEX "Recipe_slug_key" ON "Recipe"("slug");
 CREATE UNIQUE INDEX "NutrionalFacts_recipeId_key" ON "NutrionalFacts"("recipeId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Equipment_name_key" ON "Equipment"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "RecipeTag_name_key" ON "RecipeTag"("name");
 
 -- CreateIndex
@@ -157,6 +171,9 @@ ALTER TABLE "NutrionalFacts" ADD CONSTRAINT "NutrionalFacts_recipeId_fkey" FOREI
 
 -- AddForeignKey
 ALTER TABLE "Step" ADD CONSTRAINT "Step_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "Recipe"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Equipment" ADD CONSTRAINT "Equipment_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "Recipe"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Ingredient" ADD CONSTRAINT "Ingredient_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

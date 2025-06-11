@@ -42,7 +42,9 @@ export default function Page({ params }: { params: Promise<{ slug: string }>  })
           <SharedButton text="sharedbutton" onClick={() => console.log('9')} />
           <RecipeIngredientsOverview steps={recipe.steps} />
           <RecipeSteps steps={recipe.steps} />
-          <NutritionalFacts nutritionalFacts={recipe.nutritionalFacts} />
+          {recipe.nutritionalFacts && (
+            <NutritionalFacts nutritionalFacts={recipe.nutritionalFacts} />
+          )}
         </RecipeLayout>
       )}
     </>

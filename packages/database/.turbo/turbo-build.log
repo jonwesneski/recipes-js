@@ -1,4 +1,0 @@
-
-> @repo/database@0.0.0 build C:\Users\mrex8\coding\js\reactplay\recipes-js\packages\database
-> tsc && cpx "generated/**/*" dist/generated
-

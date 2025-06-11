@@ -5,6 +5,9 @@ import { PrismaService } from 'src/prisma.service';
 
 export type RecipeType = Prisma.RecipeGetPayload<{
   include: {
+    equipments: {
+      omit: { id: true; createdAt: true; updatedAt: true; recipeId: true };
+    };
     steps: {
       include: {
         ingredients: {
@@ -12,7 +15,9 @@ export type RecipeType = Prisma.RecipeGetPayload<{
         };
       };
     };
-    nutritionalFacts: true;
+    nutritionalFacts: {
+      omit: { id: true; createdAt: true; updatedAt: true; recipeId: true };
+    };
     tags: {
       select: { name: true };
     };
@@ -29,6 +34,7 @@ export class RecipesService {
         slug: slug,
       },
       include: {
+        equipments: true,
         steps: {
           include: {
             ingredients: true,
@@ -70,6 +76,7 @@ export class RecipesService {
         },
       },
       include: {
+        equipments: true,
         steps: {
           include: {
             ingredients: true,
