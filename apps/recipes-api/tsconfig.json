@@ -20,6 +20,7 @@
     "noFallthroughCasesInSwitch": false
   },
   "include": [
-    "src"
+    "src",
+    "test"
   ]
 }

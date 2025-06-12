@@ -3,6 +3,14 @@ import { Prisma } from '@repo/database';
 import { CreateRecipeDto } from './contracts/recipes/recipes.dto';
 import { PrismaService } from 'src/prisma.service';
 
+export type RecipeMinimalType = Prisma.RecipeGetPayload<{
+  include: {
+    tags: {
+      select: { name: true };
+    };
+  };
+}>;
+
 export type RecipeType = Prisma.RecipeGetPayload<{
   include: {
     equipments: {
@@ -27,6 +35,14 @@ export type RecipeType = Prisma.RecipeGetPayload<{
 @Injectable()
 export class RecipesService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getRecipes(): Promise<RecipeMinimalType[]> {
+    return this.prisma.recipe.findMany({
+      include: {
+        tags: { select: { name: true } },
+      },
+    });
+  }
 
   async getRecipe(slug: string): Promise<RecipeType> {
     return this.prisma.recipe.findFirstOrThrow({

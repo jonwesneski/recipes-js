@@ -18,7 +18,7 @@ export class RecipesController {
     isArray: true,
   })
   async recipesList() {
-    return this.recipesService.getRecipe('');
+    return this.recipesService.getRecipes();
   }
 
   @Get(':slug')
