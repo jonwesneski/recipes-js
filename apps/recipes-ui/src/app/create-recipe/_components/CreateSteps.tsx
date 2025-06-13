@@ -1,7 +1,6 @@
 'use client'
 import { useEffect } from "react";
-import {SharedInput} from '../../../../node_modules/@repo/ui/dist/TextInput/SharedInput'
-//import {SharedInput} from '@repo/ui'
+import { SharedInput } from '@repo/ui'
 
 
 export default function CreateSteps() {
