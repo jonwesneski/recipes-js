@@ -12,14 +12,14 @@
     ".": "./dist/index.js"
   },
   "devDependencies": {
-    "@types/node": "^22.15.18",
+    "@types/node": "^24.0.1",
     "cpx": "^1.5.0",
-    "prisma": "^6.8.2",
-    "tsx": "^4.19.4",
+    "prisma": "^6.9.0",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.8.2"
+    "@prisma/client": "^6.9.0"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"
