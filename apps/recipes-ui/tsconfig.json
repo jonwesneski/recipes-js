@@ -20,6 +20,9 @@
     "noEmit": true,
     "jsx": "preserve",
     "incremental": true,
+    "paths": {
+      "@repo/ui": ["../../packages/ui/src/index.ts"]
+    },
     "plugins": [
       {
         "name": "next"

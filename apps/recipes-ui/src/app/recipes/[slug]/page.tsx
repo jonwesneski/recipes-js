@@ -1,10 +1,9 @@
 'use client';
 
 import {RecipeSteps, NutritionalFacts, RecipeIngredientsOverview, RecipeLayout} from "./_components";
-import { useEffect, useState, use, MouseEventHandler } from "react";
+import { useEffect, useState, use } from "react";
 import {useRecipesControllerRecipeV1} from '@repo/recipes-codegen/recipes';
-import {SharedButton} from '../../../../node_modules/@repo/ui/dist/Button/SharedButton'
-//import {SharedButton} from '@repo/ui'
+import { SharedButton } from '@repo/ui'
 //import type { RecipeEntity } from '@repo/recipes-codegen/models';
 import type {RecipeEntity} from '../../../../node_modules/@repo/recipes-codegen/dist/types/model/recipeEntity';
 
