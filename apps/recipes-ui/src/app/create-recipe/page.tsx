@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from "react";
-import { SharedInput } from '../../../node_modules/@repo/ui/dist/TextInput/SharedInput'
+import { SharedInput } from '@repo/ui'
 import CreateSteps from "./_components/CreateSteps";
 import { useRecipesControllerCreateRecipeV1 } from "@repo/recipes-codegen/recipes";
 import { SharedButton } from '@repo/ui'
