@@ -10,7 +10,10 @@ async function bootstrap() {
   console.log('process.env keys:', Object.keys(process.env));
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'http://localhost:3000', // allow your frontend origin
+    origin: [
+      'http://localhost:3000', // allow your frontend origins
+      'https://recipes-ui-tau.vercel.app',
+    ],
     credentials: true,
   });
   app.enableVersioning({
