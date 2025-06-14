@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalPassThroughEnv": ["RENDER_*", "DATABASE_URL"],
   "tasks": {
     "prisma:generate": {},
     "build": {
