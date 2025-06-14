@@ -3,6 +3,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
+      "dependsOn": ["^@repo/design-system#build"],
       "outputs": ["dist/**"]
     }
   }

@@ -1,10 +1,12 @@
 {
     "extends": "@repo/typescript-config/base.json",
     "compilerOptions": {
-        "outDir": "./dist",
-        "rootDir": "./src",
         "declaration": true,
         "declarationDir": "./dist/types",
+        "lib": ["es2022", "DOM", "DOM.Iterable"],        
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "noImplicitAny": false,
         "module": "esnext",
         "moduleResolution": "node",
         "skipLibCheck": true

@@ -1,10 +1,10 @@
 'use client'
+
 export interface IRecipeLayoutProps {
     title: string;
     subtitle: string | null;
     children: React.ReactNode;
 }
-
 export function RecipeLayout(props: IRecipeLayoutProps) {
     return (
         <>

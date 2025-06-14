@@ -1,7 +1,10 @@
 'use client'
 import type { Metadata } from 'next'
 
-import '../index.css'
+
+import "./globals.css"
+import "@repo/design-system/styles.css"
+import "@repo/ui/styles.css"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // export const metadata: Metadata = {

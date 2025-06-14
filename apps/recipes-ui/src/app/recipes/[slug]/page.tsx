@@ -3,7 +3,6 @@
 import {RecipeSteps, NutritionalFacts, RecipeIngredientsOverview, RecipeLayout} from "./_components";
 import { useEffect, useState, use } from "react";
 import {useRecipesControllerRecipeV1} from '@repo/recipes-codegen/recipes';
-import { SharedButton } from '@repo/ui'
 //import type { RecipeEntity } from '@repo/recipes-codegen/models';
 import type {RecipeEntity} from '../../../../node_modules/@repo/recipes-codegen/dist/types/model/recipeEntity';
 
@@ -24,7 +23,6 @@ export default function Page({ params }: { params: Promise<{ slug: string }>  })
     <>
       {recipe && (
         <RecipeLayout title={recipe.name} subtitle={recipe.description}>
-          <SharedButton text="sharedbutton" onClick={() => console.log('9')} />
           <RecipeIngredientsOverview steps={recipe.steps} />
           <RecipeSteps steps={recipe.steps} />
           {recipe.nutritionalFacts && (
