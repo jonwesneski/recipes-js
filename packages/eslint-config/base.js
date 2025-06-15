@@ -19,6 +19,7 @@ module.exports = [
     },
     rules: {
       "turbo/no-undeclared-env-vars": "warn",
+      "@typescript-eslint/no-unsafe-assignment": "off"
     },
   },
   {

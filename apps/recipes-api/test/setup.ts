@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
 import { GenericContainer } from 'testcontainers';
+import * as recipesData from './recipesTestData.json';
 
 async function getPrisma() {
   const { prisma } = await import('@repo/database');
@@ -32,6 +33,42 @@ export default async function setupDb() {
 
   const prisma = await getPrisma();
   await prisma.$connect();
+  await seedDb(prisma);
 
   global.postgresContainer = postgresContainer;
+}
+
+async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
+  // Create a new user
+  const user = await prisma.user.create({
+    data: {
+      name: 'jon',
+      email: 'j@j.com',
+    },
+  });
+
+  for (const recipe of recipesData) {
+    await prisma.recipe.create({
+      data: {
+        name: recipe.name,
+        description: recipe.description,
+        slug: recipe.slug,
+        steps: {
+          create: recipe.steps.map((step) => ({
+            instruction: step.instruction,
+            ingredients: {
+              createMany: {
+                data: step.ingredients.map((ingredient) => ({
+                  name: ingredient.name,
+                  amount: ingredient.amount,
+                  unit: ingredient.unit,
+                })),
+              },
+            },
+          })),
+        },
+        userId: user.id,
+      },
+    });
+  }
 }

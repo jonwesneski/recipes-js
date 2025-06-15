@@ -1,4 +1,8 @@
- {
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.formatOnSave": true,
   "prettier.configPath": "apps/recipes-api/.prettierrc",
-  "editor.formatOnSave": true
- }
+}

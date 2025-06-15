@@ -1,2 +1,2 @@
-export { prisma } from './src/client';
 export * from './generated/prisma';
+export { prisma, PrismaClientKnownRequestError } from './src/client';

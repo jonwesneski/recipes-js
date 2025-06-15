@@ -4,11 +4,13 @@
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.ts$": "ts-jest"
   },
   "moduleNameMapper": {
     "^src/(.*)$": "<rootDir>/../src/$1"
   },
   "globalSetup": "<rootDir>/setup.ts",
-  "globalTeardown": "<rootDir>/teardown.ts"
+  "globalTeardown": "<rootDir>/teardown.ts",
+  "verbose": true,
+  "silent": false
 }
