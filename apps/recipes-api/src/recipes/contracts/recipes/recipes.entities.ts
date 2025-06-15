@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RecipeType } from '../../recipes.service';
 import { Prisma } from '@repo/database';
+import { RecipeType } from '../../recipes.service';
 
 type OmitFields<T, K extends keyof any> = Omit<
   T,
@@ -15,14 +15,14 @@ export class EquipmentEntity
 }
 
 export class NutritionalFactsEntity
-  implements OmitFields<Prisma.NutrionalFactsCreateInput, 'recipe'>
+  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'recipe'>
 {
   @ApiProperty({ type: Number, nullable: true })
   proteinInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
-  fatInG: number | null;
+  totalFatInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
-  carbsInG: number | null;
+  carbohydratesInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
   fiberInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
@@ -62,7 +62,7 @@ export class NutritionalFactsEntity
   @ApiProperty({ type: Number, nullable: true })
   niacinInMg: number | null;
   @ApiProperty({ type: Number, nullable: true })
-  calories: number | null;
+  caloriesInKcal: number | null;
 }
 
 export class IngredientEntity

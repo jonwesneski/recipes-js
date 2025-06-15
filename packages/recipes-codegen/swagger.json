@@ -71,6 +71,11 @@
   "servers": [],
   "components": {
     "schemas": {
+      "EquipmentEntity": {
+        "type": "object",
+        "properties": { "name": { "type": "string" } },
+        "required": ["name"]
+      },
       "IngredientEntity": {
         "type": "object",
         "properties": {
@@ -109,8 +114,8 @@
         "type": "object",
         "properties": {
           "proteinInG": { "type": "number", "nullable": true },
-          "fatInG": { "type": "number", "nullable": true },
-          "carbsInG": { "type": "number", "nullable": true },
+          "totalFatInG": { "type": "number", "nullable": true },
+          "carbohydratesInG": { "type": "number", "nullable": true },
           "fiberInG": { "type": "number", "nullable": true },
           "sugarInG": { "type": "number", "nullable": true },
           "sodiumInMg": { "type": "number", "nullable": true },
@@ -130,12 +135,12 @@
           "thiaminInMg": { "type": "number", "nullable": true },
           "riboflavinInMg": { "type": "number", "nullable": true },
           "niacinInMg": { "type": "number", "nullable": true },
-          "calories": { "type": "number", "nullable": true }
+          "caloriesInKcal": { "type": "number", "nullable": true }
         },
         "required": [
           "proteinInG",
-          "fatInG",
-          "carbsInG",
+          "totalFatInG",
+          "carbohydratesInG",
           "fiberInG",
           "sugarInG",
           "sodiumInMg",
@@ -155,13 +160,17 @@
           "thiaminInMg",
           "riboflavinInMg",
           "niacinInMg",
-          "calories"
+          "caloriesInKcal"
         ]
       },
       "TagsType": { "type": "object", "properties": {} },
       "RecipeEntity": {
         "type": "object",
         "properties": {
+          "equipments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/EquipmentEntity" }
+          },
           "steps": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/StepEntity" }
@@ -185,6 +194,7 @@
           "userId": { "type": "string" }
         },
         "required": [
+          "equipments",
           "steps",
           "nutritionalFacts",
           "tags",

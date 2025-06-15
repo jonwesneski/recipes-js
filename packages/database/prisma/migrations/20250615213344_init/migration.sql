@@ -48,27 +48,27 @@ CREATE TABLE "Recipe" (
 );
 
 -- CreateTable
-CREATE TABLE "NutrionalFacts" (
+CREATE TABLE "NutritionalFacts" (
     "id" TEXT NOT NULL,
-    "calories" INTEGER,
-    "proteinInG" INTEGER,
-    "fatInG" INTEGER,
-    "carbsInG" INTEGER,
-    "fiberInG" INTEGER,
-    "sugarInG" INTEGER,
-    "sodiumInMg" INTEGER,
-    "cholesterolInMg" INTEGER,
+    "caloriesInKcal" INTEGER,
+    "totalFatInG" INTEGER,
     "saturatedFatInG" INTEGER,
     "transFatInG" INTEGER,
-    "potassiumInMg" INTEGER,
+    "cholesterolInMg" INTEGER,
+    "sodiumInMg" INTEGER,
+    "carbohydratesInG" INTEGER,
+    "fiberInG" INTEGER,
+    "sugarInG" INTEGER,
+    "proteinInG" INTEGER,
     "vitaminAInIU" INTEGER,
     "vitaminCInMg" INTEGER,
-    "calciumInMg" INTEGER,
-    "ironInMg" INTEGER,
     "vitaminDInIU" INTEGER,
     "vitaminB6InMg" INTEGER,
     "vitaminB12InMg" INTEGER,
+    "calciumInMg" INTEGER,
+    "ironInMg" INTEGER,
     "magnesiumInMg" INTEGER,
+    "potassiumInMg" INTEGER,
     "folateInMcg" INTEGER,
     "thiaminInMg" INTEGER,
     "riboflavinInMg" INTEGER,
@@ -77,7 +77,7 @@ CREATE TABLE "NutrionalFacts" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "recipeId" TEXT NOT NULL,
 
-    CONSTRAINT "NutrionalFacts_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "NutritionalFacts_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -116,21 +116,21 @@ CREATE TABLE "Ingredient" (
 );
 
 -- CreateTable
-CREATE TABLE "RecipeTag" (
+CREATE TABLE "Tag" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "RecipeTag_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Tag_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "_RecipeToRecipeTag" (
+CREATE TABLE "_RecipeToTag" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
 
-    CONSTRAINT "_RecipeToRecipeTag_AB_pkey" PRIMARY KEY ("A","B")
+    CONSTRAINT "_RecipeToTag_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
@@ -140,16 +140,16 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Recipe_slug_key" ON "Recipe"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "NutrionalFacts_recipeId_key" ON "NutrionalFacts"("recipeId");
+CREATE UNIQUE INDEX "NutritionalFacts_recipeId_key" ON "NutritionalFacts"("recipeId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Equipment_name_key" ON "Equipment"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "RecipeTag_name_key" ON "RecipeTag"("name");
+CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");
 
 -- CreateIndex
-CREATE INDEX "_RecipeToRecipeTag_B_index" ON "_RecipeToRecipeTag"("B");
+CREATE INDEX "_RecipeToTag_B_index" ON "_RecipeToTag"("B");
 
 -- AddForeignKey
 ALTER TABLE "UserFavorite" ADD CONSTRAINT "UserFavorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -167,7 +167,7 @@ ALTER TABLE "UserFollow" ADD CONSTRAINT "UserFollow_followingId_fkey" FOREIGN KE
 ALTER TABLE "Recipe" ADD CONSTRAINT "Recipe_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "NutrionalFacts" ADD CONSTRAINT "NutrionalFacts_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "Recipe"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "NutritionalFacts" ADD CONSTRAINT "NutritionalFacts_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "Recipe"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Step" ADD CONSTRAINT "Step_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "Recipe"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -179,7 +179,7 @@ ALTER TABLE "Equipment" ADD CONSTRAINT "Equipment_recipeId_fkey" FOREIGN KEY ("r
 ALTER TABLE "Ingredient" ADD CONSTRAINT "Ingredient_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "Step"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_RecipeToRecipeTag" ADD CONSTRAINT "_RecipeToRecipeTag_A_fkey" FOREIGN KEY ("A") REFERENCES "Recipe"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_RecipeToTag" ADD CONSTRAINT "_RecipeToTag_A_fkey" FOREIGN KEY ("A") REFERENCES "Recipe"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_RecipeToRecipeTag" ADD CONSTRAINT "_RecipeToRecipeTag_B_fkey" FOREIGN KEY ("B") REFERENCES "RecipeTag"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_RecipeToTag" ADD CONSTRAINT "_RecipeToTag_B_fkey" FOREIGN KEY ("B") REFERENCES "Tag"("id") ON DELETE CASCADE ON UPDATE CASCADE;

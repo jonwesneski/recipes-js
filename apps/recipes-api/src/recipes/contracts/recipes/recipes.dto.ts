@@ -15,7 +15,7 @@ type OmitFields<T, K extends keyof any> = Omit<
 >;
 
 export class NutritionalFactsDto
-  implements OmitFields<Prisma.NutrionalFactsCreateInput, 'recipe'>
+  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'recipe'>
 {
   @IsNumber()
   @IsPositive()
@@ -24,7 +24,7 @@ export class NutritionalFactsDto
   @IsNumber()
   @IsPositive()
   @IsOptional()
-  fatInG?: number | null;
+  totalFatInG?: number | null;
   @IsNumber()
   @IsPositive()
   @IsOptional()
@@ -108,7 +108,7 @@ export class NutritionalFactsDto
   @IsNumber()
   @IsPositive()
   @IsOptional()
-  calories?: number | null;
+  caloriesInKcal?: number | null;
   @IsNumber()
   @IsPositive()
   @IsOptional()

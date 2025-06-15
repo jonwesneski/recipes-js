@@ -49,52 +49,52 @@ model UserFollow {
 }
 
 model Recipe {
-  id                       String          @id @default(cuid())
+  id                       String            @id @default(cuid())
   name                     String
-  slug                     String          @unique
+  slug                     String            @unique
   description              String?
   preparationTimeInMinutes Int?
   cookingTimeInMinutes     Int?
-  createdAt                DateTime        @default(now())
-  updatedAt                DateTime        @updatedAt
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
   steps                    Step[]
   equipments               Equipment[]
-  nutritionalFacts         NutrionalFacts?
+  nutritionalFacts         NutritionalFacts?
   userId                   String
-  user                     User            @relation(fields: [userId], references: [id])
-  tags                     RecipeTag[]
+  user                     User              @relation(fields: [userId], references: [id])
+  tags                     Tag[]
   userFavorites            UserFavorite[]
 }
 
-model NutrionalFacts {
-  id              String   @id @default(cuid())
-  calories        Int?
-  proteinInG      Int?
-  fatInG          Int?
-  carbsInG        Int?
-  fiberInG        Int?
-  sugarInG        Int?
-  sodiumInMg      Int?
-  cholesterolInMg Int?
-  saturatedFatInG Int?
-  transFatInG     Int?
-  potassiumInMg   Int?
-  vitaminAInIU    Int?
-  vitaminCInMg    Int?
-  calciumInMg     Int?
-  ironInMg        Int?
-  vitaminDInIU    Int?
-  vitaminB6InMg   Int?
-  vitaminB12InMg  Int?
-  magnesiumInMg   Int?
-  folateInMcg     Int?
-  thiaminInMg     Int?
-  riboflavinInMg  Int?
-  niacinInMg      Int?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  recipeId        String   @unique
-  recipe          Recipe   @relation(fields: [recipeId], references: [id])
+model NutritionalFacts {
+  id               String   @id @default(cuid())
+  caloriesInKcal   Int?
+  totalFatInG      Int?
+  saturatedFatInG  Int?
+  transFatInG      Int?
+  cholesterolInMg  Int?
+  sodiumInMg       Int?
+  carbohydratesInG Int?
+  fiberInG         Int?
+  sugarInG         Int?
+  proteinInG       Int?
+  vitaminAInIU     Int?
+  vitaminCInMg     Int?
+  vitaminDInIU     Int?
+  vitaminB6InMg    Int?
+  vitaminB12InMg   Int?
+  calciumInMg      Int?
+  ironInMg         Int?
+  magnesiumInMg    Int?
+  potassiumInMg    Int?
+  folateInMcg      Int?
+  thiaminInMg      Int?
+  riboflavinInMg   Int?
+  niacinInMg       Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  recipeId         String   @unique
+  recipe           Recipe   @relation(fields: [recipeId], references: [id])
 }
 
 model Step {
@@ -127,7 +127,7 @@ model Ingredient {
   step      Step     @relation(fields: [stepId], references: [id])
 }
 
-model RecipeTag {
+model Tag {
   id        String   @id @default(cuid())
   name      String   @unique
   createdAt DateTime @default(now())
