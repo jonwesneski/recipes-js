@@ -6,8 +6,6 @@ import { writeFileSync } from 'fs';
 import * as path from 'path';
 
 async function bootstrap() {
-  console.log('DATABASE_URL:', process.env.DATABASE_URL);
-  console.log('process.env keys:', Object.keys(process.env));
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: [
