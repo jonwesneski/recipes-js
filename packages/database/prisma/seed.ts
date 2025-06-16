@@ -1,45 +1,79 @@
 import { PrismaClient } from '../generated/prisma/client';
+import { PrismaClientKnownRequestError } from '../src/client';
 import data from './seedData.json';
 
 const prisma = new PrismaClient();
 
 async function main() {
   // Create a new user
-  const user = await prisma.user.create({
-    data: {
-      name: 'jon',
+  let user = await prisma.user.findUnique({
+    where: {
       email: 'j@j.com',
     },
   });
-
-  for (const recipeData of data.recipes) {
-    const recipe = await prisma.recipe.create({
+  if (!user) {
+    user = await prisma.user.create({
       data: {
-        name: recipeData.name,
-        description: recipeData.description,
-        slug: recipeData.slug,
-        steps: {
-          create: recipeData.steps.map((step) => ({
-            instruction: step.instruction,
-            ingredients: {
-              createMany: {
-                data: step.ingredients.map((ingredient) => ({
-                  name: ingredient.name,
-                  amount: ingredient.amount,
-                  unit: ingredient.unit,
-                })),
-              },
-            },
-          })),
-        },
-        nutritionalFacts: {
-          create: recipeData.nutritionalFacts,
-        },
-        userId: user.id,
+        name: 'jon',
+        email: 'j@j.com',
       },
     });
   }
+
+  for (const recipeData of data.recipes) {
+    const count = recipeData.name === 'BULK' ? 50 : 1;
+    for (let i = 0; i < count; i++) {
+      let name = recipeData.name;
+      let slug = recipeData.slug;
+      if (recipeData.name === 'BULK') {
+        name = `Test Recipe ${i + 1}`;
+        slug = `test-recipe-${i + 1}`;
+      }
+
+      try {
+        await prisma.recipe.create({
+          data: {
+            name,
+            description: recipeData.description,
+            slug,
+            steps: {
+              create: recipeData.steps.map((step) => ({
+                instruction: step.instruction,
+                ingredients: {
+                  createMany: {
+                    data: step.ingredients.map((ingredient) => ({
+                      name: ingredient.name,
+                      amount: ingredient.amount,
+                      unit: ingredient.unit,
+                    })),
+                  },
+                },
+              })),
+            },
+            nutritionalFacts: {
+              create: recipeData.nutritionalFacts,
+            },
+            tags: {
+              connectOrCreate: recipeData.tags.map((tag) => ({
+                where: { name: tag },
+                create: { name: tag },
+              })),
+            },
+            userId: user.id,
+          },
+        });
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code !== 'P2002') {
+            throw error; // Re-throw if it's not a unique constraint violation
+          }
+        }
+        throw error;
+      }
+    }
+  }
 }
+
 main()
   .then(async () => {
     await prisma.$disconnect();

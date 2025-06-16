@@ -1,6 +1,6 @@
 'use client'
-import { useEffect } from "react";
-import { SharedInput } from '@repo/ui'
+
+import { SharedInput, SharedTextArea } from '@repo/ui';
 
 
 export default function CreateSteps() {
@@ -15,6 +15,7 @@ export default function CreateSteps() {
         </select>
         <div>
         <textarea></textarea>
+        <SharedTextArea name="ingredients" />
         </div>
     </div>
   );

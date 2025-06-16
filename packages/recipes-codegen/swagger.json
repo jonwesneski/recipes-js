@@ -163,7 +163,6 @@
           "caloriesInKcal"
         ]
       },
-      "TagsType": { "type": "object", "properties": {} },
       "RecipeEntity": {
         "type": "object",
         "properties": {
@@ -179,10 +178,7 @@
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/NutritionalFactsEntity" }]
           },
-          "tags": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/TagsType" }
-          },
+          "tags": { "type": "array", "items": { "type": "string" } },
           "id": { "type": "string" },
           "createdAt": { "format": "date-time", "type": "string" },
           "updatedAt": { "format": "date-time", "type": "string" },

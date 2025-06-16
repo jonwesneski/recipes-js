@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@repo/database';
-import { RecipeType } from '../../recipes.service';
+import { RecipeMinimalType, RecipeType } from '../../recipes.service';
 
 type OmitFields<T, K extends keyof any> = Omit<
   T,
@@ -114,8 +114,8 @@ export class RecipeEntity implements RecipeType {
   steps: StepEntity[];
   @ApiProperty({ type: NutritionalFactsEntity, nullable: true })
   nutritionalFacts: NutritionalFactsEntity | null;
-  @ApiProperty({ type: [TagsType] })
-  tags: TagsType[];
+  @ApiProperty({ type: [String] })
+  tags: string[];
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -132,6 +132,19 @@ export class RecipeEntity implements RecipeType {
   preparationTimeInMinutes: number | null;
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes: number | null;
+  @ApiProperty()
+  userId: string;
+}
+
+export class RecipeMinimalEntity implements RecipeMinimalType {
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  slug: string;
+  @ApiProperty({ type: String, nullable: true })
+  description: string | null;
+  @ApiProperty({ type: [String] })
+  tags: string[];
   @ApiProperty()
   userId: string;
 }

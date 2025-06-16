@@ -1,17 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@repo/database';
-import { CreateRecipeDto } from './contracts/recipes/recipes.dto';
 import { PrismaService } from 'src/prisma.service';
+import { CreateRecipeDto } from './contracts/recipes/recipes.dto';
 
-export type RecipeMinimalType = Prisma.RecipeGetPayload<{
+type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
   include: {
     tags: {
       select: { name: true };
     };
   };
+  omit: {
+    id: true;
+    createdAt: true;
+    updatedAt: true;
+    preparationTimeInMinutes: true;
+    cookingTimeInMinutes: true;
+  };
 }>;
 
-export type RecipeType = Prisma.RecipeGetPayload<{
+type RecipePrismaType = Prisma.RecipeGetPayload<{
   include: {
     equipments: {
       omit: { id: true; createdAt: true; updatedAt: true; recipeId: true };
@@ -32,20 +39,42 @@ export type RecipeType = Prisma.RecipeGetPayload<{
   };
 }>;
 
+export type RecipeType = Omit<RecipePrismaType, 'tags'> & { tags: string[] };
+export type RecipeMinimalType = Omit<RecipeMinimalPrismaType, 'tags'> & {
+  tags: string[];
+};
+
 @Injectable()
 export class RecipesService {
   constructor(private readonly prisma: PrismaService) {}
 
+  transformRecipe<T extends RecipePrismaType | RecipeMinimalPrismaType>(
+    recipe: T,
+  ): Omit<T, 'tags'> & { tags: string[] } {
+    return {
+      ...recipe,
+      tags: recipe.tags.map((tag) => tag.name),
+    };
+  }
+
   async getRecipes(): Promise<RecipeMinimalType[]> {
-    return this.prisma.recipe.findMany({
+    const recipes = await this.prisma.recipe.findMany({
       include: {
         tags: { select: { name: true } },
       },
+      omit: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        preparationTimeInMinutes: true,
+        cookingTimeInMinutes: true,
+      },
     });
+    return recipes.map((recipe) => this.transformRecipe(recipe));
   }
 
   async getRecipe(slug: string): Promise<RecipeType> {
-    return this.prisma.recipe.findFirstOrThrow({
+    const recipe = await this.prisma.recipe.findFirstOrThrow({
       where: {
         slug: slug,
       },
@@ -60,10 +89,11 @@ export class RecipesService {
         tags: { select: { name: true } },
       },
     });
+    return this.transformRecipe(recipe);
   }
 
   async createRecipe(data: CreateRecipeDto): Promise<RecipeType> {
-    return await this.prisma.recipe.create({
+    const recipe = await this.prisma.recipe.create({
       data: {
         ...data,
         steps: {
@@ -102,5 +132,6 @@ export class RecipesService {
         tags: { select: { name: true } },
       },
     });
+    return this.transformRecipe(recipe);
   }
 }
