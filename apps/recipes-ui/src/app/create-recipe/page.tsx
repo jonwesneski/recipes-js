@@ -1,15 +1,17 @@
 'use client'
 
 import { useRecipesControllerCreateRecipeV1 } from "@repo/recipes-codegen/recipes";
+import { tagsControllerTagNameListV1 } from "@repo/recipes-codegen/tags";
 import { SharedButton, SharedInput } from '@repo/ui';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CreateSteps from "./_components/CreateSteps";
 
 
 export default function Page() {
 
 
-    const { mutate } = useRecipesControllerCreateRecipeV1({mutation: {retry: false}})
+    const { mutate } = useRecipesControllerCreateRecipeV1({mutation: {retry: false} })
+    const [tags, setTags] = useState<string[]>([]);
 
     
     const handleSubmit = () => {
@@ -20,7 +22,16 @@ export default function Page() {
     }
 
     useEffect(() => {
+      // todo add params
+      const fetchTags = async () => {
+        const currentTags = await tagsControllerTagNameListV1();
+        setTags(tags => [...tags, ...currentTags.data])
+        if (currentTags.pagination.next_page !== null) {
+          //await fetchTags()
+        }
+      }
        
+      fetchTags();
     }, []);
 
 

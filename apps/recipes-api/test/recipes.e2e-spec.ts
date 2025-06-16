@@ -1,12 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { configureApp } from 'src/common';
 import { PrismaService } from 'src/prisma.service';
+import { CreateRecipeDto } from 'src/recipes/contracts/recipes/recipes.dto';
 import { RecipeEntity } from 'src/recipes/contracts/recipes/recipes.entities';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 
-const basePath = '/recipes';
+const basePath = '/v1/recipes';
 
 describe('RecipesController (e2e)', () => {
   let app: INestApplication<App>;
@@ -19,10 +21,13 @@ describe('RecipesController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    configureApp(app);
+
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
     user1 = await prismaService.user.findFirst({
       where: { name: 'jon' },
     });
+
     await app.init();
   });
 
@@ -77,6 +82,9 @@ describe('RecipesController (e2e)', () => {
             },
           ],
           tags: [],
+          nutritionalFacts: null,
+          preparationTimeInMinutes: 30,
+          cookingTimeInMinutes: 15,
           userId: user1!.id,
         })
         .expect(201)
@@ -87,7 +95,7 @@ describe('RecipesController (e2e)', () => {
     });
 
     it('create existing recipe', async () => {
-      const sampleRecipe = {
+      const sampleRecipe: CreateRecipeDto = {
         name: 'sample Recipe',
         description: 'This is a test recipe',
         slug: 'sample-recipe',
@@ -98,6 +106,9 @@ describe('RecipesController (e2e)', () => {
           },
         ],
         tags: [],
+        nutritionalFacts: null,
+        preparationTimeInMinutes: 30,
+        cookingTimeInMinutes: 15,
         userId: user1!.id,
       };
 

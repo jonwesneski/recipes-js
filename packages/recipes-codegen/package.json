@@ -8,6 +8,10 @@
       "import": "./dist/recipes/recipes.js",
       "types": "./dist/types/recipes/recipes.d.ts"
     },
+    "./tags": {
+      "import": "./dist/tags/tags.js",
+      "types": "./dist/types/tags/tags.d.ts"
+    },
     "./models": {
       "import": "./dist/model/index.js",
       "types": "./dist/types/model/index.d.ts"

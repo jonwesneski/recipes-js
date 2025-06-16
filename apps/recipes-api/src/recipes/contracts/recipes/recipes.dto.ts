@@ -1,4 +1,5 @@
 import { Prisma } from '@repo/database/generated/prisma/client';
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsInt,
@@ -7,6 +8,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 
 type OmitFields<T, K extends keyof any> = Omit<
@@ -182,6 +184,9 @@ export class CreateRecipeDto
   cookingTimeInMinutes?: number | null;
   @IsArray()
   steps: StepDto[];
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => NutritionalFactsDto)
   nutritionalFacts?: NutritionalFactsDto | null;
   @IsArray()
   @IsString({ each: true })

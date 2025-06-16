@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
+import { BaseQueryDto } from 'src/common';
 import { TagNamesEntity } from './contracts/tags.entities';
 import { TagsService } from './tags.service';
 
@@ -14,17 +15,7 @@ export class TagsController {
     description: 'All tag names',
     type: TagNamesEntity,
   })
-  async tagNameList(): Promise<TagNamesEntity> {
-    const tagNames = await this.tagsService.getTagNames();
-    return {
-      data: tagNames,
-      pagination: {
-        total_records: tagNames.length, // todo: grab from db
-        current_page: 1,
-        total_pages: 1,
-        next_page: null,
-        prev_page: null,
-      },
-    };
+  async tagNameList(@Query() query: BaseQueryDto): Promise<TagNamesEntity> {
+    return await this.tagsService.getTagNames(query);
   }
 }

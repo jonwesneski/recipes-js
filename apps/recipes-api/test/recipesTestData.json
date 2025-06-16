@@ -1,112 +1,114 @@
-{
-  "name": "Tres Leches Cake",
-  "description": "A delicious cake soaked in three types of milk",
-  "preparationTimeInMinutes": 30,
-  "cookingTimeInMinutes": 30,
-  "slug": "tres-leches-cake",
-  "steps": [
-    {
-      "instruction": "Preheat oven to 350F and grease a 9x13 inch baking dish",
-      "ingredients": []
-    },
-    {
-      "instruction": "Mix the dry ingredients together in a bowl",
-      "ingredients": [
-        {
-          "name": "All-purpose flour",
-          "amount": 1,
-          "unit": "cups"
-        },
-        {
-          "name": "Baking powder",
-          "amount": 1.5,
-          "unit": "tsp"
-        },
-        {
-          "name": "Salt",
-          "amount": 0.5,
-          "unit": "tsp"
-        }
-      ]
-    },
-    {
-      "instruction": "Separate egg whites and yolks. Mix yolks with sugar, milk, and vanilla extract. Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool",
-      "ingredients": [
-        {
-          "name": "Eggs",
-          "amount": 5,
-          "unit": ""
-        },
-        {
-          "name": "Sugar",
-          "amount": 0.75,
-          "unit": "cups"
-        },
-        {
-          "name": "Milk",
-          "amount": 0.33,
-          "unit": "cups"
-        },
-        {
-          "name": "Vanilla extract",
-          "amount": 1,
-          "unit": "tsp"
-        }
-      ]
-    },
-    {
-      "instruction": "Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool",
-      "ingredients": [
-        {
-          "name": "Sugar",
-          "amount": 0.25,
-          "unit": "cups"
-        }
-      ]
-    },
-    {
-      "instruction": "Mix 3 milks together, and then poke holes in cake then pour milk mixture into the cake, let it soak up the liquid. then add frosting",
-      "ingredients": [
-        {
-          "name": "coconut milk",
-          "amount": 0.33,
-          "unit": "cups"
-        },
-        {
-          "name": "evaporated milk",
-          "amount": 12,
-          "unit": "oz"
-        },
-        {
-          "name": "Sweetened condensed milk",
-          "amount": 14,
-          "unit": "oz"
-        }
-      ]
+[
+  {
+    "name": "Tres Leches Cake",
+    "description": "A delicious cake soaked in three types of milk",
+    "preparationTimeInMinutes": 30,
+    "cookingTimeInMinutes": 30,
+    "slug": "tres-leches-cake",
+    "steps": [
+      {
+        "instruction": "Preheat oven to 350F and grease a 9x13 inch baking dish",
+        "ingredients": []
+      },
+      {
+        "instruction": "Mix the dry ingredients together in a bowl",
+        "ingredients": [
+          {
+            "name": "All-purpose flour",
+            "amount": 1,
+            "unit": "cups"
+          },
+          {
+            "name": "Baking powder",
+            "amount": 1.5,
+            "unit": "tsp"
+          },
+          {
+            "name": "Salt",
+            "amount": 0.5,
+            "unit": "tsp"
+          }
+        ]
+      },
+      {
+        "instruction": "Separate egg whites and yolks. Mix yolks with sugar, milk, and vanilla extract. Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool",
+        "ingredients": [
+          {
+            "name": "Eggs",
+            "amount": 5,
+            "unit": ""
+          },
+          {
+            "name": "Sugar",
+            "amount": 0.75,
+            "unit": "cups"
+          },
+          {
+            "name": "Milk",
+            "amount": 0.33,
+            "unit": "cups"
+          },
+          {
+            "name": "Vanilla extract",
+            "amount": 1,
+            "unit": "tsp"
+          }
+        ]
+      },
+      {
+        "instruction": "Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool",
+        "ingredients": [
+          {
+            "name": "Sugar",
+            "amount": 0.25,
+            "unit": "cups"
+          }
+        ]
+      },
+      {
+        "instruction": "Mix 3 milks together, and then poke holes in cake then pour milk mixture into the cake, let it soak up the liquid. then add frosting",
+        "ingredients": [
+          {
+            "name": "coconut milk",
+            "amount": 0.33,
+            "unit": "cups"
+          },
+          {
+            "name": "evaporated milk",
+            "amount": 12,
+            "unit": "oz"
+          },
+          {
+            "name": "Sweetened condensed milk",
+            "amount": 14,
+            "unit": "oz"
+          }
+        ]
+      }
+    ],
+    "nutritionalFacts": {
+      "caloriesInKcal": 350,
+      "proteinInG": 6,
+      "carbohydratesInG": 50,
+      "totalFatInG": 12,
+      "fiberInG": 1,
+      "sugarInG": 30,
+      "cholesterolInMg": 100,
+      "sodiumInMg": 200,
+      "saturatedFatInG": 5,
+      "transFatInG": 0,
+      "vitaminAInIU": 10,
+      "vitaminCInMg": 0,
+      "calciumInMg": 0,
+      "ironInMg": 0,
+      "vitaminDInIU": 0,
+      "vitaminB6InMg": 0,
+      "vitaminB12InMg": 0,
+      "magnesiumInMg": 0,
+      "folateInMcg": 0,
+      "thiaminInMg": 0,
+      "riboflavinInMg": 0,
+      "niacinInMg": 0
     }
-  ],
-  "nutritionalFacts": {
-    "caloriesInKcal": 350,
-    "proteinInG": 6,
-    "carbohydratesInG": 50,
-    "totalFatInG": 12,
-    "fiberInG": 1,
-    "sugarInG": 30,
-    "cholesterolInMg": 100,
-    "sodiumInMg": 200,
-    "saturatedFatInG": 5,
-    "transFatInG": 0,
-    "vitaminAInIU": 10,
-    "vitaminCInMg": 0,
-    "calciumInMg": 0,
-    "ironInMg": 0,
-    "vitaminDInIU": 0,
-    "vitaminB6InMg": 0,
-    "vitaminB12InMg": 0,
-    "magnesiumInMg": 0,
-    "folateInMcg": 0,
-    "thiaminInMg": 0,
-    "riboflavinInMg": 0,
-    "niacinInMg": 0
   }
-}
+]

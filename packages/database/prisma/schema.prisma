@@ -26,6 +26,8 @@ model User {
 
   followers  UserFollow[] @relation("UserFollows")
   followings UserFollow[] @relation("UserFollowings")
+
+  @@map("users")
 }
 
 model UserFavorite {
@@ -34,8 +36,10 @@ model UserFavorite {
   updatedAt DateTime @updatedAt
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  recipeId  String
+  recipeId  Int
   recipe    Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@map("user_favorites")
 }
 
 model UserFollow {
@@ -46,10 +50,12 @@ model UserFollow {
   user        User     @relation("UserFollows", fields: [userId], references: [id])
   followingId String
   following   User     @relation("UserFollowings", fields: [followingId], references: [id])
+
+  @@map("user_follows")
 }
 
 model Recipe {
-  id                       String            @id @default(cuid())
+  id                       Int               @id @default(autoincrement())
   name                     String
   slug                     String            @unique
   description              String?
@@ -64,6 +70,8 @@ model Recipe {
   user                     User              @relation(fields: [userId], references: [id])
   tags                     Tag[]
   userFavorites            UserFavorite[]
+
+  @@map("recipes")
 }
 
 model NutritionalFacts {
@@ -93,8 +101,10 @@ model NutritionalFacts {
   niacinInMg       Int?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  recipeId         String   @unique
+  recipeId         Int      @unique
   recipe           Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@map("nutritional_facts")
 }
 
 model Step {
@@ -103,8 +113,10 @@ model Step {
   instruction String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  recipeId    String
+  recipeId    Int
   recipe      Recipe       @relation(fields: [recipeId], references: [id])
+
+  @@map("steps")
 }
 
 model Equipment {
@@ -112,8 +124,10 @@ model Equipment {
   name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  recipeId  String
+  recipeId  Int
   recipe    Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@map("equipments")
 }
 
 model Ingredient {
@@ -125,12 +139,16 @@ model Ingredient {
   updatedAt DateTime @updatedAt
   stepId    String
   step      Step     @relation(fields: [stepId], references: [id])
+
+  @@map("ingredients")
 }
 
 model Tag {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   recipes   Recipe[]
+
+  @@map("tags")
 }
