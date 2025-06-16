@@ -59,6 +59,23 @@
         },
         "tags": ["Recipes"]
       }
+    },
+    "/v1/tag-names": {
+      "get": {
+        "operationId": "TagsController_tagNameList_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All tag names",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TagNamesEntity" }
+              }
+            }
+          }
+        },
+        "tags": ["Tags"]
+      }
     }
   },
   "info": {
@@ -205,7 +222,32 @@
           "userId"
         ]
       },
-      "CreateRecipeDto": { "type": "object", "properties": {} }
+      "CreateRecipeDto": { "type": "object", "properties": {} },
+      "PaginationEntity": {
+        "type": "object",
+        "properties": {
+          "total_records": { "type": "number" },
+          "current_page": { "type": "number" },
+          "total_pages": { "type": "number" },
+          "next_page": { "type": "number", "nullable": true },
+          "prev_page": { "type": "number", "nullable": true }
+        },
+        "required": [
+          "total_records",
+          "current_page",
+          "total_pages",
+          "next_page",
+          "prev_page"
+        ]
+      },
+      "TagNamesEntity": {
+        "type": "object",
+        "properties": {
+          "data": { "type": "array", "items": { "type": "string" } },
+          "pagination": { "$ref": "#/components/schemas/PaginationEntity" }
+        },
+        "required": ["data", "pagination"]
+      }
     }
   }
 }

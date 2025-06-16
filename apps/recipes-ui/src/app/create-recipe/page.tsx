@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect } from "react";
-import { SharedInput } from '@repo/ui'
-import CreateSteps from "./_components/CreateSteps";
 import { useRecipesControllerCreateRecipeV1 } from "@repo/recipes-codegen/recipes";
-import { SharedButton } from '@repo/ui'
+import { SharedButton, SharedInput } from '@repo/ui';
+import { useEffect } from "react";
+import CreateSteps from "./_components/CreateSteps";
 
 
 export default function Page() {
 
 
     const { mutate } = useRecipesControllerCreateRecipeV1({mutation: {retry: false}})
+
     
     const handleSubmit = () => {
         mutate({data: {}}, {
