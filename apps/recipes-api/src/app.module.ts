@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { RecipesModule } from './recipes/recipes.module';
-import { TagsModule } from './tags/tags.module';
+import { HealthCheckModule } from './healthCheck';
+import { RecipesModule } from './recipes';
+import { TagsModule } from './tags';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    HealthCheckModule,
     RecipesModule,
     TagsModule,
   ],

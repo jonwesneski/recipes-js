@@ -9,8 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { PrismaClientKnownRequestError } from '@repo/database';
-import { CreateRecipeDto } from './contracts/recipes/recipes.dto';
-import { RecipeEntity } from './contracts/recipes/recipes.entities';
+import { CreateRecipeDto, RecipeEntity } from './contracts';
 import { RecipesService } from './recipes.service';
 
 @Controller({

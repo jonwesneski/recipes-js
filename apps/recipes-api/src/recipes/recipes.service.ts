@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@repo/database';
-import { PrismaService } from 'src/prisma.service';
-import { CreateRecipeDto } from './contracts/recipes/recipes.dto';
+import { PrismaService } from 'src/common';
+import { CreateRecipeDto } from './contracts';
 
 type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
   include: {

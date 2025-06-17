@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@repo/database';
-import { RecipeMinimalType, RecipeType } from '../../recipes.service';
+import { RecipeMinimalType, RecipeType } from '../recipes.service';
 
 type OmitFields<T, K extends keyof any> = Omit<
   T,

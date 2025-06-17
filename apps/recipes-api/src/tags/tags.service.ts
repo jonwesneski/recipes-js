@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/common/prisma.service';
 
 export type PrismaQueryParams = {
   cursorId?: number;
@@ -21,7 +21,7 @@ export class TagsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getTagNames({
-    cursorId = 0,
+    cursorId = 1,
   }: PrismaQueryParams): Promise<PrismaResults<string[]>> {
     const tags = await this.prisma.tag.findMany({ cursor: { id: cursorId } });
     const count = await this.prisma.tag.count();
