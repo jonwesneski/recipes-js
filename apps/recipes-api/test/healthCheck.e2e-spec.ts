@@ -1,0 +1,88 @@
+import { INestApplication } from '@nestjs/common';
+import { HealthIndicatorResult, MemoryHealthIndicator } from '@nestjs/terminus';
+import { Test, TestingModule } from '@nestjs/testing';
+import { configureApp } from 'src/common';
+import * as request from 'supertest';
+import { App } from 'supertest/types';
+import { AppModule } from '../src/app.module';
+
+const basePath = '/';
+const statusPath = `${basePath}status`;
+const healthPath = `${basePath}health`;
+
+describe('HealthCheckController (e2e)', () => {
+  let app: INestApplication<App>;
+  let memoryHealthIndicator: MemoryHealthIndicator;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    configureApp(app);
+    memoryHealthIndicator = app.get<MemoryHealthIndicator>(
+      MemoryHealthIndicator,
+    );
+
+    await app.init();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  describe(`GET ${statusPath}`, () => {
+    it('valid', () => {
+      return request(app.getHttpServer())
+        .get(statusPath)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data).toBeUndefined();
+        });
+    });
+  });
+
+  describe(`GET ${healthPath}`, () => {
+    it('valid', () => {
+      const heapSpy = jest.spyOn(memoryHealthIndicator, 'checkHeap');
+      heapSpy.mockImplementationOnce(async () =>
+        Promise.resolve({
+          heap: {
+            status: 'up',
+          },
+        } as HealthIndicatorResult<string>),
+      );
+      const rssSpy = jest.spyOn(memoryHealthIndicator, 'checkRSS');
+      rssSpy.mockImplementationOnce(async () =>
+        Promise.resolve({
+          rss: {
+            status: 'up',
+          },
+        } as HealthIndicatorResult<string>),
+      );
+
+      return request(app.getHttpServer())
+        .get(healthPath)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.status).toBe('ok');
+          expect(res.body.info).toBeDefined();
+          expect(res.body.error).toEqual({});
+          expect(res.body.details).toBeDefined();
+        });
+    });
+
+    it('invalid', () => {
+      return request(app.getHttpServer())
+        .get(healthPath)
+        .expect(503)
+        .expect((res) => {
+          expect(res.body.status).toBe('error');
+          expect(res.body.info).toBeDefined();
+          expect(res.body.error).not.toEqual({});
+          expect(res.body.details).toBeDefined();
+        });
+    });
+  });
+});

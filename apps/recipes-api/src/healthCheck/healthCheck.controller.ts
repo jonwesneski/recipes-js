@@ -27,18 +27,18 @@ export class HealthCheckController {
 
   @Get('health')
   @HealthCheck()
-  check() {
+  async check() {
     let diskPath = '/';
     if (process.platform === 'win32') {
-      diskPath = 'C:\\'; // Windows uses C:\ as the root path
+      diskPath = 'C:\\';
     }
 
-    return this.health.check([
-      //   () => this.http.pingCheck('basic check', 'http://localhost:3000'),
+    return await this.health.check([
+      //   () => this.http.pingCheck('basic check for some-api', 'http://some-api'),
       () =>
         this.disk.checkStorage('diskStorage', {
           thresholdPercent: 0.5,
-          path: 'C:\\',
+          path: diskPath,
         }),
       () => this.db.checkDb('recipes-db'),
       () => this.memory.checkHeap('memory_heap', 300 * 1024 * 1024),

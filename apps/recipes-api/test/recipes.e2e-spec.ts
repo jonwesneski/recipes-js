@@ -1,9 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { configureApp } from 'src/common';
-import { PrismaService } from 'src/common/prisma.service';
-import { CreateRecipeDto } from 'src/recipes/contracts/recipes.dto';
-import { RecipeEntity } from 'src/recipes/contracts/recipes/recipes.entities';
+import { configureApp, PrismaService } from 'src/common';
+import { CreateRecipeDto, RecipeEntity } from 'src/recipes/contracts';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
