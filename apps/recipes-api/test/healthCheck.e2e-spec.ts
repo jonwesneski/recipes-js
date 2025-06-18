@@ -1,5 +1,9 @@
 import { INestApplication } from '@nestjs/common';
-import { HealthIndicatorResult, MemoryHealthIndicator } from '@nestjs/terminus';
+import {
+  DiskHealthIndicator,
+  HealthIndicatorResult,
+  MemoryHealthIndicator,
+} from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 import { configureApp } from 'src/common';
 import * as request from 'supertest';
@@ -13,6 +17,7 @@ const healthPath = `${basePath}health`;
 describe('HealthCheckController (e2e)', () => {
   let app: INestApplication<App>;
   let memoryHealthIndicator: MemoryHealthIndicator;
+  let diskStorageIndicator: DiskHealthIndicator;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -24,6 +29,7 @@ describe('HealthCheckController (e2e)', () => {
     memoryHealthIndicator = app.get<MemoryHealthIndicator>(
       MemoryHealthIndicator,
     );
+    diskStorageIndicator = app.get<DiskHealthIndicator>(DiskHealthIndicator);
 
     await app.init();
   });
@@ -45,6 +51,12 @@ describe('HealthCheckController (e2e)', () => {
 
   describe(`GET ${healthPath}`, () => {
     it('valid', () => {
+      const diskSpy = jest.spyOn(diskStorageIndicator, 'checkStorage');
+      diskSpy.mockImplementationOnce(async () =>
+        Promise.resolve({
+          storage: { status: 'up' },
+        } as HealthIndicatorResult<string>),
+      );
       const heapSpy = jest.spyOn(memoryHealthIndicator, 'checkHeap');
       heapSpy.mockImplementationOnce(async () =>
         Promise.resolve({
