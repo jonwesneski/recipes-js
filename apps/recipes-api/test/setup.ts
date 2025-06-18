@@ -44,6 +44,7 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
   const user = await prisma.user.create({
     data: {
       name: 'jon',
+      handle: 'jon',
       email: 'j@j.com',
     },
   });
@@ -68,7 +69,7 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
             },
           })),
         },
-        userId: user.id,
+        userHandle: user.handle,
       },
     });
   }
