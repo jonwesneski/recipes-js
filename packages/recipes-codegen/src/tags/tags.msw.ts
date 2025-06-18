@@ -20,7 +20,7 @@ import type {
 } from '.././model';
 
 
-export const getTagsControllerTagNameListV1ResponseMock = (overrideResponse: Partial< TagNamesEntity > = {}): TagNamesEntity => ({data: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), pagination: {total_records: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), current_page: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), total_pages: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), next_page: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), null]), prev_page: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), null])}, ...overrideResponse})
+export const getTagsControllerTagNameListV1ResponseMock = (overrideResponse: Partial< TagNamesEntity > = {}): TagNamesEntity => ({data: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), pagination: {totalRecords: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), currentCursor: faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), nextCursor: faker.helpers.arrayElement([faker.number.float({min: undefined, max: undefined, fractionDigits: 2}), null])}, ...overrideResponse})
 
 
 export const getTagsControllerTagNameListV1MockHandler = (overrideResponse?: TagNamesEntity | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<TagNamesEntity> | TagNamesEntity)) => {
