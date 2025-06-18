@@ -3,7 +3,7 @@ interface SharedInputProps {
     name: string
     placeHolder?: string;
 }
-export function SharedInput(props: SharedInputProps) {
+export const SharedInput = (props: SharedInputProps) => {
     const placeHolder = props.placeHolder ? `${props.placeHolder}...` : undefined
     return (
         <input type="text" 

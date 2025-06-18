@@ -11,6 +11,8 @@
       "dependsOn": ["^prisma:generate"],
       "persistent": true,
       "cache": false
-    }
+    },
+    "lint": {},
+    "test": {}
   }
 }
