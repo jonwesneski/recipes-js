@@ -1,6 +1,5 @@
-name: PR Update
+name: Lint, Build, and Test
 
-# Update permissions to include all necessary ones
 permissions:
   contents: read
   pull-requests: read
@@ -9,9 +8,10 @@ permissions:
   id-token: write
 
 on:
+  push:
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    types: ['opened', 'synchronize', 'ready_for_review']
   merge_group:
   workflow_dispatch:
 
@@ -20,22 +20,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # test:
-  #   name: Run Unit Tests
-  #   uses: ./.github/workflows/test.yml
-  #   secrets: inherit
+  lint-build-test:
+    runs-on: ubuntu-latest
 
-  # lint:
-  #   name: Run Linters
-  #   uses: ./.github/workflows/lint.yml
-  #   secrets: inherit
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+          run_install: false
 
-  # e2e-test:
-  #   name: Run E2E Tests
-  #   uses: ./.github/workflows/e2e.yml
-  #   secrets: inherit
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # - name: Lint
+      #   run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
