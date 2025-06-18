@@ -151,41 +151,14 @@
 					"name": "recipes",
 					"item": [
 						{
-							"name": "{slug}",
+							"name": "{userHandle}",
 							"item": [
 								{
-									"name": "Recipes Controller recipe v1",
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "application/json"
-											}
-										],
-										"url": {
-											"raw": "{{host}}/v1/recipes/:slug",
-											"host": [
-												"{{host}}"
-											],
-											"path": [
-												"v1",
-												"recipes",
-												":slug"
-											],
-											"variable": [
-												{
-													"key": "slug",
-													"value": "tres-leches-cake",
-													"description": "(Required) Slug of recipe"
-												}
-											]
-										}
-									},
-									"response": [
+									"name": "{slug}",
+									"item": [
 										{
-											"name": "The recips record",
-											"originalRequest": {
+											"name": "Recipes Controller recipe v1",
+											"request": {
 												"method": "GET",
 												"header": [
 													{
@@ -194,33 +167,69 @@
 													}
 												],
 												"url": {
-													"raw": "{{baseUrl}}/v1/recipes/:slug",
+													"raw": "{{host}}/v1/recipes/:userHandle/:slug",
 													"host": [
-														"{{baseUrl}}"
+														"{{host}}"
 													],
 													"path": [
 														"v1",
 														"recipes",
+														":userHandle",
 														":slug"
 													],
 													"variable": [
 														{
-															"key": "slug"
+															"key": "userHandle",
+															"value": "jon"
+														},
+														{
+															"key": "slug",
+															"value": "tres-leches-cake"
 														}
 													]
 												}
 											},
-											"status": "OK",
-											"code": 200,
-											"_postman_previewlanguage": "json",
-											"header": [
+											"response": [
 												{
-													"key": "Content-Type",
-													"value": "application/json"
+													"name": "The recips record",
+													"originalRequest": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/v1/recipes/:slug",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"v1",
+																"recipes",
+																":slug"
+															],
+															"variable": [
+																{
+																	"key": "slug"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"equipments\": [\n    {\n      \"name\": \"eiusmod sed dolor\"\n    },\n    {\n      \"name\": \"est sunt laborum Excepteur\"\n    }\n  ],\n  \"steps\": [\n    {\n      \"id\": \"in mollit ut exercitation\",\n      \"createdAt\": \"1964-06-17T03:11:26.932Z\",\n      \"updatedAt\": \"2018-02-19T13:38:27.302Z\",\n      \"recipeId\": 2614868.639866382,\n      \"instruction\": \"officia do\",\n      \"ingredients\": [\n        {\n          \"id\": \"voluptate amet\",\n          \"createdAt\": \"2007-03-24T03:47:51.295Z\",\n          \"updatedAt\": \"1995-12-26T22:23:24.599Z\",\n          \"amount\": -75221655.53504463,\n          \"unit\": \"do consectetur Excepteur veniam\",\n          \"name\": \"a\"\n        },\n        {\n          \"id\": \"ullamco\",\n          \"createdAt\": \"2006-02-22T13:31:05.746Z\",\n          \"updatedAt\": \"1969-10-25T10:53:28.131Z\",\n          \"amount\": 44975187.3629995,\n          \"unit\": \"eiusmod qui ut culpa dolor\",\n          \"name\": \"commodo minim\"\n        }\n      ]\n    },\n    {\n      \"id\": \"qui enim est\",\n      \"createdAt\": \"1986-05-29T23:53:12.084Z\",\n      \"updatedAt\": \"1993-02-24T18:27:25.404Z\",\n      \"recipeId\": -84159020.39733152,\n      \"instruction\": \"aute elit\",\n      \"ingredients\": [\n        {\n          \"id\": \"Excepteur in\",\n          \"createdAt\": \"1959-06-19T07:21:29.744Z\",\n          \"updatedAt\": \"2006-02-26T03:19:00.879Z\",\n          \"amount\": -7489670.570124567,\n          \"unit\": \"et Excepteur in labore\",\n          \"name\": \"in\"\n        },\n        {\n          \"id\": \"labore anim ullamco ad\",\n          \"createdAt\": \"1978-08-31T14:45:52.891Z\",\n          \"updatedAt\": \"1953-10-08T17:41:10.201Z\",\n          \"amount\": -39986663.57355694,\n          \"unit\": \"Duis\",\n          \"name\": \"voluptate adipisicing qui irure\"\n        }\n      ]\n    }\n  ],\n  \"nutritionalFacts\": {\n    \"proteinInG\": 7546067.993230209,\n    \"totalFatInG\": -22432293.955778435,\n    \"carbohydratesInG\": -33953714.01533844,\n    \"fiberInG\": -82950649.00102508,\n    \"sugarInG\": -99183623.71972074,\n    \"sodiumInMg\": -97596014.53904301,\n    \"cholesterolInMg\": -46524535.84840464,\n    \"saturatedFatInG\": -17307625.797967225,\n    \"transFatInG\": -51894658.53103514,\n    \"potassiumInMg\": -53057793.4784295,\n    \"vitaminAInIU\": -22808516.264947042,\n    \"vitaminCInMg\": -2169160.3078814596,\n    \"calciumInMg\": 48616318.46605432,\n    \"ironInMg\": 28067388.62680666,\n    \"vitaminDInIU\": -72547911.8417585,\n    \"vitaminB6InMg\": -45625573.80142405,\n    \"vitaminB12InMg\": -42883427.609391056,\n    \"magnesiumInMg\": -51966944.84965021,\n    \"folateInMcg\": 33547026.372279152,\n    \"thiaminInMg\": -41416439.998280905,\n    \"riboflavinInMg\": 66232659.53746989,\n    \"niacinInMg\": 48674740.858596176,\n    \"caloriesInKcal\": 93755637.78189173\n  },\n  \"tags\": [\n    \"ea do esse veniam consequat\",\n    \"qui amet\"\n  ],\n  \"id\": 37780149.049479485,\n  \"createdAt\": \"2011-07-15T10:01:42.708Z\",\n  \"updatedAt\": \"1954-06-15T04:32:25.248Z\",\n  \"name\": \"Lorem consequat nulla exercitation\",\n  \"slug\": \"p\",\n  \"description\": \"dolor\",\n  \"preparationTimeInMinutes\": 95473482.64237145,\n  \"cookingTimeInMinutes\": -36245873.2695885,\n  \"userId\": \"incididunt proident in\"\n}"
 												}
-											],
-											"cookie": [],
-											"body": "{\n  \"equipments\": [\n    {\n      \"name\": \"eiusmod sed dolor\"\n    },\n    {\n      \"name\": \"est sunt laborum Excepteur\"\n    }\n  ],\n  \"steps\": [\n    {\n      \"id\": \"in mollit ut exercitation\",\n      \"createdAt\": \"1964-06-17T03:11:26.932Z\",\n      \"updatedAt\": \"2018-02-19T13:38:27.302Z\",\n      \"recipeId\": 2614868.639866382,\n      \"instruction\": \"officia do\",\n      \"ingredients\": [\n        {\n          \"id\": \"voluptate amet\",\n          \"createdAt\": \"2007-03-24T03:47:51.295Z\",\n          \"updatedAt\": \"1995-12-26T22:23:24.599Z\",\n          \"amount\": -75221655.53504463,\n          \"unit\": \"do consectetur Excepteur veniam\",\n          \"name\": \"a\"\n        },\n        {\n          \"id\": \"ullamco\",\n          \"createdAt\": \"2006-02-22T13:31:05.746Z\",\n          \"updatedAt\": \"1969-10-25T10:53:28.131Z\",\n          \"amount\": 44975187.3629995,\n          \"unit\": \"eiusmod qui ut culpa dolor\",\n          \"name\": \"commodo minim\"\n        }\n      ]\n    },\n    {\n      \"id\": \"qui enim est\",\n      \"createdAt\": \"1986-05-29T23:53:12.084Z\",\n      \"updatedAt\": \"1993-02-24T18:27:25.404Z\",\n      \"recipeId\": -84159020.39733152,\n      \"instruction\": \"aute elit\",\n      \"ingredients\": [\n        {\n          \"id\": \"Excepteur in\",\n          \"createdAt\": \"1959-06-19T07:21:29.744Z\",\n          \"updatedAt\": \"2006-02-26T03:19:00.879Z\",\n          \"amount\": -7489670.570124567,\n          \"unit\": \"et Excepteur in labore\",\n          \"name\": \"in\"\n        },\n        {\n          \"id\": \"labore anim ullamco ad\",\n          \"createdAt\": \"1978-08-31T14:45:52.891Z\",\n          \"updatedAt\": \"1953-10-08T17:41:10.201Z\",\n          \"amount\": -39986663.57355694,\n          \"unit\": \"Duis\",\n          \"name\": \"voluptate adipisicing qui irure\"\n        }\n      ]\n    }\n  ],\n  \"nutritionalFacts\": {\n    \"proteinInG\": 7546067.993230209,\n    \"totalFatInG\": -22432293.955778435,\n    \"carbohydratesInG\": -33953714.01533844,\n    \"fiberInG\": -82950649.00102508,\n    \"sugarInG\": -99183623.71972074,\n    \"sodiumInMg\": -97596014.53904301,\n    \"cholesterolInMg\": -46524535.84840464,\n    \"saturatedFatInG\": -17307625.797967225,\n    \"transFatInG\": -51894658.53103514,\n    \"potassiumInMg\": -53057793.4784295,\n    \"vitaminAInIU\": -22808516.264947042,\n    \"vitaminCInMg\": -2169160.3078814596,\n    \"calciumInMg\": 48616318.46605432,\n    \"ironInMg\": 28067388.62680666,\n    \"vitaminDInIU\": -72547911.8417585,\n    \"vitaminB6InMg\": -45625573.80142405,\n    \"vitaminB12InMg\": -42883427.609391056,\n    \"magnesiumInMg\": -51966944.84965021,\n    \"folateInMcg\": 33547026.372279152,\n    \"thiaminInMg\": -41416439.998280905,\n    \"riboflavinInMg\": 66232659.53746989,\n    \"niacinInMg\": 48674740.858596176,\n    \"caloriesInKcal\": 93755637.78189173\n  },\n  \"tags\": [\n    \"ea do esse veniam consequat\",\n    \"qui amet\"\n  ],\n  \"id\": 37780149.049479485,\n  \"createdAt\": \"2011-07-15T10:01:42.708Z\",\n  \"updatedAt\": \"1954-06-15T04:32:25.248Z\",\n  \"name\": \"Lorem consequat nulla exercitation\",\n  \"slug\": \"p\",\n  \"description\": \"dolor\",\n  \"preparationTimeInMinutes\": 95473482.64237145,\n  \"cookingTimeInMinutes\": -36245873.2695885,\n  \"userId\": \"incididunt proident in\"\n}"
+											]
 										}
 									]
 								}
