@@ -1,8 +1,8 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import {render} from '@testing-library/react'
-import IngredientList from './IngredientList'
-import { UserStoreProvider } from '../../../../providers/use-store-provider';
-import { ModalStoreProvider } from '../../../../providers/modal-store-provider';
+import { ModalStoreProvider } from '../../../../../providers/modal-store-provider';
+import { UserStoreProvider } from '../../../../../providers/use-store-provider';
+import IngredientList from './IngredientList';
 
 
 

@@ -1,8 +1,8 @@
 'use client'
 
-import type {StepEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/stepEntity';
-import IngredientList from './IngredientList';
+import { StepEntity } from '@repo/recipes-codegen/models';
 import React from 'react';
+import IngredientList from './IngredientList';
 
 
 interface RecipeStepsProps {
