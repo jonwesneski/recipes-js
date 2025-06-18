@@ -15,6 +15,7 @@ async function main() {
     user = await prisma.user.create({
       data: {
         name: 'jon',
+        handle: 'jon',
         email: 'j@j.com',
       },
     });
@@ -29,6 +30,8 @@ async function main() {
         name = `Test Recipe ${i + 1}`;
         slug = `test-recipe-${i + 1}`;
       }
+
+      console.log('====', { name, slug });
 
       try {
         await prisma.recipe.create({
@@ -53,13 +56,30 @@ async function main() {
             nutritionalFacts: {
               create: recipeData.nutritionalFacts,
             },
-            tags: {
+            recipeTags: {
               connectOrCreate: recipeData.tags.map((tag) => ({
-                where: { name: tag },
-                create: { name: tag },
+                where: {
+                  recipeUserHandle_recipeSlug_tagName: {
+                    recipeUserHandle: user.handle,
+                    recipeSlug: slug,
+                    tagName: tag,
+                  },
+                },
+                create: {
+                  Tag: {
+                    connectOrCreate: {
+                      where: {
+                        name: tag,
+                      },
+                      create: {
+                        name: tag,
+                      },
+                    },
+                  },
+                },
               })),
             },
-            userId: user.id,
+            userHandle: user.handle,
           },
         });
       } catch (error) {

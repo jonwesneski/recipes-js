@@ -29,15 +29,19 @@ export class RecipesController {
     return this.recipesService.getRecipes();
   }
 
-  @Get(':slug')
+  @Get(':userHandle/:slug')
   @ApiOkResponse({
-    description: 'The recips record',
+    description: 'The recipe record',
     type: RecipeEntity,
   })
   @ApiParam({ name: 'slug', type: String, description: 'Slug of recipe' })
-  async recipe(@Param('slug') slug: string): Promise<RecipeEntity> {
+  @ApiParam({ name: 'userHandle', type: String, description: 'User of recipe' })
+  async recipe(
+    @Param('userHandle') userHandle: string,
+    @Param('slug') slug: string,
+  ): Promise<RecipeEntity> {
     try {
-      return await this.recipesService.getRecipe(slug);
+      return await this.recipesService.getRecipe(userHandle, slug);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {

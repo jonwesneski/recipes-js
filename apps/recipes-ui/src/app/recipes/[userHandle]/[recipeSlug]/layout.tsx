@@ -1,8 +1,8 @@
 'use client'
 
-import { UserStoreProvider } from '../../../providers/use-store-provider';
-import { ModalStoreProvider } from '../../../providers/modal-store-provider';
-import ModalRoot from '../../ModalRoot';
+import { ModalStoreProvider } from '../../../../providers/modal-store-provider';
+import { UserStoreProvider } from '../../../../providers/use-store-provider';
+import ModalRoot from '../../../ModalRoot';
 
 export default function DefaultRecipeLayout({
   children,

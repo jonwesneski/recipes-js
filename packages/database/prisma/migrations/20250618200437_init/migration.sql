@@ -1,9 +1,9 @@
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
-    "name" TEXT,
-    "email" TEXT,
-    "password" TEXT,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "handle" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -16,7 +16,8 @@ CREATE TABLE "user_favorites" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
-    "recipeId" INTEGER NOT NULL,
+    "recipeUserHandle" TEXT NOT NULL,
+    "recipeSlug" TEXT NOT NULL,
 
     CONSTRAINT "user_favorites_pkey" PRIMARY KEY ("id")
 );
@@ -42,9 +43,9 @@ CREATE TABLE "recipes" (
     "cookingTimeInMinutes" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "userId" TEXT NOT NULL,
+    "userHandle" TEXT NOT NULL,
 
-    CONSTRAINT "recipes_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "recipes_pkey" PRIMARY KEY ("userHandle","slug")
 );
 
 -- CreateTable
@@ -75,7 +76,8 @@ CREATE TABLE "nutritional_facts" (
     "niacinInMg" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "recipeId" INTEGER NOT NULL,
+    "recipeUserHandle" TEXT NOT NULL,
+    "recipeSlug" TEXT NOT NULL,
 
     CONSTRAINT "nutritional_facts_pkey" PRIMARY KEY ("id")
 );
@@ -86,7 +88,8 @@ CREATE TABLE "steps" (
     "instruction" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "recipeId" INTEGER NOT NULL,
+    "recipeUserHandle" TEXT NOT NULL,
+    "recipeSlug" TEXT NOT NULL,
 
     CONSTRAINT "steps_pkey" PRIMARY KEY ("id")
 );
@@ -97,7 +100,8 @@ CREATE TABLE "equipments" (
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "recipeId" INTEGER NOT NULL,
+    "recipeUserHandle" TEXT NOT NULL,
+    "recipeSlug" TEXT NOT NULL,
 
     CONSTRAINT "equipments_pkey" PRIMARY KEY ("id")
 );
@@ -121,41 +125,48 @@ CREATE TABLE "tags" (
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "tags_pkey" PRIMARY KEY ("id")
+    "recipeUserHandle" TEXT,
+    "recipeSlug" TEXT
 );
 
 -- CreateTable
-CREATE TABLE "_RecipeToTag" (
-    "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL,
+CREATE TABLE "recipe_tags" (
+    "recipeUserHandle" TEXT NOT NULL,
+    "recipeSlug" TEXT NOT NULL,
+    "tagName" TEXT NOT NULL,
 
-    CONSTRAINT "_RecipeToTag_AB_pkey" PRIMARY KEY ("A","B")
+    CONSTRAINT "recipe_tags_pkey" PRIMARY KEY ("recipeUserHandle","recipeSlug","tagName")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_handle_key" ON "users"("handle");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "recipes_id_key" ON "recipes"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "recipes_slug_key" ON "recipes"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "nutritional_facts_recipeId_key" ON "nutritional_facts"("recipeId");
+CREATE UNIQUE INDEX "nutritional_facts_recipeUserHandle_recipeSlug_key" ON "nutritional_facts"("recipeUserHandle", "recipeSlug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "equipments_name_key" ON "equipments"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tags_name_key" ON "tags"("name");
+CREATE UNIQUE INDEX "tags_id_key" ON "tags"("id");
 
 -- CreateIndex
-CREATE INDEX "_RecipeToTag_B_index" ON "_RecipeToTag"("B");
+CREATE UNIQUE INDEX "tags_name_key" ON "tags"("name");
 
 -- AddForeignKey
 ALTER TABLE "user_favorites" ADD CONSTRAINT "user_favorites_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_favorites" ADD CONSTRAINT "user_favorites_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "recipes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_favorites" ADD CONSTRAINT "user_favorites_recipeUserHandle_recipeSlug_fkey" FOREIGN KEY ("recipeUserHandle", "recipeSlug") REFERENCES "recipes"("userHandle", "slug") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "user_follows" ADD CONSTRAINT "user_follows_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -164,22 +175,25 @@ ALTER TABLE "user_follows" ADD CONSTRAINT "user_follows_userId_fkey" FOREIGN KEY
 ALTER TABLE "user_follows" ADD CONSTRAINT "user_follows_followingId_fkey" FOREIGN KEY ("followingId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "recipes" ADD CONSTRAINT "recipes_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "recipes" ADD CONSTRAINT "recipes_userHandle_fkey" FOREIGN KEY ("userHandle") REFERENCES "users"("handle") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "nutritional_facts" ADD CONSTRAINT "nutritional_facts_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "recipes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "nutritional_facts" ADD CONSTRAINT "nutritional_facts_recipeUserHandle_recipeSlug_fkey" FOREIGN KEY ("recipeUserHandle", "recipeSlug") REFERENCES "recipes"("userHandle", "slug") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "steps" ADD CONSTRAINT "steps_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "recipes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "steps" ADD CONSTRAINT "steps_recipeUserHandle_recipeSlug_fkey" FOREIGN KEY ("recipeUserHandle", "recipeSlug") REFERENCES "recipes"("userHandle", "slug") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "equipments" ADD CONSTRAINT "equipments_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "recipes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "equipments" ADD CONSTRAINT "equipments_recipeUserHandle_recipeSlug_fkey" FOREIGN KEY ("recipeUserHandle", "recipeSlug") REFERENCES "recipes"("userHandle", "slug") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ingredients" ADD CONSTRAINT "ingredients_stepId_fkey" FOREIGN KEY ("stepId") REFERENCES "steps"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_RecipeToTag" ADD CONSTRAINT "_RecipeToTag_A_fkey" FOREIGN KEY ("A") REFERENCES "recipes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "tags" ADD CONSTRAINT "tags_recipeUserHandle_recipeSlug_fkey" FOREIGN KEY ("recipeUserHandle", "recipeSlug") REFERENCES "recipes"("userHandle", "slug") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_RecipeToTag" ADD CONSTRAINT "_RecipeToTag_B_fkey" FOREIGN KEY ("B") REFERENCES "tags"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "recipe_tags" ADD CONSTRAINT "recipe_tags_recipeUserHandle_recipeSlug_fkey" FOREIGN KEY ("recipeUserHandle", "recipeSlug") REFERENCES "recipes"("userHandle", "slug") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "recipe_tags" ADD CONSTRAINT "recipe_tags_tagName_fkey" FOREIGN KEY ("tagName") REFERENCES "tags"("name") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -26,7 +26,7 @@ export default function Page() {
       const fetchTags = async () => {
         const currentTags = await tagsControllerTagNameListV1();
         setTags(tags => [...tags, ...currentTags.data])
-        if (currentTags.pagination.next_page !== null) {
+        if (currentTags.pagination.nextCursor !== null) {
           //await fetchTags()
         }
       }

@@ -1,6 +1,124 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/status": {
+      "get": {
+        "operationId": "HealthCheckController_status",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["HealthCheck"]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthCheckController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": { "status": "up" },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["HealthCheck"]
+      }
+    },
     "/v1/recipes": {
       "get": {
         "operationId": "RecipesController_recipesList_v1",
@@ -35,10 +153,17 @@
         "tags": ["Recipes"]
       }
     },
-    "/v1/recipes/{slug}": {
+    "/v1/recipes/{userHandle}/{slug}": {
       "get": {
         "operationId": "RecipesController_recipe_v1",
         "parameters": [
+          {
+            "name": "userHandle",
+            "required": true,
+            "in": "path",
+            "description": "User of recipe",
+            "schema": { "type": "string" }
+          },
           {
             "name": "slug",
             "required": true,
@@ -49,7 +174,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The recips record",
+            "description": "The recipe record",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/RecipeEntity" }
@@ -111,7 +236,6 @@
           "id": { "type": "string" },
           "createdAt": { "format": "date-time", "type": "string" },
           "updatedAt": { "format": "date-time", "type": "string" },
-          "recipeId": { "type": "string" },
           "instruction": { "type": "string", "nullable": true },
           "ingredients": {
             "type": "array",
@@ -122,7 +246,6 @@
           "id",
           "createdAt",
           "updatedAt",
-          "recipeId",
           "instruction",
           "ingredients"
         ]
@@ -196,7 +319,7 @@
             "allOf": [{ "$ref": "#/components/schemas/NutritionalFactsEntity" }]
           },
           "tags": { "type": "array", "items": { "type": "string" } },
-          "id": { "type": "string" },
+          "id": { "type": "number" },
           "createdAt": { "format": "date-time", "type": "string" },
           "updatedAt": { "format": "date-time", "type": "string" },
           "name": { "type": "string" },
@@ -204,7 +327,7 @@
           "description": { "type": "string", "nullable": true },
           "preparationTimeInMinutes": { "type": "number", "nullable": true },
           "cookingTimeInMinutes": { "type": "number", "nullable": true },
-          "userId": { "type": "string" }
+          "userHandle": { "type": "string" }
         },
         "required": [
           "equipments",
@@ -219,26 +342,18 @@
           "description",
           "preparationTimeInMinutes",
           "cookingTimeInMinutes",
-          "userId"
+          "userHandle"
         ]
       },
       "CreateRecipeDto": { "type": "object", "properties": {} },
       "PaginationEntity": {
         "type": "object",
         "properties": {
-          "total_records": { "type": "number" },
-          "current_page": { "type": "number" },
-          "total_pages": { "type": "number" },
-          "next_page": { "type": "number", "nullable": true },
-          "prev_page": { "type": "number", "nullable": true }
+          "totalRecords": { "type": "number" },
+          "currentCursor": { "type": "number" },
+          "nextCursor": { "type": "number", "nullable": true }
         },
-        "required": [
-          "total_records",
-          "current_page",
-          "total_pages",
-          "next_page",
-          "prev_page"
-        ]
+        "required": ["totalRecords", "currentCursor", "nextCursor"]
       },
       "TagNamesEntity": {
         "type": "object",

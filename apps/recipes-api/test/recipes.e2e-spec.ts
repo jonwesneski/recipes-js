@@ -11,7 +11,7 @@ const basePath = '/v1/recipes';
 describe('RecipesController (e2e)', () => {
   let app: INestApplication<App>;
   let prismaService: PrismaService;
-  let user1: Awaited<ReturnType<PrismaService['user']['findFirst']>>;
+  let user1: Awaited<ReturnType<PrismaService['user']['findUnique']>>;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -22,8 +22,8 @@ describe('RecipesController (e2e)', () => {
     configureApp(app);
 
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
-    user1 = await prismaService.user.findFirst({
-      where: { name: 'jon' },
+    user1 = await prismaService.user.findUnique({
+      where: { handle: 'jon' },
     });
 
     await app.init();
@@ -44,10 +44,10 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe(`GET ${basePath}/[slug]`, () => {
+  describe(`GET ${basePath}/[user]/[slug]`, () => {
     it('existing recipe', () => {
       return request(app.getHttpServer())
-        .get(`${basePath}/tres-leches-cake`)
+        .get(`${basePath}/${user1!.handle}/tres-leches-cake`)
         .expect(200)
         .expect((res) => {
           const emptyRecipe = new RecipeEntity();
@@ -59,7 +59,7 @@ describe('RecipesController (e2e)', () => {
 
     it('non-existing recipe', () => {
       return request(app.getHttpServer())
-        .get(`${basePath}/test-recipe`)
+        .get(`${basePath}/${user1!.handle}/test-recipe`)
         .expect(404)
         .expect({ message: 'Not Found', statusCode: 404 });
     });
@@ -83,7 +83,7 @@ describe('RecipesController (e2e)', () => {
           nutritionalFacts: null,
           preparationTimeInMinutes: 30,
           cookingTimeInMinutes: 15,
-          userId: user1!.id,
+          userHandle: user1!.handle,
         })
         .expect(201)
         .expect((res) => {
@@ -107,7 +107,7 @@ describe('RecipesController (e2e)', () => {
         nutritionalFacts: null,
         preparationTimeInMinutes: 30,
         cookingTimeInMinutes: 15,
-        userId: user1!.id,
+        userHandle: user1!.handle,
       };
 
       await request(app.getHttpServer()).post(basePath).send(sampleRecipe);

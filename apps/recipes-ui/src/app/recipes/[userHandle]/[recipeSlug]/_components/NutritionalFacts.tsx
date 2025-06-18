@@ -1,5 +1,6 @@
 'use client'
-import type { NutritionalFactsEntity } from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/nutritionalFactsEntity';
+
+import { NutritionalFactsEntity } from "@repo/recipes-codegen/models";
 
 interface NutritionalFactsProps {
     nutritionalFacts: NutritionalFactsEntity;

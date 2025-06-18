@@ -8,14 +8,14 @@ type OmitFields<T, K extends keyof any> = Omit<
 >;
 
 export class EquipmentEntity
-  implements OmitFields<Prisma.EquipmentCreateInput, 'recipe'>
+  implements OmitFields<Prisma.EquipmentCreateInput, 'Recipe'>
 {
   @ApiProperty({ type: String })
   name: string;
 }
 
 export class NutritionalFactsEntity
-  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'recipe'>
+  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'Recipe'>
 {
   @ApiProperty({ type: Number, nullable: true })
   proteinInG: number | null;
@@ -66,7 +66,7 @@ export class NutritionalFactsEntity
 }
 
 export class IngredientEntity
-  implements OmitFields<Prisma.IngredientCreateInput, 'step'>
+  implements OmitFields<Prisma.IngredientCreateInput, 'Step'>
 {
   @ApiProperty()
   id: string;
@@ -95,8 +95,6 @@ export class StepEntity
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
-  @ApiProperty()
-  recipeId: number;
   @ApiProperty({ type: String, nullable: true })
   instruction: string | null;
   @ApiProperty({ type: [IngredientEntity] })
@@ -133,7 +131,7 @@ export class RecipeEntity implements RecipeType {
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes: number | null;
   @ApiProperty()
-  userId: string;
+  userHandle: string;
 }
 
 export class RecipeMinimalEntity implements RecipeMinimalType {
@@ -146,5 +144,5 @@ export class RecipeMinimalEntity implements RecipeMinimalType {
   @ApiProperty({ type: [String] })
   tags: string[];
   @ApiProperty()
-  userId: string;
+  userHandle: string;
 }

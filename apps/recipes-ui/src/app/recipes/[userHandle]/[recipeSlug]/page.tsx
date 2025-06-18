@@ -1,16 +1,16 @@
 'use client';
 
-import {RecipeSteps, NutritionalFacts, RecipeIngredientsOverview, RecipeLayout} from "./_components";
-import { useEffect, useState, use } from "react";
-import {useRecipesControllerRecipeV1} from '@repo/recipes-codegen/recipes';
-//import type { RecipeEntity } from '@repo/recipes-codegen/models';
-import type {RecipeEntity} from '../../../../node_modules/@repo/recipes-codegen/dist/types/model/recipeEntity';
+import type { RecipeEntity } from '@repo/recipes-codegen/models';
+import { useRecipesControllerRecipeV1 } from '@repo/recipes-codegen/recipes';
+import { use, useEffect, useState } from "react";
+import { NutritionalFacts, RecipeIngredientsOverview, RecipeLayout, RecipeSteps } from "./_components";
 
 
-export default function Page({ params }: { params: Promise<{ slug: string }>  }) {
+export default function Page({ params }: { params: Promise<{ userHandle: string, slug: string }>  }) {
   const [recipe, setRecipe] = useState<RecipeEntity | null>(null);
-  const {slug} = use(params)
-  const {isSuccess, data} = useRecipesControllerRecipeV1(slug)
+  const {userHandle, slug} = use(params)
+
+  const {isSuccess, data} = useRecipesControllerRecipeV1(userHandle, slug)
 
   useEffect(() => {
     if (isSuccess) {

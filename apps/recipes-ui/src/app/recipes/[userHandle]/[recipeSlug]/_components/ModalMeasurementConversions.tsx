@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { getVolumeConversions } from "../../../../utils";
-import { ModalCentered } from "../../../ModalCentered";
+import { getVolumeConversions } from "../../../../../utils";
+import { ModalCentered } from "../../../../ModalCentered";
 
 
 const ConversionRows = (props: {unitSystem: string, conversions: [string, number][]}) => {

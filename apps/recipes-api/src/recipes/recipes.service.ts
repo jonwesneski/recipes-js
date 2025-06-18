@@ -21,7 +21,14 @@ type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
 type RecipePrismaType = Prisma.RecipeGetPayload<{
   include: {
     equipments: {
-      omit: { id: true; createdAt: true; updatedAt: true; recipeId: true };
+      omit: {
+        id: true;
+        createdAt: true;
+        updatedAt: true;
+        recipeId: true;
+        recipeSlug: true;
+        recipeUserHandle: true;
+      };
     };
     steps: {
       include: {
@@ -29,9 +36,17 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
           omit: { stepId: true; recipeId: true };
         };
       };
+      omit: { recipeSlug: true; recipeUserHandle: true };
     };
     nutritionalFacts: {
-      omit: { id: true; createdAt: true; updatedAt: true; recipeId: true };
+      omit: {
+        id: true;
+        createdAt: true;
+        updatedAt: true;
+        recipeId: true;
+        recipeSlug: true;
+        recipeUserHandle: true;
+      };
     };
     tags: {
       select: { name: true };
@@ -73,10 +88,11 @@ export class RecipesService {
     return recipes.map((recipe) => this.transformRecipe(recipe));
   }
 
-  async getRecipe(slug: string): Promise<RecipeType> {
+  async getRecipe(userHandle: string, slug: string): Promise<RecipeType> {
     const recipe = await this.prisma.recipe.findFirstOrThrow({
       where: {
-        slug: slug,
+        slug,
+        userHandle,
       },
       include: {
         equipments: true,

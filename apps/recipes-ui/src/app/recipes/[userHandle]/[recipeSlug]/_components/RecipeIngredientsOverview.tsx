@@ -1,9 +1,7 @@
 'use client'
-import React from "react";
-import type {StepEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/stepEntity';
-import type {IngredientEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/ingredientEntity';
-import { useUserStore } from "../../../../providers/use-store-provider";
-import { numberToFraction } from "../../../../utils";
+import { StepEntity } from "@repo/recipes-codegen/models";
+import { useUserStore } from "../../../../../providers/use-store-provider";
+import { numberToFraction } from "../../../../../utils";
 
 interface RecipeIngredientsOverviewProps {
     steps: StepEntity[];

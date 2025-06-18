@@ -1,9 +1,9 @@
 'use client'
 
-import type {IngredientEntity} from '../../../../../node_modules/@repo/recipes-codegen/dist/types/model/ingredientEntity';
-import { useUserStore } from '../../../../providers/use-store-provider';
-import { numberToFraction } from '../../../../utils';
-import { useCustomModal } from '../../../hooks/useCustomModal';
+import { IngredientEntity } from '@repo/recipes-codegen/models';
+import { useUserStore } from '../../../../../providers/use-store-provider';
+import { numberToFraction } from '../../../../../utils';
+import { useCustomModal } from '../../../../hooks/useCustomModal';
 import { ModalMeasurementConversions } from './ModalMeasurementConversions';
 
 export default function IngredientList({ingredients}: {ingredients: IngredientEntity[]}) {
