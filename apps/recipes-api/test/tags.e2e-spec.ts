@@ -6,7 +6,7 @@ import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 
-const basePath = '/v1/tags';
+//const basePath = '/v1/tags';
 const tagNamesPath = `/v1/tag-names`;
 
 describe('TagsController (e2e)', () => {

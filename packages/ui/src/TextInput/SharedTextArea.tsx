@@ -3,14 +3,14 @@ import { useRef, useState } from "react";
 interface SharedTextAreaProps {
     name: string
 }
-export function SharedTextArea(props: SharedTextAreaProps) {
+export const SharedTextArea = (props: SharedTextAreaProps) => {
     const [inputValue, setInputValue] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popUpPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const getCaretPosition = () => {
-    const position: { row: Number | null, column: number| null } = { row: null, column: null };
+    const position: { row: number | null, column: number | null } = { row: null, column: null };
     if (inputRef.current) {
         // Calcuate row position 
         // // do we care about row position?
@@ -77,7 +77,8 @@ export function SharedTextArea(props: SharedTextAreaProps) {
   };
 
   const handleBlur = () => {
-    //setIsPopupVisible(false);
+    setIsPopupVisible(false);
+    console.log('blur')
   };
   
   return (
