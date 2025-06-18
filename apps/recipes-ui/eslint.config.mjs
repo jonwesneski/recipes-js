@@ -9,18 +9,18 @@ const compat = new FlatCompat({
   recommendedConfig: js.configs.recommended,
 });
 
-  export default [
-    ...compat.extends("@repo/eslint-config/next"),
-    {
-      languageOptions: {
-        //globals: globals.browser, // or node, etc.
-        //parser: tseslint.parser,
-        parserOptions: {
-          //root: true,
-          project: './tsconfig.json', // Point to your tsconfig.json
-          ecmaVersion: "latest",
-          sourceType: "module",
-        },
+export default [
+  ...compat.extends("@repo/eslint-config/next"),
+  {
+    languageOptions: {
+      //globals: globals.browser, // or node, etc.
+      //parser: tseslint.parser,
+      parserOptions: {
+        //root: true,
+        project: './tsconfig.json', // Point to your tsconfig.json
+        ecmaVersion: "latest",
+        sourceType: "module",
       },
     },
-  ];
+  },
+];
