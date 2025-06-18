@@ -21,9 +21,5 @@ jobs:
           version: 10.11.0
           run_install: false
       - run: pnpm install
-
-  lint:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - run: pnpm lint
+      - name: Lint
+        run: pnpm lint
