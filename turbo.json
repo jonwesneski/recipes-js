@@ -12,11 +12,7 @@
       "persistent": true,
       "cache": false
     },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "test": {
-      "dependsOn": ["^test"]
-    }
+    "lint": {},
+    "test": {}
   }
 }
