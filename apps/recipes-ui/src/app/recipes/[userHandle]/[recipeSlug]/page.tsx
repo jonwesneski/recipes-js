@@ -6,11 +6,11 @@ import { use, useEffect, useState } from "react";
 import { NutritionalFacts, RecipeIngredientsOverview, RecipeLayout, RecipeSteps } from "./_components";
 
 
-export default function Page({ params }: { params: Promise<{ userHandle: string, slug: string }>  }) {
+export default function Page({ params }: { params: Promise<{ userHandle: string, recipeSlug: string }>  }) {
   const [recipe, setRecipe] = useState<RecipeEntity | null>(null);
-  const {userHandle, slug} = use(params)
+  const {userHandle, recipeSlug} = use(params)
 
-  const {isSuccess, data} = useRecipesControllerRecipeV1(userHandle, slug)
+  const {isSuccess, data} = useRecipesControllerRecipeV1(userHandle, recipeSlug)
 
   useEffect(() => {
     if (isSuccess) {
