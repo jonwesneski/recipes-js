@@ -21,11 +21,7 @@ const VOLUME_CONVERSIONS = {
 
 type ImperialVolumeUnit = keyof typeof IMPERIAL_VOLUME_CONVERSIONS;
 type MetricVolumeUnit = keyof typeof METRIC_VOLUME_CONVERSIONS;
-type VolumeUnit = ImperialVolumeUnit | MetricVolumeUnit;
-type ConverionsType = {
-  imperial: Record<ImperialVolumeUnit, number>;
-  metric: Record<MetricVolumeUnit, number>;
-};
+export type VolumeUnit = ImperialVolumeUnit | MetricVolumeUnit;
 
 export function convertVolume(
   amount: number,
@@ -38,46 +34,49 @@ export function convertVolume(
   return inCups * VOLUME_CONVERSIONS[to];
 }
 
-// Example: get all conversions for a given amount in a given unit
 export function getVolumeConversions(amount: number, from: VolumeUnit) {
-  const conversions: ConverionsType = {
-    imperial: {} as any,
-    metric: {} as any,
-  };
+  const imperial = {} as Record<ImperialVolumeUnit, number>;
+  const metric = {} as Record<MetricVolumeUnit, number>;
+
   (Object.keys(IMPERIAL_VOLUME_CONVERSIONS) as ImperialVolumeUnit[]).forEach(
     (unit) => {
-      conversions.imperial[unit] = convertVolume(amount, from, unit);
+      imperial[unit] = convertVolume(amount, from, unit);
     },
   );
   (Object.keys(METRIC_VOLUME_CONVERSIONS) as MetricVolumeUnit[]).forEach(
     (unit) => {
-      conversions.metric[unit] = convertVolume(amount, from, unit);
+      metric[unit] = convertVolume(amount, from, unit);
     },
   );
-  delete conversions.imperial[from as ImperialVolumeUnit]; // Remove the original unit from the conversions
-  delete conversions.metric[from as MetricVolumeUnit];
-  return conversions;
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- Remove the original unit from the conversions
+  delete imperial[from as ImperialVolumeUnit];
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- Remove the original unit from the conversions
+  delete metric[from as MetricVolumeUnit];
+  return {
+    imperial,
+    metric,
+  };
 }
 
-export function numberToFraction(number: number, maxDenominator = 10): string {
-  if (!Number.isFinite(number)) {
-    return number.toString();
+export function numberToFraction(value: number, maxDenominator = 10): string {
+  if (!Number.isFinite(value)) {
+    return value.toString();
   }
 
-  if (number === Math.floor(number)) {
-    return number.toString();
+  if (value === Math.floor(value)) {
+    return value.toString();
   }
 
-  const sign = number < 0 ? -1 : 1;
-  number = Math.abs(number);
+  const sign = value < 0 ? -1 : 1;
+  const positiveValue = Math.abs(value);
 
   let bestNumerator = 1;
   let bestDenominator = 1;
-  let bestError = Math.abs(number - bestNumerator / bestDenominator);
+  let bestError = Math.abs(positiveValue - bestNumerator / bestDenominator);
 
   for (let denominator = 1; denominator <= maxDenominator; denominator++) {
-    const numerator = Math.round(number * denominator);
-    const error = Math.abs(number - numerator / denominator);
+    const numerator = Math.round(positiveValue * denominator);
+    const error = Math.abs(positiveValue - numerator / denominator);
     if (error < bestError) {
       bestNumerator = numerator;
       bestDenominator = denominator;
@@ -90,7 +89,7 @@ export function numberToFraction(number: number, maxDenominator = 10): string {
   const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
   const commonDivisor = gcd(bestNumerator, bestDenominator);
   let numerator = bestNumerator / commonDivisor;
-  let denominator = bestDenominator / commonDivisor;
+  const denominator = bestDenominator / commonDivisor;
 
   // Extract whole part if improper fraction
   const whole = Math.floor(numerator / denominator);

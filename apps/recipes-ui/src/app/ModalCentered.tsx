@@ -17,7 +17,7 @@ export const ModalCentered = (props: ModalCenteredProps) => {
     }
 
     document.addEventListener('mousedown', handleClickOutside)
-    divRef?.current?.focus()
+    divRef.current?.focus()
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
@@ -34,6 +34,7 @@ export const ModalCentered = (props: ModalCenteredProps) => {
         position: 'inherit',
         transform: 'translate(-50%, 50%)',
       }}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- I think I need it
       tabIndex={0}
     >
       {props.children}

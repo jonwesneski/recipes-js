@@ -4,18 +4,21 @@ import { redirect } from 'next/navigation'
 import { useEffect } from 'react'
 import { useAuthentication } from '../../providers/authentication-provider'
 
-export function ClientRedirect(props: { accessToken: string | undefined }) {
+export const ClientRedirect = (props: { accessToken: string | undefined }) => {
   const { accessToken, setAccessToken } = useAuthentication()
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (accessToken) {
-        redirect('/recipes')
-      } else if (props.accessToken) {
-        setAccessToken(props.accessToken)
+  useEffect(
+    () => {
+      if (typeof window !== 'undefined') {
+        if (accessToken) {
+          redirect('/recipes')
+        } else if (props.accessToken) {
+          setAccessToken(props.accessToken)
+        }
       }
-    }
-  }, [accessToken])
+    },
+    [accessToken] /*[props.accessToken, accessToken, setAccessToken]*/,
+  )
 
   return null
 }

@@ -1,7 +1,7 @@
-import path from "node:path";
-import { fileURLToPath } from 'node:url';
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
+import path from "node:path";
+import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const compat = new FlatCompat({
@@ -21,6 +21,21 @@ export default [
         ecmaVersion: "latest",
         sourceType: "module",
       },
+      globals: {
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        jest: "readonly",
+      },
     },
+    rules: {
+      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      'react/hook-use-state': 'off',
+    }
   },
 ];

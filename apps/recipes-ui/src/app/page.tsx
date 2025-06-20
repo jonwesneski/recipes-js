@@ -1,7 +1,9 @@
 'use client'
 
-export default function Page() {
-  const handleGoogleOAuth = async (event: any) => {
+import { MouseEvent } from 'react'
+
+const Page = () => {
+  const handleGoogleOAuth = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/callback`
   }
@@ -17,3 +19,4 @@ export default function Page() {
     </div>
   )
 }
+export default Page

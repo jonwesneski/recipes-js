@@ -4,10 +4,12 @@ import { useRecipesControllerRecipesListV1 } from '@repo/recipes-codegen/recipes
 import { SharedButton } from '@repo/ui'
 import { useEffect } from 'react'
 
-export default function Page() {
+const Page = () => {
   const { data, isSuccess } = useRecipesControllerRecipesListV1()
 
-  useEffect(() => {}, [isSuccess])
+  useEffect(() => {
+    // will do somthing
+  }, [isSuccess])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
@@ -26,3 +28,4 @@ export default function Page() {
     </div>
   )
 }
+export default Page

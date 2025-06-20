@@ -5,9 +5,9 @@ import { tagsControllerTagNameListV1 } from '@repo/recipes-codegen/tags'
 import { SharedButton, SharedInput } from '@repo/ui'
 import { useEffect, useState } from 'react'
 import { useAuthentication } from '../../providers/authentication-provider'
-import CreateSteps from './_components/CreateSteps'
+import { CreateSteps } from './_components/CreateSteps'
 
-export default function Page() {
+const Page = () => {
   const { accessToken } = useAuthentication()
   const { mutate } = useRecipesControllerCreateRecipeV1({
     mutation: { retry: false },
@@ -17,7 +17,8 @@ export default function Page() {
       },
     },
   })
-  const [tags, setTags] = useState<string[]>([])
+
+  const [_tags, setTags] = useState<string[]>([])
 
   const handleSubmit = () => {
     mutate(
@@ -39,7 +40,8 @@ export default function Page() {
       }
     }
 
-    fetchTags()
+    // eslint-disable-next-line no-console -- gotta log somewhere
+    fetchTags().catch((e: unknown) => console.log(e))
   }, [])
 
   return (
@@ -53,3 +55,4 @@ export default function Page() {
     </div>
   )
 }
+export default Page

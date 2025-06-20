@@ -2,7 +2,7 @@
 
 import {
   createContext,
-  ReactNode,
+  type ReactNode,
   useContext,
   useEffect,
   useState,
@@ -10,7 +10,7 @@ import {
 
 export type AuthenticationType = {
   accessToken: string | null
-  setAccessToken: (accessToken: string) => void
+  setAccessToken: (_value: string) => void
 }
 export const AuthenticationContext = createContext<AuthenticationType | null>(
   null,
@@ -32,9 +32,9 @@ export const AuthenticationProvider = ({
     }
   }, [])
 
-  const setAccessToken = (accessToken: string) => {
-    localStorage.setItem('accessToken', accessToken)
-    _setAccessToken(accessToken)
+  const setAccessToken = (value: string) => {
+    localStorage.setItem('accessToken', value)
+    _setAccessToken(value)
   }
 
   return (
