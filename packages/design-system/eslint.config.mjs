@@ -1,5 +1,7 @@
 import path from "node:path";
+// eslint-disable-next-line import/order -- these need to be imported first
 import { fileURLToPath } from 'node:url';
+
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 
@@ -23,5 +25,8 @@ const compat = new FlatCompat({
           sourceType: "module",
         },
       },
+      rules: {
+        "next/no-html-link-for-pages": 'off'
+      }
     },
   ];
