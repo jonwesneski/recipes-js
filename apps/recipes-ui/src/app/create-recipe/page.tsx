@@ -40,7 +40,6 @@ const Page = () => {
       }
     }
 
-    // eslint-disable-next-line no-console -- gotta log somewhere
     fetchTags().catch((e: unknown) => console.log(e))
   }, [])
 

@@ -36,6 +36,7 @@ export default [
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
       'react/hook-use-state': 'off',
+      'no-console': 'warn'
     }
   },
 ];
