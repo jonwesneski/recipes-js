@@ -11,22 +11,26 @@ export class AuthController {
 
   @Get('google/login')
   @UseGuards(GoogleOauthGuard)
-  googleLogin() {}
+  googleLogin() {
+    // Initiates the Google OAuth flow
+  }
 
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     try {
       const frontendUrl = req.headers.referer!;
-      const token = await this.authService.validateGoogleUser(
+      const googleUser = await this.authService.validateGoogleUser(
         req.user as GoogleAuthDto,
       );
-      res.cookie('access_token', token, {
+      res.cookie('access_token', googleUser.tokens.accessToken, {
         maxAge: 2592000000,
         sameSite: true,
-        secure: false,
+        secure: true,
+        httpOnly: true,
+        //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
-      res.redirect(frontendUrl);
+      res.redirect(`${frontendUrl}/redirect`);
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });
     }

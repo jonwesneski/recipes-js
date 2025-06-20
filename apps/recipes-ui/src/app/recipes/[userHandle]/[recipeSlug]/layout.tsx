@@ -15,6 +15,6 @@ export default function DefaultRecipeLayout({
         {children}
         <ModalRoot />
       </ModalStoreProvider>
-      </UserStoreProvider>
+    </UserStoreProvider>
   )
 }

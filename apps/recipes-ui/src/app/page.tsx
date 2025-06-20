@@ -1,19 +1,19 @@
 'use client'
 
 export default function Page() {
-
   const handleGoogleOAuth = async (event: any) => {
-    event.preventDefault();
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/callback?ui=${encodeURIComponent(window.location.toString())}`;
-  };
-
+    event.preventDefault()
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/callback`
+  }
 
   return (
     <div className="flex flex-row min-h-screen justify-center items-center">
       <div className="block">
         <h1>Sign in with:</h1>
-          <button type='button' onClick={handleGoogleOAuth}>Google</button>
+        <button type="button" onClick={handleGoogleOAuth}>
+          Google
+        </button>
       </div>
     </div>
-  );
+  )
 }
