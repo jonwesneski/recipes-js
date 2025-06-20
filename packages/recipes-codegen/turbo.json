@@ -3,7 +3,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["^recipes-api#build"],
+      "dependsOn": ["^recipes-api#swagger:only"],
       "outputs": ["dist/**"]
     }
   }

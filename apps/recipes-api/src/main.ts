@@ -22,6 +22,9 @@ async function bootstrap() {
   writeFileSync(outputPath, JSON.stringify(documentFactory), {
     encoding: 'utf8',
   });
+  if (process.env.SWAGGER_ONLY === 'true') {
+    return;
+  }
 
   await app.listen(process.env.PORT ?? 3001);
 }

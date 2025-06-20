@@ -14,7 +14,7 @@ export default {
       }
     },
     input: {
-      target: './swagger.json',
+      target: '../../apps/recipes-api/swagger.json',
     },
   },
 };
