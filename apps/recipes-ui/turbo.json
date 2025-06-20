@@ -3,11 +3,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^@repo/recipes-codegen#build",
-        "^@repo/ui#build",
-        "^@repo/design-system#build"
-      ],
+      "dependsOn": ["^@repo/recipes-codegen#build", "^@repo/ui#build"],
       "outputs": [".next/**", "!.next/cache/**"]
     }
   }
