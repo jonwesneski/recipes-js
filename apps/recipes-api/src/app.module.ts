@@ -10,6 +10,8 @@ import { TagsModule } from './tags';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath:
+        process.env.SWAGGER_ONLY === 'true' ? '.env.test' : undefined,
     }),
     LoggerModule.forRoot({
       pinoHttp: {
