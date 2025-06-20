@@ -4,5 +4,8 @@
     "source.organizeImports": "explicit"
   },
   "editor.formatOnSave": true,
-  "prettier.configPath": "apps/recipes-api/.prettierrc",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.configPath": "./.prettierrc",
 }

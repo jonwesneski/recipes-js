@@ -6,9 +6,11 @@ import {
   NotFoundException,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { PrismaClientKnownRequestError } from '@repo/database';
+import { JwtGuard } from 'src/auth/guards';
 import { CreateRecipeDto, RecipeEntity } from './contracts';
 import { RecipesService } from './recipes.service';
 
@@ -53,6 +55,7 @@ export class RecipesController {
   }
 
   @Post()
+  @UseGuards(JwtGuard)
   async createRecipe(@Body() body: CreateRecipeDto): Promise<RecipeEntity> {
     try {
       return await this.recipesService.createRecipe(body);

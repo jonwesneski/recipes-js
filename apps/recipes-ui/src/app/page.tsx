@@ -1,30 +1,19 @@
 'use client'
 
-import { useRecipesControllerRecipesListV1 } from '@repo/recipes-codegen/recipes';
-import { SharedButton } from '@repo/ui';
-import { useEffect } from "react";
-
-
 export default function Page() {
-
-
-    const { data, isSuccess } = useRecipesControllerRecipesListV1()
-
-    useEffect(() => {
-       
-    }, [isSuccess]);
-
+  const handleGoogleOAuth = async (event: any) => {
+    event.preventDefault()
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/callback`
+  }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-        {isSuccess && data.map((recipe) => (
-            <div key={recipe.slug} className="border p-4 rounded-lg shadow hover:shadow-lg transition-shadow">
-            <h2 className="text-xl font-bold">{recipe.name}</h2>
-            <p className="text-gray-600">{recipe.description}</p>
-            <p>{recipe.tags.join(' ')}</p>
-            <SharedButton text={`/recipes/${recipe.slug}`} />
-            </div>
-        ))}
+    <div className="flex flex-row min-h-screen justify-center items-center">
+      <div className="block">
+        <h1>Sign in with:</h1>
+        <button type="button" onClick={handleGoogleOAuth}>
+          Google
+        </button>
+      </div>
     </div>
-  );
+  )
 }

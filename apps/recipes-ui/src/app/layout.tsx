@@ -1,11 +1,11 @@
 'use client'
-import type { Metadata } from 'next'
 
 
-import "./globals.css"
 import "@repo/design-system/styles.css"
 import "@repo/ui/styles.css"
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { AuthenticationProvider } from '../providers/authentication-provider'
+import "./globals.css"
 
 // export const metadata: Metadata = {
 //   title: 'React App',
@@ -28,9 +28,11 @@ export default function RootLayout({
              margin: '0px 20px'}}
          >
           <div id="root">
-            <QueryClientProvider client={queryClient}>
-              {children}
-            </QueryClientProvider>
+            <AuthenticationProvider>
+              <QueryClientProvider client={queryClient}>
+                {children}
+              </QueryClientProvider>
+            </AuthenticationProvider>
           </div>
         </div>
       </body>
