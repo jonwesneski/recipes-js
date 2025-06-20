@@ -3,6 +3,7 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
+import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
 export function configureApp(app: INestApplication<any>) {
   app.enableCors({
@@ -15,6 +16,7 @@ export function configureApp(app: INestApplication<any>) {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  app.useGlobalInterceptors(new LoggerErrorInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -22,4 +24,5 @@ export function configureApp(app: INestApplication<any>) {
       transform: true,
     }),
   );
+  app.useLogger(app.get(Logger));
 }

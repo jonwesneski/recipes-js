@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/common/prisma.service';
 import {
@@ -9,6 +9,8 @@ import { GoogleAuthDto } from './guards';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private jwtService: JwtService,
     @Inject(jwtRefreshConfig.KEY)
@@ -33,6 +35,8 @@ export class AuthService {
     });
 
     if (!userRecord) {
+      this.logger.log('creating user from gmail');
+
       const now = new Date();
       const secondsSinceEpoch = Math.floor(now.getTime() / 1000);
       const handle = user.name + secondsSinceEpoch.toString();
