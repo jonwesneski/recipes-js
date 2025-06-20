@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { GenericContainer } from 'testcontainers';
 import * as recipesData from './recipesTestData.json';
@@ -18,6 +19,7 @@ export default async function setupDb() {
     })
     .start();
 
+  dotenv.config({ path: './.env.test' });
   process.env.DATABASE_URL = `postgresql://prisma:prisma@${postgresContainer.getHost()}:${postgresContainer.getMappedPort(5432)}/recipes-db-test?schema=public`;
 
   // Optional: wait a moment for the container to be ready for connections
