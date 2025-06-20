@@ -1,5 +1,6 @@
-import { INestApplication } from '@nestjs/common';
+import { CanActivate, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtGuard } from 'src/auth/guards';
 import { configureApp, PrismaService } from 'src/common';
 import { CreateRecipeDto, RecipeEntity } from 'src/recipes/contracts';
 import * as request from 'supertest';
@@ -11,12 +12,16 @@ const basePath = '/v1/recipes';
 describe('RecipesController (e2e)', () => {
   let app: INestApplication<App>;
   let prismaService: PrismaService;
+  const mockJwtGuard: CanActivate = { canActivate: jest.fn(() => true) };
   let user1: Awaited<ReturnType<PrismaService['user']['findUnique']>>;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideGuard(JwtGuard)
+      .useValue(mockJwtGuard)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     configureApp(app);
