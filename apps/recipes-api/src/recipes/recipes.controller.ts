@@ -1,16 +1,7 @@
-import {
-  Body,
-  ConflictException,
-  Controller,
-  Get,
-  NotFoundException,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
-import { PrismaClientKnownRequestError } from '@repo/database';
 import { JwtGuard } from 'src/auth/guards';
+import { throwIfConflict, throwIfNotFound } from 'src/common';
 import { CreateRecipeDto, RecipeEntity } from './contracts';
 import { RecipesService } from './recipes.service';
 
@@ -45,11 +36,7 @@ export class RecipesController {
     try {
       return await this.recipesService.getRecipe(userHandle, slug);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundException();
-        }
-      }
+      throwIfNotFound(error);
       throw error;
     }
   }
@@ -60,13 +47,7 @@ export class RecipesController {
     try {
       return await this.recipesService.createRecipe(body);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException(
-            `Recipe with slug "${body.slug}" already exists.`,
-          );
-        }
-      }
+      throwIfConflict(error, `Recipe with slug "${body.slug}" already exists.`);
       throw error;
     }
   }

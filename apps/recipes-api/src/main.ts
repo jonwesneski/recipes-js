@@ -1,29 +1,13 @@
-import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'fs';
 import * as path from 'path';
 import { AppModule } from './app.module';
+import { configureApp } from './common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: [
-      'http://localhost:3000', // allow your frontend origins
-      'https://recipes-ui-tau.vercel.app',
-    ],
-    credentials: true,
-  });
-  app.enableVersioning({
-    type: VersioningType.URI,
-  });
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  configureApp(app);
 
   const config = new DocumentBuilder()
     .setTitle('Recipes API')
@@ -38,6 +22,9 @@ async function bootstrap() {
   writeFileSync(outputPath, JSON.stringify(documentFactory), {
     encoding: 'utf8',
   });
+  if (process.env.SWAGGER_ONLY === 'true') {
+    return;
+  }
 
   await app.listen(process.env.PORT ?? 3001);
 }

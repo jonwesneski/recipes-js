@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-confusing-void-expression, no-unused-vars -- its fine zustand */
 import { createStore } from 'zustand/vanilla';
 
 export type UserState = {
