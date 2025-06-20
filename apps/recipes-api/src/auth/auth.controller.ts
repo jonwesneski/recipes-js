@@ -25,12 +25,12 @@ export class AuthController {
       );
       res.cookie('access_token', googleUser.tokens.accessToken, {
         maxAge: 2592000000,
-        sameSite: true,
+        sameSite: 'none',
         secure: true,
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
-      res.redirect(`${frontendUrl}/redirect`);
+      res.redirect(`${frontendUrl}redirect`);
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });
     }
