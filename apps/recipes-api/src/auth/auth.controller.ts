@@ -27,7 +27,8 @@ export class AuthController {
         maxAge: 2592000000,
         sameSite: 'none',
         secure: true,
-        //httpOnly: true,
+        domain: 'recipes-ui-tau.vercel.app',
+        httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
       res.redirect(`${frontendUrl}redirect`);
