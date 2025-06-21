@@ -9,7 +9,6 @@
 //   return <ClientRedirect accessToken={myCookie?.value} />
 // }
 // export default Page
-'use client'
 
 import { redirect, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
