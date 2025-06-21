@@ -23,6 +23,8 @@ export class AuthController {
       const googleUser = await this.authService.validateGoogleUser(
         req.user as GoogleAuthDto,
       );
+
+      // Setting cookies when domain are different is not allowed
       res.cookie('access_token', googleUser.tokens.accessToken, {
         maxAge: 2592000000,
         sameSite: 'none',
@@ -31,7 +33,9 @@ export class AuthController {
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
-      res.redirect(`${frontendUrl}redirect`);
+      res.redirect(
+        `${frontendUrl}redirect?token=${googleUser.tokens.accessToken} `,
+      );
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });
     }
