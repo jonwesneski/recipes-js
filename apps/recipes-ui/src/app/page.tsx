@@ -1,6 +1,6 @@
 'use client'
 
-import { MouseEvent } from 'react'
+import { type MouseEvent } from 'react'
 
 const Page = () => {
   const handleGoogleOAuth = (event: MouseEvent<HTMLButtonElement>) => {

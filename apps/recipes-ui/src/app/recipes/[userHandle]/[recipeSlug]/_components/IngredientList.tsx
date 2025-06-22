@@ -30,9 +30,9 @@ export const IngredientList = ({
 
   return (
     <ul className="ingredient-list">
-      {ingredients.map((ingredient, index) => {
+      {ingredients.map((ingredient) => {
         return (
-          <li key={index} className="text-left">
+          <li key={ingredient.id} className="text-left">
             <span>
               {useFractions
                 ? numberToFraction(ingredient.amount)

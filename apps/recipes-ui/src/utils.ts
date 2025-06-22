@@ -1,3 +1,40 @@
+import { IngredientEntityUnit } from '@repo/recipes-codegen/models';
+
+export const measurementUnits = Object.keys(IngredientEntityUnit);
+export const measurementUnitsAbbreviated: Record<IngredientEntityUnit, string> =
+  {
+    cups: 'cups',
+    tablespoons: 'tbs',
+    teaspoons: 'tsp',
+    ounces: 'oz',
+    pounds: 'lbs',
+    fluidOunces: 'fl oz',
+    pints: 'pt',
+    quarts: 'qt',
+    gallons: 'gal',
+    grams: 'g',
+    kilograms: 'kg',
+    milliliters: 'ml',
+    liters: 'L',
+    whole: 'whole',
+  };
+export const measurementUnitsSingular: Record<IngredientEntityUnit, string> = {
+  cups: 'cup',
+  tablespoons: 'tablespoon',
+  teaspoons: 'teaspoon',
+  ounces: 'ounce',
+  pounds: 'pound',
+  fluidOunces: 'fluid ounce',
+  pints: 'pint',
+  quarts: 'quart',
+  gallons: 'gallon',
+  grams: 'gram',
+  kilograms: 'kilogram',
+  milliliters: 'millilter',
+  liters: 'liter',
+  whole: 'whole',
+};
+
 const IMPERIAL_VOLUME_CONVERSIONS = {
   cups: 1,
   tbs: 16,

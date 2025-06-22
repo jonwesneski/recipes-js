@@ -21,7 +21,7 @@ export class NutritionalFactsEntity
   servings: number | null;
   @ApiProperty({ type: Number, nullable: true })
   servingAmount: number | null;
-  @ApiProperty({ enum: MeasurementUnit })
+  @ApiProperty({ enum: MeasurementUnit, nullable: true })
   servingUnit: MeasurementUnit | null;
   @ApiProperty({ type: Number, nullable: true })
   proteinInG: number | null;
