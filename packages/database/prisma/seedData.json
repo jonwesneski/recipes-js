@@ -22,12 +22,12 @@
             {
               "name": "Baking powder",
               "amount": 1.5,
-              "unit": "tsp"
+              "unit": "teaspoons"
             },
             {
               "name": "Salt",
               "amount": 0.5,
-              "unit": "tsp"
+              "unit": "teaspoons"
             }
           ]
         },
@@ -37,7 +37,7 @@
             {
               "name": "Eggs",
               "amount": 5,
-              "unit": ""
+              "unit": "whole"
             },
             {
               "name": "Sugar",
@@ -52,7 +52,7 @@
             {
               "name": "Vanilla extract",
               "amount": 1,
-              "unit": "tsp"
+              "unit": "teaspoons"
             }
           ]
         },
@@ -77,12 +77,12 @@
             {
               "name": "evaporated milk",
               "amount": 12,
-              "unit": "oz"
+              "unit": "ounces"
             },
             {
               "name": "Sweetened condensed milk",
               "amount": 14,
-              "unit": "oz"
+              "unit": "ounces"
             }
           ]
         }
@@ -135,12 +135,12 @@
             {
               "name": "Baking powder",
               "amount": 1.5,
-              "unit": "tsp"
+              "unit": "teaspoons"
             },
             {
               "name": "Salt",
               "amount": 0.5,
-              "unit": "tsp"
+              "unit": "teaspoons"
             }
           ]
         },

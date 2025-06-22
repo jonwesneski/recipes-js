@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma } from '@repo/database';
+import { MeasurementUnit, Prisma } from '@repo/database';
 import { RecipeMinimalType, RecipeType } from '../recipes.service';
 
 type OmitFields<T, K extends keyof any> = Omit<
@@ -17,6 +17,12 @@ export class EquipmentEntity
 export class NutritionalFactsEntity
   implements OmitFields<Prisma.NutritionalFactsCreateInput, 'Recipe'>
 {
+  @ApiProperty({ type: Number, nullable: true })
+  servings: number | null;
+  @ApiProperty({ type: Number, nullable: true })
+  servingAmount: number | null;
+  @ApiProperty({ enum: MeasurementUnit })
+  servingUnit: MeasurementUnit | null;
   @ApiProperty({ type: Number, nullable: true })
   proteinInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
@@ -76,8 +82,8 @@ export class IngredientEntity
   updatedAt: Date;
   @ApiProperty({ type: Number })
   amount: number;
-  @ApiProperty()
-  unit: string;
+  @ApiProperty({ enum: MeasurementUnit })
+  unit: MeasurementUnit;
   @ApiProperty()
   name: string;
 }

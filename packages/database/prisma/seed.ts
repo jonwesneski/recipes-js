@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma/client';
+import { MeasurementUnit, PrismaClient } from '../generated/prisma/client';
 import { PrismaClientKnownRequestError } from '../src/client';
 import data from './seedData.json';
 
@@ -47,7 +47,7 @@ async function main() {
                     data: step.ingredients.map((ingredient) => ({
                       name: ingredient.name,
                       amount: ingredient.amount,
-                      unit: ingredient.unit,
+                      unit: ingredient.unit as MeasurementUnit,
                     })),
                   },
                 },

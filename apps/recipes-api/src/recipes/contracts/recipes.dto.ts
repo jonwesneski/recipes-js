@@ -1,7 +1,8 @@
-import { Prisma } from '@repo/database/generated/prisma/client';
+import { MeasurementUnit, Prisma } from '@repo/database';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -19,6 +20,16 @@ type OmitFields<T, K extends keyof any> = Omit<
 export class NutritionalFactsDto
   implements OmitFields<Prisma.NutritionalFactsCreateInput, 'Recipe'>
 {
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  servings?: number | null;
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  servingAmount?: number | null;
+  @IsEnum(MeasurementUnit)
+  servingUnit?: MeasurementUnit | null;
   @IsNumber()
   @IsPositive()
   @IsOptional()
@@ -139,8 +150,8 @@ export class IngredientDto
   @IsNumber()
   @IsPositive()
   amount: number;
-  @IsString()
-  unit: string;
+  @IsEnum(MeasurementUnit)
+  unit: MeasurementUnit;
   @IsString()
   @IsNotEmpty()
   name: string;

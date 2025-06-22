@@ -14,6 +14,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum MeasurementUnit {
+  whole
+  cups // Imperial Volume
+  fluidOunces
+  tablespoons
+  teaspoons
+  pints
+  quarts
+  gallons
+  pounds // Imperial Weight
+  ounces
+  liters // Metric Volume
+  milliliters
+  kilograms // Metric Weight
+  grams
+}
+
 model User {
   id        String         @id @default(cuid())
   name      String
@@ -78,7 +95,10 @@ model Recipe {
 }
 
 model NutritionalFacts {
-  id               String   @id @default(cuid())
+  id               String           @id @default(cuid())
+  servings         Int?
+  servingAmount    Int?
+  servingUnit      MeasurementUnit?
   caloriesInKcal   Int?
   totalFatInG      Int?
   saturatedFatInG  Int?
@@ -102,11 +122,11 @@ model NutritionalFacts {
   thiaminInMg      Int?
   riboflavinInMg   Int?
   niacinInMg       Int?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   recipeUserHandle String
   recipeSlug       String
-  Recipe           Recipe   @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
+  Recipe           Recipe           @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
 
   @@unique([recipeUserHandle, recipeSlug])
   @@map("nutritional_facts")
@@ -138,14 +158,14 @@ model Equipment {
 }
 
 model Ingredient {
-  id        String   @id @default(cuid())
+  id        String          @id @default(cuid())
   amount    Float
-  unit      String
+  unit      MeasurementUnit
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
   stepId    String
-  Step      Step     @relation(fields: [stepId], references: [id])
+  Step      Step            @relation(fields: [stepId], references: [id])
 
   @@map("ingredients")
 }

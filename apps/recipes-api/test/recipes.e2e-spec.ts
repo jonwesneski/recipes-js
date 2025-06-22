@@ -81,7 +81,9 @@ describe('RecipesController (e2e)', () => {
           steps: [
             {
               instruction: 'Step 1',
-              ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'g' }],
+              ingredients: [
+                { name: 'Ingredient 1', amount: 100, unit: 'grams' },
+              ],
             },
           ],
           tags: [],
@@ -105,7 +107,7 @@ describe('RecipesController (e2e)', () => {
         steps: [
           {
             instruction: 'Step 1',
-            ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'g' }],
+            ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
           },
         ],
         tags: [],

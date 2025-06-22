@@ -1,3 +1,4 @@
+import { MeasurementUnit } from '@repo/database';
 import { execSync } from 'child_process';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -65,7 +66,7 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
                 data: step.ingredients.map((ingredient) => ({
                   name: ingredient.name,
                   amount: ingredient.amount,
-                  unit: ingredient.unit,
+                  unit: ingredient.unit as MeasurementUnit,
                 })),
               },
             },
