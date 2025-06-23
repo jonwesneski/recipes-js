@@ -2,10 +2,9 @@
 
 import {
   type CreateRecipeDto,
-  type IngredientDto,
   type NutritionalFactsDto,
-  type StepDto,
 } from '@repo/recipes-codegen/model'
+import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import {
   createContext,
   type Dispatch,
@@ -17,7 +16,8 @@ import {
 
 export type StepsItemsType = {
   id: string
-  step: StepDto
+  ingredients: IngredientsValidator
+  instruction: string
 }
 export type RecipeType = Omit<CreateRecipeDto, 'steps'> & {
   setName: (_value: string) => void
@@ -27,7 +27,8 @@ export type RecipeType = Omit<CreateRecipeDto, 'steps'> & {
   steps: StepsItemsType[]
   setSteps: Dispatch<SetStateAction<StepsItemsType[]>>
   addStep: () => void
-  setIngredients: (_stepId: string, _ingredients: IngredientDto[]) => void
+  insertSteps: (_stepId: string, _ingredients: IngredientsValidator[]) => void
+  setIngredients: (_stepId: string, _ingredients: IngredientsValidator) => void
   setNutritionalFacts: (_value: NutritionalFactsDto) => void
   setTags: (_value: string[]) => void
 }
@@ -48,7 +49,11 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
     number | null
   >(null)
   const [steps, setSteps] = useState<StepsItemsType[]>([
-    { id: crypto.randomUUID(), step: { ingredients: [], instruction: '' } },
+    {
+      id: crypto.randomUUID(),
+      ingredients: new IngredientsValidator({ dto: [] }),
+      instruction: '',
+    },
   ])
   const [nutritionalFacts, setNutritionalFacts] =
     useState<NutritionalFactsDto | null>(null)
@@ -56,14 +61,42 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const userHandle = ''
 
   const addStep = () => {
-    setSteps((v) => [...v, { id: crypto.randomUUID(), step: {} as StepDto }])
+    setSteps((v) => [
+      ...v,
+      {
+        id: crypto.randomUUID(),
+        ingredients: new IngredientsValidator({ dto: [] }),
+        instruction: '',
+      },
+    ])
   }
 
-  const setIngredients = (stepId: string, ingredients: IngredientDto[]) => {
+  const insertSteps = (stepId: string, ingredients: IngredientsValidator[]) => {
+    const index = steps.findIndex((s) => s.id === stepId)
+    const inserts = ingredients.map((i) => {
+      return {
+        id: crypto.randomUUID(),
+        ingredients: i,
+        instruction: '',
+      }
+    })
+    if (index !== -1) {
+      setSteps((v) => {
+        return v.toSpliced(index + 1, 0, ...inserts)
+      })
+    } else {
+      setSteps((v) => [...v, ...inserts])
+    }
+  }
+
+  const setIngredients = (
+    stepId: string,
+    ingredients: IngredientsValidator,
+  ) => {
     setSteps((value) => {
       const index = value.findIndex((v) => v.id === stepId)
       if (index !== -1) {
-        value[index].step.ingredients = ingredients
+        value[index].ingredients = ingredients
       }
       return value
     })
@@ -84,6 +117,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
         steps,
         setSteps,
         addStep,
+        insertSteps,
         setIngredients,
         nutritionalFacts,
         setNutritionalFacts,

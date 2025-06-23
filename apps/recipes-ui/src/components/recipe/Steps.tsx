@@ -1,9 +1,9 @@
 'use client'
 
-import { type IngredientDto } from '@repo/recipes-codegen/model'
+import { SharedButton } from '@repo/ui'
 import { useRecipe } from '@src/providers/recipe-provider'
+import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import React from 'react'
-import { type ZodError } from 'zod/v4'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
@@ -11,13 +11,17 @@ interface StepsProps {
   editable: boolean
 }
 export const Steps = (props: StepsProps) => {
-  const { steps, addStep } = useRecipe()
+  const { steps, addStep, insertSteps, setIngredients } = useRecipe()
 
-  const handleIngredientsError = (
-    id: string,
-    error: ZodError<IngredientDto[]>,
+  const handleIngredientValid = (
+    index: string,
+    ingredients: IngredientsValidator,
   ) => {
-    console.log(id, error, props)
+    setIngredients(index, ingredients)
+  }
+
+  const handleOnPaste = (stepId: string, data: IngredientsValidator[]) => {
+    insertSteps(stepId, data)
   }
 
   return (
@@ -26,16 +30,19 @@ export const Steps = (props: StepsProps) => {
         return (
           <React.Fragment key={s.id}>
             <IngredientsTextArea
-              id={s.id}
-              onTextChangeError={handleIngredientsError}
+              ingredients={s.ingredients.stringValue}
+              onTextChange={(ingredients: IngredientsValidator) =>
+                handleIngredientValid(s.id, ingredients)
+              }
+              onPaste={(data: IngredientsValidator[]) =>
+                handleOnPaste(s.id, data)
+              }
             />
             <InstructionsTextArea />
           </React.Fragment>
         )
       })}
-      <button type="button" onClick={addStep}>
-        Add step
-      </button>
+      <SharedButton onClick={addStep} text="Add Step" />
     </div>
   )
 }

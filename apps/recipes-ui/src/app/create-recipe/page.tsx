@@ -4,7 +4,7 @@ import { type CreateRecipeDto } from '@repo/recipes-codegen/model'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/recipes-codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/recipes-codegen/tags'
 import { SharedButton } from '@repo/ui'
-import { Recipe } from '@src/components/recipe/RecipeComponent'
+import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { useEffect, useState } from 'react'
 
@@ -41,7 +41,7 @@ const Page = () => {
       const currentTags = await tagsControllerTagNameListV1()
       setTags((tags) => [...tags, ...currentTags.data])
       if (currentTags.pagination.nextCursor !== null) {
-        //await fetchTags()
+        await fetchTags()
       }
     }
 

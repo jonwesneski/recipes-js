@@ -1,17 +1,17 @@
-import { type IngredientDto } from '@repo/recipes-codegen/model'
-import { useRecipe } from '@src/providers/recipe-provider'
-import { ingredientsListSchema } from '@src/zod-schemas'
+'use client'
+
+import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import { useRef, useState } from 'react'
-import { type ZodError } from 'zod/v4'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 interface IngredientsTextAreaProps {
-  id: string
-  onTextChangeError: (_id: string, _error: ZodError<IngredientDto[]>) => void
+  ingredients: string
+  onTextChange: (ingredients: IngredientsValidator) => void
+  //onTextChangeError: (_error: ZodError<IngredientDto[]>) => void
+  onPaste: (data: IngredientsValidator[]) => void
 }
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
-  const [inputValue, setInputValue] = useState('')
-  const { setIngredients } = useRecipe()
+  const [inputValue, setInputValue] = useState(props.ingredients)
   const [isPopupVisible, setIsPopupVisible] = useState(false)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -42,27 +42,9 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const lines = event.target.value.split('\n')
-    //const p = getCaretPosition()
-    //const currentRowText = lines[p.row!].split(' ')
-    //const result = ingredientRowArraySchema.safeParse(currentRowText)
-    const result = ingredientsListSchema.safeParse(
-      lines.map((l) => l.split(' ')),
+    props.onTextChange(
+      new IngredientsValidator({ stringValue: event.target.value }),
     )
-    if (result.success) {
-      setIngredients(props.id, result.data)
-    } else {
-      console.log(result.error)
-      props.onTextChangeError(props.id, result.error)
-    }
-    // const currentCaretLine = lines.slice(0, event.target.value.substring(0, caretPosition).split('\n').length - 1).join('\n');
-    // console.log({caretPosition, total: event.target.textLength, currentCaretLine, lines, value: event.target.value});
-
-    // const textarea = inputRef.current;
-    //   const cursorPosition = textarea!.selectionStart;
-    //   const textBeforeCursor = textarea!.value.substring(0, cursorPosition);
-    //   const caretRow = textBeforeCursor.split('\n').length;
-    //   console.log({caretRow})
     setInputValue(event.target.value)
   }
 
@@ -93,6 +75,20 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     setIsPopupVisible(false)
   }
 
+  /* When some pastes in recipes that are already separated by '\r\n\r\n'
+   * we will add new steps for them
+   */
+  const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    event.preventDefault()
+    const data = event.clipboardData?.getData('text/plain').split('\r\n\r\n')
+    // Set input for first, pass the rest to be populated later
+    setInputValue(data[0])
+    props.onTextChange(new IngredientsValidator({ stringValue: data[0] }))
+    props.onPaste(
+      data.slice(1).map((d) => new IngredientsValidator({ stringValue: d })),
+    )
+  }
+
   const isCaretOnMeasurementColumn = () => {
     const position = getCaretPosition()
     return position.column === 1
@@ -106,6 +102,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         onMouseUp={handleMouseUp}
         onTouchEnd={handleTouchEnd}
         onBlur={handleBlur}
+        onPaste={handleOnPaste}
         ref={inputRef}
         style={{ padding: '10px', border: '1px solid #ccc' }}
       />
