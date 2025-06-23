@@ -1,8 +1,8 @@
 'use client'
 
+import { useAuthentication } from '@src/providers/authentication-provider'
 import { redirect, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { useAuthentication } from '../../providers/authentication-provider'
 
 export const ClientRedirect = (props: { accessToken: string | undefined }) => {
   const { accessToken, setAccessToken } = useAuthentication()

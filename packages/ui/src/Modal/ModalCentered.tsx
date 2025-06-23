@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useCustomModal } from './hooks/useCustomModal'
+import { useCustomModal } from './useCustomModal'
 
 interface ModalCenteredProps {
   children: React.ReactNode

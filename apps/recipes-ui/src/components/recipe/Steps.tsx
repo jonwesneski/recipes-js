@@ -1,10 +1,10 @@
 'use client'
 
 import { type IngredientDto } from '@repo/recipes-codegen/models'
-import { IngredientsTextArea } from '@src/components'
 import { useRecipe } from '@src/providers/recipe-provider'
 import React from 'react'
 import { type ZodError } from 'zod/v4'
+import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
 interface StepsProps {

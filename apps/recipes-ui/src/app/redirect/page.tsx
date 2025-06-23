@@ -10,9 +10,9 @@
 // }
 // export default Page
 
+import { useAuthentication } from '@src/providers/authentication-provider'
 import { redirect, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { useAuthentication } from '../../providers/authentication-provider'
 
 const ClientRedirect = () => {
   const { accessToken, setAccessToken } = useAuthentication()

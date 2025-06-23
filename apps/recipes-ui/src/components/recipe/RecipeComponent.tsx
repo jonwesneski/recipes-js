@@ -1,8 +1,8 @@
 'use client'
 
 import { SharedInput } from '@repo/ui'
-import { Steps } from '@src/components/Steps'
 import { RecipeProvider } from '@src/providers/recipe-provider'
+import { Steps } from './Steps'
 
 interface RecipeProps {
   editable: boolean

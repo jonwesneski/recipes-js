@@ -1,6 +1,6 @@
+import { ModalCentered } from '@repo/ui'
+import { getVolumeConversions, type VolumeUnit } from '@src/utils'
 import { useEffect, useRef } from 'react'
-import { getVolumeConversions, type VolumeUnit } from '../../../../../utils'
-import { ModalCentered } from '../../../../ModalCentered'
 
 const ConversionRows = (props: {
   unitSystem: string

@@ -37,19 +37,34 @@ export const measurementUnitsSingular: Record<IngredientEntityUnit, string> = {
   liters: 'liter',
 };
 
-const IMPERIAL_VOLUME_CONVERSIONS = {
+const IMPERIAL_VOLUME_CONVERSIONS: Record<
+  Extract<
+    IngredientEntityUnit,
+    | 'cups'
+    | 'tablespoons'
+    | 'teaspoons'
+    | 'ounces'
+    | 'pints'
+    | 'quarts'
+    | 'gallons'
+  >,
+  number
+> = {
   cups: 1,
-  tbs: 16,
-  tsp: 48,
-  oz: 8,
+  tablespoons: 16,
+  teaspoons: 48,
+  ounces: 8,
   pints: 0.5,
   quarts: 0.25,
   gallons: 0.0625,
 };
 
-const METRIC_VOLUME_CONVERSIONS = {
-  ml: 236.588,
-  L: 0.236588,
+const METRIC_VOLUME_CONVERSIONS: Record<
+  Extract<IngredientEntityUnit, 'milliliters' | 'liters'>,
+  number
+> = {
+  milliliters: 236.588,
+  liters: 0.236588,
 };
 
 // Merge for all-units support

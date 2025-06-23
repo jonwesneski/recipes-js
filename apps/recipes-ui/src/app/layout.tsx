@@ -2,8 +2,8 @@
 
 import '@repo/design-system/styles.css'
 import '@repo/ui/styles.css'
+import { AuthenticationProvider } from '@src/providers/authentication-provider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthenticationProvider } from '../providers/authentication-provider'
 import './globals.css'
 
 // export const metadata: Metadata = {

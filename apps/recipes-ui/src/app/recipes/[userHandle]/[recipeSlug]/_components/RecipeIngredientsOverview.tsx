@@ -1,7 +1,7 @@
 'use client'
 import type { StepEntity } from '@repo/recipes-codegen/models'
-import { useUserStore } from '../../../../../providers/use-store-provider'
-import { numberToFraction } from '../../../../../utils'
+import { useUserStore } from '@src/providers/use-store-provider'
+import { numberToFraction } from '@src/utils'
 
 interface RecipeIngredientsOverviewProps {
   steps: StepEntity[]

@@ -1,8 +1,7 @@
 'use client'
 
-import { ModalStoreProvider } from '../../../../providers/modal-store-provider'
-import { UserStoreProvider } from '../../../../providers/use-store-provider'
-import { ModalRoot } from '../../../ModalRoot'
+import { ModalRoot, ModalStoreProvider } from '@repo/ui'
+import { UserStoreProvider } from '@src/providers/use-store-provider'
 
 const DefaultRecipeLayout = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -2,7 +2,7 @@
 
 import { type ReactNode, createContext, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
-import { type ModalStore, createModalStore } from '../stores/modal-store'
+import { type ModalStore, createModalStore } from './modal-store'
 
 export type ModalStoreApi = ReturnType<typeof createModalStore>
 export const ModalStoreContext = createContext<ModalStoreApi | null>(null)

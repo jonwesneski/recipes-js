@@ -1,3 +1,4 @@
+import { type IngredientEntity } from '@repo/recipes-codegen/models'
 import { render } from '@testing-library/react'
 import React from 'react'
 import { ModalStoreProvider } from '../../../../../providers/modal-store-provider'
@@ -25,12 +26,12 @@ describe('IngredientList', () => {
     {
       amount: 2,
       name: 'eggs',
-      unit: '',
+      unit: 'whole',
       createdAt: '',
       updatedAt: '',
       id: '2',
     },
-  ]
+  ] as IngredientEntity[]
   it('Lists created', async () => {
     const { findByText } = renderComponent(
       <IngredientList ingredients={sampleIngredients} />,
