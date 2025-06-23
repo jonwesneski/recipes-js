@@ -1,4 +1,4 @@
-import { type IngredientDto } from '@repo/recipes-codegen/models'
+import { type IngredientDto } from '@repo/recipes-codegen/model'
 import { useRecipe } from '@src/providers/recipe-provider'
 import { ingredientsListSchema } from '@src/zod-schemas'
 import { useRef, useState } from 'react'

@@ -3,7 +3,7 @@ import { z } from 'zod/v4';
 import {
   type IngredientDto,
   type IngredientEntityUnit,
-} from '@repo/recipes-codegen/models';
+} from '@repo/recipes-codegen/model';
 import { measurementUnits } from '@src/utils/measurements';
 
 // 1/222 or 1 1/222

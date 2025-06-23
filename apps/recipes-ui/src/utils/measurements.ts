@@ -1,4 +1,4 @@
-import { IngredientEntityUnit } from '@repo/recipes-codegen/models';
+import { IngredientEntityUnit } from '@repo/recipes-codegen/model';
 import { z } from 'zod/v4';
 
 export const measurementUnits = Object.keys(IngredientEntityUnit);

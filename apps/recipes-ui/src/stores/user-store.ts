@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression, no-unused-vars -- its fine zustand */
-import { type NutritionalFactsDto } from '@repo/recipes-codegen/models';
+import { type NutritionalFactsDto } from '@repo/recipes-codegen/model';
 import { createStore } from 'zustand/vanilla';
 
 export type UserState = {

@@ -5,7 +5,7 @@ import {
   type IngredientDto,
   type NutritionalFactsDto,
   type StepDto,
-} from '@repo/recipes-codegen/models'
+} from '@repo/recipes-codegen/model'
 import {
   createContext,
   type Dispatch,

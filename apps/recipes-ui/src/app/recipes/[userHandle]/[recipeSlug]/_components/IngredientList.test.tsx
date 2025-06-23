@@ -1,8 +1,8 @@
-import { type IngredientEntity } from '@repo/recipes-codegen/models'
+import { type IngredientEntity } from '@repo/recipes-codegen/model'
 import { ModalStoreProvider } from '@repo/ui'
+import { UserStoreProvider } from '@src/providers/use-store-provider'
 import { render } from '@testing-library/react'
 import React from 'react'
-import { UserStoreProvider } from '../../../../../providers/use-store-provider'
 import { IngredientList } from './IngredientList'
 
 const renderComponent = (ui: React.ReactNode) => {

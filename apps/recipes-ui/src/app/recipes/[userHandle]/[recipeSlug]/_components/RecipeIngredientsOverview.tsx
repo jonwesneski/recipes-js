@@ -1,5 +1,5 @@
 'use client'
-import type { StepEntity } from '@repo/recipes-codegen/models'
+import type { StepEntity } from '@repo/recipes-codegen/model'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { numberToFraction } from '@src/utils/measurements'
 

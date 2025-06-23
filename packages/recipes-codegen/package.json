@@ -12,7 +12,7 @@
       "import": "./dist/tags/tags.js",
       "types": "./dist/types/tags/tags.d.ts"
     },
-    "./models": {
+    "./model": {
       "import": "./dist/model/index.js",
       "types": "./dist/types/model/index.d.ts"
     },
@@ -22,7 +22,7 @@
     }
   },
   "scripts": {
-    "build": "orval && tsc"
+    "build": "orval && tsc && tsc -p tsconfig.test.json"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.8.0",

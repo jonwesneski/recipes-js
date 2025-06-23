@@ -1,4 +1,4 @@
-import { type IngredientEntityUnit } from '@repo/recipes-codegen/models'
+import { type IngredientEntityUnit } from '@repo/recipes-codegen/model'
 import { measurementUnitsAbbreviated } from '@src/utils/measurements'
 import React from 'react'
 

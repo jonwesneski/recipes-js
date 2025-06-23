@@ -1,6 +1,6 @@
 'use client'
 
-import { type CreateRecipeDto } from '@repo/recipes-codegen/models'
+import { type CreateRecipeDto } from '@repo/recipes-codegen/model'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/recipes-codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/recipes-codegen/tags'
 import { SharedButton } from '@repo/ui'

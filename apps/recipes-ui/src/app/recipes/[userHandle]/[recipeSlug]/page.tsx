@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-leaked-render -- will add is loading state */
 'use client'
 
-import type { RecipeEntity } from '@repo/recipes-codegen/models'
+import type { RecipeEntity } from '@repo/recipes-codegen/model'
 import { useRecipesControllerRecipeV1 } from '@repo/recipes-codegen/recipes'
 import { use, useEffect, useState } from 'react'
 import {

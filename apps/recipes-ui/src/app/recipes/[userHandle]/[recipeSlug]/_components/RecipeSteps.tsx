@@ -1,6 +1,6 @@
 'use client'
 
-import type { StepEntity } from '@repo/recipes-codegen/models'
+import type { StepEntity } from '@repo/recipes-codegen/model'
 import React from 'react'
 import { IngredientList } from './IngredientList'
 

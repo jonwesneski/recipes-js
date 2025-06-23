@@ -1,6 +1,6 @@
 'use client'
 
-import type { IngredientEntity } from '@repo/recipes-codegen/models'
+import type { IngredientEntity } from '@repo/recipes-codegen/model'
 import { useCustomModal } from '@repo/ui'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
