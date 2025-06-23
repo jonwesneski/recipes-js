@@ -4,7 +4,7 @@ import {
   type IngredientDto,
   type IngredientEntityUnit,
 } from '@repo/recipes-codegen/models';
-import { measurementUnits } from '@src/utils';
+import { measurementUnits } from '@src/utils/measurements';
 
 // 1/222 or 1 1/222
 const fractionRegex =

@@ -1,5 +1,9 @@
 import { ModalCentered } from '@repo/ui'
-import { getVolumeConversions, type VolumeUnit } from '@src/utils'
+import {
+  getConversions,
+  WeightUnit,
+  type VolumeUnit,
+} from '@src/utils/measurements'
 import { useEffect, useRef } from 'react'
 
 const ConversionRows = (props: {
@@ -24,17 +28,14 @@ const ConversionRows = (props: {
 }
 
 interface ModalMeasurementConversionsProps {
-  unitType: string
+  unitType: VolumeUnit | WeightUnit
   amount: number
 }
 export const ModalMeasurementConversions = (
   props: ModalMeasurementConversionsProps,
 ) => {
   const divRef = useRef<HTMLElement>(null)
-  const conversions = getVolumeConversions(
-    props.amount,
-    props.unitType as VolumeUnit,
-  )
+  const conversions = getConversions(props.amount, props.unitType)
 
   useEffect(() => {
     divRef.current?.focus()
@@ -42,7 +43,7 @@ export const ModalMeasurementConversions = (
 
   return (
     <ModalCentered>
-      <h2>Measurement Conversions</h2>
+      <h2>{conversions.type} Conversions</h2>
       <table className="w-full table-auto rounded-3xl border-collapse bg-amber-100">
         <thead>
           <tr>
@@ -53,11 +54,11 @@ export const ModalMeasurementConversions = (
         <tbody>
           <ConversionRows
             unitSystem="Imperial"
-            conversions={Object.entries(conversions.imperial)}
+            conversions={Object.entries(conversions.values.imperial)}
           />
           <ConversionRows
             unitSystem="Metric"
-            conversions={Object.entries(conversions.metric)}
+            conversions={Object.entries(conversions.values.metric)}
           />
         </tbody>
       </table>

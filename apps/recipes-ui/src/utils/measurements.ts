@@ -1,4 +1,5 @@
 import { IngredientEntityUnit } from '@repo/recipes-codegen/models';
+import { z } from 'zod/v4';
 
 export const measurementUnits = Object.keys(IngredientEntityUnit);
 export const measurementUnitsAbbreviated: Record<IngredientEntityUnit, string> =
@@ -43,7 +44,7 @@ const IMPERIAL_VOLUME_CONVERSIONS: Record<
     | 'cups'
     | 'tablespoons'
     | 'teaspoons'
-    | 'ounces'
+    | 'fluidOunces'
     | 'pints'
     | 'quarts'
     | 'gallons'
@@ -53,7 +54,7 @@ const IMPERIAL_VOLUME_CONVERSIONS: Record<
   cups: 1,
   tablespoons: 16,
   teaspoons: 48,
-  ounces: 8,
+  fluidOunces: 8,
   pints: 0.5,
   quarts: 0.25,
   gallons: 0.0625,
@@ -67,26 +68,63 @@ const METRIC_VOLUME_CONVERSIONS: Record<
   liters: 0.236588,
 };
 
-// Merge for all-units support
+const IMPERIAL_WEIGHT_CONVERSIONS: Record<
+  Extract<IngredientEntityUnit, 'pounds' | 'ounces'>,
+  number
+> = {
+  pounds: 1,
+  ounces: 16,
+};
+
+const METRIC_WEIGHT_CONVERSIONS: Record<
+  Extract<IngredientEntityUnit, 'grams' | 'kilograms'>,
+  number
+> = {
+  grams: 1,
+  kilograms: 100,
+};
+
 const VOLUME_CONVERSIONS = {
   ...IMPERIAL_VOLUME_CONVERSIONS,
   ...METRIC_VOLUME_CONVERSIONS,
+};
+
+const WEIGHT_CONVERSIONS = {
+  ...IMPERIAL_WEIGHT_CONVERSIONS,
+  ...METRIC_WEIGHT_CONVERSIONS,
 };
 
 type ImperialVolumeUnit = keyof typeof IMPERIAL_VOLUME_CONVERSIONS;
 type MetricVolumeUnit = keyof typeof METRIC_VOLUME_CONVERSIONS;
 export type VolumeUnit = ImperialVolumeUnit | MetricVolumeUnit;
 
-export function convertVolume(
+type ImperialWeightUnit = keyof typeof IMPERIAL_WEIGHT_CONVERSIONS;
+type MetricWeightUnit = keyof typeof METRIC_WEIGHT_CONVERSIONS;
+export type WeightUnit = ImperialWeightUnit | MetricWeightUnit;
+const weightUnitSchema = z.union(
+  Object.keys(WEIGHT_CONVERSIONS).map((l) => z.literal(l)),
+);
+
+export const isWeight = (unit: string) => {
+  return weightUnitSchema.safeParse(unit).success;
+};
+
+export const getConversions = (
   amount: number,
-  from: VolumeUnit,
-  to: VolumeUnit,
-): number {
-  // Convert from source unit to cups (base unit)
-  const inCups = amount / VOLUME_CONVERSIONS[from];
-  // Convert from cups to target unit
-  return inCups * VOLUME_CONVERSIONS[to];
-}
+  from: VolumeUnit | WeightUnit,
+) => {
+  if (isWeight(from)) {
+    return {
+      type: 'Weight',
+      values: getWeightConversions(amount, from as WeightUnit),
+    };
+  }
+
+  return {
+    type: 'Volume',
+    values: getVolumeConversions(amount, from as VolumeUnit),
+  };
+};
 
 export function getVolumeConversions(amount: number, from: VolumeUnit) {
   const imperial = {} as Record<ImperialVolumeUnit, number>;
@@ -110,6 +148,52 @@ export function getVolumeConversions(amount: number, from: VolumeUnit) {
     imperial,
     metric,
   };
+}
+
+function convertVolume(
+  amount: number,
+  from: VolumeUnit,
+  to: VolumeUnit,
+): number {
+  // Convert from source unit to cups (base unit)
+  const baseUnit = amount / VOLUME_CONVERSIONS[from];
+  // Convert from cups to target unit
+  return baseUnit * VOLUME_CONVERSIONS[to];
+}
+
+export function getWeightConversions(amount: number, from: WeightUnit) {
+  const imperial = {} as Record<ImperialWeightUnit, number>;
+  const metric = {} as Record<MetricWeightUnit, number>;
+
+  (Object.keys(IMPERIAL_WEIGHT_CONVERSIONS) as ImperialWeightUnit[]).forEach(
+    (unit) => {
+      imperial[unit] = convertWeight(amount, from, unit);
+    },
+  );
+  (Object.keys(METRIC_WEIGHT_CONVERSIONS) as MetricWeightUnit[]).forEach(
+    (unit) => {
+      metric[unit] = convertWeight(amount, from, unit);
+    },
+  );
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- Remove the original unit from the conversions
+  delete imperial[from as ImperialWeightUnit];
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- Remove the original unit from the conversions
+  delete metric[from as MetricWeightUnit];
+  return {
+    imperial,
+    metric,
+  };
+}
+
+export function convertWeight(
+  amount: number,
+  from: WeightUnit,
+  to: WeightUnit,
+): number {
+  // Convert from source unit to (base unit)
+  const baseUnit = amount / WEIGHT_CONVERSIONS[from];
+  // Convert from unit to target unit
+  return baseUnit * WEIGHT_CONVERSIONS[to];
 }
 
 export function numberToFraction(value: number, maxDenominator = 10): string {

@@ -3,7 +3,11 @@
 import type { IngredientEntity } from '@repo/recipes-codegen/models'
 import { useCustomModal } from '@repo/ui'
 import { useUserStore } from '@src/providers/use-store-provider'
-import { numberToFraction } from '@src/utils'
+import {
+  numberToFraction,
+  type VolumeUnit,
+  type WeightUnit,
+} from '@src/utils/measurements'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
 
 export const IngredientList = ({
@@ -15,17 +19,19 @@ export const IngredientList = ({
   const { showModal } = useCustomModal()
 
   const handleClick = (e: React.MouseEvent, ingredient: IngredientEntity) => {
-    e.preventDefault()
-    showModal(
-      ModalMeasurementConversions.name,
-      () => (
-        <ModalMeasurementConversions
-          unitType={ingredient.unit}
-          amount={ingredient.amount}
-        />
-      ),
-      {},
-    )
+    if (ingredient.unit !== 'whole' && ingredient.unit !== 'pinches') {
+      e.preventDefault()
+      showModal(
+        ModalMeasurementConversions.name,
+        () => (
+          <ModalMeasurementConversions
+            unitType={ingredient.unit as VolumeUnit | WeightUnit}
+            amount={ingredient.amount}
+          />
+        ),
+        {},
+      )
+    }
   }
 
   return (

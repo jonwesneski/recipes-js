@@ -1,5 +1,5 @@
 import { type IngredientEntityUnit } from '@repo/recipes-codegen/models'
-import { measurementUnitsAbbreviated } from '@src/utils'
+import { measurementUnitsAbbreviated } from '@src/utils/measurements'
 import React from 'react'
 
 interface IngredientsMeasurementPopUpProps {
