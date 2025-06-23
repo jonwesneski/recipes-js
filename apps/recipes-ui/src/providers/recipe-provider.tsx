@@ -2,42 +2,50 @@
 
 import {
   type CreateRecipeDto,
-  type IngredientDto,
   type NutritionalFactsDto,
-  type StepDto,
 } from '@repo/recipes-codegen/model'
+import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import {
   createContext,
-  type Dispatch,
+  createRef,
   type ReactNode,
-  type SetStateAction,
+  type RefObject,
   useContext,
   useState,
 } from 'react'
 
 export type StepsItemsType = {
   id: string
-  step: StepDto
+  ref: RefObject<HTMLDivElement | null>
+  ingredients: IngredientsValidator
+  instruction: string
 }
+
 export type RecipeType = Omit<CreateRecipeDto, 'steps'> & {
+  editEnabled: boolean
   setName: (_value: string) => void
   setDescription: (_value: string) => void
   setPreparationTimeInMinutes: (_value: number) => void
   setCookingTimeInMinutes: (_value: number) => void
   steps: StepsItemsType[]
-  setSteps: Dispatch<SetStateAction<StepsItemsType[]>>
   addStep: () => void
-  setIngredients: (_stepId: string, _ingredients: IngredientDto[]) => void
+  insertSteps: (_stepId: string, _ingredients: IngredientsValidator[]) => void
+  removeStep: (_stepId: string) => void
+  setIngredients: (_stepId: string, _ingredients: IngredientsValidator) => void
   setNutritionalFacts: (_value: NutritionalFactsDto) => void
   setTags: (_value: string[]) => void
 }
 export const RecipeContext = createContext<RecipeType | null>(null)
 
 export interface RecipeProviderProps {
+  enableEdit: boolean
   children: ReactNode
 }
-
-export const RecipeProvider = ({ children }: RecipeProviderProps) => {
+export const RecipeProvider = ({
+  enableEdit,
+  children,
+}: RecipeProviderProps) => {
+  const [editEnabled, _setEditEnabled] = useState<boolean>(enableEdit)
   const [name, setName] = useState<string>('')
   const [slug, _setSlug] = useState<string>('')
   const [description, setDescription] = useState<string | null>(null)
@@ -47,8 +55,13 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const [cookingTimeInMinutes, setCookingTimeInMinutes] = useState<
     number | null
   >(null)
-  const [steps, setSteps] = useState<StepsItemsType[]>([
-    { id: crypto.randomUUID(), step: { ingredients: [], instruction: '' } },
+  const [steps, _setSteps] = useState<StepsItemsType[]>([
+    {
+      id: crypto.randomUUID(),
+      ref: createRef<HTMLDivElement>(),
+      ingredients: new IngredientsValidator({ dto: [] }),
+      instruction: '',
+    },
   ])
   const [nutritionalFacts, setNutritionalFacts] =
     useState<NutritionalFactsDto | null>(null)
@@ -56,14 +69,51 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const userHandle = ''
 
   const addStep = () => {
-    setSteps((v) => [...v, { id: crypto.randomUUID(), step: {} as StepDto }])
+    _setSteps((v) => [
+      ...v,
+      {
+        id: crypto.randomUUID(),
+        ref: createRef<HTMLDivElement>(),
+        ingredients: new IngredientsValidator({ dto: [] }),
+        instruction: '',
+      },
+    ])
   }
 
-  const setIngredients = (stepId: string, ingredients: IngredientDto[]) => {
-    setSteps((value) => {
+  const insertSteps = (stepId: string, ingredients: IngredientsValidator[]) => {
+    const index = steps.findIndex((s) => s.id === stepId)
+    const inserts = ingredients.map((i) => {
+      return {
+        id: crypto.randomUUID(),
+        ref: createRef<HTMLDivElement>(),
+        ingredients: i,
+        instruction: '',
+      }
+    })
+    if (index !== -1) {
+      _setSteps((v) => {
+        return v.toSpliced(index + 1, 0, ...inserts)
+      })
+    } else {
+      _setSteps((v) => [...v, ...inserts])
+    }
+  }
+
+  const removeStep = (stepId: string) => {
+    const index = steps.findIndex((s) => s.id === stepId)
+    if (index !== -1) {
+      _setSteps((v) => v.toSpliced(index, 1))
+    }
+  }
+
+  const setIngredients = (
+    stepId: string,
+    ingredients: IngredientsValidator,
+  ) => {
+    _setSteps((value) => {
       const index = value.findIndex((v) => v.id === stepId)
       if (index !== -1) {
-        value[index].step.ingredients = ingredients
+        value[index].ingredients = ingredients
       }
       return value
     })
@@ -72,6 +122,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   return (
     <RecipeContext.Provider
       value={{
+        editEnabled,
         name,
         setName,
         slug,
@@ -82,8 +133,9 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
         cookingTimeInMinutes,
         setCookingTimeInMinutes,
         steps,
-        setSteps,
         addStep,
+        insertSteps,
+        removeStep,
         setIngredients,
         nutritionalFacts,
         setNutritionalFacts,

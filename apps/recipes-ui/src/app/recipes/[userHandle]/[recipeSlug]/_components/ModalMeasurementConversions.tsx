@@ -1,8 +1,8 @@
 import { ModalCentered } from '@repo/ui'
 import {
   getConversions,
-  WeightUnit,
   type VolumeUnit,
+  type WeightUnit,
 } from '@src/utils/measurements'
 import { useEffect, useRef } from 'react'
 
