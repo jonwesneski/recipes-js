@@ -5,13 +5,22 @@ import {
   type NutritionalFactsDto,
 } from '@repo/recipes-codegen/model'
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
-import { createContext, type ReactNode, useContext, useState } from 'react'
+import {
+  createContext,
+  createRef,
+  type ReactNode,
+  type RefObject,
+  useContext,
+  useState,
+} from 'react'
 
 export type StepsItemsType = {
   id: string
+  ref: RefObject<HTMLDivElement | null>
   ingredients: IngredientsValidator
   instruction: string
 }
+
 export type RecipeType = Omit<CreateRecipeDto, 'steps'> & {
   editEnabled: boolean
   setName: (_value: string) => void
@@ -49,6 +58,7 @@ export const RecipeProvider = ({
   const [steps, _setSteps] = useState<StepsItemsType[]>([
     {
       id: crypto.randomUUID(),
+      ref: createRef<HTMLDivElement>(),
       ingredients: new IngredientsValidator({ dto: [] }),
       instruction: '',
     },
@@ -63,6 +73,7 @@ export const RecipeProvider = ({
       ...v,
       {
         id: crypto.randomUUID(),
+        ref: createRef<HTMLDivElement>(),
         ingredients: new IngredientsValidator({ dto: [] }),
         instruction: '',
       },
@@ -74,6 +85,7 @@ export const RecipeProvider = ({
     const inserts = ingredients.map((i) => {
       return {
         id: crypto.randomUUID(),
+        ref: createRef<HTMLDivElement>(),
         ingredients: i,
         instruction: '',
       }

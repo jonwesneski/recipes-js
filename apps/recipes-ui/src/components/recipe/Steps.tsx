@@ -3,40 +3,77 @@
 import { SharedButton } from '@repo/ui'
 import { useRecipe } from '@src/providers/recipe-provider'
 import { type IngredientsValidator } from '@src/utils/ingredientsValidator'
-import React from 'react'
+import { type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
 export const Steps = () => {
   const { steps, addStep, insertSteps, setIngredients } = useRecipe()
 
-  const handleIngredientValid = (
+  const handleIngredients = (
     index: string,
     ingredients: IngredientsValidator,
   ) => {
     setIngredients(index, ingredients)
   }
 
-  const handleOnPaste = (stepId: string, data: IngredientsValidator[]) => {
-    insertSteps(stepId, data)
+  const handleOnPasteIngredients = (
+    stepId: string,
+    ingredients: IngredientsValidator[],
+  ) => {
+    insertSteps(stepId, ingredients)
+  }
+
+  const handleOnResize = (
+    stepRef: RefObject<HTMLDivElement | null>,
+    height: number,
+  ) => {
+    if (stepRef.current) {
+      stepRef.current.style.height = `${height}px`
+    }
+  }
+
+  const handleOnInstructions = (stepId: string, instructions: string) => {
+    console.log(stepId, instructions)
+  }
+
+  const handleOnPasteInstructions = (
+    stepId: string,
+    instructions: string[],
+  ) => {
+    console.log(stepId, instructions)
   }
 
   return (
     <div>
       {steps.map((s) => {
         return (
-          <React.Fragment key={s.id}>
+          <div
+            ref={s.ref}
+            key={s.id}
+            className="md:grid md:grid-cols-2 md:gap-4"
+          >
             <IngredientsTextArea
               ingredients={s.ingredients.stringValue}
               onTextChange={(ingredients: IngredientsValidator) =>
-                handleIngredientValid(s.id, ingredients)
+                handleIngredients(s.id, ingredients)
               }
               onPaste={(data: IngredientsValidator[]) =>
-                handleOnPaste(s.id, data)
+                handleOnPasteIngredients(s.id, data)
               }
+              onResize={(height: number) => handleOnResize(s.ref, height)}
             />
-            <InstructionsTextArea />
-          </React.Fragment>
+            <InstructionsTextArea
+              instructions=""
+              onTextChange={(instructions: string) =>
+                handleOnInstructions(s.id, instructions)
+              }
+              onPaste={(data: string[]) =>
+                handleOnPasteInstructions(s.id, data)
+              }
+              onResize={(height: number) => handleOnResize(s.ref, height)}
+            />
+          </div>
         )
       })}
       <SharedButton onClick={addStep} text="Add Step" />

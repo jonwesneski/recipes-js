@@ -13,8 +13,8 @@ export const Recipe = (props: RecipeProps) => {
       <div className="[&>*]:block">
         <SharedInput name="recipe" placeHolder="Recipe name" />
         <SharedInput name="description" placeHolder="Short description" />
-        <Steps />
       </div>
+      <Steps />
     </RecipeProvider>
   )
 }

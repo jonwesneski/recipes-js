@@ -7,8 +7,8 @@ import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 interface IngredientsTextAreaProps {
   ingredients: string
   onTextChange: (_ingredients: IngredientsValidator) => void
-  //onTextChangeError: (_error: ZodError<IngredientDto[]>) => void
   onPaste: (_data: IngredientsValidator[]) => void
+  onResize: (_height: number) => void
 }
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const [inputValue, setInputValue] = useState(props.ingredients)
@@ -46,6 +46,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       new IngredientsValidator({ stringValue: event.target.value }),
     )
     setInputValue(event.target.value)
+    handleResize()
   }
 
   const handleMouseUp = (_event: React.MouseEvent<HTMLTextAreaElement>) => {
@@ -59,10 +60,15 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const _handleShowPopUp = () => {
     if (inputRef.current) {
       const rect = inputRef.current.getBoundingClientRect()
-      if (isCaretOnMeasurementColumn()) {
+      const position = getCaretPosition()
+      // is caret in measurement-unit column
+      if (position.column === 1) {
+        const x = rect.width / 6
+        const y = position.row + 1
+        const yMultipler = y * 10
         setPopupPosition({
-          x: rect.left - rect.width * 2,
-          y: rect.height - 5,
+          x: rect.x - x,
+          y: rect.y + yMultipler + 50,
         })
         setIsPopupVisible(true)
       } else {
@@ -73,6 +79,13 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
 
   const handleBlur = () => {
     setIsPopupVisible(false)
+  }
+
+  const handleResize = () => {
+    if (inputRef.current) {
+      inputRef.current.style.overflow = 'hidden'
+      props.onResize(inputRef.current.scrollHeight)
+    }
   }
 
   /* When some pastes in recipes that are already separated by '\r\n\r\n'
@@ -89,13 +102,8 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     )
   }
 
-  const isCaretOnMeasurementColumn = () => {
-    const position = getCaretPosition()
-    return position.column === 1
-  }
-
   return (
-    <div style={{ position: 'relative' }}>
+    <>
       <textarea
         value={inputValue}
         onChange={handleInputChange}
@@ -104,7 +112,12 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         onBlur={handleBlur}
         onPaste={handleOnPaste}
         ref={inputRef}
-        style={{ padding: '10px', border: '1px solid #ccc' }}
+        style={{
+          padding: '10px',
+          border: '1px solid #ccc',
+          resize: 'none',
+          height: '100%',
+        }}
       />
       {isPopupVisible && (
         <IngredientsMeasurementPopUp
@@ -112,6 +125,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
           left={popupPosition.x}
         />
       )}
-    </div>
+    </>
   )
 }
