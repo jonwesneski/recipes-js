@@ -1,7 +1,7 @@
 import { type IngredientEntity } from '@repo/recipes-codegen/models'
+import { ModalStoreProvider } from '@repo/ui'
 import { render } from '@testing-library/react'
 import React from 'react'
-import { ModalStoreProvider } from '../../../../../providers/modal-store-provider'
 import { UserStoreProvider } from '../../../../../providers/use-store-provider'
 import { IngredientList } from './IngredientList'
 
