@@ -16,6 +16,7 @@ datasource db {
 
 enum MeasurementUnit {
   whole
+  pinches
   cups // Imperial Volume
   fluidOunces
   tablespoons
@@ -32,17 +33,22 @@ enum MeasurementUnit {
 }
 
 model User {
-  id        String         @id @default(cuid())
-  name      String
-  email     String         @unique
-  handle    String         @unique
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  recipes   Recipe[]
-  favorites UserFavorite[]
+  id           String            @id @default(cuid())
+  name         String
+  email        String            @unique
+  handle       String            @unique
+  useFractions Boolean           @default(false)
+  useImperial  Boolean           @default(false)
+  useDarkMode  Boolean           @default(false)
+  diet         NutritionalFacts? @relation(fields: [nutritionalFactsId], references: [id])
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  recipes      Recipe[]
+  favorites    UserFavorite[]
 
-  Followers  UserFollow[] @relation("UserFollows")
-  Followings UserFollow[] @relation("UserFollowings")
+  Followers          UserFollow[] @relation("UserFollows")
+  Followings         UserFollow[] @relation("UserFollowings")
+  nutritionalFactsId String?
 
   @@map("users")
 }
@@ -127,6 +133,7 @@ model NutritionalFacts {
   recipeUserHandle String
   recipeSlug       String
   Recipe           Recipe           @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
+  User             User[]
 
   @@unique([recipeUserHandle, recipeSlug])
   @@map("nutritional_facts")

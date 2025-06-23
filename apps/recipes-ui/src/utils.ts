@@ -3,6 +3,8 @@ import { IngredientEntityUnit } from '@repo/recipes-codegen/models';
 export const measurementUnits = Object.keys(IngredientEntityUnit);
 export const measurementUnitsAbbreviated: Record<IngredientEntityUnit, string> =
   {
+    whole: 'whole',
+    pinches: 'pinch',
     cups: 'cups',
     tablespoons: 'tbs',
     teaspoons: 'tsp',
@@ -16,9 +18,10 @@ export const measurementUnitsAbbreviated: Record<IngredientEntityUnit, string> =
     kilograms: 'kg',
     milliliters: 'ml',
     liters: 'L',
-    whole: 'whole',
   };
 export const measurementUnitsSingular: Record<IngredientEntityUnit, string> = {
+  whole: 'whole',
+  pinches: 'pinch',
   cups: 'cup',
   tablespoons: 'tablespoon',
   teaspoons: 'teaspoon',
@@ -32,7 +35,6 @@ export const measurementUnitsSingular: Record<IngredientEntityUnit, string> = {
   kilograms: 'kilogram',
   milliliters: 'millilter',
   liters: 'liter',
-  whole: 'whole',
 };
 
 const IMPERIAL_VOLUME_CONVERSIONS = {
