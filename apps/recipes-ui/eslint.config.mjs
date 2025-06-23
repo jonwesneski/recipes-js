@@ -35,8 +35,13 @@ export default [
       '@typescript-eslint/naming-convention': 'off',
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
+      'import/order': 'off', // prettier orders how it feels like, and sometimes certain imports need to happen first
+      'no-console': 'off',
+      'prefer-named-capture-group': 'off',
       'react/hook-use-state': 'off',
-      'no-console': 'warn'
+      'react/jsx-curly-brace-presence': 'off',
+      'react-hooks/exhaustive-deps': 'off', // Getting a version incompatibility issue with this for now
+
     }
   },
 ];

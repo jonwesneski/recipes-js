@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { throwIfConflict, throwIfNotFound } from 'src/common';
 import { CreateRecipeDto, RecipeEntity } from './contracts';
@@ -42,6 +42,7 @@ export class RecipesController {
   }
 
   @Post()
+  @ApiBody({ type: CreateRecipeDto })
   @UseGuards(JwtGuard)
   async createRecipe(@Body() body: CreateRecipeDto): Promise<RecipeEntity> {
     try {

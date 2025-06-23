@@ -1,11 +1,12 @@
 'use client'
 
+import { type CreateRecipeDto } from '@repo/recipes-codegen/models'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/recipes-codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/recipes-codegen/tags'
-import { SharedButton, SharedInput } from '@repo/ui'
+import { SharedButton } from '@repo/ui'
+import { Recipe } from '@src/components/Recipe'
 import { useEffect, useState } from 'react'
 import { useAuthentication } from '../../providers/authentication-provider'
-import { CreateSteps } from './_components/CreateSteps'
 
 const Page = () => {
   const { accessToken } = useAuthentication()
@@ -22,7 +23,7 @@ const Page = () => {
 
   const handleSubmit = () => {
     mutate(
-      { data: {} },
+      { data: {} as CreateRecipeDto },
       {
         onSuccess: () => undefined,
         onError: () => undefined,
@@ -46,9 +47,8 @@ const Page = () => {
   return (
     <div className="flex justify-center">
       <div className="create-recipe">
-        <SharedInput name="recipe" placeHolder="Recipe name" />
-        <SharedInput name="description" placeHolder="Short description" />
-        <CreateSteps />
+        {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
+        <Recipe editable={true} />
         <SharedButton text="submit" onClick={() => handleSubmit()} />
       </div>
     </div>

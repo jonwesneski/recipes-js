@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-leaked-render -- will add is loading state */
 'use client'
 
 import type { RecipeEntity } from '@repo/recipes-codegen/models'

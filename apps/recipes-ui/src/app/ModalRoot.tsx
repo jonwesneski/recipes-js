@@ -14,7 +14,7 @@ export const ModalRoot = () => {
           left: 0,
           pointerEvents: 'none',
         }}
-      ></div>
+      />
       {modal?.portal}
     </>
   )
