@@ -2,15 +2,12 @@
 
 import { SharedButton } from '@repo/ui'
 import { useRecipe } from '@src/providers/recipe-provider'
-import { IngredientsValidator } from '@src/utils/ingredientsValidator'
+import { type IngredientsValidator } from '@src/utils/ingredientsValidator'
 import React from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
-interface StepsProps {
-  editable: boolean
-}
-export const Steps = (props: StepsProps) => {
+export const Steps = () => {
   const { steps, addStep, insertSteps, setIngredients } = useRecipe()
 
   const handleIngredientValid = (

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-confusing-void-expression, no-unused-vars -- its fine zustand */
+/* eslint-disable no-unused-vars -- its fine zustand */
 import { type NutritionalFactsDto } from '@repo/recipes-codegen/model';
 import { createStore } from 'zustand/vanilla';
 

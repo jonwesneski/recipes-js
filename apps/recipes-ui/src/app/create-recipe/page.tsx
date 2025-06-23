@@ -52,7 +52,7 @@ const Page = () => {
     <div className="flex justify-center">
       <div className="create-recipe">
         {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
-        <Recipe editable={true} />
+        <Recipe editEnabled={true} />
         <SharedButton text="submit" onClick={() => handleSubmit()} />
       </div>
     </div>

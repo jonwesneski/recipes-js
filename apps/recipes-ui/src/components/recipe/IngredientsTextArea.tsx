@@ -6,9 +6,9 @@ import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 interface IngredientsTextAreaProps {
   ingredients: string
-  onTextChange: (ingredients: IngredientsValidator) => void
+  onTextChange: (_ingredients: IngredientsValidator) => void
   //onTextChangeError: (_error: ZodError<IngredientDto[]>) => void
-  onPaste: (data: IngredientsValidator[]) => void
+  onPaste: (_data: IngredientsValidator[]) => void
 }
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const [inputValue, setInputValue] = useState(props.ingredients)
@@ -61,8 +61,8 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       const rect = inputRef.current.getBoundingClientRect()
       if (isCaretOnMeasurementColumn()) {
         setPopupPosition({
-          x: rect.x - 150,
-          y: rect.y,
+          x: rect.left - rect.width * 2,
+          y: rect.height - 5,
         })
         setIsPopupVisible(true)
       } else {
@@ -80,7 +80,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
    */
   const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
     event.preventDefault()
-    const data = event.clipboardData?.getData('text/plain').split('\r\n\r\n')
+    const data = event.clipboardData.getData('text/plain').split('\r\n\r\n')
     // Set input for first, pass the rest to be populated later
     setInputValue(data[0])
     props.onTextChange(new IngredientsValidator({ stringValue: data[0] }))

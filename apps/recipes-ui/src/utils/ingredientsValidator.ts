@@ -1,6 +1,6 @@
-import { IngredientDto } from '@repo/recipes-codegen/model';
+import { type IngredientDto } from '@repo/recipes-codegen/model';
 import { ingredientsListSchema } from '@src/zod-schemas';
-import { ZodError } from 'zod/v4';
+import { type ZodError } from 'zod/v4';
 
 export class IngredientsValidator {
   public stringValue: string;
@@ -13,7 +13,7 @@ export class IngredientsValidator {
         params.stringValue.split('\n').map((l) => l.split(' ')),
       );
       this.error = result.error;
-      this.dto = result.data || [];
+      this.dto = result.data ?? [];
     } else if (params.dto) {
       this.dto = params.dto;
       this.stringValue = this.dto
