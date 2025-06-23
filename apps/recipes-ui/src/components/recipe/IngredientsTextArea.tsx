@@ -82,7 +82,10 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleResize = () => {
-    if (inputRef.current) {
+    if (
+      inputRef.current &&
+      inputRef.current.clientHeight < inputRef.current.scrollHeight
+    ) {
       inputRef.current.style.overflow = 'hidden'
       props.onResize(inputRef.current.scrollHeight)
     }
