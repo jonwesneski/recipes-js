@@ -45,7 +45,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     props.onTextChange(
       new IngredientsValidator({ stringValue: event.target.value }),
     )
-    //setInputValue(event.target.value)
+    setInputValue(event.target.value)
     handleResize()
   }
 
@@ -101,16 +101,29 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       ? stringData.split('\r\n\r\n')
       : stringData.split('\n\n')
     // Set input for first, pass the rest to be populated later
-    //setInputValue(data[0])
-    setInputValue(JSON.stringify({ stringData }))
-    //props.onTextChange(new IngredientsValidator({ stringValue: data[0] }))
+    setInputValue(data[0])
+    props.onTextChange(new IngredientsValidator({ stringValue: data[0] }))
     props.onPaste(
       data.slice(1).map((d) => new IngredientsValidator({ stringValue: d })),
     )
   }
 
   const handleOnInput = (event: React.InputEvent<HTMLTextAreaElement>) => {
-    setInputValue(event.nativeEvent.inputType)
+    if (
+      event.nativeEvent.inputType === 'insertText' &&
+      event.nativeEvent.data &&
+      event.nativeEvent.data.length > 1
+    ) {
+      // This might have been pasted from some mobile phones like
+      // android keyboard (which doesn't fire onPaste) so calling it
+      // explicitly here
+      event.preventDefault()
+      handleOnPaste({
+        clipboardData: {
+          getData: (_format: string) => event.nativeEvent.data!,
+        },
+      } as React.ClipboardEvent<HTMLTextAreaElement>)
+    }
   }
 
   return (
