@@ -120,7 +120,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       event.preventDefault()
       handleOnPaste({
         clipboardData: {
-          getData: (_format: string) => event.nativeEvent.data!,
+          getData: (_format: string) => event.nativeEvent.data,
         },
       } as React.ClipboardEvent<HTMLTextAreaElement>)
     }
