@@ -113,7 +113,8 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       Object.getPrototypeOf(event.nativeEvent),
     )
 
-    const obj: { [x in string]: any } = {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- f
+    const obj: Record<string, any> = {}
     for (const key in descriptors) {
       if (descriptors[key].get) {
         obj[key] = event.nativeEvent[key as never]
