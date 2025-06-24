@@ -101,7 +101,8 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       ? stringData.split('\r\n\r\n')
       : stringData.split('\n\n')
     // Set input for first, pass the rest to be populated later
-    setInputValue(data[0])
+    //setInputValue(data[0])
+    setInputValue(JSON.stringify({ stringData }))
     props.onTextChange(new IngredientsValidator({ stringValue: data[0] }))
     props.onPaste(
       data.slice(1).map((d) => new IngredientsValidator({ stringValue: d })),
