@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-confusing-void-expression, no-unused-vars -- its fine zustand */
+/* eslint-disable @typescript-eslint/no-confusing-void-expression, no-unused-vars, @typescript-eslint/consistent-type-definitions -- its fine zustand */
 import type { ReactPortal } from 'react';
 import { createStore } from 'zustand/vanilla';
 

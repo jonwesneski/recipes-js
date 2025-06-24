@@ -1,5 +1,6 @@
 'use client'
 
+import { TextArea } from '@repo/ui'
 import { useRef, useState } from 'react'
 
 interface IngredientsTextAreaProps {
@@ -15,30 +16,14 @@ export const InstructionsTextArea = (props: IngredientsTextAreaProps) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value)
-    handleResize()
-  }
-
-  const handleResize = () => {
-    if (
-      inputRef.current &&
-      inputRef.current.clientHeight < inputRef.current.scrollHeight
-    ) {
-      inputRef.current.style.overflow = 'hidden'
-      props.onResize(inputRef.current.scrollHeight)
-    }
   }
 
   return (
-    <textarea
+    <TextArea
+      ref={inputRef}
       value={inputValue}
       onChange={handleInputChange}
-      ref={inputRef}
-      style={{
-        padding: '10px',
-        border: '1px solid #ccc',
-        resize: 'none',
-        height: '100%',
-      }}
+      onResize={props.onResize}
     />
   )
 }

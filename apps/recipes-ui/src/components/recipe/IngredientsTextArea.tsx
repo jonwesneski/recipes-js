@@ -1,5 +1,6 @@
 'use client'
 
+import { TextArea } from '@repo/ui'
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import { useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
@@ -46,7 +47,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       new IngredientsValidator({ stringValue: event.target.value }),
     )
     setInputValue(event.target.value)
-    handleResize()
   }
 
   const handleMouseUp = (_event: React.MouseEvent<HTMLTextAreaElement>) => {
@@ -81,16 +81,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     setIsPopupVisible(false)
   }
 
-  const handleResize = () => {
-    if (
-      inputRef.current &&
-      inputRef.current.clientHeight < inputRef.current.scrollHeight
-    ) {
-      inputRef.current.style.overflow = 'hidden'
-      props.onResize(inputRef.current.scrollHeight)
-    }
-  }
-
   /* When some pastes in recipes that are already separated by '\r\n\r\n'
    * we will add new steps for them
    */
@@ -121,6 +111,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         obj[`${key}TYPE`] = typeof event.nativeEvent[key as never]
       }
     }
+    console.log(JSON.stringify(obj))
     // console.log(
     //   JSON.stringify({
     //     ...obj,
@@ -128,31 +119,25 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     //     INSERTDATA: event.nativeEvent.data,
     //   }),
     // )
-    if (
-      event.nativeEvent.inputType === 'insertText' &&
-      (event.nativeEvent.data === '\r\n' || event.nativeEvent.data === '\n\n')
-    ) {
+    if (event.nativeEvent.inputType === 'insertLineBreak') {
       // This might have been pasted from some mobile phones like
       // android keyboard (which doesn't fire onPaste) so calling it
       // explicitly here
-      event.preventDefault()
-
-      //setInputValue(event.nativeEvent.data)
-      // props.onTextChange(
-      //   new IngredientsValidator({ stringValue: event.nativeEvent.data }),
+      // const end1 = event.currentTarget.textContent?.slice(-4) || ''
+      // const end2 = event.currentTarget.textContent?.slice(-2) || ''
+      // if (end1 === '\r\n' || end2 === '\n') {
+      //   event.preventDefault()
+      //   props.onPaste([new IngredientsValidator({ stringValue: '' })])
+      // }
+      // console.log(
+      //   JSON.stringify({ inputValue: event.currentTarget.textContent }),
       // )
-      props.onPaste([new IngredientsValidator({ stringValue: '' })])
-      // handleOnPaste({
-      //   clipboardData: {
-      //     getData: (_format: string) => event.nativeEvent.data,
-      //   },
-      // } as React.ClipboardEvent<HTMLTextAreaElement>)
     }
   }
 
   return (
     <>
-      <textarea
+      <TextArea
         value={inputValue}
         onChange={handleInputChange}
         onMouseUp={handleMouseUp}
@@ -160,13 +145,8 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         onBlur={handleBlur}
         onPaste={handleOnPaste}
         onInput={handleOnInput}
+        onResize={props.onResize}
         ref={inputRef}
-        style={{
-          padding: '10px',
-          border: '1px solid #ccc',
-          resize: 'none',
-          height: '100%',
-        }}
       />
       {isPopupVisible && (
         <IngredientsMeasurementPopUp
