@@ -45,7 +45,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     props.onTextChange(
       new IngredientsValidator({ stringValue: event.target.value }),
     )
-    setInputValue(event.target.value)
+    //setInputValue(event.target.value)
     handleResize()
   }
 
@@ -109,6 +109,31 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleOnInput = (event: React.InputEvent<HTMLTextAreaElement>) => {
+    const descriptors = Object.getOwnPropertyDescriptors(
+      Object.getPrototypeOf(event.nativeEvent),
+    )
+
+    const obj: { [x in string]: any } = {}
+    for (const key in descriptors) {
+      if (descriptors[key].get) {
+        obj[key] = event.nativeEvent[key as never]
+        obj[`${key}TYPE`] = typeof event.nativeEvent[key as never]
+      }
+    }
+    // console.log(
+    //   JSON.stringify({
+    //     ...obj,
+    //     ISINSERT: event.nativeEvent.inputType === 'insertText',
+    //     INSERTDATA: event.nativeEvent.data,
+    //   }),
+    // )
+    setInputValue(
+      JSON.stringify({
+        ...obj,
+        ISINSERT: event.nativeEvent.inputType === 'insertText',
+        INSERTDATA: event.nativeEvent.data,
+      }),
+    )
     if (
       event.nativeEvent.inputType === 'insertText' &&
       event.nativeEvent.data &&
