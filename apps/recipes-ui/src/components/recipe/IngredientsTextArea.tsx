@@ -1,7 +1,7 @@
 'use client'
 
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 interface IngredientsTextAreaProps {
@@ -45,7 +45,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     props.onTextChange(
       new IngredientsValidator({ stringValue: event.target.value }),
     )
-    //setInputValue(event.target.value)
+    setInputValue(event.target.value)
     handleResize()
   }
 
@@ -128,13 +128,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     //     INSERTDATA: event.nativeEvent.data,
     //   }),
     // )
-    setInputValue(
-      JSON.stringify({
-        ...obj,
-        ISINSERT: event.nativeEvent.inputType === 'insertText',
-        INSERTDATA: event.nativeEvent.data,
-      }),
-    )
     if (
       event.nativeEvent.inputType === 'insertText' &&
       event.nativeEvent.data &&
@@ -151,6 +144,16 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       } as React.ClipboardEvent<HTMLTextAreaElement>)
     }
   }
+
+  useEffect(() => {
+    if (inputValue.includes('\r\n\r\n') || inputValue.includes('\n\n')) {
+      handleOnPaste({
+        clipboardData: {
+          getData: (_format: string) => inputValue,
+        },
+      } as React.ClipboardEvent<HTMLTextAreaElement>)
+    }
+  }, [inputValue])
 
   return (
     <>
