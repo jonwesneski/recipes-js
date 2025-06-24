@@ -1,7 +1,7 @@
 'use client'
 
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 interface IngredientsTextAreaProps {
@@ -149,16 +149,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       // } as React.ClipboardEvent<HTMLTextAreaElement>)
     }
   }
-
-  useEffect(() => {
-    if (inputValue.includes('\r\n\r\n') || inputValue.includes('\n\n')) {
-      handleOnPaste({
-        clipboardData: {
-          getData: (_format: string) => inputValue,
-        },
-      } as React.ClipboardEvent<HTMLTextAreaElement>)
-    }
-  }, [inputValue])
 
   return (
     <>
