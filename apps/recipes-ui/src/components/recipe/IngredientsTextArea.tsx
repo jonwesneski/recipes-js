@@ -130,18 +130,23 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     // )
     if (
       event.nativeEvent.inputType === 'insertText' &&
-      event.nativeEvent.data &&
-      event.nativeEvent.data.length > 1
+      (event.nativeEvent.data === '\r\n' || event.nativeEvent.data === '\n\n')
     ) {
       // This might have been pasted from some mobile phones like
       // android keyboard (which doesn't fire onPaste) so calling it
       // explicitly here
       event.preventDefault()
-      handleOnPaste({
-        clipboardData: {
-          getData: (_format: string) => event.nativeEvent.data,
-        },
-      } as React.ClipboardEvent<HTMLTextAreaElement>)
+
+      //setInputValue(event.nativeEvent.data)
+      // props.onTextChange(
+      //   new IngredientsValidator({ stringValue: event.nativeEvent.data }),
+      // )
+      props.onPaste([new IngredientsValidator({ stringValue: '' })])
+      // handleOnPaste({
+      //   clipboardData: {
+      //     getData: (_format: string) => event.nativeEvent.data,
+      //   },
+      // } as React.ClipboardEvent<HTMLTextAreaElement>)
     }
   }
 
