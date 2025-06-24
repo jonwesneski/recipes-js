@@ -96,6 +96,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
    */
   const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
     event.preventDefault()
+    setTest(JSON.stringify({ d: event.clipboardData.getData('text/plain') }))
     const data = event.clipboardData.getData('text/plain').split('\r\n\r\n')
     // Set input for first, pass the rest to be populated later
     setInputValue(data[0])
@@ -105,8 +106,10 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     )
   }
 
+  const [test, setTest] = useState('')
   return (
     <>
+      <p>{test}</p>
       <textarea
         value={inputValue}
         onChange={handleInputChange}
