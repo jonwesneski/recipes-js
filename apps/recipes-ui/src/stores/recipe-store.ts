@@ -30,13 +30,22 @@ export type RecipeActions = {
   setCookingTimeInMinutes: (_value: number) => void;
   addStep: () => void;
   insertIngredientsSteps: (
-    _stepId: string,
+    ref: RefObject<HTMLTextAreaElement | null>,
     _ingredients: IngredientsValidator[],
   ) => void;
-  insertInstructionsSteps: (_stepId: string, _instructions: string[]) => void;
+  insertInstructionsSteps: (
+    ref: RefObject<HTMLTextAreaElement | null>,
+    _instructions: string[],
+  ) => void;
   removeStep: (_stepId: string) => void;
-  setIngredients: (_stepId: string, _ingredients: IngredientsValidator) => void;
-  setInstructions: (_stepId: string, _instructions: string) => void;
+  setIngredients: (
+    ref: RefObject<HTMLTextAreaElement | null>,
+    _ingredients: IngredientsValidator,
+  ) => void;
+  setInstructions: (
+    ref: RefObject<HTMLTextAreaElement | null>,
+    _instructions: string,
+  ) => void;
   shouldBeFocused: (ref: RefObject<HTMLTextAreaElement | null>) => boolean;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
@@ -100,20 +109,23 @@ export const createRecipeStore = (
         return {};
       });
     },
-    setIngredients: (stepId: string, ingredients: IngredientsValidator) =>
+    setIngredients: (
+      ref: RefObject<HTMLTextAreaElement | null>,
+      ingredients: IngredientsValidator,
+    ) =>
       set((state) => {
-        const index = state.steps.findIndex((s) => s.id === stepId);
+        const index = state.steps.findIndex((s) => s.ingredientsRef === ref);
         if (index !== -1) {
           state.steps[index].ingredients = ingredients;
         }
         return { steps: [...state.steps] };
       }),
     insertIngredientsSteps: (
-      stepId: string,
+      ref: RefObject<HTMLTextAreaElement | null>,
       ingredients: IngredientsValidator[],
     ) =>
       set((state) => {
-        let index = state.steps.findIndex((s) => s.id === stepId);
+        let index = state.steps.findIndex((s) => s.ingredientsRef === ref);
         const inserts = ingredients.map((i) =>
           createStepItem({ ingredients: i }),
         );
@@ -142,17 +154,23 @@ export const createRecipeStore = (
         }
         return { steps: [...current, ...inserts] };
       }),
-    setInstructions: (stepId: string, instructions: string) =>
+    setInstructions: (
+      ref: RefObject<HTMLTextAreaElement | null>,
+      instructions: string,
+    ) =>
       set((state) => {
-        const index = state.steps.findIndex((s) => s.id === stepId);
+        const index = state.steps.findIndex((s) => s.instructionsRef === ref);
         if (index !== -1) {
           state.steps[index].instructions = instructions;
         }
         return { steps: [...state.steps] };
       }),
-    insertInstructionsSteps: (stepId: string, instructions: string[]) =>
+    insertInstructionsSteps: (
+      ref: RefObject<HTMLTextAreaElement | null>,
+      instructions: string[],
+    ) =>
       set((state) => {
-        let index = state.steps.findIndex((s) => s.id === stepId);
+        let index = state.steps.findIndex((s) => s.instructionsRef === ref);
         const inserts = instructions.map((i) =>
           createStepItem({ instructions: i }),
         );

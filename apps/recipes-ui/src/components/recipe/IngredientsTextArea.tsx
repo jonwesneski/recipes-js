@@ -1,28 +1,29 @@
 'use client'
 
 import { TextArea } from '@repo/ui'
-import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import { type RefObject, useEffect, useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLTextAreaElement | null>
-  ingredients: string
-  onTextChange: (_ingredients: IngredientsValidator) => void
-  onPaste: (_data: IngredientsValidator[]) => void
   onResize: (_height: number) => void
 }
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
-  const [inputValue, setInputValue] = useState(props.ingredients)
   const [isPopupVisible, setIsPopupVisible] = useState(false)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
   let textAreaRef = useRef<HTMLTextAreaElement>(null)
   textAreaRef = props.ref ?? textAreaRef
-  const { shouldBeFocused } = useRecipeStore((state) => state)
+  const {
+    ingredients,
+    setIngredients,
+    shouldBeFocused,
+    insertIngredientsSteps,
+  } = useRecipeStepIngredientsStore(textAreaRef)
 
   useEffect(() => {
-    if (textAreaRef.current && shouldBeFocused(textAreaRef)) {
+    if (textAreaRef.current && shouldBeFocused) {
       textAreaRef.current.focus()
       textAreaRef.current.setSelectionRange(
         textAreaRef.current.value.length,
@@ -57,10 +58,9 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    props.onTextChange(
+    setIngredients(
       new IngredientsValidator({ stringValue: event.target.value }),
     )
-    setInputValue(event.target.value)
   }
 
   const handleMouseUp = (_event: React.MouseEvent<HTMLTextAreaElement>) => {
@@ -104,7 +104,9 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     const data = stringData.includes('\r')
       ? stringData.split('\r\n\r\n')
       : stringData.split('\n\n')
-    props.onPaste(data.map((d) => new IngredientsValidator({ stringValue: d })))
+    insertIngredientsSteps(
+      data.map((d) => new IngredientsValidator({ stringValue: d })),
+    )
   }
 
   const handleOnInput = (event: React.InputEvent<HTMLTextAreaElement>) => {
@@ -147,7 +149,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   return (
     <>
       <TextArea
-        value={inputValue}
+        value={ingredients?.stringValue}
         onChange={handleInputChange}
         onMouseUp={handleMouseUp}
         onTouchEnd={handleTouchEnd}

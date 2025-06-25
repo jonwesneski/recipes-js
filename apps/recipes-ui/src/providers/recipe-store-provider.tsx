@@ -5,7 +5,14 @@ import {
   createRecipeStore,
   defaultInitState,
 } from '@src/stores/recipe-store'
-import { type ReactNode, createContext, useContext, useRef } from 'react'
+import { type IngredientsValidator } from '@src/utils/ingredientsValidator'
+import {
+  type ReactNode,
+  type RefObject,
+  createContext,
+  useContext,
+  useRef,
+} from 'react'
 import { useStore } from 'zustand'
 
 export type RecipeStoreApi = ReturnType<typeof createRecipeStore>
@@ -41,4 +48,44 @@ export const useRecipeStore = <T,>(selector: (_store: RecipeStore) => T): T => {
     )
   }
   return useStore(store, selector)
+}
+
+export const useRecipeStepIngredientsStore = (
+  ref: RefObject<HTMLTextAreaElement | null>,
+) => {
+  const {
+    steps,
+    setIngredients: _stepIngredients,
+    insertIngredientsSteps: _insertIngredientsSteps,
+  } = useRecipeStore((state) => state)
+  const step = steps.find((s) => s.ingredientsRef === ref)
+  return {
+    ingredients: step?.ingredients,
+    ingredientsRef: step?.ingredientsRef,
+    shouldBeFocused: step?.shouldIngredientsBeFocused,
+    setIngredients: (ingredients: IngredientsValidator) =>
+      _stepIngredients(ref, ingredients),
+    insertIngredientsSteps: (ingredients: IngredientsValidator[]) =>
+      _insertIngredientsSteps(ref, ingredients),
+  }
+}
+
+export const useRecipeStepInstructionsStore = (
+  ref: RefObject<HTMLTextAreaElement | null>,
+) => {
+  const {
+    steps,
+    setInstructions: _stepInstructions,
+    insertInstructionsSteps: _insertInstructionsSteps,
+  } = useRecipeStore((state) => state)
+  const step = steps.find((s) => s.instructionsRef === ref)
+  return {
+    instructions: step?.instructions,
+    instructionsRef: step?.instructionsRef,
+    shouldBeFocused: step?.shouldInstructionsBeFocused,
+    setInstructions: (instructions: string) =>
+      _stepInstructions(ref, instructions),
+    insertInstructionsSteps: (instructions: string[]) =>
+      _insertInstructionsSteps(ref, instructions),
+  }
 }
