@@ -11,8 +11,8 @@ export const Recipe = (props: RecipeProps) => {
   return (
     <RecipeStoreProvider initialState={{ editEnabled: props.editEnabled }}>
       <div className="[&>*]:block">
-        <SharedInput name="recipe" placeHolder="Recipe name" />
-        <SharedInput name="description" placeHolder="Short description" />
+        <SharedInput name="recipe" placeholder="Recipe name" />
+        <SharedInput name="description" placeholder="Short description" />
       </div>
       <Steps />
     </RecipeStoreProvider>
