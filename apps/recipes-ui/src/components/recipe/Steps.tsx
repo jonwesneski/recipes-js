@@ -2,7 +2,7 @@
 
 import { SharedButton } from '@repo/ui'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import { useEffect, type RefObject } from 'react'
+import { type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
@@ -17,10 +17,6 @@ export const Steps = () => {
       stepRef.current.style.height = `${height}px`
     }
   }
-
-  useEffect(() => {
-    console.log(steps)
-  }, [steps])
 
   return (
     <div>

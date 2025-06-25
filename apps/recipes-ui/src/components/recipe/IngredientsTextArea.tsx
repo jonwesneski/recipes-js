@@ -158,6 +158,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         onInput={handleOnInput}
         onResize={props.onResize}
         ref={textAreaRef}
+        data-testid="ingredients-text-area"
       />
       {isPopupVisible ? (
         <IngredientsMeasurementPopUp

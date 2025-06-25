@@ -51,6 +51,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
       onChange={handleInputChange}
       onResize={props.onResize}
       onPaste={handleOnPaste}
+      data-testid="instructions-text-area"
     />
   )
 }

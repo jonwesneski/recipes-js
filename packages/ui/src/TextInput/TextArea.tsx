@@ -25,7 +25,7 @@ export const TextArea = (props: TextAreaProps) => {
 
   const handleResize = () => {
     if (
-      props.ref.current &&
+      props.ref?.current &&
       props.ref.current.clientHeight < props.ref.current.scrollHeight
     ) {
       props.ref.current.style.overflow = 'hidden'
