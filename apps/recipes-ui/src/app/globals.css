@@ -16,6 +16,6 @@ code {
     monospace;
 }
 
-.create-recipe > input {
+.single-recipe > input {
   display: block;
 }

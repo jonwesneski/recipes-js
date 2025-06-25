@@ -1,8 +1,10 @@
 'use client'
 
 import '@repo/design-system/styles.css'
+import { ModalRoot, ModalStoreProvider } from '@repo/ui'
 import '@repo/ui/styles.css'
 import { AuthenticationProvider } from '@src/providers/authentication-provider'
+import { UserStoreProvider } from '@src/providers/use-store-provider'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './globals.css'
 
@@ -28,7 +30,12 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           <div id="root">
             <AuthenticationProvider>
               <QueryClientProvider client={queryClient}>
-                {children}
+                <UserStoreProvider>
+                  <ModalStoreProvider>
+                    {children}
+                    <ModalRoot />
+                  </ModalStoreProvider>
+                </UserStoreProvider>
               </QueryClientProvider>
             </AuthenticationProvider>
           </div>
