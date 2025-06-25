@@ -1,6 +1,7 @@
 'use client'
 
 import { TextArea } from '@repo/ui'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { type RefObject, useEffect, useRef, useState } from 'react'
 
 interface InstructionsTextAreaProps {
@@ -13,11 +14,12 @@ interface InstructionsTextAreaProps {
 }
 export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
   const [inputValue, setInputValue] = useState(props.instructions)
+  const { shouldBeFocused } = useRecipeStore((state) => state)
   let textAreaRef = useRef<HTMLTextAreaElement>(null)
   textAreaRef = props.ref ?? textAreaRef
 
   useEffect(() => {
-    if (textAreaRef.current) {
+    if (textAreaRef.current && shouldBeFocused(textAreaRef)) {
       textAreaRef.current.focus()
       textAreaRef.current.setSelectionRange(
         textAreaRef.current.value.length,
@@ -39,10 +41,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
     const data = stringData.includes('\r')
       ? stringData.split('\r\n\r\n')
       : stringData.split('\n\n')
-    // Set input for first, pass the rest to be populated later
-    setInputValue(data[0])
-    props.onTextChange(data[0])
-    props.onPaste(data.slice(1))
+    props.onPaste(data)
   }
 
   return (

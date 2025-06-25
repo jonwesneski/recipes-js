@@ -1,6 +1,7 @@
 'use client'
 
 import { TextArea } from '@repo/ui'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import { type RefObject, useEffect, useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
@@ -15,12 +16,16 @@ interface IngredientsTextAreaProps {
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const [inputValue, setInputValue] = useState(props.ingredients)
   const [isPopupVisible, setIsPopupVisible] = useState(false)
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
+  const [popupPosition, setPopupPosition] = useState({
+    x: 0,
+    y: 0,
+  })
   let textAreaRef = useRef<HTMLTextAreaElement>(null)
   textAreaRef = props.ref ?? textAreaRef
+  const { shouldBeFocused } = useRecipeStore((state) => state)
 
   useEffect(() => {
-    if (textAreaRef.current) {
+    if (textAreaRef.current && shouldBeFocused(textAreaRef)) {
       textAreaRef.current.focus()
       textAreaRef.current.setSelectionRange(
         textAreaRef.current.value.length,
@@ -102,12 +107,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     const data = stringData.includes('\r')
       ? stringData.split('\r\n\r\n')
       : stringData.split('\n\n')
-    // Set input for first, pass the rest to be populated later
-    setInputValue(data[0])
-    props.onTextChange(new IngredientsValidator({ stringValue: data[0] }))
-    props.onPaste(
-      data.slice(1).map((d) => new IngredientsValidator({ stringValue: d })),
-    )
+    props.onPaste(data.map((d) => new IngredientsValidator({ stringValue: d })))
   }
 
   const handleOnInput = (event: React.InputEvent<HTMLTextAreaElement>) => {
@@ -160,12 +160,12 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         onResize={props.onResize}
         ref={textAreaRef}
       />
-      {isPopupVisible && (
+      {isPopupVisible ? (
         <IngredientsMeasurementPopUp
           top={popupPosition.y}
           left={popupPosition.x}
         />
-      )}
+      ) : null}
     </>
   )
 }

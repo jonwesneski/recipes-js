@@ -1,9 +1,9 @@
 'use client'
 
 import { SharedButton } from '@repo/ui'
-import { useRecipe } from '@src/providers/recipe-provider'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { type IngredientsValidator } from '@src/utils/ingredientsValidator'
-import { type RefObject } from 'react'
+import { useEffect, type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
@@ -15,7 +15,7 @@ export const Steps = () => {
     setInstructions,
     insertIngredientsSteps,
     insertInstructionsSteps,
-  } = useRecipe()
+  } = useRecipeStore((state) => state)
 
   const handleOnIngredients = (
     stepId: string,
@@ -51,6 +51,10 @@ export const Steps = () => {
     insertInstructionsSteps(stepId, instructions)
   }
 
+  useEffect(() => {
+    console.log(steps)
+  }, [steps])
+
   return (
     <div>
       {steps.map((s) => {
@@ -61,7 +65,7 @@ export const Steps = () => {
             className="md:grid md:grid-cols-2 md:gap-4"
           >
             <IngredientsTextArea
-              ref={s.ingredientRef}
+              ref={s.ingredientsRef}
               ingredients={s.ingredients.stringValue}
               onTextChange={(ingredients: IngredientsValidator) =>
                 handleOnIngredients(s.id, ingredients)
