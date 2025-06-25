@@ -1,7 +1,7 @@
 'use client'
 
 import { SharedInput } from '@repo/ui'
-import { RecipeProvider } from '@src/providers/recipe-provider'
+import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { Steps } from './Steps'
 
 interface RecipeProps {
@@ -9,12 +9,12 @@ interface RecipeProps {
 }
 export const Recipe = (props: RecipeProps) => {
   return (
-    <RecipeProvider enableEdit={props.editEnabled}>
+    <RecipeStoreProvider initialState={{ editEnabled: props.editEnabled }}>
       <div className="[&>*]:block">
         <SharedInput name="recipe" placeHolder="Recipe name" />
         <SharedInput name="description" placeHolder="Short description" />
       </div>
       <Steps />
-    </RecipeProvider>
+    </RecipeStoreProvider>
   )
 }

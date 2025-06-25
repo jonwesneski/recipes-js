@@ -1,27 +1,34 @@
 'use client'
 
 import { SharedButton } from '@repo/ui'
-import { useRecipe } from '@src/providers/recipe-provider'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { type IngredientsValidator } from '@src/utils/ingredientsValidator'
-import { type RefObject } from 'react'
+import { useEffect, type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
 export const Steps = () => {
-  const { steps, addStep, insertSteps, setIngredients } = useRecipe()
+  const {
+    steps,
+    addStep,
+    setIngredients,
+    setInstructions,
+    insertIngredientsSteps,
+    insertInstructionsSteps,
+  } = useRecipeStore((state) => state)
 
-  const handleIngredients = (
-    index: string,
+  const handleOnIngredients = (
+    stepId: string,
     ingredients: IngredientsValidator,
   ) => {
-    setIngredients(index, ingredients)
+    setIngredients(stepId, ingredients)
   }
 
   const handleOnPasteIngredients = (
     stepId: string,
     ingredients: IngredientsValidator[],
   ) => {
-    insertSteps(stepId, ingredients)
+    insertIngredientsSteps(stepId, ingredients)
   }
 
   const handleOnResize = (
@@ -34,15 +41,19 @@ export const Steps = () => {
   }
 
   const handleOnInstructions = (stepId: string, instructions: string) => {
-    console.log(stepId, instructions)
+    setInstructions(stepId, instructions)
   }
 
   const handleOnPasteInstructions = (
     stepId: string,
     instructions: string[],
   ) => {
-    console.log(stepId, instructions)
+    insertInstructionsSteps(stepId, instructions)
   }
+
+  useEffect(() => {
+    console.log(steps)
+  }, [steps])
 
   return (
     <div>
@@ -54,9 +65,10 @@ export const Steps = () => {
             className="md:grid md:grid-cols-2 md:gap-4"
           >
             <IngredientsTextArea
+              ref={s.ingredientsRef}
               ingredients={s.ingredients.stringValue}
               onTextChange={(ingredients: IngredientsValidator) =>
-                handleIngredients(s.id, ingredients)
+                handleOnIngredients(s.id, ingredients)
               }
               onPaste={(data: IngredientsValidator[]) =>
                 handleOnPasteIngredients(s.id, data)
@@ -64,7 +76,8 @@ export const Steps = () => {
               onResize={(height: number) => handleOnResize(s.ref, height)}
             />
             <InstructionsTextArea
-              instructions=""
+              ref={s.instructionsRef}
+              instructions={s.instructions}
               onTextChange={(instructions: string) =>
                 handleOnInstructions(s.id, instructions)
               }
