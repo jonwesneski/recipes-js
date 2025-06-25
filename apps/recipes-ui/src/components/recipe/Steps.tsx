@@ -8,7 +8,7 @@ import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
 export const Steps = () => {
-  const { steps, addStep, insertSteps, setIngredients } = useRecipe()
+  const { steps, addStep, insertIngredientsSteps, setIngredients } = useRecipe()
 
   const handleIngredients = (
     index: string,
@@ -21,7 +21,7 @@ export const Steps = () => {
     stepId: string,
     ingredients: IngredientsValidator[],
   ) => {
-    insertSteps(stepId, ingredients)
+    insertIngredientsSteps(stepId, ingredients)
   }
 
   const handleOnResize = (
@@ -54,6 +54,7 @@ export const Steps = () => {
             className="md:grid md:grid-cols-2 md:gap-4"
           >
             <IngredientsTextArea
+              ref={s.ingredientRef}
               ingredients={s.ingredients.stringValue}
               onTextChange={(ingredients: IngredientsValidator) =>
                 handleIngredients(s.id, ingredients)

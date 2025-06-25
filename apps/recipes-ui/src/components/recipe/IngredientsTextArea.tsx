@@ -2,10 +2,11 @@
 
 import { TextArea } from '@repo/ui'
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
-import { useRef, useState } from 'react'
+import { type RefObject, useEffect, useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 interface IngredientsTextAreaProps {
+  ref?: RefObject<HTMLTextAreaElement | null>
   ingredients: string
   onTextChange: (_ingredients: IngredientsValidator) => void
   onPaste: (_data: IngredientsValidator[]) => void
@@ -15,7 +16,18 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const [inputValue, setInputValue] = useState(props.ingredients)
   const [isPopupVisible, setIsPopupVisible] = useState(false)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  let textAreaRef = useRef<HTMLTextAreaElement>(null)
+  textAreaRef = props.ref ?? textAreaRef
+
+  useEffect(() => {
+    if (props.ref?.current) {
+      props.ref.current.focus()
+      props.ref.current.setSelectionRange(
+        props.ref.current.value.length,
+        props.ref.current.value.length,
+      )
+    }
+  }, [])
 
   const getCaretPosition = () => {
     const position: { row: number; column: number } = {
@@ -23,10 +35,10 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       column: 0,
     }
 
-    if (inputRef.current) {
+    if (textAreaRef.current) {
       // Calcuate row position
       // // do we care about row position?
-      const textarea = inputRef.current
+      const textarea = textAreaRef.current
       const cursorPosition = textarea.selectionStart
       const textBeforeCursor = textarea.value.substring(0, cursorPosition)
       const row = textBeforeCursor.split('\n').length
@@ -58,8 +70,8 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const _handleShowPopUp = () => {
-    if (inputRef.current) {
-      const rect = inputRef.current.getBoundingClientRect()
+    if (textAreaRef.current) {
+      const rect = textAreaRef.current.getBoundingClientRect()
       const position = getCaretPosition()
       // is caret in measurement-unit column
       if (position.column === 1) {
@@ -146,7 +158,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         onPaste={handleOnPaste}
         onInput={handleOnInput}
         onResize={props.onResize}
-        ref={inputRef}
+        ref={textAreaRef}
       />
       {isPopupVisible && (
         <IngredientsMeasurementPopUp

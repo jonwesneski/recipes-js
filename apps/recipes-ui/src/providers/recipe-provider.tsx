@@ -17,6 +17,7 @@ import {
 export type StepsItemsType = {
   id: string
   ref: RefObject<HTMLDivElement | null>
+  ingredientRef: RefObject<HTMLTextAreaElement | null>
   ingredients: IngredientsValidator
   instruction: string
 }
@@ -29,7 +30,10 @@ export type RecipeType = Omit<CreateRecipeDto, 'steps'> & {
   setCookingTimeInMinutes: (_value: number) => void
   steps: StepsItemsType[]
   addStep: () => void
-  insertSteps: (_stepId: string, _ingredients: IngredientsValidator[]) => void
+  insertIngredientsSteps: (
+    _stepId: string,
+    _ingredients: IngredientsValidator[],
+  ) => void
   removeStep: (_stepId: string) => void
   setIngredients: (_stepId: string, _ingredients: IngredientsValidator) => void
   setNutritionalFacts: (_value: NutritionalFactsDto) => void
@@ -55,40 +59,23 @@ export const RecipeProvider = ({
   const [cookingTimeInMinutes, setCookingTimeInMinutes] = useState<
     number | null
   >(null)
-  const [steps, _setSteps] = useState<StepsItemsType[]>([
-    {
-      id: crypto.randomUUID(),
-      ref: createRef<HTMLDivElement>(),
-      ingredients: new IngredientsValidator({ dto: [] }),
-      instruction: '',
-    },
-  ])
+  const [steps, _setSteps] = useState<StepsItemsType[]>([createStepItem()])
   const [nutritionalFacts, setNutritionalFacts] =
     useState<NutritionalFactsDto | null>(null)
   const [tags, setTags] = useState<string[]>([])
   const userHandle = ''
 
   const addStep = () => {
-    _setSteps((v) => [
-      ...v,
-      {
-        id: crypto.randomUUID(),
-        ref: createRef<HTMLDivElement>(),
-        ingredients: new IngredientsValidator({ dto: [] }),
-        instruction: '',
-      },
-    ])
+    _setSteps((v) => [...v, createStepItem()])
   }
 
-  const insertSteps = (stepId: string, ingredients: IngredientsValidator[]) => {
+  const insertIngredientsSteps = (
+    stepId: string,
+    ingredients: IngredientsValidator[],
+  ) => {
     const index = steps.findIndex((s) => s.id === stepId)
     const inserts = ingredients.map((i) => {
-      return {
-        id: crypto.randomUUID(),
-        ref: createRef<HTMLDivElement>(),
-        ingredients: i,
-        instruction: '',
-      }
+      return createStepItem({ ingredients: i })
     })
     if (index !== -1) {
       _setSteps((v) => {
@@ -134,7 +121,7 @@ export const RecipeProvider = ({
         setCookingTimeInMinutes,
         steps,
         addStep,
-        insertSteps,
+        insertIngredientsSteps,
         removeStep,
         setIngredients,
         nutritionalFacts,
@@ -147,6 +134,19 @@ export const RecipeProvider = ({
       {children}
     </RecipeContext.Provider>
   )
+}
+
+const createStepItem = (params?: {
+  ingredients?: IngredientsValidator
+  instructions?: string
+}) => {
+  return {
+    id: crypto.randomUUID(),
+    ref: createRef<HTMLDivElement>(),
+    ingredientRef: createRef<HTMLTextAreaElement>(),
+    ingredients: params?.ingredients ?? new IngredientsValidator({ dto: [] }),
+    instruction: params?.instructions ?? '',
+  }
 }
 
 export const useRecipe = () => {
