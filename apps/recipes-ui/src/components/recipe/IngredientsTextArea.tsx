@@ -20,11 +20,11 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   textAreaRef = props.ref ?? textAreaRef
 
   useEffect(() => {
-    if (props.ref?.current) {
-      props.ref.current.focus()
-      props.ref.current.setSelectionRange(
-        props.ref.current.value.length,
-        props.ref.current.value.length,
+    if (textAreaRef.current) {
+      textAreaRef.current.focus()
+      textAreaRef.current.setSelectionRange(
+        textAreaRef.current.value.length,
+        textAreaRef.current.value.length,
       )
     }
   }, [])

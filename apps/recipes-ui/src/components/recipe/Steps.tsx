@@ -8,13 +8,20 @@ import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 
 export const Steps = () => {
-  const { steps, addStep, insertIngredientsSteps, setIngredients } = useRecipe()
+  const {
+    steps,
+    addStep,
+    setIngredients,
+    setInstructions,
+    insertIngredientsSteps,
+    insertInstructionsSteps,
+  } = useRecipe()
 
-  const handleIngredients = (
-    index: string,
+  const handleOnIngredients = (
+    stepId: string,
     ingredients: IngredientsValidator,
   ) => {
-    setIngredients(index, ingredients)
+    setIngredients(stepId, ingredients)
   }
 
   const handleOnPasteIngredients = (
@@ -34,14 +41,14 @@ export const Steps = () => {
   }
 
   const handleOnInstructions = (stepId: string, instructions: string) => {
-    console.log(stepId, instructions)
+    setInstructions(stepId, instructions)
   }
 
   const handleOnPasteInstructions = (
     stepId: string,
     instructions: string[],
   ) => {
-    console.log(stepId, instructions)
+    insertInstructionsSteps(stepId, instructions)
   }
 
   return (
@@ -57,7 +64,7 @@ export const Steps = () => {
               ref={s.ingredientRef}
               ingredients={s.ingredients.stringValue}
               onTextChange={(ingredients: IngredientsValidator) =>
-                handleIngredients(s.id, ingredients)
+                handleOnIngredients(s.id, ingredients)
               }
               onPaste={(data: IngredientsValidator[]) =>
                 handleOnPasteIngredients(s.id, data)
@@ -65,7 +72,8 @@ export const Steps = () => {
               onResize={(height: number) => handleOnResize(s.ref, height)}
             />
             <InstructionsTextArea
-              instructions=""
+              ref={s.instructionsRef}
+              instructions={s.instructions}
               onTextChange={(instructions: string) =>
                 handleOnInstructions(s.id, instructions)
               }

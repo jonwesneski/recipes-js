@@ -17,9 +17,10 @@ import {
 export type StepsItemsType = {
   id: string
   ref: RefObject<HTMLDivElement | null>
-  ingredientRef: RefObject<HTMLTextAreaElement | null>
+  ingredientRef?: RefObject<HTMLTextAreaElement | null>
   ingredients: IngredientsValidator
-  instruction: string
+  instructionsRef?: RefObject<HTMLTextAreaElement | null>
+  instructions: string
 }
 
 export type RecipeType = Omit<CreateRecipeDto, 'steps'> & {
@@ -34,8 +35,10 @@ export type RecipeType = Omit<CreateRecipeDto, 'steps'> & {
     _stepId: string,
     _ingredients: IngredientsValidator[],
   ) => void
+  insertInstructionsSteps: (_stepId: string, _instructions: string[]) => void
   removeStep: (_stepId: string) => void
   setIngredients: (_stepId: string, _ingredients: IngredientsValidator) => void
+  setInstructions: (_stepId: string, _instructions: string) => void
   setNutritionalFacts: (_value: NutritionalFactsDto) => void
   setTags: (_value: string[]) => void
 }
@@ -86,6 +89,30 @@ export const RecipeProvider = ({
     }
   }
 
+  const insertInstructionsSteps = (stepId: string, instructions: string[]) => {
+    _setSteps((v) => {
+      let index = v.findIndex((s) => s.id === stepId)
+      const inserts = instructions.map((i) =>
+        createStepItem({ instructions: i }),
+      )
+      if (index !== -1) {
+        index++
+        for (const insert of inserts) {
+          if (v[index]) {
+            v[index].instructions = insert.instructions
+            v[index].instructionsRef = insert.instructionsRef
+          } else {
+            v.push(insert)
+          }
+          index++
+        }
+        return [...v]
+      }
+
+      return [...v, ...inserts]
+    })
+  }
+
   const removeStep = (stepId: string) => {
     const index = steps.findIndex((s) => s.id === stepId)
     if (index !== -1) {
@@ -102,7 +129,17 @@ export const RecipeProvider = ({
       if (index !== -1) {
         value[index].ingredients = ingredients
       }
-      return value
+      return [...value]
+    })
+  }
+
+  const setInstructions = (stepId: string, instructions: string) => {
+    _setSteps((value) => {
+      const index = value.findIndex((v) => v.id === stepId)
+      if (index !== -1) {
+        value[index].instructions = instructions
+      }
+      return [...value]
     })
   }
 
@@ -121,9 +158,11 @@ export const RecipeProvider = ({
         setCookingTimeInMinutes,
         steps,
         addStep,
-        insertIngredientsSteps,
         removeStep,
         setIngredients,
+        setInstructions,
+        insertIngredientsSteps,
+        insertInstructionsSteps,
         nutritionalFacts,
         setNutritionalFacts,
         tags,
@@ -139,13 +178,18 @@ export const RecipeProvider = ({
 const createStepItem = (params?: {
   ingredients?: IngredientsValidator
   instructions?: string
-}) => {
+}): StepsItemsType => {
   return {
     id: crypto.randomUUID(),
     ref: createRef<HTMLDivElement>(),
-    ingredientRef: createRef<HTMLTextAreaElement>(),
+    ingredientRef: params?.ingredients
+      ? createRef<HTMLTextAreaElement>()
+      : undefined,
     ingredients: params?.ingredients ?? new IngredientsValidator({ dto: [] }),
-    instruction: params?.instructions ?? '',
+    instructionsRef: params?.instructions
+      ? createRef<HTMLTextAreaElement>()
+      : undefined,
+    instructions: params?.instructions ?? '',
   }
 }
 
