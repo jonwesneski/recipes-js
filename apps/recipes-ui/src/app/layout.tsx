@@ -23,7 +23,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           className="recipe-layout"
           style={{
             height: '100vh', // Or a specific height
-            backgroundColor: '#ffffff',
             margin: '0px 20px',
           }}
         >

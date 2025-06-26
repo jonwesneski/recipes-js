@@ -20,8 +20,6 @@ const Page = () => {
     },
   })
 
-  const [_tags, setTags] = useState<string[]>([])
-
   const handleSubmit = () => {
     mutate(
       { data: {} as CreateRecipeDto },
@@ -36,6 +34,7 @@ const Page = () => {
     window.history.replaceState(null, '', '/recipes/jon/tres-leches-cake')
   }
 
+  const [_tags, setTags] = useState<string[]>([])
   useEffect(() => {
     // todo add params
     const fetchTags = async () => {

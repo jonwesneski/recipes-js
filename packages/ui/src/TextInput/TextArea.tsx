@@ -36,7 +36,7 @@ export const TextArea = (props: TextAreaProps) => {
   return (
     <textarea
       {...props}
-      className="border-1 border-black h-full p-2 m-2"
+      className="border-1 h-full p-2 m-2"
       placeholder={placeHolder}
       style={{
         resize: 'none',

@@ -1,4 +1,5 @@
 'use client'
+
 import { Navbar } from './Navbar'
 
 export const NavigationLayout = ({
@@ -7,17 +8,16 @@ export const NavigationLayout = ({
   children: React.ReactNode
 }) => {
   return (
-    <>
-      {/* Navbar for small screens (bottom fixed) */}
-      <nav className="bottom-0 left-0 w-full md:hidden">
+    <div className="flex flex-col min-h-screen">
+      <header className="hidden md:block">
         <Navbar />
-      </nav>
+      </header>
 
-      {/* Navbar for medium screens and above (top fixed) */}
-      <nav className="top-0 left-0 w-full hidden md:block">
+      <div className="flex-grow p-4">{children}</div>
+
+      <footer className="md:hidden">
         <Navbar />
-      </nav>
-      {children}
-    </>
+      </footer>
+    </div>
   )
 }
