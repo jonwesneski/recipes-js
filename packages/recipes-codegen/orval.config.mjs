@@ -2,7 +2,7 @@ export default {
   recipes: {
     output: {
       mode: 'tags-split',
-      target: './src/api.ts',
+      target: './src/api',
       schemas: './src/model',
       client: 'react-query',
       mock: true,

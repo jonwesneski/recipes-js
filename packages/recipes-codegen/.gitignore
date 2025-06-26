@@ -1,5 +1,5 @@
 src/model
-src/recipes
+src/api
 dist-cjs/
 
 tsconfig.tsbuildinfo

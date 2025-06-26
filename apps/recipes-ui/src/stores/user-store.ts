@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars -- its fine zustand */
-import { type NutritionalFactsDto } from '@repo/recipes-codegen/model';
+import type { UserEntityDiet } from '@repo/recipes-codegen/model';
 import { createStore } from 'zustand/vanilla';
 
 export type UserState = {
@@ -9,7 +9,7 @@ export type UserState = {
   useFractions: boolean;
   useImperial: boolean;
   useDarkMode: boolean;
-  diet?: NutritionalFactsDto;
+  diet?: UserEntityDiet;
 };
 
 export type UserActions = {
@@ -19,7 +19,7 @@ export type UserActions = {
   setUseFractions: (useFractions: boolean) => void;
   setUseImperial: (useImperial: boolean) => void;
   setUseDarkMode: (useDarkMode: boolean) => void;
-  setDiet: (diet: NutritionalFactsDto) => void;
+  setDiet: (diet: UserEntityDiet) => void;
 };
 
 export type UserStore = UserState & UserActions;
@@ -42,6 +42,6 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     setUseFractions: (useFractions: boolean) => set(() => ({ useFractions })),
     setUseImperial: (useImperial: boolean) => set(() => ({ useImperial })),
     setUseDarkMode: (useDarkMode: boolean) => set(() => ({ useDarkMode })),
-    setDiet: (diet: NutritionalFactsDto) => set(() => ({ diet })),
+    setDiet: (diet: UserEntityDiet) => set(() => ({ diet })),
   }));
 };
