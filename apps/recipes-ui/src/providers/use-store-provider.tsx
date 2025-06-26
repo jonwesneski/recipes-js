@@ -1,7 +1,13 @@
 'use client'
 
 import { type UserStore, createUserStore } from '@src/stores/user-store'
-import { type ReactNode, createContext, useContext, useRef } from 'react'
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react'
 import { useStore } from 'zustand'
 
 export type UserStoreApi = ReturnType<typeof createUserStore>
@@ -19,6 +25,10 @@ export const UserStoreProvider = ({
   const storeRef = useRef<UserStoreApi | null>(null)
 
   storeRef.current ??= createUserStore(initialState)
+
+  useEffect(() => {
+    storeRef.current?.setState((state) => ({ useDarkMode: state.useDarkMode }))
+  }, [storeRef.current])
 
   return (
     <UserStoreContext.Provider value={storeRef.current}>

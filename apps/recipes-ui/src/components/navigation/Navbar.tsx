@@ -1,41 +1,46 @@
 'use client'
 
+import { useUserStore } from '@src/providers/use-store-provider'
 import { useEffect, useState } from 'react'
 
 export const Navbar = () => {
+  const { useDarkMode } = useUserStore((state) => state)
   const [isOpen, setIsOpen] = useState(true)
-  const [ns, setNs] = useState([1, 2, 3])
-
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(useDarkMode)
+  const [lightDarkString, setLightDarkString] = useState<'Light' | 'Dark'>(
+    useDarkMode ? 'Light' : 'Dark',
+  )
 
   useEffect(() => {
     document.documentElement.setAttribute(
       'data-theme',
       isDarkMode ? 'dark' : '',
     )
+    setLightDarkString(() => (isDarkMode ? 'Light' : 'Dark'))
   }, [isDarkMode])
+
+  const handleLightDarkMode = () => {
+    setIsDarkMode((v) => !v)
+  }
 
   return (
     <nav className="relative border-2">
-      <button
-        onClick={() => {
-          //setIsOpen((v) => !v)
-          setNs((v) => [...v, v.length + 1])
-        }}
-        onTouchCancel={() => {
-          setIsDarkMode((value) => value)
-          setIsOpen((v) => v)
-        }}
-      >
-        NAVBAR
-      </button>
-      {isOpen && (
-        <div className="absolute flex flex-col-reverse justify-end">
-          {ns.map((n, index) => (
-            <div key={index}>{n}</div>
-          ))}
-        </div>
-      )}
+      <div className="flex justify-end">
+        <button
+          onClick={() => {
+            setIsOpen((v) => !v)
+          }}
+        >
+          NAVBAR
+        </button>
+        {isOpen && (
+          <div className="absolute flex flex-col-reverse -translate-y-18 md:translate-y-5 md:flex-col border-2">
+            <div onClick={handleLightDarkMode}>{lightDarkString} Mode</div>
+            <div>Item 2</div>
+            <div>Item 3</div>
+          </div>
+        )}
+      </div>
     </nav>
   )
 }

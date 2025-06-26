@@ -32,6 +32,10 @@
 }
 
 @layer components {
+  * {
+    @apply transition-colors duration-200
+  }
+  
   button {
     background-color: var(--color-background);
     border-color: var(--color-border);
