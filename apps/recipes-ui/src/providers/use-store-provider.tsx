@@ -46,6 +46,8 @@ export const UserStoreProvider = ({
           setUseImperial,
           setDiet,
         } = storeRef.current.getState()
+
+        setIsInitialized(true)
         if (accessToken) {
           try {
             const decodedToken = jwtGoogleSchema.parse(jwtDecode(accessToken))
@@ -57,7 +59,6 @@ export const UserStoreProvider = ({
             setUseFractions(user.useFractions)
             setUseImperial(user.useImperial)
             setDiet(user.diet)
-            setIsInitialized(true)
           } catch (error) {
             console.error('Error decoding JWT:', error)
           }

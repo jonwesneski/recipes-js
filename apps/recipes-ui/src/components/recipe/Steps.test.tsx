@@ -1,35 +1,31 @@
-import { ModalStoreProvider } from '@repo/ui'
-import { AuthenticationProvider } from '@src/providers/authentication-provider'
-import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
-import { UserStoreProvider } from '@src/providers/use-store-provider'
-import { type RecipeStore } from '@src/stores/recipe-store'
-import { render } from '@testing-library/react'
+import { renderComponent } from '@src/mocks/renderComponent'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { Steps } from './Steps'
+
+jest.mock('jwt-decode', () => ({
+  default: () => ({}),
+  jwtDecode: () => {
+    return {
+      sub: '1234',
+      email: 'test@email.com',
+      handle: '123',
+    }
+  },
+}))
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  clear: jest.fn(),
+}
+
+Object.defineProperty(global, 'localStorage', { value: localStorageMock })
+localStorageMock.getItem.mockImplementation(() => 'jwtvalue')
 
 const INGREDIENTS_ID = 'ingredients-text-area'
 const INSTRUCTIONS_ID = 'instructions-text-area'
 
 const ingredientsString = '2 cups flour\n\n1 ounces sugar\n\n2 grams paste'
 const instructionsString = 'my second step\n\nmy third step\n\nmy fourth step'
-
-const renderComponent = (
-  ui: React.ReactNode,
-  initialState?: Partial<RecipeStore>,
-) => {
-  return render(
-    <AuthenticationProvider>
-      <UserStoreProvider>
-        <ModalStoreProvider>
-          <RecipeStoreProvider initialState={initialState}>
-            {ui}
-          </RecipeStoreProvider>
-        </ModalStoreProvider>
-      </UserStoreProvider>
-    </AuthenticationProvider>,
-  )
-}
 
 describe('Steps', () => {
   describe('On New', () => {

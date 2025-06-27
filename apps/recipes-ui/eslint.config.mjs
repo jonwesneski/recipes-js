@@ -10,6 +10,9 @@ const compat = new FlatCompat({
 });
 
 export default [
+  {
+    ignores: ["./src/mocks/jest.setup.ts"],
+  },
   ...compat.extends("@repo/eslint-config/next"),
   {
     languageOptions: {
