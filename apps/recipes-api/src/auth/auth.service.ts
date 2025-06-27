@@ -1,10 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JwtGoogleType } from '@repo/zod-schemas';
+import { type JwtGoogleType } from '@repo/zod-schemas';
 import { PrismaService } from 'src/common/prisma.service';
 import {
   jwtRefreshConfig,
-  JwtRefreshConfigType,
+  type JwtRefreshConfigType,
 } from './config/jwt-refresh.config';
 import { GoogleAuthDto } from './guards';
 
