@@ -5,20 +5,28 @@
   "private": true,
   "exports": {
     "./recipes": {
-      "import": "./dist/recipes/recipes.js",
-      "types": "./dist/types/recipes/recipes.d.ts"
+      "import": "./dist/api/recipes/recipes.js",
+      "types": "./dist/types/api/recipes/recipes.d.ts"
     },
     "./tags": {
-      "import": "./dist/tags/tags.js",
-      "types": "./dist/types/tags/tags.d.ts"
+      "import": "./dist/api/tags/tags.js",
+      "types": "./dist/types/api/tags/tags.d.ts"
+    },
+    "./users": {
+      "import": "./dist/api/users/users.js",
+      "types": "./dist/types/api/users/users.d.ts"
     },
     "./model": {
       "import": "./dist/model/index.js",
       "types": "./dist/types/model/index.d.ts"
     },
-    "./msw": {
-      "import": "./dist/recipes/recipes.msw.js",
-      "types": "./dist/types/recipes/recipes.msw.d.ts"
+    "./mswRecipes": {
+      "import": "./dist/api/recipes/recipes.msw.js",
+      "types": "./dist/types/api/recipes/recipes.msw.d.ts"
+    },
+    "./mswUsers": {
+      "import": "./dist/api/users/users.msw.js",
+      "types": "./dist/types/api/users/users.msw.d.ts"
     }
   },
   "scripts": {

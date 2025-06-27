@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth2';
 import {
   googleOAuthConfig,
-  GoogleOAuthConfigType,
+  type GoogleOAuthConfigType,
 } from '../config/google-oauth.config';
 
 export type GoogleAuthDto = {

@@ -1,17 +1,6 @@
 import { type IngredientEntity } from '@repo/recipes-codegen/model'
-import { ModalStoreProvider } from '@repo/ui'
-import { UserStoreProvider } from '@src/providers/use-store-provider'
-import { render } from '@testing-library/react'
-import React from 'react'
+import { renderComponent } from '@src/mocks/renderComponent'
 import { IngredientList } from './IngredientList'
-
-const renderComponent = (ui: React.ReactNode) => {
-  return render(
-    <UserStoreProvider>
-      <ModalStoreProvider>{ui}</ModalStoreProvider>
-    </UserStoreProvider>,
-  )
-}
 
 describe('IngredientList', () => {
   const sampleIngredients = [

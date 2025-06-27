@@ -6,7 +6,7 @@ import {
   HttpHealthIndicator,
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
-import { Response } from 'express';
+import { type Response } from 'express';
 import { PrismaOrmHealthIndicatorService } from './prismaOrmHealthIndicator.service';
 
 @Controller()

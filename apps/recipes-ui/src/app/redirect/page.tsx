@@ -1,14 +1,4 @@
 'use client'
-// import { cookies } from 'next/headers'
-// import { ClientRedirect } from './_clientRedirect'
-
-// const Page = async () => {
-//   const cookieStore = await cookies()
-//   const myCookie = cookieStore.get('access_token')
-
-//   return <ClientRedirect accessToken={myCookie?.value} />
-// }
-// export default Page
 
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { redirect, useSearchParams } from 'next/navigation'
@@ -20,13 +10,17 @@ const ClientRedirect = () => {
   const queryToken = searchParams.get('token')
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (accessToken) {
-        redirect('/recipes')
-      } else if (queryToken) {
-        setAccessToken(queryToken)
+    const fetch = () => {
+      if (typeof window !== 'undefined') {
+        if (accessToken) {
+          redirect('/recipes')
+        } else if (queryToken) {
+          setAccessToken(queryToken)
+        }
       }
     }
+
+    fetch()
   }, [accessToken, setAccessToken])
 
   return null

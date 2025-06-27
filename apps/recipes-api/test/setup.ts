@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { GenericContainer } from 'testcontainers';
-import * as recipesData from './recipesTestData.json';
+import recipesData from './recipesTestData.json';
 
 async function getPrisma() {
   const { prisma } = await import('@repo/database');

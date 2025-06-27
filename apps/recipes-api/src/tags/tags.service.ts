@@ -1,20 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/common/prisma.service';
-
-export type PrismaQueryParams = {
-  cursorId?: number;
-  take?: number;
-  skip?: number;
-};
-
-export type PrismaResults<T> = {
-  data: T;
-  pagination: {
-    totalRecords: number;
-    currentCursor: number;
-    nextCursor: number | null;
-  };
-};
+import {
+  type PrismaQueryParams,
+  type PrismaResults,
+  PrismaService,
+} from 'src/common/prisma.service';
 
 @Injectable()
 export class TagsService {
