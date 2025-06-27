@@ -1,4 +1,5 @@
 import { ModalStoreProvider } from '@repo/ui'
+import { AuthenticationProvider } from '@src/providers/authentication-provider'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { UserStoreProvider } from '@src/providers/use-store-provider'
 import { type RecipeStore } from '@src/stores/recipe-store'
@@ -18,13 +19,15 @@ const renderComponent = (
   initialState?: Partial<RecipeStore>,
 ) => {
   return render(
-    <UserStoreProvider>
-      <ModalStoreProvider>
-        <RecipeStoreProvider initialState={initialState}>
-          {ui}
-        </RecipeStoreProvider>
-      </ModalStoreProvider>
-    </UserStoreProvider>,
+    <AuthenticationProvider>
+      <UserStoreProvider>
+        <ModalStoreProvider>
+          <RecipeStoreProvider initialState={initialState}>
+            {ui}
+          </RecipeStoreProvider>
+        </ModalStoreProvider>
+      </UserStoreProvider>
+    </AuthenticationProvider>,
   )
 }
 

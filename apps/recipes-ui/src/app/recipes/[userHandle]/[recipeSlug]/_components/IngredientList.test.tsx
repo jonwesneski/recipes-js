@@ -1,5 +1,6 @@
 import { type IngredientEntity } from '@repo/recipes-codegen/model'
 import { ModalStoreProvider } from '@repo/ui'
+import { AuthenticationProvider } from '@src/providers/authentication-provider'
 import { UserStoreProvider } from '@src/providers/use-store-provider'
 import { render } from '@testing-library/react'
 import React from 'react'
@@ -7,9 +8,11 @@ import { IngredientList } from './IngredientList'
 
 const renderComponent = (ui: React.ReactNode) => {
   return render(
-    <UserStoreProvider>
-      <ModalStoreProvider>{ui}</ModalStoreProvider>
-    </UserStoreProvider>,
+    <AuthenticationProvider>
+      <UserStoreProvider>
+        <ModalStoreProvider>{ui}</ModalStoreProvider>
+      </UserStoreProvider>
+    </AuthenticationProvider>,
   )
 }
 

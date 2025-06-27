@@ -25,7 +25,10 @@ export default {
   },
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/src/$1',
-    '^@repo/recipes-codegen/(.*)$': '<rootDir>/../../packages/recipes-codegen/dist-cjs/$1',
+    '^@repo/recipes-codegen/(.*)$': [
+      '<rootDir>/../../packages/recipes-codegen/dist-cjs/api/$1/$1',
+      '<rootDir>/../../packages/recipes-codegen/dist-cjs/$1'
+    ],
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
 }
