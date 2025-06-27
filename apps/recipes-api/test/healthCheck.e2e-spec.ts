@@ -6,7 +6,7 @@ import {
 } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 import { configureApp } from 'src/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 
@@ -86,6 +86,11 @@ describe('HealthCheckController (e2e)', () => {
     });
 
     it('invalid', () => {
+      const diskSpy = jest.spyOn(diskStorageIndicator, 'checkStorage');
+      diskSpy.mockResolvedValueOnce({
+        status: { status: 'down' },
+      } as HealthIndicatorResult<string>);
+
       return request(app.getHttpServer())
         .get(healthPath)
         .expect(503)
