@@ -20,23 +20,23 @@ export class UserPatchDto
   @IsNotEmpty()
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, required: false })
   name?: string;
   @IsNotEmpty()
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, required: false })
   handle?: string;
   @IsOptional()
   @IsBoolean()
-  @ApiProperty({ type: Boolean, nullable: true })
+  @ApiProperty({ type: Boolean, required: false, nullable: true })
   useDarkMode?: boolean;
   @IsOptional()
   @IsBoolean()
-  @ApiProperty({ type: Boolean, nullable: true })
+  @ApiProperty({ type: Boolean, required: false, nullable: true })
   useFractions?: boolean;
   @IsOptional()
   @IsBoolean()
-  @ApiProperty({ type: Boolean, nullable: true })
+  @ApiProperty({ type: Boolean, required: false, nullable: true })
   useImperial?: boolean;
 }

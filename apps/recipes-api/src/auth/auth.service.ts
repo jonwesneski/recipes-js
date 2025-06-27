@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { JwtGoogleType } from '@repo/zod-schemas';
 import { PrismaService } from 'src/common/prisma.service';
 import {
   jwtRefreshConfig,
@@ -18,7 +19,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async generateTokens(payload: Record<string, string | number | boolean>) {
+  async generateTokens(payload: JwtGoogleType) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, this.jwtRefreshTokenConfig),
@@ -51,12 +52,8 @@ export class AuthService {
     }
     const tokens = await this.generateTokens({
       sub: userRecord.id,
-      name: userRecord.name,
       email: userRecord.email,
       handle: userRecord.handle,
-      useDarkMode: userRecord.useDarkMode,
-      useFractions: userRecord.useFractions,
-      useImperial: userRecord.useImperial,
     });
 
     return { userRecord, tokens };

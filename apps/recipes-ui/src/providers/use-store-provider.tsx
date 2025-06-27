@@ -1,14 +1,19 @@
 'use client'
 
+import { usersControllerUserV1 } from '@repo/recipes-codegen/users'
+import { jwtGoogleSchema } from '@repo/zod-schemas'
 import { type UserStore, createUserStore } from '@src/stores/user-store'
+import { jwtDecode } from 'jwt-decode'
 import {
   type ReactNode,
   createContext,
   useContext,
   useEffect,
   useRef,
+  useState,
 } from 'react'
 import { useStore } from 'zustand'
+import { useAuthentication } from './authentication-provider'
 
 export type UserStoreApi = ReturnType<typeof createUserStore>
 export const UserStoreContext = createContext<UserStoreApi | null>(null)
@@ -26,15 +31,48 @@ export const UserStoreProvider = ({
 
   storeRef.current ??= createUserStore(initialState)
 
-  useEffect(() => {
-    storeRef.current?.setState((state) => ({ useDarkMode: state.useDarkMode }))
-  }, [storeRef.current])
+  const { accessToken } = useAuthentication()
+  const [isInitialized, setIsInitialized] = useState<boolean>(false)
 
-  return (
+  useEffect(() => {
+    const fetch = async () => {
+      if (typeof window !== 'undefined' && storeRef.current) {
+        const {
+          setEmail,
+          setHandle,
+          setName,
+          setUseDarkMode,
+          setUseFractions,
+          setUseImperial,
+          setDiet,
+        } = storeRef.current.getState()
+        if (accessToken) {
+          try {
+            const decodedToken = jwtGoogleSchema.parse(jwtDecode(accessToken))
+            const user = await usersControllerUserV1(decodedToken.handle)
+            setEmail(user.email)
+            setName(user.name)
+            setHandle(user.handle)
+            setUseDarkMode(user.useDarkMode)
+            setUseFractions(user.useFractions)
+            setUseImperial(user.useImperial)
+            setDiet(user.diet)
+            setIsInitialized(true)
+          } catch (error) {
+            console.error('Error decoding JWT:', error)
+          }
+        }
+      }
+    }
+
+    fetch().catch((e: unknown) => console.log(e))
+  }, [accessToken, setIsInitialized])
+
+  return isInitialized ? (
     <UserStoreContext.Provider value={storeRef.current}>
       {children}
     </UserStoreContext.Provider>
-  )
+  ) : null
 }
 
 export const useUserStore = <T,>(selector: (_store: UserStore) => T): T => {

@@ -27,8 +27,6 @@ export class UsersService {
     handle: string,
     user: UserPatchDto,
   ): Promise<UserPrismaType> {
-    console.log(await this.prisma.user.findMany());
-
     return await this.prisma.user.update({
       where: { handle },
       data: user,
