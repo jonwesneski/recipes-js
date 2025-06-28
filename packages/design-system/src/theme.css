@@ -19,7 +19,7 @@
     --margined-background: #f0f0f0;
     --border: #000;
     --text: #000;
-    --muted: #7b7b7b7b;
+    --muted: #4444447b;
   }
 
   [data-theme="dark"] {
@@ -27,7 +27,7 @@
     --margined-background: #242424;
     --border: #fff;
     --text: #fff;
-    --muted: #7b7b7b7b;
+    --muted: #bbbbbb7b;
   }
 }
 
@@ -63,5 +63,9 @@
     background-color: var(--color-background);
     border-color: var(--color-border);
     color: var(--color-text);
+  }
+
+  ::placeholder {
+    color: var(--color-muted)
   }
 }
