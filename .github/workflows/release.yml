@@ -32,8 +32,10 @@ jobs:
           branch: main
           fallbackTag: 0.0.0
 
-      - name: Release
-        run: 'echo ${{ steps.semver.outputs.next }}'
+      - name: Create Tag
+        run: |
+          'git tag ${{ steps.semver.outputs.next }}'
+          'git push origin --tag'
 
     #   - name: Create Release
     #     uses: ncipollo/release-action
