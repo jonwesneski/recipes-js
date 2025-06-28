@@ -8,16 +8,16 @@ export const NavigationLayout = ({
   children: React.ReactNode
 }) => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="hidden md:block">
+    <>
+      <nav className="fixed top-0 left-0 right-0 z-50 hidden md:block">
         <Navbar />
-      </header>
+      </nav>
 
-      <div className="flex-grow p-4">{children}</div>
+      <div className="flex-grow pt-10">{children}</div>
 
-      <footer className="md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 block md:hidden">
         <Navbar />
-      </footer>
-    </div>
+      </nav>
+    </>
   )
 }
