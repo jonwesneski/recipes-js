@@ -38,7 +38,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git tag ${{ steps.semver.outputs.next }}
           git tag -fa latest -m "Latest"
-          git push origin ${{ steps.semver.outputs.next }} latest
+          git push --force origin ${{ steps.semver.outputs.next }} latest
 
     #   - name: Create Release
     #     uses: ncipollo/release-action
