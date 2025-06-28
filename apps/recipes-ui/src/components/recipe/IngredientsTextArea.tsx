@@ -3,8 +3,13 @@
 import { TextArea } from '@repo/ui'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
+import { rem } from '@src/utils/rem'
 import { type RefObject, useEffect, useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
+
+const placeholder = `1.5 cups sugar
+1 1/4 cups chopped tomatoes
+1 whole avocado`
 
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLTextAreaElement | null>
@@ -24,6 +29,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
 
   useEffect(() => {
     if (textAreaRef.current && shouldBeFocused) {
+      // Set Caret Position
       textAreaRef.current.focus()
       textAreaRef.current.setSelectionRange(
         textAreaRef.current.value.length,
@@ -32,27 +38,24 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     }
   }, [])
 
-  const getCaretPosition = () => {
+  const getCaretPosition = (element: HTMLTextAreaElement) => {
     const position: { row: number; column: number } = {
       row: 0,
       column: 0,
     }
 
-    if (textAreaRef.current) {
-      // Calcuate row position
-      // // do we care about row position?
-      const textarea = textAreaRef.current
-      const cursorPosition = textarea.selectionStart
-      const textBeforeCursor = textarea.value.substring(0, cursorPosition)
-      const row = textBeforeCursor.split('\n').length
+    // Calcuate row position
+    // // do we care about row position?
+    const cursorPosition = element.selectionStart
+    const textBeforeCursor = element.value.substring(0, cursorPosition)
+    const row = textBeforeCursor.split('\n').length
 
-      // Calculate column position we have 3 columns in textarea
-      const currentRowText = textBeforeCursor.split('\n')[row - 1] || ''
-      const column = currentRowText.split(' ').length
+    // Calculate column position we have 3 columns in textarea
+    const currentRowText = textBeforeCursor.split('\n')[row - 1] || ''
+    const column = currentRowText.split(' ').length
 
-      position.row = row - 1
-      position.column = column - 1
-    }
+    position.row = row - 1
+    position.column = column - 1
 
     return position
   }
@@ -74,7 +77,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const _handleShowPopUp = () => {
     if (textAreaRef.current) {
       const rect = textAreaRef.current.getBoundingClientRect()
-      const position = getCaretPosition()
+      const position = getCaretPosition(textAreaRef.current)
       // is caret in measurement-unit column
       if (position.column === 1) {
         const x = rect.width / 6
@@ -149,7 +152,11 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   return (
     <>
       <TextArea
+        ref={textAreaRef}
         value={ingredients?.stringValue}
+        placeholder={placeholder}
+        minHeight={rem(120)}
+        minWidth={rem(270)}
         onChange={handleInputChange}
         onMouseUp={handleMouseUp}
         onTouchEnd={handleTouchEnd}
@@ -157,7 +164,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         onPaste={handleOnPaste}
         onInput={handleOnInput}
         onResize={props.onResize}
-        ref={textAreaRef}
         data-testid="ingredients-text-area"
       />
       {isPopupVisible ? (
