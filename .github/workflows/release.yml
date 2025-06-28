@@ -34,8 +34,8 @@ jobs:
 
       - name: Create Tag
         run: |
-          'git tag ${{ steps.semver.outputs.next }}'
-          'git push origin --tag'
+          git tag ${{ steps.semver.outputs.next }}
+          git push origin ${{ steps.semver.outputs.next }}
 
     #   - name: Create Release
     #     uses: ncipollo/release-action
