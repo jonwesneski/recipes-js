@@ -40,7 +40,8 @@ export class AuthService {
 
       const now = new Date();
       const secondsSinceEpoch = Math.floor(now.getTime() / 1000);
-      const handle = user.name + secondsSinceEpoch.toString();
+      const handle =
+        user.name.replace(/\s+/g, '') + secondsSinceEpoch.toString();
 
       userRecord = await this.prisma.user.create({
         data: {
