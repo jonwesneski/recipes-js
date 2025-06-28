@@ -30,6 +30,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
+          fallbackTag: 0.0.0
 
       - name: Release
         run: 'echo ${{ steps.semver.outputs.next }}'
