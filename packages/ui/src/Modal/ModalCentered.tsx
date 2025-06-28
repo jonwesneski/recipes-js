@@ -21,7 +21,7 @@ export const ModalCentered = (props: ModalCenteredProps) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [])
+  }, [closeModal])
 
   return (
     <div

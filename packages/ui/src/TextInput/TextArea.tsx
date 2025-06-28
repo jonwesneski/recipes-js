@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-definitions -- type ok here */
 import type {
   DetailedHTMLProps,
   RefObject,
@@ -13,9 +12,19 @@ type TextAreaProps = Omit<
   'style' | 'className' | 'ref'
 > & {
   ref: RefObject<HTMLTextAreaElement | null>
+  minWidth?: string | number
+  minHeight?: string | number
+  maxWidth?: string | number
+  width?: string | number
   onResize: (_height: number) => void
 }
-export const TextArea = (props: TextAreaProps) => {
+export const TextArea = ({
+  minWidth,
+  minHeight,
+  maxWidth,
+  width,
+  ...props
+}: TextAreaProps) => {
   const placeHolder = props.placeholder ? `${props.placeholder}...` : undefined
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -25,7 +34,7 @@ export const TextArea = (props: TextAreaProps) => {
 
   const handleResize = () => {
     if (
-      props.ref?.current &&
+      props.ref.current &&
       props.ref.current.clientHeight < props.ref.current.scrollHeight
     ) {
       props.ref.current.style.overflow = 'hidden'
@@ -40,6 +49,10 @@ export const TextArea = (props: TextAreaProps) => {
       placeholder={placeHolder}
       style={{
         resize: 'none',
+        width,
+        minHeight,
+        minWidth,
+        maxWidth,
       }}
       onChange={handleInputChange}
     />

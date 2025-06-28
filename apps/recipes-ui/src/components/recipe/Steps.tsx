@@ -20,21 +20,20 @@ export const Steps = () => {
 
   return (
     <div>
-      {steps.map((s) => {
+      {steps.map((s, index) => {
         return (
-          <div
-            ref={s.ref}
-            key={s.id}
-            className="md:grid md:grid-cols-2 md:gap-4"
-          >
-            <IngredientsTextArea
-              ref={s.ingredientsRef}
-              onResize={(height: number) => handleOnResize(s.ref, height)}
-            />
-            <InstructionsTextArea
-              ref={s.instructionsRef}
-              onResize={(height: number) => handleOnResize(s.ref, height)}
-            />
+          <div key={s.id}>
+            <h6>Step {index + 1}:</h6>
+            <div ref={s.ref} className="flex flex-col md:flex-row">
+              <IngredientsTextArea
+                ref={s.ingredientsRef}
+                onResize={(height: number) => handleOnResize(s.ref, height)}
+              />
+              <InstructionsTextArea
+                ref={s.instructionsRef}
+                onResize={(height: number) => handleOnResize(s.ref, height)}
+              />
+            </div>
           </div>
         )
       })}

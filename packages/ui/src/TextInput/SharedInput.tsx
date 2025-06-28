@@ -3,9 +3,12 @@ import type { DetailedHTMLProps, InputHTMLAttributes } from 'react'
 type InputProps = Omit<
   DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
   'style' | 'className' | 'type'
->
-export const SharedInput = (props: InputProps) => {
-  const placeHolder = props.placeholder ? `${props.placeholder}...` : undefined
+> & { variant?: 'ellipses' | 'none' }
+export const SharedInput = ({ variant, ...props }: InputProps) => {
+  const placeHolder =
+    (variant === undefined || variant === 'ellipses') && props.placeholder
+      ? `${props.placeholder}...`
+      : props.placeholder
   return (
     <input
       {...props}
