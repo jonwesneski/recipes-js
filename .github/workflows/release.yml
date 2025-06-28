@@ -1,0 +1,45 @@
+name: Release
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+  checks: write
+  id-token: write
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Next Version
+        id: semver
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: Release
+        run: 'echo ${{ steps.semver.outputs.next }}'
+
+    #   - name: Create Release
+    #     uses: ncipollo/release-action
+    #     with:
+    #         allowUpdates: true
+    #         draft: false
+    #         makeLatest: true
+    #         name: ${{ steps.semver.outputs.next }}
+    #         body: Changelog
+    #         token: ${{ github.token }}
