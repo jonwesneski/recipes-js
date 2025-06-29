@@ -8,8 +8,8 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
+  Min,
   ValidateNested,
 } from 'class-validator';
 
@@ -29,12 +29,12 @@ export class NutritionalFactsDto
   implements OmitFields<Prisma.NutritionalFactsCreateInput, 'Recipe'>
 {
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   servings?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   servingAmount?: number | null;
@@ -43,142 +43,132 @@ export class NutritionalFactsDto
   @ApiProperty({ enum: MeasurementUnit, nullable: true })
   servingUnit?: MeasurementUnit | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   proteinInG?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   totalFatInG?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  carbsInG?: number | null;
+  carbohydratesInG?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   fiberInG?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   sugarInG?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   sodiumInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   cholesterolInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   saturatedFatInG?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   transFatInG?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   potassiumInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   vitaminAInIU?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   vitaminCInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   calciumInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   ironInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   vitaminDInIU?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   vitaminB6InMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   vitaminB12InMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   magnesiumInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   folateInMcg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   thiaminInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   riboflavinInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   niacinInMg?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   caloriesInKcal?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  carbohydrates?: number | null;
+  fatInG?: number | null;
   @IsNumber()
-  @IsPositive()
-  @IsOptional()
-  @ApiProperty({ type: Number, nullable: true })
-  protein?: number | null;
-  @IsNumber()
-  @IsPositive()
-  @IsOptional()
-  @ApiProperty({ type: Number, nullable: true })
-  fat?: number | null;
-  @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   fiber?: number | null;
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
   sugar?: number | null;
@@ -188,7 +178,7 @@ export class IngredientDto
   implements OmitFields<Prisma.IngredientCreateInput, 'Step'>
 {
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   @ApiProperty({ type: Number })
   amount: number;
   @IsEnum(MeasurementUnit)
@@ -220,7 +210,7 @@ export class CreateRecipeDto
   implements
     OmitFields<
       Prisma.RecipeUncheckedCreateInput,
-      'nutritionalFacts' | 'user' | 'steps' | 'tags'
+      'equipments' | 'nutritionalFacts' | 'user' | 'steps' | 'tags'
     >
 {
   @IsNotEmpty()
@@ -233,14 +223,17 @@ export class CreateRecipeDto
   @IsOptional()
   @ApiProperty({ type: String, nullable: true })
   description?: string | null;
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  base64Image: string;
   @IsInt()
   @IsOptional()
-  @IsPositive()
+  @Min(0)
   @ApiProperty({ type: Number, nullable: true })
   preparationTimeInMinutes?: number | null;
   @IsInt()
   @IsOptional()
-  @IsPositive()
+  @Min(0)
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes?: number | null;
   @IsArray()
@@ -255,6 +248,10 @@ export class CreateRecipeDto
   @IsString({ each: true })
   @ApiProperty({ type: [String] })
   tags: string[];
+  @IsArray()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String] })
+  equipments: string[];
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ type: String })

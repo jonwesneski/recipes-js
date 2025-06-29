@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@repo/database';
 import { PrismaService } from 'src/common';
+import { S3Service } from 'src/common/s3.service';
 import { CreateRecipeDto } from './contracts';
 
 type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
@@ -61,7 +62,10 @@ export type RecipeMinimalType = Omit<RecipeMinimalPrismaType, 'tags'> & {
 
 @Injectable()
 export class RecipesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly s3Service: S3Service,
+  ) {}
 
   transformRecipe<T extends RecipePrismaType | RecipeMinimalPrismaType>(
     recipe: T,
@@ -109,6 +113,11 @@ export class RecipesService {
   }
 
   async createRecipe(data: CreateRecipeDto): Promise<RecipeType> {
+    this.s3Service.uploadFile(
+      'example',
+      Buffer.from(data.base64Image, 'base64'),
+    );
+    return await Promise.resolve({} as RecipeType);
     const recipe = await this.prisma.recipe.create({
       data: {
         ...data,
@@ -134,6 +143,12 @@ export class RecipesService {
           connectOrCreate: data.tags.map((tag) => ({
             where: { name: tag },
             create: { name: tag },
+          })),
+        },
+        equipments: {
+          connectOrCreate: data.equipments.map((equipment) => ({
+            where: { name: equipment },
+            create: { name: equipment },
           })),
         },
       },

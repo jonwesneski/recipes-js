@@ -3,6 +3,7 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
+import { json, urlencoded } from 'express';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
 export function configureApp(app: INestApplication<any>) {
@@ -16,6 +17,8 @@ export function configureApp(app: INestApplication<any>) {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({
