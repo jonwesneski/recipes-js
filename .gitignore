@@ -9,6 +9,7 @@
 next-env.d.ts
 
 **/tsconfig.build.tsbuildinfo
+**/tsconfig.tsbuildinfo
 
 # testing
 **/coverage
