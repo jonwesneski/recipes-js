@@ -14,6 +14,8 @@ NodeJS: [https://nodejs.org/en/download](https://nodejs.org/en/download)
   4. `pnpm setup` You may have to restart your terminal after this
   5. `pnpm add turbo --global`
   6. `pnpm i`
+  7. Install docker compose
+  8. `docker-compose up -d`
 
 - MacOS:
   1. brew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
@@ -25,7 +27,7 @@ NodeJS: [https://nodejs.org/en/download](https://nodejs.org/en/download)
   7. `pnpm setup` You may have to restart your terminal after this
   8. `pnpm add turbo --global`
   9. `pnpm i`
-  10. `docker compose up -d`
+  10. `docker-compose up -d`
 
 ### Running locally:
 
