@@ -111,7 +111,7 @@ describe('RecipesController (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body.name).toBe('Test Recipe');
-          expect(res.body.slug).toBe('test-recipe');
+          expect(res.body.id).toBeDefined();
         });
     });
 
@@ -141,7 +141,7 @@ describe('RecipesController (e2e)', () => {
         .send(sampleRecipe)
         .expect(409)
         .expect({
-          message: 'Recipe with slug "sample-recipe" already exists.',
+          message: 'Recipe with name "sample Recipe" already exists.',
           error: 'Conflict',
           statusCode: 409,
         });

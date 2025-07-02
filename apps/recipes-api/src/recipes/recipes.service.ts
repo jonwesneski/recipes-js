@@ -152,7 +152,7 @@ export class RecipesService {
           create: data.nutritionalFacts || {},
         },
         recipeTags: {
-          create: data.tags.map((tag) => ({
+          create: tags.map((tag) => ({
             tag: {
               connectOrCreate: {
                 where: { name: tag },
