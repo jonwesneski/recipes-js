@@ -1,6 +1,5 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiParam } from '@nestjs/swagger';
-import { JwtGuard } from 'src/auth/guards';
 import { throwIfConflict, throwIfNotFound } from 'src/common';
 import { CreateRecipeDto, RecipeEntity } from './contracts';
 import { RecipesService } from './recipes.service';
@@ -22,19 +21,19 @@ export class RecipesController {
     return this.recipesService.getRecipes();
   }
 
-  @Get(':userHandle/:slug')
+  @Get(':userHandle/:id')
   @ApiOkResponse({
     description: 'The recipe record',
     type: RecipeEntity,
   })
-  @ApiParam({ name: 'slug', type: String, description: 'Slug of recipe' })
   @ApiParam({ name: 'userHandle', type: String, description: 'User of recipe' })
+  @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
   async recipe(
     @Param('userHandle') userHandle: string,
-    @Param('slug') slug: string,
+    @Param('id') id: string,
   ): Promise<RecipeEntity> {
     try {
-      return await this.recipesService.getRecipe(userHandle, slug);
+      return await this.recipesService.getRecipe(userHandle, id);
     } catch (error) {
       throwIfNotFound(error);
       throw error;
@@ -43,12 +42,12 @@ export class RecipesController {
 
   @Post()
   @ApiBody({ type: CreateRecipeDto })
-  @UseGuards(JwtGuard)
+  //@UseGuards(JwtGuard)
   async createRecipe(@Body() body: CreateRecipeDto): Promise<RecipeEntity> {
     try {
       return await this.recipesService.createRecipe(body);
     } catch (error) {
-      throwIfConflict(error, `Recipe with slug "${body.slug}" already exists.`);
+      throwIfConflict(error, `Recipe with name "${body.name}" already exists.`);
       throw error;
     }
   }

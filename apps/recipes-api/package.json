@@ -18,7 +18,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "npx jest --config ./test/jest-e2e.json",
     "test:e2e:cov": "pnpm test:e2e",
     "test:cov:merge": "ts-node merge-coverage.ts coverage/unit/coverage-final.json coverage/e2e/coverage-final.json",
     "test:ci": "pnpm test:cov --forceExit && pnpm test:e2e:cov --forceExit && pnpm test:cov:merge"
@@ -36,6 +36,7 @@
     "@prisma/client": "^6.9.0",
     "@repo/database": "workspace:*",
     "@repo/zod-schemas": "workspace:*",
+    "aws-sdk": "^2.1692.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "nestjs-pino": "^4.4.0",

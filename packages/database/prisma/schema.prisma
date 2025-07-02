@@ -33,37 +33,23 @@ enum MeasurementUnit {
 }
 
 model User {
-  id           String            @id @default(cuid())
-  name         String
-  email        String            @unique
-  handle       String            @unique
-  useFractions Boolean           @default(false)
-  useImperial  Boolean           @default(false)
-  useDarkMode  Boolean           @default(false)
-  diet         NutritionalFacts? @relation(fields: [nutritionalFactsId], references: [id])
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-  recipes      Recipe[]
-  favorites    UserFavorite[]
+  id                 String            @id @default(cuid())
+  name               String
+  email              String            @unique
+  handle             String            @unique
+  useFractions       Boolean           @default(false)
+  useImperial        Boolean           @default(false)
+  useDarkMode        Boolean           @default(false)
+  diet               NutritionalFacts? @relation(fields: [nutritionalFactsId], references: [id])
+  nutritionalFactsId String?           @unique
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  recipes            Recipe[]
 
-  Followers          UserFollow[] @relation("UserFollows")
-  Followings         UserFollow[] @relation("UserFollowings")
-  nutritionalFactsId String?
+  followers  UserFollow[] @relation("UserFollows")
+  followings UserFollow[] @relation("UserFollowings")
 
   @@map("users")
-}
-
-model UserFavorite {
-  id               String   @id @default(cuid())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  userId           String
-  User             User     @relation(fields: [userId], references: [id])
-  recipeUserHandle String
-  recipeSlug       String
-  Recipe           Recipe   @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
-
-  @@map("user_favorites")
 }
 
 model UserFollow {
@@ -71,32 +57,30 @@ model UserFollow {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   userId      String
-  User        User     @relation("UserFollows", fields: [userId], references: [id])
+  user        User     @relation("UserFollows", fields: [userId], references: [id])
   followingId String
-  Following   User     @relation("UserFollowings", fields: [followingId], references: [id])
+  following   User     @relation("UserFollowings", fields: [followingId], references: [id])
 
   @@map("user_follows")
 }
 
 model Recipe {
-  id                       Int               @unique @default(autoincrement())
+  id                       String            @unique @default(cuid())
   name                     String
-  slug                     String            @unique
   description              String?
+  imageUrl                 String
   preparationTimeInMinutes Int?
   cookingTimeInMinutes     Int?
   createdAt                DateTime          @default(now())
   updatedAt                DateTime          @updatedAt
   steps                    Step[]
   equipments               Equipment[]
-  nutritionalFacts         NutritionalFacts?
   userHandle               String
-  User                     User              @relation(fields: [userHandle], references: [handle])
-  tags                     Tag[]
-  userFavorites            UserFavorite[]
+  user                     User              @relation(fields: [userHandle], references: [handle])
   recipeTags               RecipeTag[]
+  nutritionalFacts         NutritionalFacts?
 
-  @@id([userHandle, slug])
+  @@unique([userHandle, name])
   @@map("recipes")
 }
 
@@ -130,36 +114,32 @@ model NutritionalFacts {
   niacinInMg       Int?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
-  recipeUserHandle String
-  recipeSlug       String
-  Recipe           Recipe           @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
-  User             User[]
+  recipeId         String           @unique
+  recipe           Recipe?          @relation(fields: [recipeId], references: [id])
+  user             User?
 
-  @@unique([recipeUserHandle, recipeSlug])
   @@map("nutritional_facts")
 }
 
 model Step {
-  id               String       @id @default(cuid())
-  ingredients      Ingredient[]
-  instruction      String?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  recipeUserHandle String
-  recipeSlug       String
-  Recipe           Recipe       @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
+  id          String       @id @default(cuid())
+  ingredients Ingredient[]
+  instruction String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  recipeId    String
+  recipe      Recipe       @relation(fields: [recipeId], references: [id])
 
   @@map("steps")
 }
 
 model Equipment {
-  id               String   @id @default(cuid())
-  name             String   @unique
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  recipeUserHandle String
-  recipeSlug       String
-  Recipe           Recipe   @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
 
   @@map("equipments")
 }
@@ -172,31 +152,27 @@ model Ingredient {
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
   stepId    String
-  Step      Step            @relation(fields: [stepId], references: [id])
+  step      Step            @relation(fields: [stepId], references: [id])
 
   @@map("ingredients")
 }
 
 model Tag {
-  id               Int         @unique @default(autoincrement())
-  name             String      @unique
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  recipeTags       RecipeTag[]
-  Recipe           Recipe?     @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
-  recipeUserHandle String?
-  recipeSlug       String?
+  id         Int         @unique @default(autoincrement())
+  name       String      @unique
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  recipeTags RecipeTag[]
 
   @@map("tags")
 }
 
 model RecipeTag {
-  recipeUserHandle String
-  recipeSlug       String
-  tagName          String
-  Recipe           Recipe @relation(fields: [recipeUserHandle, recipeSlug], references: [userHandle, slug])
-  Tag              Tag    @relation(fields: [tagName], references: [name])
+  recipeId         String
+  tagId            Int
+  recipe           Recipe @relation(fields: [recipeId], references: [id])
+  tag              Tag    @relation(fields: [tagId], references: [id])
 
-  @@id([recipeUserHandle, recipeSlug, tagName])
+  @@id([recipeId, tagId])
   @@map("recipe_tags")
 }

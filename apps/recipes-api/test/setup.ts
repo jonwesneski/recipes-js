@@ -1,6 +1,7 @@
 import { MeasurementUnit } from '@repo/database';
 import { execSync } from 'child_process';
 import * as dotenv from 'dotenv';
+
 import * as path from 'path';
 import { GenericContainer } from 'testcontainers';
 import recipesData from './recipesTestData.json';
@@ -57,7 +58,7 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
       data: {
         name: recipe.name,
         description: recipe.description,
-        slug: recipe.slug,
+        imageUrl: 'url',
         steps: {
           create: recipe.steps.map((step) => ({
             instruction: step.instruction,

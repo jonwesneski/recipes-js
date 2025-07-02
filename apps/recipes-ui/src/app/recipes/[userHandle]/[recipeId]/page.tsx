@@ -14,15 +14,12 @@ import {
 const Page = ({
   params,
 }: {
-  params: Promise<{ userHandle: string; recipeSlug: string }>
+  params: Promise<{ userHandle: string; recipeId: string }>
 }) => {
   const [recipe, setRecipe] = useState<RecipeEntity | null>(null)
-  const { userHandle, recipeSlug } = use(params)
+  const { userHandle, recipeId } = use(params)
 
-  const { isSuccess, data } = useRecipesControllerRecipeV1(
-    userHandle,
-    recipeSlug,
-  )
+  const { isSuccess, data } = useRecipesControllerRecipeV1(userHandle, recipeId)
 
   useEffect(() => {
     if (isSuccess) {

@@ -18,13 +18,13 @@ const Page = () => {
         {isSuccess && Array.isArray(data)
           ? data.map((recipe) => (
               <div
-                key={recipe.slug}
+                key={recipe.id}
                 className="border p-4 rounded-lg shadow hover:shadow-lg transition-shadow"
               >
                 <h2 className="text-xl font-bold">{recipe.name}</h2>
                 <p className="text-gray-600">{recipe.description}</p>
                 <p>{recipe.tags.join(' ')}</p>
-                <SharedButton text={`/recipes/${recipe.slug}`} />
+                <SharedButton text={`/recipes/${recipe.id}`} />
               </div>
             ))
           : null}
