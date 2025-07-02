@@ -123,7 +123,7 @@ export class RecipesService {
   }
 
   async createRecipe(data: CreateRecipeDto): Promise<RecipeType> {
-    const { base64Image, ...remainingData } = data;
+    const { base64Image, tags, ...remainingData } = data;
     const imageUrl = await this.s3Service.uploadFile(
       'example',
       Buffer.from(base64Image, 'base64'),
