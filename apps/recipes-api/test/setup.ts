@@ -1,6 +1,7 @@
 import { MeasurementUnit } from '@repo/database';
 import { execSync } from 'child_process';
 import * as dotenv from 'dotenv';
+
 import * as path from 'path';
 import { GenericContainer } from 'testcontainers';
 import recipesData from './recipesTestData.json';
@@ -11,8 +12,6 @@ async function getPrisma() {
 }
 
 export default async function setupDb() {
-  dotenv.config({ path: './.env.test' });
-
   const postgresContainer = await new GenericContainer('postgres:13')
     .withExposedPorts(5432)
     .withEnvironment({
@@ -22,6 +21,7 @@ export default async function setupDb() {
     })
     .start();
 
+  dotenv.config({ path: './.env.test' });
   process.env.DATABASE_URL = `postgresql://prisma:prisma@${postgresContainer.getHost()}:${postgresContainer.getMappedPort(5432)}/recipes-db-test?schema=public`;
 
   // Optional: wait a moment for the container to be ready for connections
