@@ -17,7 +17,7 @@ export class S3Service {
       secretAccessKey: _awsConfig.secretAccessKey,
       region: _awsConfig.region,
     });
-    this.cloudFrontBaseUrl = _awsConfig.cloudFrontBaseUrl
+    this.cloudFrontBaseUrl = _awsConfig.cloudFrontBaseUrl;
   }
 
   async uploadFile(keyName: string, content: Buffer<ArrayBuffer>) {
@@ -29,14 +29,14 @@ export class S3Service {
     };
     return new Promise<string>((resolve, reject) => {
       this.s3.upload(params, (err: Error, data: S3.ManagedUpload.SendData) => {
-      if (err) {
-        this.logger.error(`Error uploading file: ${JSON.stringify(err)}`);
-        reject(err)
-      } else {
-        this.logger.log(`File uploaded successfully at ${data.Location}`);
-        resolve(`${this.cloudFrontBaseUrl}/${params.Key}`);
-      }
+        if (err) {
+          this.logger.error(`Error uploading file: ${JSON.stringify(err)}`);
+          reject(err);
+        } else {
+          this.logger.log(`File uploaded successfully at ${data.Location}`);
+          resolve(`${this.cloudFrontBaseUrl}/${params.Key}`);
+        }
+      });
     });
-    })
   }
 }

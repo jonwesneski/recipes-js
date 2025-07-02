@@ -18,6 +18,7 @@ describe('RecipesController (e2e)', () => {
     uploadFile: jest.fn(),
   };
   let user1: Awaited<ReturnType<PrismaService['user']['findUnique']>>;
+  let recipeId: string;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -34,9 +35,15 @@ describe('RecipesController (e2e)', () => {
 
     mockS3Service.uploadFile.mockResolvedValueOnce(() => 'url')
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
-    user1 = await prismaService.user.findUnique({
+    user1 = await prismaService.user.findUniqueOrThrow({
       where: { handle: 'jon' },
     });
+    recipeId = (await prismaService.recipe.findUniqueOrThrow({
+      where: {userHandle_name: {
+      userHandle: 'jon',
+      name: 'Tres Leches Cake',
+    },}
+    })).id
 
     await app.init();
   });
@@ -56,10 +63,10 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe(`GET ${basePath}/[user]/[slug]`, () => {
+  describe(`GET ${basePath}/[user]/[id]`, () => {
     it('existing recipe', () => {
       return request(app.getHttpServer())
-        .get(`${basePath}/${user1!.handle}/tres-leches-cake`)
+        .get(`${basePath}/${user1!.handle}/${recipeId}`)
         .expect(200)
         .expect((res) => {
           const emptyRecipe = new RecipeEntity();
@@ -71,7 +78,7 @@ describe('RecipesController (e2e)', () => {
 
     it('non-existing recipe', () => {
       return request(app.getHttpServer())
-        .get(`${basePath}/${user1!.handle}/test-recipe`)
+        .get(`${basePath}/${user1!.handle}/123`)
         .expect(404)
         .expect({ message: 'Not Found', statusCode: 404 });
     });

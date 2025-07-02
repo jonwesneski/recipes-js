@@ -9,10 +9,10 @@ type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
     recipeTags: {
       include: {
         tag: {
-          select: { name: true },
-        },
-      },
-    },
+          select: { name: true };
+        };
+      };
+    };
   };
   omit: {
     id: true;
@@ -39,7 +39,7 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
           omit: { stepId: true; recipeId: true };
         };
       };
-      omit: { recipeId: true; };
+      omit: { recipeId: true };
     };
     nutritionalFacts: {
       omit: {
@@ -52,14 +52,16 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
     recipeTags: {
       include: {
         tag: {
-          select: { name: true },
-        },
-      },
-    },
+          select: { name: true };
+        };
+      };
+    };
   };
 }>;
 
-export type RecipeType = Omit<RecipePrismaType, 'recipeTags'> & { tags: string[] };
+export type RecipeType = Omit<RecipePrismaType, 'recipeTags'> & {
+  tags: string[];
+};
 export type RecipeMinimalType = Omit<RecipeMinimalPrismaType, 'recipeTags'> & {
   tags: string[];
 };
@@ -84,8 +86,8 @@ export class RecipesService {
     const recipes = await this.prisma.recipe.findMany({
       include: {
         recipeTags: {
-          include: {tag: {select: {name: true}}}
-        }
+          include: { tag: { select: { name: true } } },
+        },
       },
       omit: {
         id: true,
@@ -113,21 +115,20 @@ export class RecipesService {
         },
         nutritionalFacts: true,
         recipeTags: {
-          include: {tag: {select: {name: true}}}
-        }
+          include: { tag: { select: { name: true } } },
+        },
       },
     });
     return this.transformRecipe(recipe);
   }
 
   async createRecipe(data: CreateRecipeDto): Promise<RecipeType> {
-    const {base64Image, ...remainingData} = data
+    const { base64Image, ...remainingData } = data;
     const imageUrl = await this.s3Service.uploadFile(
       'example',
       Buffer.from(base64Image, 'base64'),
-    )
-    
-    return await Promise.resolve({} as RecipeType);
+    );
+
     const recipe = await this.prisma.recipe.create({
       data: {
         ...remainingData,
@@ -151,15 +152,15 @@ export class RecipesService {
           create: data.nutritionalFacts || {},
         },
         recipeTags: {
-                create: data.tags.map((tag) => ({
-                  tag: {
-                    connectOrCreate: {
-                      where: { name: tag },
-                      create: { name: tag },
-                    },
-                  },
-                })),
+          create: data.tags.map((tag) => ({
+            tag: {
+              connectOrCreate: {
+                where: { name: tag },
+                create: { name: tag },
               },
+            },
+          })),
+        },
         equipments: {
           connectOrCreate: data.equipments.map((equipment) => ({
             where: { name: equipment },
@@ -176,8 +177,8 @@ export class RecipesService {
         },
         nutritionalFacts: true,
         recipeTags: {
-          include: {tag: {select: {name: true}}}
-        }
+          include: { tag: { select: { name: true } } },
+        },
       },
     });
     return this.transformRecipe(recipe);
