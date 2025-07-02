@@ -33,7 +33,7 @@ describe('RecipesController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     configureApp(app);
 
-    mockS3Service.uploadFile.mockResolvedValueOnce(() => 'url')
+    mockS3Service.uploadFile.mockResolvedValue(() => 'url')
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
     user1 = await prismaService.user.findUniqueOrThrow({
       where: { handle: 'jon' },
