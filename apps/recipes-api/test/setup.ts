@@ -11,6 +11,8 @@ async function getPrisma() {
 }
 
 export default async function setupDb() {
+  dotenv.config({ path: './.env.test' });
+
   const postgresContainer = await new GenericContainer('postgres:13')
     .withExposedPorts(5432)
     .withEnvironment({
@@ -20,7 +22,6 @@ export default async function setupDb() {
     })
     .start();
 
-  dotenv.config({ path: './.env.test' });
   process.env.DATABASE_URL = `postgresql://prisma:prisma@${postgresContainer.getHost()}:${postgresContainer.getMappedPort(5432)}/recipes-db-test?schema=public`;
 
   // Optional: wait a moment for the container to be ready for connections
@@ -57,7 +58,7 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
       data: {
         name: recipe.name,
         description: recipe.description,
-        slug: recipe.slug,
+        imageUrl: 'url',
         steps: {
           create: recipe.steps.map((step) => ({
             instruction: step.instruction,

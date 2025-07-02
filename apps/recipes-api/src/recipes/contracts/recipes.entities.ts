@@ -8,14 +8,14 @@ type OmitFields<T, K extends keyof any> = Omit<
 >;
 
 export class EquipmentEntity
-  implements OmitFields<Prisma.EquipmentCreateInput, 'Recipe'>
+  implements OmitFields<Prisma.EquipmentCreateInput, 'recipe'>
 {
   @ApiProperty({ type: String })
   name: string;
 }
 
 export class NutritionalFactsEntity
-  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'Recipe'>
+  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'recipe'>
 {
   @ApiProperty({ type: Number, nullable: true })
   servings: number | null;
@@ -72,7 +72,7 @@ export class NutritionalFactsEntity
 }
 
 export class IngredientEntity
-  implements OmitFields<Prisma.IngredientCreateInput, 'Step'>
+  implements OmitFields<Prisma.IngredientCreateInput, 'step'>
 {
   @ApiProperty()
   id: string;
@@ -111,7 +111,23 @@ export class TagsType {
   name: string;
 }
 
-export class RecipeEntity implements RecipeType {
+export class RecipeEntity implements Omit<RecipeType, 'recipeTags'> {
+  @ApiProperty()
+  id: string;
+  @ApiProperty()
+  createdAt: Date;
+  @ApiProperty()
+  updatedAt: Date;
+  @ApiProperty()
+  name: string;
+  @ApiProperty({ type: String, nullable: true })
+  description: string | null;
+  @ApiProperty({ type: Number, nullable: true })
+  preparationTimeInMinutes: number | null;
+  @ApiProperty({ type: Number, nullable: true })
+  cookingTimeInMinutes: number | null;
+  @ApiProperty()
+  imageUrl: string;
   @ApiProperty({ type: [EquipmentEntity] })
   equipments: EquipmentEntity[];
   @ApiProperty({ type: [StepEntity] })
@@ -121,32 +137,16 @@ export class RecipeEntity implements RecipeType {
   @ApiProperty({ type: [String] })
   tags: string[];
   @ApiProperty()
-  id: number;
-  @ApiProperty()
-  createdAt: Date;
-  @ApiProperty()
-  updatedAt: Date;
-  @ApiProperty()
-  name: string;
-  @ApiProperty()
-  slug: string;
-  @ApiProperty({ type: String, nullable: true })
-  description: string | null;
-  @ApiProperty({ type: Number, nullable: true })
-  preparationTimeInMinutes: number | null;
-  @ApiProperty({ type: Number, nullable: true })
-  cookingTimeInMinutes: number | null;
-  @ApiProperty()
   userHandle: string;
 }
 
 export class RecipeMinimalEntity implements RecipeMinimalType {
   @ApiProperty()
   name: string;
-  @ApiProperty()
-  slug: string;
   @ApiProperty({ type: String, nullable: true })
   description: string | null;
+  @ApiProperty()
+  imageUrl: string;
   @ApiProperty({ type: [String] })
   tags: string[];
   @ApiProperty()

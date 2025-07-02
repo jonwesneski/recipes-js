@@ -19,14 +19,14 @@ type OmitFields<T, K extends keyof any> = Omit<
 >;
 
 export class EquipmentDto
-  implements OmitFields<Prisma.EquipmentCreateInput, 'Recipe'>
+  implements OmitFields<Prisma.EquipmentCreateInput, 'recipe'>
 {
   @ApiProperty({ type: String })
   name: string;
 }
 
 export class NutritionalFactsDto
-  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'Recipe'>
+  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'recipe'>
 {
   @IsNumber()
   @Min(0)
@@ -175,7 +175,7 @@ export class NutritionalFactsDto
 }
 
 export class IngredientDto
-  implements OmitFields<Prisma.IngredientCreateInput, 'Step'>
+  implements OmitFields<Prisma.IngredientCreateInput, 'step'>
 {
   @IsNumber()
   @Min(0)
@@ -210,15 +210,13 @@ export class CreateRecipeDto
   implements
     OmitFields<
       Prisma.RecipeUncheckedCreateInput,
-      'equipments' | 'nutritionalFacts' | 'user' | 'steps' | 'tags'
+      'equipments' | 'nutritionalFacts' | 'user' | 'steps' | 'tags' | 'imageUrl'
     >
 {
   @IsNotEmpty()
   @ApiProperty({ type: String })
   name: string;
   @IsNotEmpty()
-  @ApiProperty({ type: String })
-  slug: string;
   @IsString()
   @IsOptional()
   @ApiProperty({ type: String, nullable: true })

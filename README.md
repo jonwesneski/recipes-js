@@ -22,7 +22,7 @@ NodeJS: [https://nodejs.org/en/download](https://nodejs.org/en/download)
   2. `brew install docker`
   3. `brew install colima`
   4. `brew services start colima` 
-  5. `colima start`
+  5. `colima start --runtime docker`
   6. `npm install -g pnpm@10.11.0`
   7. `pnpm setup` You may have to restart your terminal after this
   8. `pnpm add turbo --global`

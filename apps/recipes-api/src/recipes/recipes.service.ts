@@ -6,9 +6,13 @@ import { CreateRecipeDto } from './contracts';
 
 type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
   include: {
-    tags: {
-      select: { name: true };
-    };
+    recipeTags: {
+      include: {
+        tag: {
+          select: { name: true },
+        },
+      },
+    },
   };
   omit: {
     id: true;
@@ -27,8 +31,6 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
         createdAt: true;
         updatedAt: true;
         recipeId: true;
-        recipeSlug: true;
-        recipeUserHandle: true;
       };
     };
     steps: {
@@ -37,7 +39,7 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
           omit: { stepId: true; recipeId: true };
         };
       };
-      omit: { recipeSlug: true; recipeUserHandle: true };
+      omit: { recipeId: true; };
     };
     nutritionalFacts: {
       omit: {
@@ -45,18 +47,20 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
         createdAt: true;
         updatedAt: true;
         recipeId: true;
-        recipeSlug: true;
-        recipeUserHandle: true;
       };
     };
-    tags: {
-      select: { name: true };
-    };
+    recipeTags: {
+      include: {
+        tag: {
+          select: { name: true },
+        },
+      },
+    },
   };
 }>;
 
-export type RecipeType = Omit<RecipePrismaType, 'tags'> & { tags: string[] };
-export type RecipeMinimalType = Omit<RecipeMinimalPrismaType, 'tags'> & {
+export type RecipeType = Omit<RecipePrismaType, 'recipeTags'> & { tags: string[] };
+export type RecipeMinimalType = Omit<RecipeMinimalPrismaType, 'recipeTags'> & {
   tags: string[];
 };
 
@@ -69,17 +73,19 @@ export class RecipesService {
 
   transformRecipe<T extends RecipePrismaType | RecipeMinimalPrismaType>(
     recipe: T,
-  ): Omit<T, 'tags'> & { tags: string[] } {
+  ): Omit<T, 'recipeTags'> & { tags: string[] } {
     return {
       ...recipe,
-      tags: recipe.tags.map((tag) => tag.name),
+      tags: recipe.recipeTags.map((rt) => rt.tag.name),
     };
   }
 
   async getRecipes(): Promise<RecipeMinimalType[]> {
     const recipes = await this.prisma.recipe.findMany({
       include: {
-        tags: { select: { name: true } },
+        recipeTags: {
+          include: {tag: {select: {name: true}}}
+        }
       },
       omit: {
         id: true,
@@ -92,10 +98,10 @@ export class RecipesService {
     return recipes.map((recipe) => this.transformRecipe(recipe));
   }
 
-  async getRecipe(userHandle: string, slug: string): Promise<RecipeType> {
+  async getRecipe(userHandle: string, id: string): Promise<RecipeType> {
     const recipe = await this.prisma.recipe.findFirstOrThrow({
       where: {
-        slug,
+        id,
         userHandle,
       },
       include: {
@@ -106,21 +112,26 @@ export class RecipesService {
           },
         },
         nutritionalFacts: true,
-        tags: { select: { name: true } },
+        recipeTags: {
+          include: {tag: {select: {name: true}}}
+        }
       },
     });
     return this.transformRecipe(recipe);
   }
 
   async createRecipe(data: CreateRecipeDto): Promise<RecipeType> {
-    this.s3Service.uploadFile(
+    const {base64Image, ...remainingData} = data
+    const imageUrl = await this.s3Service.uploadFile(
       'example',
-      Buffer.from(data.base64Image, 'base64'),
-    );
+      Buffer.from(base64Image, 'base64'),
+    )
+    
     return await Promise.resolve({} as RecipeType);
     const recipe = await this.prisma.recipe.create({
       data: {
-        ...data,
+        ...remainingData,
+        imageUrl,
         steps: {
           create: data.steps.map((step) => ({
             instruction: step.instruction,
@@ -139,12 +150,16 @@ export class RecipesService {
         nutritionalFacts: {
           create: data.nutritionalFacts || {},
         },
-        tags: {
-          connectOrCreate: data.tags.map((tag) => ({
-            where: { name: tag },
-            create: { name: tag },
-          })),
-        },
+        recipeTags: {
+                create: data.tags.map((tag) => ({
+                  tag: {
+                    connectOrCreate: {
+                      where: { name: tag },
+                      create: { name: tag },
+                    },
+                  },
+                })),
+              },
         equipments: {
           connectOrCreate: data.equipments.map((equipment) => ({
             where: { name: equipment },
@@ -160,7 +175,9 @@ export class RecipesService {
           },
         },
         nutritionalFacts: true,
-        tags: { select: { name: true } },
+        recipeTags: {
+          include: {tag: {select: {name: true}}}
+        }
       },
     });
     return this.transformRecipe(recipe);
