@@ -27,16 +27,13 @@ export class S3Service {
       Body: content,
       ContentType: 'image/jpg',
     };
-    return new Promise<string>((resolve, reject) => {
-      this.s3.upload(params, (err: Error, data: S3.ManagedUpload.SendData) => {
-        if (err) {
-          this.logger.error(`Error uploading file: ${JSON.stringify(err)}`);
-          reject(err);
-        } else {
-          this.logger.log(`File uploaded successfully at ${data.Location}`);
-          resolve(`${this.cloudFrontBaseUrl}/${params.Key}`);
-        }
-      });
-    });
+    try {
+      const result = await this.s3.upload(params).promise();
+      this.logger.log(`File uploaded successfully at ${result.Location}`);
+      return `${this.cloudFrontBaseUrl}/${params.Key}`;
+    } catch (err) {
+      this.logger.error(`Error uploading file: ${JSON.stringify(err)}`);
+      throw err;
+    }
   }
 }
