@@ -21,19 +21,19 @@ export class RecipesController {
     return this.recipesService.getRecipes();
   }
 
-  @Get(':userHandle/:slug')
+  @Get(':userHandle/:id')
   @ApiOkResponse({
     description: 'The recipe record',
     type: RecipeEntity,
   })
-  @ApiParam({ name: 'slug', type: String, description: 'Slug of recipe' })
   @ApiParam({ name: 'userHandle', type: String, description: 'User of recipe' })
+  @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
   async recipe(
     @Param('userHandle') userHandle: string,
-    @Param('slug') slug: string,
+    @Param('id') id: string,
   ): Promise<RecipeEntity> {
     try {
-      return await this.recipesService.getRecipe(userHandle, slug);
+      return await this.recipesService.getRecipe(userHandle, id);
     } catch (error) {
       throwIfNotFound(error);
       throw error;
@@ -47,7 +47,7 @@ export class RecipesController {
     try {
       return await this.recipesService.createRecipe(body);
     } catch (error) {
-      throwIfConflict(error, `Recipe with slug "${body.slug}" already exists.`);
+      throwIfConflict(error, `Recipe with name "${body.name}" already exists.`);
       throw error;
     }
   }

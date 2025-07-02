@@ -19,6 +19,7 @@ export type StepsItemsType = {
 };
 
 export type RecipeState = Omit<CreateRecipeDto, 'steps'> & {
+  id: string;
   editEnabled: boolean;
   steps: StepsItemsType[];
 };
@@ -74,11 +75,13 @@ const createStepItem = (params?: {
 
 export const defaultInitState: RecipeState = {
   editEnabled: false,
+  id: '',
   name: '',
-  slug: '',
   description: null,
+  base64Image: '',
   preparationTimeInMinutes: null,
   cookingTimeInMinutes: null,
+  equipments: [],
   steps: [createStepItem()],
   nutritionalFacts: null,
   tags: [],

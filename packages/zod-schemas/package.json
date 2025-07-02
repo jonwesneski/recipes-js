@@ -22,7 +22,10 @@
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
     "eslint": "^9.29.0",
-    "typescript": "^5.8.3"
+    "eslint-plugin-prettier": "^5.4.1",
+    "globals": "^16.2.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.0"
   },
   "dependencies": {
     "zod": "^3.25.67"

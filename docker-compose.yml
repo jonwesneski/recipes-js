@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
-      POSTGRES_DB: recipe_db
+      POSTGRES_DB: recipe-db
     ports:
       - "5432:5432"
     volumes:
