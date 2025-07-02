@@ -124,63 +124,70 @@ export class RecipesService {
 
   async createRecipe(data: CreateRecipeDto): Promise<RecipeType> {
     const { base64Image, tags, ...remainingData } = data;
-    const imageUrl = await this.s3Service.uploadFile(
-      'example',
-      Buffer.from(base64Image, 'base64'),
-    );
+    const s3BucketKeyName = data.name.replaceAll(' ', '_');
+    const imageUrl = `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`;
 
-    const recipe = await this.prisma.recipe.create({
-      data: {
-        ...remainingData,
-        imageUrl,
-        steps: {
-          create: data.steps.map((step) => ({
-            instruction: step.instruction,
-            ingredients: {
-              createMany: {
-                data:
-                  step.ingredients?.map((ingredient) => ({
-                    name: ingredient.name,
-                    amount: ingredient.amount,
-                    unit: ingredient.unit,
-                  })) || [],
+    const recipe = await this.prisma.$transaction(async () => {
+      const recipe = await this.prisma.recipe.create({
+        data: {
+          ...remainingData,
+          imageUrl,
+          steps: {
+            create: data.steps.map((step) => ({
+              instruction: step.instruction,
+              ingredients: {
+                createMany: {
+                  data:
+                    step.ingredients?.map((ingredient) => ({
+                      name: ingredient.name,
+                      amount: ingredient.amount,
+                      unit: ingredient.unit,
+                    })) || [],
+                },
               },
-            },
-          })),
-        },
-        nutritionalFacts: {
-          create: data.nutritionalFacts || {},
-        },
-        recipeTags: {
-          create: tags.map((tag) => ({
-            tag: {
-              connectOrCreate: {
-                where: { name: tag },
-                create: { name: tag },
+            })),
+          },
+          nutritionalFacts: {
+            create: data.nutritionalFacts || {},
+          },
+          recipeTags: {
+            create: tags.map((tag) => ({
+              tag: {
+                connectOrCreate: {
+                  where: { name: tag },
+                  create: { name: tag },
+                },
               },
-            },
-          })),
-        },
-        equipments: {
-          connectOrCreate: data.equipments.map((equipment) => ({
-            where: { name: equipment },
-            create: { name: equipment },
-          })),
-        },
-      },
-      include: {
-        equipments: true,
-        steps: {
-          include: {
-            ingredients: true,
+            })),
+          },
+          equipments: {
+            connectOrCreate: data.equipments.map((equipment) => ({
+              where: { name: equipment },
+              create: { name: equipment },
+            })),
           },
         },
-        nutritionalFacts: true,
-        recipeTags: {
-          include: { tag: { select: { name: true } } },
+        include: {
+          equipments: true,
+          steps: {
+            include: {
+              ingredients: true,
+            },
+          },
+          nutritionalFacts: true,
+          recipeTags: {
+            include: { tag: { select: { name: true } } },
+          },
         },
-      },
+      });
+
+      await this.s3Service.uploadFile(
+        s3BucketKeyName,
+        Buffer.from(base64Image, 'base64'),
+      );
+      return recipe;
     });
+
     return this.transformRecipe(recipe);
   }
 }
