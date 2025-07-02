@@ -7,7 +7,7 @@ export class S3Service {
   private readonly logger = new Logger(S3Service.name);
 
   private s3: S3;
-  private cloudFrontBaseUrl: string;
+  private _cloudFrontBaseUrl: string;
   constructor(
     @Inject(awsConfig.KEY)
     _awsConfig: AwsConfigType,
@@ -17,7 +17,11 @@ export class S3Service {
       secretAccessKey: _awsConfig.secretAccessKey,
       region: _awsConfig.region,
     });
-    this.cloudFrontBaseUrl = _awsConfig.cloudFrontBaseUrl;
+    this._cloudFrontBaseUrl = _awsConfig.cloudFrontBaseUrl;
+  }
+
+  public get cloudFrontBaseUrl() {
+    return this._cloudFrontBaseUrl;
   }
 
   async uploadFile(keyName: string, content: Buffer<ArrayBuffer>) {
@@ -30,7 +34,6 @@ export class S3Service {
     try {
       const result = await this.s3.upload(params).promise();
       this.logger.log(`File uploaded successfully at ${result.Location}`);
-      return `${this.cloudFrontBaseUrl}/${params.Key}`;
     } catch (err) {
       this.logger.error(`Error uploading file: ${JSON.stringify(err)}`);
       throw err;
