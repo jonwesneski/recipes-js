@@ -1,11 +1,12 @@
 'use client'
-import { Button, Label, Text, TextLabel } from '@repo/ui'
+import { Button, TextLabel } from '@repo/ui'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { isImageSizeUnderLimit } from '@src/utils/imageChecker'
 import Image from 'next/image'
 import { useState } from 'react'
 import { RecipeCamera } from './RecipeCamera'
 import { Steps } from './Steps'
+import { TimeTextLabel } from './TimeTextLabel'
 
 interface RecipeProps {
   editEnabled: boolean
@@ -34,26 +35,13 @@ export const Recipe = (props: RecipeProps) => {
           placeholder="Recipe name"
           label="recipe name"
         />
-
         <TextLabel
           name="description"
           placeholder="Short description"
           label="description"
         />
-        <TextLabel
-          name="prep-time"
-          placeholder="30"
-          label="prep. time"
-          variant="none"
-        />
-        <TextLabel
-          name="cook-time"
-          placeholder="95"
-          variant="none"
-          label="cook time"
-        />
-        <Text name="cook-time" placeholder="95" variant="none" />
-        <Label text="cook time in min." />
+        <TimeTextLabel name="prep-time" label="prep. time" />
+        <TimeTextLabel name="cook-time" label="cook time" />
         <Button
           variant="opposite"
           text={addImageText}
