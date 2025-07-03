@@ -1,0 +1,47 @@
+{
+  "name": "@repo/codegen",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./recipes": {
+      "import": "./dist/api/recipes/recipes.js",
+      "types": "./dist/types/api/recipes/recipes.d.ts"
+    },
+    "./tags": {
+      "import": "./dist/api/tags/tags.js",
+      "types": "./dist/types/api/tags/tags.d.ts"
+    },
+    "./users": {
+      "import": "./dist/api/users/users.js",
+      "types": "./dist/types/api/users/users.d.ts"
+    },
+    "./model": {
+      "import": "./dist/model/index.js",
+      "types": "./dist/types/model/index.d.ts"
+    },
+    "./mswRecipes": {
+      "import": "./dist/api/recipes/recipes.msw.js",
+      "types": "./dist/types/api/recipes/recipes.msw.d.ts"
+    },
+    "./mswUsers": {
+      "import": "./dist/api/users/users.msw.js",
+      "types": "./dist/types/api/users/users.msw.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "orval && tsc && tsc -p tsconfig.test.json"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^24.0.1",
+    "msw": "^2.10.2",
+    "orval": "^7.10.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.80.7",
+    "axios": "^1.9.0"
+  }
+}
