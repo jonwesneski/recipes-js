@@ -1,6 +1,6 @@
 'use client'
 
-import { SharedButton } from '@repo/ui'
+import { Button } from '@repo/ui'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
@@ -23,7 +23,7 @@ export const Steps = () => {
       {steps.map((s, index) => {
         return (
           <div key={s.id}>
-            <h6>Step {index + 1}:</h6>
+            <h1 className="font-bold">step {index + 1}:</h1>
             <div ref={s.ref} className="flex flex-col md:flex-row">
               <IngredientsTextArea
                 ref={s.ingredientsRef}
@@ -37,7 +37,7 @@ export const Steps = () => {
           </div>
         )
       })}
-      <SharedButton variant="opposite" text="add step" onClick={addStep} />
+      <Button variant="opposite" text="add step" onClick={addStep} />
     </div>
   )
 }

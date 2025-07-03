@@ -1,24 +1,12 @@
 import clsx from 'clsx'
 import { type MouseEventHandler } from 'react'
 
-interface SharedButtonProps {
+interface ButtonProps {
   text: string
-  variant: 'default' | 'opposite'
+  variant?: 'default' | 'opposite'
   onClick?: MouseEventHandler<HTMLButtonElement>
 }
-export const SharedButton = (props: SharedButtonProps) => {
-  let background = '--background'
-  let text = '--text'
-  const { variant } = props
-  switch (props.variant) {
-    case 'opposite':
-      background = '--text'
-      text = '--background'
-    default:
-      background = '--background'
-      text = '--text'
-  }
-
+export const Button = ({ variant = 'default', ...props }: ButtonProps) => {
   return (
     <button
       type="button"

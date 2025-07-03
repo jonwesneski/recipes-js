@@ -1,4 +1,5 @@
 export * from './Button';
 export * from './Label';
 export * from './Modal';
-export * from './TextInput';
+export * from './Text';
+export * from './TextArea';

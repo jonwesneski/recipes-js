@@ -50,6 +50,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
   return (
     <TextArea
       ref={textAreaRef}
+      variant="shadowRB"
       value={instructions}
       placeholder={placeholder}
       minHeight={rem(120)}

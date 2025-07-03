@@ -1,5 +1,5 @@
 'use client'
-import { Label, SharedButton, SharedInput } from '@repo/ui'
+import { Button, Label, Text, TextLabel } from '@repo/ui'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { isImageSizeUnderLimit } from '@src/utils/imageChecker'
 import Image from 'next/image'
@@ -28,16 +28,33 @@ export const Recipe = (props: RecipeProps) => {
 
   return (
     <RecipeStoreProvider initialState={{ editEnabled: props.editEnabled }}>
-      <div className="[&>*]:block mb-10">
-        <SharedInput name="recipe" placeholder="Recipe name" />
-        <Label text="recipe name" htmlFor="recipe" />
-        <SharedInput name="description" placeholder="Short description" />
-        <Label text="description" htmlFor="description" />
-        <SharedInput name="prep-time" placeholder="30" variant="none" />
-        <Label text="prep. time in min." htmlFor="prep-time" />
-        <SharedInput name="cook-time" placeholder="95" variant="none" />
+      <div className="flex flex-col gap-10">
+        <TextLabel
+          name="recipe"
+          placeholder="Recipe name"
+          label="recipe name"
+        />
+
+        <TextLabel
+          name="description"
+          placeholder="Short description"
+          label="description"
+        />
+        <TextLabel
+          name="prep-time"
+          placeholder="30"
+          label="prep. time"
+          variant="none"
+        />
+        <TextLabel
+          name="cook-time"
+          placeholder="95"
+          variant="none"
+          label="cook time"
+        />
+        <Text name="cook-time" placeholder="95" variant="none" />
         <Label text="cook time in min." />
-        <SharedButton
+        <Button
           variant="opposite"
           text={addImageText}
           onClick={handleOnCamera}

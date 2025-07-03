@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import type {
   DetailedHTMLProps,
   RefObject,
@@ -12,6 +13,7 @@ type TextAreaProps = Omit<
   'style' | 'className' | 'ref'
 > & {
   ref: RefObject<HTMLTextAreaElement | null>
+  variant?: 'shadowLT' | 'shadowRB'
   minWidth?: string | number
   minHeight?: string | number
   maxWidth?: string | number
@@ -19,6 +21,7 @@ type TextAreaProps = Omit<
   onResize: (_height: number) => void
 }
 export const TextArea = ({
+  variant = 'shadowLT',
   minWidth,
   minHeight,
   maxWidth,
@@ -45,7 +48,10 @@ export const TextArea = ({
   return (
     <textarea
       {...props}
-      className="border-1 h-full p-2 m-2"
+      className={clsx('border-1 h-full p-2 m-2', {
+        'shadow-[-4px_-4px]': variant === 'shadowLT',
+        'shadow-[4px_4px]': variant === 'shadowRB',
+      })}
       placeholder={placeHolder}
       style={{
         resize: 'none',

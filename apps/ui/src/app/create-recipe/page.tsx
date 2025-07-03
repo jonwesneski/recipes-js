@@ -3,7 +3,7 @@
 import { type CreateRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
-import { SharedButton } from '@repo/ui'
+import { Button } from '@repo/ui'
 import { NavigationLayout } from '@src/components/navigation'
 import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
@@ -54,7 +54,7 @@ const Page = () => {
         <div className="single-recipe">
           {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
           <Recipe editEnabled={true} />
-          <SharedButton
+          <Button
             text="submit"
             variant="opposite"
             onClick={() => handleSubmit()}
