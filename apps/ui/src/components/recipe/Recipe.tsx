@@ -12,7 +12,7 @@ interface RecipeProps {
 }
 export const Recipe = (props: RecipeProps) => {
   const [showCamera, setShowCamera] = useState(false)
-  const [addImageText, setAddImageText] = useState('Add Image')
+  const [addImageText, setAddImageText] = useState('add image')
   const [image, setImage] = useState<string | undefined>(undefined)
   const handleOnCamera = () => {
     setShowCamera(true)
@@ -21,7 +21,7 @@ export const Recipe = (props: RecipeProps) => {
   const handleOnImage = (_image: string) => {
     if (isImageSizeUnderLimit(_image)) {
       setImage(_image)
-      setAddImageText('Replace Image')
+      setAddImageText('replace image')
     }
     setShowCamera(false)
   }
@@ -37,9 +37,13 @@ export const Recipe = (props: RecipeProps) => {
         <Label text="prep. time in min." htmlFor="prep-time" />
         <SharedInput name="cook-time" placeholder="95" variant="none" />
         <Label text="cook time in min." />
-        <SharedButton text={addImageText} onClick={handleOnCamera} />
+        <SharedButton
+          variant="opposite"
+          text={addImageText}
+          onClick={handleOnCamera}
+        />
         {showCamera && <RecipeCamera onImage={handleOnImage} />}
-        {image && <Image src={image} width={200} height={200} alt="Taken" />}
+        {image && <Image src={image} width={200} height={200} alt="taken" />}
       </div>
       <Steps />
     </RecipeStoreProvider>

@@ -37,7 +37,7 @@ export const Steps = () => {
           </div>
         )
       })}
-      <SharedButton onClick={addStep} text="Add Step" />
+      <SharedButton variant="opposite" text="add step" onClick={addStep} />
     </div>
   )
 }

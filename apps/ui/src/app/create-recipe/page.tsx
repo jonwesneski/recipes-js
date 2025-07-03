@@ -54,7 +54,11 @@ const Page = () => {
         <div className="single-recipe">
           {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
           <Recipe editEnabled={true} />
-          <SharedButton text="submit" onClick={() => handleSubmit()} />
+          <SharedButton
+            text="submit"
+            variant="opposite"
+            onClick={() => handleSubmit()}
+          />
         </div>
       </div>
     </NavigationLayout>

@@ -15,27 +15,27 @@
 
 @layer base {
   :root {
-    --background: #fff;
+    --background: #fff1dd;
     --margined-background: #f0f0f0;
     --border: #000;
     --text: #000;
     --muted: #4444447b;
   }
 
-  [data-theme="dark"] {
+  [data-theme='dark'] {
     --background: #000;
     --margined-background: #242424;
-    --border: #fff;
-    --text: #fff;
+    --border: #fff1dd;
+    --text: #fff1dd;
     --muted: #bbbbbb7b;
   }
 }
 
 @layer components {
   * {
-    @apply transition-colors duration-200
+    @apply transition-colors duration-200;
   }
-  
+
   button {
     background-color: var(--color-background);
     border-color: var(--color-border);
@@ -66,6 +66,6 @@
   }
 
   ::placeholder {
-    color: var(--color-muted)
+    color: var(--color-muted);
   }
 }
