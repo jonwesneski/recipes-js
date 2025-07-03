@@ -5,7 +5,7 @@
     "prisma:generate": {},
     "build": {
       "dependsOn": ["^build", "^prisma:generate"],
-      "outputs": [".next/**", "!.next/cache/**", "apps/recipes-api/dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "apps/api/dist/**"]
     },
     "dev": {
       "dependsOn": ["^prisma:generate"],

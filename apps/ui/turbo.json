@@ -1,0 +1,10 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^@repo/codegen#build", "^@repo/ui#build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    }
+  }
+}
