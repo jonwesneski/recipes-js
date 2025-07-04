@@ -13,17 +13,6 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
   const placeholder = '00:00'
   const [time, setTime] = useState('')
 
-  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTime((t) => {
-      const digitString = event.target.value.replace(':', '').padStart(4, '0')
-      console.log(digitString)
-      if (digitString.length <= 4) {
-        return `${digitString.slice(0, 2)}:${digitString.slice(2)}`
-      }
-      return t
-    })
-  }
-
   const handleOnInput = (event: React.InputEvent<HTMLInputElement>) => {
     if (event.nativeEvent.inputType === 'insertText') {
       setTime((t) => {
