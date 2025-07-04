@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-confusing-void-expression, @typescript-eslint/consistent-type-definitions -- its fine zustand */
 import type { ReactPortal } from 'react';
 import { createStore } from 'zustand/vanilla';
 
@@ -12,9 +11,9 @@ export type ModalsState = {
 };
 
 export type ModalActions = {
-  addModal: (modal: ModalType) => void;
+  addModal: (_modal: ModalType) => void;
   removeModal: () => void; // removes first modal
-  hasModal: (id: string) => boolean;
+  hasModal: (_id: string) => boolean;
 };
 
 export type ModalStore = ModalsState & ModalActions;

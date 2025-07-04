@@ -12,7 +12,7 @@ interface TextLabelProps {
 export const TextLabel = (props: TextLabelProps) => {
   return (
     <div className="relative">
-      {props.isRequired && (
+      {Boolean(props.isRequired) && (
         <span className="absolute -left-3 text-red-900">*</span>
       )}
 
@@ -20,10 +20,10 @@ export const TextLabel = (props: TextLabelProps) => {
         name={props.name}
         placeholder={props.placeholder}
         variant={props.variant}
-        isBlock={true}
+        isBlock
       />
-      <Label text={`${props.label}`} htmlFor={props.name} />
-      {props.error && (
+      <Label text={props.label} htmlFor={props.name} />
+      {props.error !== undefined && (
         <span className="text-red-900">{`\u00A0-\u00A0${props.error}`}</span>
       )}
     </div>

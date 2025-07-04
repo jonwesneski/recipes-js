@@ -52,7 +52,7 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
         {props.label}
       </label>
 
-      <div className="flex grow-20 w-20"></div>
+      <div className="flex grow-20 w-20" />
     </div>
   )
 }

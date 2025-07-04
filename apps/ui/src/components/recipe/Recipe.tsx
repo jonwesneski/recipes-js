@@ -34,7 +34,7 @@ export const Recipe = (props: RecipeProps) => {
           name="recipe"
           placeholder="Recipe name"
           label="recipe name"
-          isRequired={true}
+          isRequired
         />
         <TextLabel
           name="description"
@@ -49,8 +49,10 @@ export const Recipe = (props: RecipeProps) => {
           text={addImageText}
           onClick={handleOnCamera}
         />
-        {showCamera && <RecipeCamera onImage={handleOnImage} />}
-        {image && <Image src={image} width={200} height={200} alt="taken" />}
+        {Boolean(showCamera) && <RecipeCamera onImage={handleOnImage} />}
+        {image !== undefined && (
+          <Image src={image} width={200} height={200} alt="taken" />
+        )}
 
         <Steps />
       </div>
