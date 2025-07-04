@@ -34,13 +34,15 @@ export const Recipe = (props: RecipeProps) => {
           name="recipe"
           placeholder="Recipe name"
           label="recipe name"
+          isRequired={true}
         />
         <TextLabel
           name="description"
           placeholder="Short description"
           label="description"
+          isRequired={false}
         />
-        <TimeTextLabel name="prep-time" label="prep. time" />
+        <TimeTextLabel name="prep-time" label="prep time" />
         <TimeTextLabel name="cook-time" label="cook time" />
         <Button
           variant="opposite"
@@ -49,8 +51,9 @@ export const Recipe = (props: RecipeProps) => {
         />
         {showCamera && <RecipeCamera onImage={handleOnImage} />}
         {image && <Image src={image} width={200} height={200} alt="taken" />}
+
+        <Steps />
       </div>
-      <Steps />
     </RecipeStoreProvider>
   )
 }

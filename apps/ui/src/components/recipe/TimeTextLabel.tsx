@@ -1,4 +1,3 @@
-import { rem } from '@src/utils/rem'
 import {
   useState,
   type DetailedHTMLProps,
@@ -42,16 +41,18 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
       <input
         {...props}
         type="text"
-        className="border-0 border-b focus:outline-none focus:border-gray-300"
+        className="border-0 border-b focus:outline-none focus:border-gray-400 w-13"
         placeholder={placeholder}
         onInput={handleOnInput}
         value={time}
         dir="rtl"
-        width={rem(10)}
+        style={{ flexShrink: 5, flexBasis: '15px' }}
       />
       <label className="font-bold" htmlFor={props.name}>
         {props.label}
       </label>
+
+      <div className="flex grow-20 w-20"></div>
     </div>
   )
 }

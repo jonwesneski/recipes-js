@@ -51,7 +51,7 @@ const Page = () => {
   return (
     <NavigationLayout>
       <div className="flex justify-center">
-        <div className="single-recipe">
+        <div className="block">
           {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
           <Recipe editEnabled={true} />
           <Button
