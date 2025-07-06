@@ -38,7 +38,12 @@ export const Steps = () => {
           </div>
         )
       })}
-      <Button variant="opposite" text="add step" onClick={addStep} />
+      <Button
+        className="float-right"
+        variant="opposite"
+        text="add step"
+        onClick={addStep}
+      />
     </div>
   )
 }

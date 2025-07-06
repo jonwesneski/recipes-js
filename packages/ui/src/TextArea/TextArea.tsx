@@ -47,7 +47,7 @@ export const TextArea = ({
     <textarea
       {...props}
       className={mergeCss(
-        'border-1 p-2 m-2',
+        'border-1 p-2 m-2 focus:outline-none',
         {
           'shadow-[-4px_-4px]': variant === 'shadowLT',
           'shadow-[4px_4px]': variant === 'shadowRB',

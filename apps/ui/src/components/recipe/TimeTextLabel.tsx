@@ -1,4 +1,6 @@
 import {
+  useEffect,
+  useRef,
   useState,
   type DetailedHTMLProps,
   type InputHTMLAttributes,
@@ -11,6 +13,7 @@ export type TimeTextLabelProps = Omit<
 export const TimeTextLabel = (props: TimeTextLabelProps) => {
   const placeholder = '00:00'
   const [time, setTime] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleOnInput = (event: React.InputEvent<HTMLInputElement>) => {
     if (
@@ -40,10 +43,18 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
     }
   }
 
+  useEffect(() => {
+    if (inputRef.current) {
+      // Always have the Caret to the right in a rtl direction
+      inputRef.current.setSelectionRange(0, 0)
+    }
+  }, [time])
+
   return (
     <div className="flex gap-2">
       <input
         {...props}
+        ref={inputRef}
         id={props.name}
         type="text"
         className="border-0 border-b focus:outline-none focus:border-gray-400 w-13"

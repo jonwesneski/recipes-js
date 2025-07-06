@@ -1,5 +1,5 @@
 export const isImageSizeUnderLimit = (dataImageString: string): boolean => {
-  return calculateImageSize(dataImageString) < 40_000;
+  return calculateImageSize(dataImageString) < 60_000;
 };
 
 const PADDING_REGEX = /=+$/;
