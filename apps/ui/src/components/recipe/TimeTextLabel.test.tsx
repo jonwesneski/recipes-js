@@ -7,6 +7,7 @@ describe('TimeTextLabel', () => {
     const { findByTestId } = render(<TimeTextLabel label="some time" />)
     const input = await findByTestId('time-input')
     expect(input.getAttribute('placeholder')).toBe('00:00')
+    expect(input).toHaveValue('')
   })
 
   it('1 minute', async () => {
@@ -50,5 +51,14 @@ describe('TimeTextLabel', () => {
     await userEvent.type(input, '0')
     await userEvent.type(input, '{backspace}')
     expect(input).toHaveValue('00:01')
+  })
+
+  it('back to nothing', async () => {
+    const { findByTestId } = render(<TimeTextLabel label="some time" />)
+    const input = await findByTestId('time-input')
+    await userEvent.type(input, '1')
+    await userEvent.type(input, '0')
+    await userEvent.type(input, '{backspace}{backspace}')
+    expect(input).toHaveValue('')
   })
 })

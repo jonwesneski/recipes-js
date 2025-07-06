@@ -27,7 +27,7 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
             '0',
           )
         if (digitString.length <= 4) {
-          return `${digitString.slice(0, 2)}:${digitString.slice(2)}`
+          return transformResult(digitString)
         }
         return t
       })
@@ -37,9 +37,16 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
         const digitString = nonZeros
           .slice(0, nonZeros.length - 1)
           .padStart(4, '0')
-        return `${digitString.slice(0, 2)}:${digitString.slice(2)}`
+        return transformResult(digitString)
       })
     }
+  }
+
+  const transformResult = (digitString: string) => {
+    if (digitString === '0000') {
+      return ''
+    }
+    return `${digitString.slice(0, 2)}:${digitString.slice(2)}`
   }
 
   return (
