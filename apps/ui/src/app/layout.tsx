@@ -20,10 +20,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en">
       <body>
         <div
-          className="recipe-layout"
+          className="md:mx-5"
           style={{
-            height: '100vh', // Or a specific height
-            margin: '0px 20px',
+            height: '100vh',
           }}
         >
           <div id="root">

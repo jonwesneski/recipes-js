@@ -16,7 +16,7 @@ export const Text = ({ variant, isBlock = false, ...props }: InputProps) => {
       {...props}
       type="text"
       className={clsx(
-        'border-0 border-b focus:outline-none focus:border-gray-500',
+        'pl-2 border-0 border-b focus:outline-none focus:border-gray-500 focus:bg-amber-700',
         { block: isBlock },
       )}
       placeholder={placeHolder}

@@ -13,10 +13,14 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
   const [time, setTime] = useState('')
 
   const handleOnInput = (event: React.InputEvent<HTMLInputElement>) => {
-    if (event.nativeEvent.inputType === 'insertText') {
+    if (
+      event.nativeEvent.inputType === 'insertText' &&
+      event.nativeEvent.data &&
+      !isNaN(parseInt(event.nativeEvent.data))
+    ) {
       setTime((t) => {
         const digitString =
-          `${t.replace(':', '').replaceAll('0', '')}${event.nativeEvent.data}`.padStart(
+          `${t.replace(':', '').replace(/^0+/, '')}${event.nativeEvent.data}`.padStart(
             4,
             '0',
           )
@@ -40,6 +44,7 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
     <div className="flex gap-2">
       <input
         {...props}
+        id={props.name}
         type="text"
         className="border-0 border-b focus:outline-none focus:border-gray-400 w-13"
         placeholder={placeholder}
@@ -48,7 +53,7 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
         dir="rtl"
         style={{ flexShrink: 5, flexBasis: '15px' }}
       />
-      <label className="font-bold" htmlFor={props.name}>
+      <label className="font-bold" htmlFor={props.id}>
         {props.label}
       </label>
 

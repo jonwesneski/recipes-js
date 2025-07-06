@@ -1,9 +1,9 @@
-import clsx from 'clsx'
 import type {
   DetailedHTMLProps,
   RefObject,
   TextareaHTMLAttributes,
 } from 'react'
+import { mergeCss } from '../utils'
 
 type TextAreaProps = Omit<
   DetailedHTMLProps<
@@ -18,14 +18,12 @@ type TextAreaProps = Omit<
   minHeight?: string | number
   maxWidth?: string | number
   width?: string | number
+  className?: string
   onResize: (_height: number) => void
 }
 export const TextArea = ({
   variant = 'shadowLT',
-  minWidth,
-  minHeight,
-  maxWidth,
-  width,
+  className,
   ...props
 }: TextAreaProps) => {
   const placeHolder = props.placeholder ? `${props.placeholder}...` : undefined
@@ -48,17 +46,17 @@ export const TextArea = ({
   return (
     <textarea
       {...props}
-      className={clsx('border-1 h-full p-2 m-2', {
-        'shadow-[-4px_-4px]': variant === 'shadowLT',
-        'shadow-[4px_4px]': variant === 'shadowRB',
-      })}
+      className={mergeCss(
+        'border-1 p-2 m-2',
+        {
+          'shadow-[-4px_-4px]': variant === 'shadowLT',
+          'shadow-[4px_4px]': variant === 'shadowRB',
+        },
+        className,
+      )}
       placeholder={placeHolder}
       style={{
         resize: 'none',
-        width,
-        minHeight,
-        minWidth,
-        maxWidth,
       }}
       onChange={handleInputChange}
     />

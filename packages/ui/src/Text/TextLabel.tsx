@@ -17,6 +17,7 @@ export const TextLabel = (props: TextLabelProps) => {
       )}
 
       <Text
+        id={props.name}
         name={props.name}
         placeholder={props.placeholder}
         variant={props.variant}
