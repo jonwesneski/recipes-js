@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { TextDecoder, TextEncoder } from 'util';
 //need to set these before importing './server'
 global.TextEncoder = TextEncoder;

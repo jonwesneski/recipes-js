@@ -55,6 +55,7 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
         value={time}
         dir="rtl"
         style={{ flexShrink: 5, flexBasis: '15px' }}
+        data-testid="time-input"
       />
       <label className="font-bold" htmlFor={props.id}>
         {props.label}

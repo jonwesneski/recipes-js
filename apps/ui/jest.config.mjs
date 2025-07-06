@@ -19,16 +19,6 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'jest-fixed-jsdom',
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  // moduleNameMapper: {
-  //   '^@src/(.*)$': '<rootDir>/src/$1',
-  //   '^@repo/codegen/(.*)$': [
-  //     '<rootDir>/../../packages/codegen/dist-cjs/api/$1/$1',
-  //     '<rootDir>/../../packages/codegen/dist-cjs/api/$1/$1.msw.js',
-  //     '<rootDir>/../../packages/codegen/dist-cjs/$1'
-  //   ],
-  //   '^@repo/codegen/mswUsers$': '<rootDir>/../../packages/codegen/dist/api/users/users.msw.js',
-  //   '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-  // },
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/src/$1',
     '^@repo/codegen/mswUsers$':
