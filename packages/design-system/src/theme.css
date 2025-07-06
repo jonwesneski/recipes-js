@@ -6,6 +6,7 @@
   /* Color Paletts with https://www.colorpalett.es/ */
   /* --color-primary-50: oklch(91.45% 0.023 264); */
 
+  --color-cream: #fff1dd;
   --color-background: var(--background);
   --color-marged-background: var(--margined-background);
   --color-input-focus-background: var(--input-focus-background);

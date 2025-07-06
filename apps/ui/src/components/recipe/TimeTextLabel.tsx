@@ -1,5 +1,4 @@
 import {
-  useEffect,
   useRef,
   useState,
   type DetailedHTMLProps,
@@ -42,13 +41,6 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
       })
     }
   }
-
-  useEffect(() => {
-    if (inputRef.current) {
-      // Always have the Caret to the right in a rtl direction
-      inputRef.current.setSelectionRange(0, 0)
-    }
-  }, [time])
 
   return (
     <div className="flex gap-2">

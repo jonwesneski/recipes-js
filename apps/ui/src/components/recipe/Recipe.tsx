@@ -96,7 +96,13 @@ export const Recipe = (props: RecipeProps) => {
 
         {Boolean(showCamera) && <RecipeCamera onImage={handleOnImage} />}
         {image !== undefined && (
-          <Image src={image} width={200} height={200} alt="taken" />
+          <Image
+            src={image}
+            className="w-full h-auto"
+            width={0}
+            height={0}
+            alt="taken"
+          />
         )}
 
         <Steps />
