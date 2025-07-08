@@ -49,6 +49,7 @@ describe('TimeTextLabel', () => {
     const input = await findByTestId('time-input')
     await userEvent.type(input, '1')
     await userEvent.type(input, '0')
+    // Not sure why this is doing a double backspace here
     await userEvent.type(input, '{backspace}')
     expect(input).toHaveValue('00:01')
   })
