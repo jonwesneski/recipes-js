@@ -3,7 +3,7 @@
 import { Button } from '@repo/ui'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import Image from 'next/image'
-import { type RefObject } from 'react'
+import { useEffect, type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
@@ -41,6 +41,13 @@ export const Steps = () => {
       console.log(error)
     }
   }
+
+  useEffect(() => {
+    const newStepRef = steps[steps.length - 1].ref.current
+    if (newStepRef) {
+      newStepRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [steps.length])
 
   return (
     <div className="mb-10">
