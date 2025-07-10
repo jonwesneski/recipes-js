@@ -6,12 +6,12 @@ import { isImageSizeUnderLimit } from '@src/utils/imageChecker'
 import { type ChangeEvent, useRef, useState } from 'react'
 
 interface PhotoInputProps {
+  label: string
   onCameraClick: (_value: string) => void
   onUploadClick: (_value: string) => void
 }
 export const PhotoInput = (props: PhotoInputProps) => {
   const uploadInputRef = useRef<HTMLInputElement>(null)
-  const [labelText, setLabelText] = useState<string>('photo')
   const [errorText, setErrorText] = useState<string | undefined>()
   const { takePhoto } = useCamera()
 
@@ -35,7 +35,6 @@ export const PhotoInput = (props: PhotoInputProps) => {
       try {
         const image = await convertImageFileToBase64(event.target.files[0])
         if (isImageSizeUnderLimit(image)) {
-          setLabelText('replace photo')
           props.onUploadClick(image)
         } else {
           setErrorText('too big')
@@ -68,7 +67,7 @@ export const PhotoInput = (props: PhotoInputProps) => {
   }
 
   return (
-    <UnderLabel text={labelText} isRequired error={errorText}>
+    <UnderLabel text={props.label} isRequired error={errorText}>
       <div className="flex flex-col">
         <div className="self-end flex gap-5 mb-3">
           <Button

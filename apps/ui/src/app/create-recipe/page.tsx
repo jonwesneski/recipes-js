@@ -56,9 +56,9 @@ const Page = () => {
         <NavigationLayout>
           <div className="flex justify-center">
             <div className="block mx-5">
-              {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
               <Recipe />
               <Button
+                className="mt-3 mx-auto block"
                 text="submit"
                 variant="opposite"
                 onClick={() => handleSubmit()}

@@ -47,6 +47,7 @@ export const Recipe = () => {
       <TimeTextLabel name="cook-time" label="cook time" />
 
       <PhotoInput
+        label="recipe photo"
         onCameraClick={handleOnCameraClick}
         onUploadClick={handleOnUploadClick}
       />

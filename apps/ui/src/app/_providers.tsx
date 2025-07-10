@@ -3,17 +3,22 @@
 import { ModalRoot, ModalStoreProvider } from '@repo/ui'
 import { AuthenticationProvider } from '@src/providers/authentication-provider'
 import { UserStoreProvider } from '@src/providers/use-store-provider'
+import { type UserStore } from '@src/stores/user-store'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 
-const AppProviders = ({ children }: { children: React.ReactNode }) => {
+interface AppProvidersProps {
+  children: React.ReactNode
+  initialState?: Partial<UserStore>
+}
+const AppProviders = (props: AppProvidersProps) => {
   return (
     <AuthenticationProvider>
       <QueryClientProvider client={queryClient}>
-        <UserStoreProvider>
+        <UserStoreProvider initialState={props.initialState}>
           <ModalStoreProvider>
-            {children}
+            {props.children}
             <ModalRoot />
           </ModalStoreProvider>
         </UserStoreProvider>

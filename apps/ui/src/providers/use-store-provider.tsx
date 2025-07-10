@@ -2,7 +2,11 @@
 
 import { usersControllerUserV1 } from '@repo/codegen/users'
 import { jwtGoogleSchema } from '@repo/zod-schemas'
-import { type UserStore, createUserStore } from '@src/stores/user-store'
+import {
+  type UserStore,
+  createUserStore,
+  defaultInitState,
+} from '@src/stores/user-store'
 import { jwtDecode } from 'jwt-decode'
 import {
   type ReactNode,
@@ -20,7 +24,7 @@ export const UserStoreContext = createContext<UserStoreApi | null>(null)
 
 export interface UserStoreProviderProps {
   children: ReactNode
-  initialState?: UserStore
+  initialState?: Partial<UserStore>
 }
 
 export const UserStoreProvider = ({
@@ -29,7 +33,7 @@ export const UserStoreProvider = ({
 }: UserStoreProviderProps) => {
   const storeRef = useRef<UserStoreApi | null>(null)
 
-  storeRef.current ??= createUserStore(initialState)
+  storeRef.current ??= createUserStore({ ...initialState, ...defaultInitState })
 
   const { accessToken } = useAuthentication()
   const [isInitialized, setIsInitialized] = useState<boolean>(false)

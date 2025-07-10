@@ -57,8 +57,9 @@ export const Steps = () => {
                 ref={s.instructionsRef}
                 onResize={(height: number) => handleOnResize(s.ref, height)}
               />
-              <div>
+              <div className="w-8/10 mx-auto mt-3">
                 <PhotoInput
+                  label="step photo"
                   onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
                   onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
                 />
@@ -77,8 +78,9 @@ export const Steps = () => {
           </div>
         )
       })}
+      <hr />
       <Button
-        className="float-right"
+        className="float-right mt-3"
         variant="opposite"
         text="add step"
         onClick={addStep}
