@@ -1,3 +1,4 @@
+import { Label } from '@repo/ui'
 import {
   useRef,
   useState,
@@ -56,6 +57,8 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
         ref={inputRef}
         id={props.name}
         type="text"
+        inputMode="numeric"
+        pattern="[0-9]{2}:[0-9]{2}"
         className="border-0 border-b focus:outline-none focus:border-gray-400 w-13"
         placeholder={placeholder}
         onInput={handleOnInput}
@@ -64,9 +67,7 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
         style={{ flexShrink: 5, flexBasis: '15px' }}
         data-testid="time-input"
       />
-      <label className="font-bold" htmlFor={props.id}>
-        {props.label}
-      </label>
+      <Label className="font-bold" text={props.label} htmlFor={props.id} />
 
       <div className="flex grow-20 w-20" />
     </div>

@@ -6,9 +6,10 @@ import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import { type RefObject, useEffect, useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
-const placeholder = `1.5 cups sugar
-1 1/4 cups chopped tomatoes
-1 whole avocado`
+const placeholder = `0.5 cups fresh basil
+1 1/4 cups peanuts
+3 whole eggs
+1 pinch salt`
 
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLTextAreaElement | null>
