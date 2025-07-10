@@ -72,7 +72,7 @@ export const Recipe = (props: RecipeProps) => {
         {image !== undefined && (
           <Image
             src={image}
-            className="w-9/10 h-auto"
+            className="w-9/10 h-auto mx-auto"
             width={0}
             height={0}
             alt="taken"
