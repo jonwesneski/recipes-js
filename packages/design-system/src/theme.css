@@ -6,8 +6,10 @@
   /* Color Paletts with https://www.colorpalett.es/ */
   /* --color-primary-50: oklch(91.45% 0.023 264); */
 
+  --color-cream: #fff1dd;
   --color-background: var(--background);
   --color-marged-background: var(--margined-background);
+  --color-input-focus-background: var(--input-focus-background);
   --color-border: var(--border);
   --color-text: var(--text);
   --color-muted: var(--muted);
@@ -15,27 +17,29 @@
 
 @layer base {
   :root {
-    --background: #fff;
-    --margined-background: #f0f0f0;
+    --background: #fff1dd;
+    --margined-background: #ffe9c9;
+    --input-focus-background: #ffe9c9;
     --border: #000;
     --text: #000;
     --muted: #4444447b;
   }
 
-  [data-theme="dark"] {
+  [data-theme='dark'] {
     --background: #000;
     --margined-background: #242424;
-    --border: #fff;
-    --text: #fff;
+    --input-focus-background: #242424;
+    --border: #fff1dd;
+    --text: #fff1dd;
     --muted: #bbbbbb7b;
   }
 }
 
 @layer components {
   * {
-    @apply transition-colors duration-200
+    @apply transition-colors duration-200;
   }
-  
+
   button {
     background-color: var(--color-background);
     border-color: var(--color-border);
@@ -59,13 +63,21 @@
     color: var(--color-text);
   }
 
+  input:focus {
+    background-color: var(--color-input-focus-background);
+  }
+
   textarea {
     background-color: var(--color-background);
     border-color: var(--color-border);
     color: var(--color-text);
   }
 
+  textarea:focus {
+    background-color: var(--color-input-focus-background);
+  }
+
   ::placeholder {
-    color: var(--color-muted)
+    color: var(--color-muted);
   }
 }

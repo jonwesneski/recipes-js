@@ -1,4 +1,4 @@
-import { renderComponent } from '@src/mocks/renderComponent'
+import { renderRecipeComponent } from '@src/mocks/renderComponent'
 import userEvent from '@testing-library/user-event'
 import { Steps } from './Steps'
 
@@ -30,7 +30,7 @@ const instructionsString = 'my second step\n\nmy third step\n\nmy fourth step'
 describe('Steps', () => {
   describe('On New', () => {
     it('Initial Load', async () => {
-      const { findAllByTestId } = renderComponent(<Steps />)
+      const { findAllByTestId } = renderRecipeComponent(<Steps />)
       const ingredients = await findAllByTestId(INGREDIENTS_ID)
       const instructions = await findAllByTestId(INSTRUCTIONS_ID)
       expect(ingredients.length).toBe(1)
@@ -41,7 +41,7 @@ describe('Steps', () => {
       const dataList = ingredientsString
         .replaceAll('\n\n', '\r\n\r\n')
         .split('\r\n\r\n')
-      const { findAllByTestId } = renderComponent(<Steps />)
+      const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENTS_ID)
 
       ingredients[0].focus()
@@ -62,7 +62,7 @@ describe('Steps', () => {
 
     it('Pasting ingredients: Linux', async () => {
       const dataList = ingredientsString.split('\n\n')
-      const { findAllByTestId } = renderComponent(<Steps />)
+      const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENTS_ID)
 
       ingredients[0].focus()
@@ -85,7 +85,7 @@ describe('Steps', () => {
       const dataList = instructionsString
         .replaceAll('\n\n', '\r\n\r\n')
         .split('\r\n\r\n')
-      const { findAllByTestId } = renderComponent(<Steps />)
+      const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let instructions = await findAllByTestId(INSTRUCTIONS_ID)
 
       instructions[0].focus()
@@ -106,7 +106,7 @@ describe('Steps', () => {
 
     it('Pasting instructions: Linux', async () => {
       const dataList = instructionsString.split('\n\n')
-      const { findAllByTestId } = renderComponent(<Steps />)
+      const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let instructions = await findAllByTestId(INSTRUCTIONS_ID)
 
       instructions[0].focus()
@@ -128,7 +128,7 @@ describe('Steps', () => {
     it('Pasting uneven steps', async () => {
       const ingredientsList = ingredientsString.split('\n\n')
       const instructionsList = instructionsString.split('\n\n')
-      const { findAllByTestId } = renderComponent(<Steps />)
+      const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENTS_ID)
 
       ingredients[0].focus()

@@ -1,7 +1,7 @@
 'use client'
 
 import { useRecipesControllerRecipesListV1 } from '@repo/codegen/recipes'
-import { SharedButton } from '@repo/ui'
+import { Button } from '@repo/ui'
 import { NavigationLayout } from '@src/components/navigation/NavigationLayout'
 import { useEffect } from 'react'
 
@@ -24,7 +24,7 @@ const Page = () => {
                 <h2 className="text-xl font-bold">{recipe.name}</h2>
                 <p className="text-gray-600">{recipe.description}</p>
                 <p>{recipe.tags.join(' ')}</p>
-                <SharedButton text={`/recipes/${recipe.id}`} />
+                <Button text={`/recipes/${recipe.id}`} />
               </div>
             ))
           : null}

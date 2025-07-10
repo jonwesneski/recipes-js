@@ -3,13 +3,13 @@
 import { TextArea } from '@repo/ui'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
-import { rem } from '@src/utils/rem'
 import { type RefObject, useEffect, useRef, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
-const placeholder = `1.5 cups sugar
-1 1/4 cups chopped tomatoes
-1 whole avocado`
+const placeholder = `0.5 cups fresh basil
+1 1/4 cups peanuts
+3 whole eggs
+1 pinch salt`
 
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLTextAreaElement | null>
@@ -149,21 +149,26 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     }
   }
 
+  const handleOnResize = (height: number) => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = `${height}px`
+    }
+  }
+
   return (
     <>
       <TextArea
         ref={textAreaRef}
+        className="min-h-32 min-w-80 grow-1"
         value={ingredients?.stringValue}
         placeholder={placeholder}
-        minHeight={rem(120)}
-        minWidth={rem(270)}
         onChange={handleInputChange}
         onMouseUp={handleMouseUp}
         onTouchEnd={handleTouchEnd}
         onBlur={handleBlur}
         onPaste={handleOnPaste}
         onInput={handleOnInput}
-        onResize={props.onResize}
+        onResize={handleOnResize}
         data-testid="ingredients-text-area"
       />
       {isPopupVisible ? (

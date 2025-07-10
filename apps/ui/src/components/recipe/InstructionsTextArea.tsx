@@ -2,7 +2,6 @@
 
 import { TextArea } from '@repo/ui'
 import { useRecipeStepInstructionsStore } from '@src/providers/recipe-store-provider'
-import { rem } from '@src/utils/rem'
 import { type RefObject, useEffect, useRef } from 'react'
 
 const placeholder = `The instructions for this step`
@@ -47,15 +46,21 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
     insertInstructionsSteps(data)
   }
 
+  const handleOnResize = (height: number) => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = `${height}px`
+    }
+  }
+
   return (
     <TextArea
       ref={textAreaRef}
+      className="min-h-32 min-w-80 grow-1"
+      variant="shadowRB"
       value={instructions}
       placeholder={placeholder}
-      minHeight={rem(120)}
-      minWidth={rem(270)}
       onChange={handleInputChange}
-      onResize={props.onResize}
+      onResize={handleOnResize}
       onPaste={handleOnPaste}
       data-testid="instructions-text-area"
     />

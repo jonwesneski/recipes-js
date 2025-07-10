@@ -9,6 +9,12 @@ interface RecipeCameraProps {
 export const RecipeCamera = (props: RecipeCameraProps) => {
   const camera = useRef<CameraType>(null)
 
+  const handleClick = () => {
+    if (camera.current) {
+      props.onImage(camera.current.takePhoto('base64url') as string)
+    }
+  }
+
   return (
     <div>
       <Camera
@@ -21,17 +27,15 @@ export const RecipeCamera = (props: RecipeCameraProps) => {
           switchCamera: 'switch failed',
         }}
       />
-      <button
-        type="button"
-        className="fixed z-9 left-1/2 transform -translate-x-1/2 bottom-[80px]"
-        onClick={() => {
-          if (camera.current) {
-            props.onImage(camera.current.takePhoto() as string)
-          }
-        }}
-      >
-        Take photo
-      </button>
+      <div className="fixed z-9 left-1/2 transform -translate-x-1/2 bottom-[80px] w-20 h-20 border-4 border-cream rounded-full bg-transparent">
+        <div
+          className="w-16 h-16 rounded-full bg-cream transform translate-x-1/17 translate-y-1/17"
+          role="button"
+          tabIndex={0}
+          onClick={() => handleClick()}
+          onKeyDown={() => handleClick()}
+        />
+      </div>
     </div>
   )
 }

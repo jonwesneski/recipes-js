@@ -3,10 +3,12 @@
 import { type CreateRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
-import { SharedButton } from '@repo/ui'
+import { Button } from '@repo/ui'
 import { NavigationLayout } from '@src/components/navigation'
 import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
+import { CameraProvider } from '@src/providers/CameraProvider'
+import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { useEffect, useState } from 'react'
 
 const Page = () => {
@@ -49,15 +51,23 @@ const Page = () => {
   }, [])
 
   return (
-    <NavigationLayout>
-      <div className="flex justify-center">
-        <div className="single-recipe">
-          {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
-          <Recipe editEnabled={true} />
-          <SharedButton text="submit" onClick={() => handleSubmit()} />
-        </div>
-      </div>
-    </NavigationLayout>
+    <RecipeStoreProvider initialState={{ editEnabled: true }}>
+      <CameraProvider>
+        <NavigationLayout>
+          <div className="flex justify-center">
+            <div className="block mx-5">
+              <Recipe />
+              <Button
+                className="mt-3 mx-auto block"
+                text="submit"
+                variant="opposite"
+                onClick={() => handleSubmit()}
+              />
+            </div>
+          </div>
+        </NavigationLayout>
+      </CameraProvider>
+    </RecipeStoreProvider>
   )
 }
 export default Page

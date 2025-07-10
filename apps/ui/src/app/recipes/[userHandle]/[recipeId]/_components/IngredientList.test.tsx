@@ -1,5 +1,5 @@
 import { type IngredientEntity } from '@repo/codegen/model'
-import { renderComponent } from '@src/mocks/renderComponent'
+import { renderRecipeComponent } from '@src/mocks/renderComponent'
 import { IngredientList } from './IngredientList'
 
 describe('IngredientList', () => {
@@ -22,7 +22,7 @@ describe('IngredientList', () => {
     },
   ] as IngredientEntity[]
   it('Lists created', async () => {
-    const { findByText } = renderComponent(
+    const { findByText } = renderRecipeComponent(
       <IngredientList ingredients={sampleIngredients} />,
     )
     await findByText(sampleIngredients[0].name)

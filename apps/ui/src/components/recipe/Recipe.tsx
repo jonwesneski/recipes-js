@@ -1,47 +1,68 @@
 'use client'
-import { Label, SharedButton, SharedInput } from '@repo/ui'
-import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
-import { isImageSizeUnderLimit } from '@src/utils/imageChecker'
-import Image from 'next/image'
-import { useState } from 'react'
-import { RecipeCamera } from './RecipeCamera'
-import { Steps } from './Steps'
 
-interface RecipeProps {
-  editEnabled: boolean
-}
-export const Recipe = (props: RecipeProps) => {
-  const [showCamera, setShowCamera] = useState(false)
-  const [addImageText, setAddImageText] = useState('Add Image')
-  const [image, setImage] = useState<string | undefined>(undefined)
-  const handleOnCamera = () => {
-    setShowCamera(true)
+import { TextLabel } from '@repo/ui'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+import { PhotoInput } from './PhotoInput'
+import { Steps } from './Steps'
+import { TimeTextLabel } from './TimeTextLabel'
+
+export const Recipe = () => {
+  const nameRef = useRef<HTMLInputElement>(null)
+  const [_image, setImage] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    if (nameRef.current) {
+      nameRef.current.focus()
+    }
+  }, [])
+
+  const handleOnCameraClick = (image: string) => {
+    setImage(image)
   }
 
-  const handleOnImage = (_image: string) => {
-    if (isImageSizeUnderLimit(_image)) {
-      setImage(_image)
-      setAddImageText('Replace Image')
-    }
-    setShowCamera(false)
+  const handleOnUploadClick = (image: string) => {
+    setImage(image)
   }
 
   return (
-    <RecipeStoreProvider initialState={{ editEnabled: props.editEnabled }}>
-      <div className="[&>*]:block mb-10">
-        <SharedInput name="recipe" placeholder="Recipe name" />
-        <Label text="recipe name" htmlFor="recipe" />
-        <SharedInput name="description" placeholder="Short description" />
-        <Label text="description" htmlFor="description" />
-        <SharedInput name="prep-time" placeholder="30" variant="none" />
-        <Label text="prep. time in min." htmlFor="prep-time" />
-        <SharedInput name="cook-time" placeholder="95" variant="none" />
-        <Label text="cook time in min." />
-        <SharedButton text={addImageText} onClick={handleOnCamera} />
-        {showCamera && <RecipeCamera onImage={handleOnImage} />}
-        {image && <Image src={image} width={200} height={200} alt="Taken" />}
-      </div>
+    <div className="flex flex-col gap-10">
+      <TextLabel
+        ref={nameRef}
+        name="recipe"
+        placeholder="Recipe name"
+        label="recipe name"
+        isRequired
+      />
+
+      <TextLabel
+        name="description"
+        placeholder="Short description"
+        label="description"
+        isRequired={false}
+      />
+
+      <TimeTextLabel name="prep-time" label="prep time" />
+
+      <TimeTextLabel name="cook-time" label="cook time" />
+
+      <PhotoInput
+        label="recipe photo"
+        onCameraClick={handleOnCameraClick}
+        onUploadClick={handleOnUploadClick}
+      />
+
+      {_image !== undefined && (
+        <Image
+          src={_image}
+          className="w-9/10 h-auto mx-auto"
+          width={0}
+          height={0}
+          alt="taken"
+        />
+      )}
+
       <Steps />
-    </RecipeStoreProvider>
+    </div>
   )
 }

@@ -33,17 +33,21 @@ describe('RecipesController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     configureApp(app);
 
-    mockS3Service.uploadFile.mockResolvedValue('url')
+    mockS3Service.uploadFile.mockResolvedValue('url');
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
     user1 = await prismaService.user.findUniqueOrThrow({
       where: { handle: 'jon' },
     });
-    recipeId = (await prismaService.recipe.findUniqueOrThrow({
-      where: {userHandle_name: {
-      userHandle: 'jon',
-      name: 'Tres Leches Cake',
-    },}
-    })).id
+    recipeId = (
+      await prismaService.recipe.findUniqueOrThrow({
+        where: {
+          userHandle_name: {
+            userHandle: 'jon',
+            name: 'Tres Leches Cake',
+          },
+        },
+      })
+    ).id;
 
     await app.init();
   });
@@ -87,24 +91,22 @@ describe('RecipesController (e2e)', () => {
   describe(`POST ${basePath}`, () => {
     it('create new recipe', () => {
       const sampleRecipe: CreateRecipeDto = {
-          name: 'Test Recipe',
-          description: 'This is a test recipe',
-          base64Image: '123',
-          steps: [
-            {
-              instruction: 'Step 1',
-              ingredients: [
-                { name: 'Ingredient 1', amount: 100, unit: 'grams' },
-              ],
-            },
-          ],
-          equipments: [],
-          tags: [],
-          nutritionalFacts: null,
-          preparationTimeInMinutes: 30,
-          cookingTimeInMinutes: 15,
-          userHandle: user1!.handle,
-        }
+        name: 'Test Recipe',
+        description: 'This is a test recipe',
+        base64Image: '123',
+        steps: [
+          {
+            instruction: 'Step 1',
+            ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
+          },
+        ],
+        equipments: [],
+        tags: [],
+        nutritionalFacts: null,
+        preparationTimeInMinutes: 30,
+        cookingTimeInMinutes: 15,
+        userHandle: user1!.handle,
+      };
       return request(app.getHttpServer())
         .post(basePath)
         .send(sampleRecipe)

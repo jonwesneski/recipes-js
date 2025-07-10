@@ -1,13 +1,15 @@
 'use client'
 
-import { SharedButton } from '@repo/ui'
+import { Button } from '@repo/ui'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import { type RefObject } from 'react'
+import Image from 'next/image'
+import { useEffect, type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
+import { PhotoInput } from './PhotoInput'
 
 export const Steps = () => {
-  const { steps, addStep } = useRecipeStore((state) => state)
+  const { steps, addStep, setImage } = useRecipeStore((state) => state)
 
   const handleOnResize = (
     stepRef: RefObject<HTMLDivElement | null>,
@@ -18,12 +20,41 @@ export const Steps = () => {
     }
   }
 
+  const handleOnCameraClick = (
+    stepRef: RefObject<HTMLDivElement | null>,
+    image: string,
+  ) => {
+    try {
+      setImage(stepRef, image)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleOnUploadClick = (
+    stepRef: RefObject<HTMLDivElement | null>,
+    image: string,
+  ) => {
+    try {
+      setImage(stepRef, image)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    const newStepRef = steps[steps.length - 1].ref.current
+    if (newStepRef) {
+      newStepRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [steps.length])
+
   return (
-    <div>
+    <div className="mb-10">
       {steps.map((s, index) => {
         return (
-          <div key={s.id}>
-            <h6>Step {index + 1}:</h6>
+          <div key={s.id} className="mb-5">
+            <h1 className="font-bold">step {index + 1}.</h1>
             <div ref={s.ref} className="flex flex-col md:flex-row">
               <IngredientsTextArea
                 ref={s.ingredientsRef}
@@ -33,11 +64,34 @@ export const Steps = () => {
                 ref={s.instructionsRef}
                 onResize={(height: number) => handleOnResize(s.ref, height)}
               />
+              <div className="w-8/10 mx-auto mt-3">
+                <PhotoInput
+                  label="step photo"
+                  onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
+                  onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
+                />
+                {s.image !== undefined && (
+                  <Image
+                    src={s.image}
+                    className="w-9/10 h-auto mx-auto"
+                    width={0}
+                    height={0}
+                    alt="taken"
+                  />
+                )}
+              </div>
             </div>
+            {index < steps.length - 1 && <hr className="mt-5" />}
           </div>
         )
       })}
-      <SharedButton onClick={addStep} text="Add Step" />
+      <hr />
+      <Button
+        className="float-right mt-3"
+        variant="opposite"
+        text="add step"
+        onClick={addStep}
+      />
     </div>
   )
 }
