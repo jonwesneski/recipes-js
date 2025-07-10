@@ -1,7 +1,7 @@
 'use client'
 
 import { useRecipesControllerRecipesListV1 } from '@repo/codegen/recipes'
-import { Button } from '@repo/ui'
+import { Button } from '@repo/design-system'
 import { NavigationLayout } from '@src/components/navigation/NavigationLayout'
 import { useEffect } from 'react'
 

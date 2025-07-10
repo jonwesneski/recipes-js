@@ -1,6 +1,6 @@
 'use client'
 
-import { TextArea } from '@repo/ui'
+import { TextArea } from '@repo/design-system'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientsValidator } from '@src/utils/ingredientsValidator'
 import { type RefObject, useEffect, useRef, useState } from 'react'

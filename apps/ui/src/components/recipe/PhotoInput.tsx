@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, UnderLabel } from '@repo/ui'
+import { Button, UnderLabel } from '@repo/design-system'
 import { useCamera } from '@src/providers/CameraProvider'
 import { isImageSizeUnderLimit } from '@src/utils/imageChecker'
 import { type ChangeEvent, useRef, useState } from 'react'

@@ -1,7 +1,7 @@
 'use client'
 
 import type { IngredientEntity } from '@repo/codegen/model'
-import { useCustomModal } from '@repo/ui'
+import { useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
   numberToFraction,

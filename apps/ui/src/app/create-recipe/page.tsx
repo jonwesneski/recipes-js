@@ -3,7 +3,7 @@
 import { type CreateRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
-import { Button } from '@repo/ui'
+import { Button } from '@repo/design-system'
 import { NavigationLayout } from '@src/components/navigation'
 import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'

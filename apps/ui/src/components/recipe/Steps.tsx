@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@repo/ui'
+import { Button } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import Image from 'next/image'
 import { useEffect, type RefObject } from 'react'

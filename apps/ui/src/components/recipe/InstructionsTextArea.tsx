@@ -1,6 +1,6 @@
 'use client'
 
-import { TextArea } from '@repo/ui'
+import { TextArea } from '@repo/design-system'
 import { useRecipeStepInstructionsStore } from '@src/providers/recipe-store-provider'
 import { type RefObject, useEffect, useRef } from 'react'
 
