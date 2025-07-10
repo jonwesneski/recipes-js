@@ -6,6 +6,8 @@ global.TextDecoder = TextDecoder as never;
 
 import { server } from './server';
 
+window.HTMLElement.prototype.scrollIntoView = function () {};
+
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
