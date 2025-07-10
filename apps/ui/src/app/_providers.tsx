@@ -1,6 +1,6 @@
 'use client'
 
-import { ModalRoot, ModalStoreProvider } from '@repo/ui'
+import { ModalRoot, ModalStoreProvider } from '@repo/design-system'
 import { AuthenticationProvider } from '@src/providers/authentication-provider'
 import { UserStoreProvider } from '@src/providers/use-store-provider'
 import { type UserStore } from '@src/stores/user-store'

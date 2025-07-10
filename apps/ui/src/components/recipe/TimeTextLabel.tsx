@@ -1,4 +1,4 @@
-import { Label } from '@repo/ui'
+import { Label } from '@repo/design-system'
 import {
   useRef,
   useState,

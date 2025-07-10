@@ -1,6 +1,6 @@
 'use client'
 
-import { TextLabel } from '@repo/ui'
+import { TextLabel } from '@repo/design-system'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { PhotoInput } from './PhotoInput'

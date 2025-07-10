@@ -1,4 +1,4 @@
-import { ModalCentered } from '@repo/ui'
+import { ModalCentered } from '@repo/design-system'
 import {
   getConversions,
   type VolumeUnit,
