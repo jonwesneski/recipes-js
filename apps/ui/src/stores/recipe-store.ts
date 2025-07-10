@@ -13,6 +13,7 @@ export type StepsItemsType = {
   instructionsRef?: RefObject<HTMLTextAreaElement | null>;
   instructions: string;
   shouldInstructionsBeFocused: boolean;
+  image?: string;
 };
 
 export type RecipeState = Omit<CreateRecipeDto, 'steps'> & {
@@ -44,6 +45,7 @@ export type RecipeActions = {
     ref: RefObject<HTMLTextAreaElement | null>,
     _instructions: string,
   ) => void;
+  setImage: (ref: RefObject<HTMLDivElement | null>, _image: string) => void;
   shouldBeFocused: (ref: RefObject<HTMLTextAreaElement | null>) => boolean;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
@@ -198,6 +200,14 @@ export const createRecipeStore = (
           return { steps: current };
         }
         return { steps: [...current, ...inserts] };
+      }),
+    setImage: (ref: RefObject<HTMLDivElement | null>, image: string) =>
+      set((state) => {
+        const index = state.steps.findIndex((s) => s.ref === ref);
+        if (index !== -1) {
+          state.steps[index].image = image;
+        }
+        return { steps: [...state.steps] };
       }),
     shouldBeFocused: (ref: RefObject<HTMLTextAreaElement | null>) => {
       return get().steps.some((s) => {

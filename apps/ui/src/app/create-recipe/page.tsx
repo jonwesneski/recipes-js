@@ -7,6 +7,8 @@ import { Button } from '@repo/ui'
 import { NavigationLayout } from '@src/components/navigation'
 import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
+import { CameraProvider } from '@src/providers/CameraProvider'
+import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { useEffect, useState } from 'react'
 
 const Page = () => {
@@ -49,19 +51,23 @@ const Page = () => {
   }, [])
 
   return (
-    <NavigationLayout>
-      <div className="flex justify-center">
-        <div className="block mx-5">
-          {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
-          <Recipe editEnabled={true} />
-          <Button
-            text="submit"
-            variant="opposite"
-            onClick={() => handleSubmit()}
-          />
-        </div>
-      </div>
-    </NavigationLayout>
+    <RecipeStoreProvider initialState={{ editEnabled: true }}>
+      <CameraProvider>
+        <NavigationLayout>
+          <div className="flex justify-center">
+            <div className="block mx-5">
+              {/*eslint-disable-next-line react/jsx-boolean-value -- always true*/}
+              <Recipe />
+              <Button
+                text="submit"
+                variant="opposite"
+                onClick={() => handleSubmit()}
+              />
+            </div>
+          </div>
+        </NavigationLayout>
+      </CameraProvider>
+    </RecipeStoreProvider>
   )
 }
 export default Page

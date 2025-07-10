@@ -11,7 +11,7 @@ export const RecipeCamera = (props: RecipeCameraProps) => {
 
   const handleClick = () => {
     if (camera.current) {
-      props.onImage(camera.current.takePhoto() as string)
+      props.onImage(camera.current.takePhoto('base64url') as string)
     }
   }
 

@@ -2,12 +2,14 @@
 
 import { Button } from '@repo/ui'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import Image from 'next/image'
 import { type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
+import { PhotoInput } from './PhotoInput'
 
 export const Steps = () => {
-  const { steps, addStep } = useRecipeStore((state) => state)
+  const { steps, addStep, setImage } = useRecipeStore((state) => state)
 
   const handleOnResize = (
     stepRef: RefObject<HTMLDivElement | null>,
@@ -15,6 +17,28 @@ export const Steps = () => {
   ) => {
     if (stepRef.current) {
       stepRef.current.style.height = `${height}px`
+    }
+  }
+
+  const handleOnCameraClick = (
+    stepRef: RefObject<HTMLDivElement | null>,
+    image: string,
+  ) => {
+    try {
+      setImage(stepRef, image)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleOnUploadClick = (
+    stepRef: RefObject<HTMLDivElement | null>,
+    image: string,
+  ) => {
+    try {
+      setImage(stepRef, image)
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -33,6 +57,21 @@ export const Steps = () => {
                 ref={s.instructionsRef}
                 onResize={(height: number) => handleOnResize(s.ref, height)}
               />
+              <div>
+                <PhotoInput
+                  onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
+                  onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
+                />
+                {s.image !== undefined && (
+                  <Image
+                    src={s.image}
+                    className="w-9/10 h-auto mx-auto"
+                    width={0}
+                    height={0}
+                    alt="taken"
+                  />
+                )}
+              </div>
             </div>
             {index < steps.length - 1 && <hr className="mt-5" />}
           </div>
