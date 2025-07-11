@@ -118,7 +118,7 @@ export class UserEntity {
   handle: string;
 }
 
-export class RecipeEntity implements Omit<RecipeType, 'recipeTags'> {
+export class RecipeEntity implements RecipeType {
   @ApiProperty()
   id: string;
   @ApiProperty()

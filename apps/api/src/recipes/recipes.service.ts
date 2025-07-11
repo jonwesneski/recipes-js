@@ -93,11 +93,14 @@ const RecipeInclude = {
 } as const;
 
 type RecipeUserType = { id: string; handle: string };
-export type RecipeType = Omit<RecipePrismaType, 'recipeTags'> & {
+export type RecipeType = Omit<RecipePrismaType, 'recipeTags' | 'userId'> & {
   tags: string[];
   user: RecipeUserType;
 };
-export type RecipeMinimalType = Omit<RecipeMinimalPrismaType, 'recipeTags'> & {
+export type RecipeMinimalType = Omit<
+  RecipeMinimalPrismaType,
+  'recipeTags' | 'userId'
+> & {
   tags: string[];
   user: RecipeUserType;
 };
@@ -111,18 +114,18 @@ export class RecipesService {
 
   transformRecipe<T extends RecipePrismaType | RecipeMinimalPrismaType>(
     recipe: T,
-  ): Omit<T, 'recipeTags'> & {
+  ): Omit<T, 'user' | 'recipeTags' | 'userId'> & {
     tags: string[];
     user: RecipeUserType;
   } {
-    const { user, userId, ...rest } = recipe;
+    const { user, userId, recipeTags, ...rest } = recipe;
     return {
-      ...recipe,
+      ...rest,
       user: {
         id: userId,
         handle: user.handle,
       },
-      tags: recipe.recipeTags.map((rt) => rt.tag.name),
+      tags: recipeTags.map((rt) => rt.tag.name),
     };
   }
 
