@@ -122,14 +122,16 @@ model NutritionalFacts {
 }
 
 model Step {
-  id          String       @id @default(cuid())
-  ingredients Ingredient[]
-  instruction String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  recipeId    String
-  recipe      Recipe       @relation(fields: [recipeId], references: [id])
+  id           String       @id @default(cuid())
+  displayOrder Int
+  ingredients  Ingredient[]
+  instruction  String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  recipeId     String
+  recipe       Recipe       @relation(fields: [recipeId], references: [id])
 
+  @@unique([recipeId, displayOrder])
   @@map("steps")
 }
 
@@ -145,15 +147,17 @@ model Equipment {
 }
 
 model Ingredient {
-  id        String          @id @default(cuid())
-  amount    Float
-  unit      MeasurementUnit
-  name      String
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  stepId    String
-  step      Step            @relation(fields: [stepId], references: [id])
+  id           String          @id @default(cuid())
+  displayOrder Int
+  amount       Float
+  unit         MeasurementUnit
+  name         String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  stepId       String
+  step         Step            @relation(fields: [stepId], references: [id])
 
+  @@unique([stepId, displayOrder])
   @@map("ingredients")
 }
 
@@ -168,10 +172,10 @@ model Tag {
 }
 
 model RecipeTag {
-  recipeId         String
-  tagId            Int
-  recipe           Recipe @relation(fields: [recipeId], references: [id])
-  tag              Tag    @relation(fields: [tagId], references: [id])
+  recipeId String
+  tagId    Int
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  tag      Tag    @relation(fields: [tagId], references: [id])
 
   @@id([recipeId, tagId])
   @@map("recipe_tags")

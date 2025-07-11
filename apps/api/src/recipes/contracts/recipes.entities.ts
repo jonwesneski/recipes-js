@@ -92,7 +92,7 @@ export class StepEntity
   implements
     Omit<
       Prisma.StepUncheckedCreateWithoutRecipeInput,
-      'ingredients' | 'instructions'
+      'displayOrder' | 'ingredients' | 'instructions'
     >
 {
   @ApiProperty()

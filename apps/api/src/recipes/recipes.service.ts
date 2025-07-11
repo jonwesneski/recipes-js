@@ -24,7 +24,7 @@ type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
   };
 }>;
 
-type RecipePrismaType = Prisma.RecipeGetPayload<{
+export type RecipePrismaType = Prisma.RecipeGetPayload<{
   include: {
     user: { select: { handle: true } };
     equipments: {
@@ -41,7 +41,7 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
           omit: { stepId: true };
         };
       };
-      omit: { recipeId: true };
+      omit: { recipeId: true; displayOrder: true };
     };
     nutritionalFacts: {
       omit: {
@@ -61,7 +61,7 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
   };
 }>;
 
-const RecipeInclude = {
+export const RecipeInclude = {
   user: { select: { handle: true } },
   equipments: {
     omit: {
@@ -72,12 +72,13 @@ const RecipeInclude = {
     },
   },
   steps: {
+    orderBy: { displayOrder: 'asc' },
     include: {
       ingredients: {
         omit: { stepId: true },
       },
     },
-    omit: { recipeId: true },
+    omit: { recipeId: true, displayOrder: true },
   },
   nutritionalFacts: {
     omit: {
@@ -174,16 +175,12 @@ export class RecipesService {
           userId,
           imageUrl,
           steps: {
-            create: data.steps.map((step) => ({
+            create: data.steps.map((step, i) => ({
+              displayOrder: i + 1,
               instruction: step.instruction,
               ingredients: {
                 createMany: {
-                  data:
-                    step.ingredients?.map((ingredient) => ({
-                      name: ingredient.name,
-                      amount: ingredient.amount,
-                      unit: ingredient.unit,
-                    })) || [],
+                  data: step.ingredients || [],
                 },
               },
             })),
@@ -221,6 +218,50 @@ export class RecipesService {
     return this.transformRecipe(recipe);
   }
 
+  /**await prisma.user.upsert({
+  where: { email: 'elsa@prisma.io' },
+  update: {
+    name: 'Elsa Prisma Updated',
+    posts: {
+      // Delete posts not in the provided list
+      deleteMany: {
+        id: {
+          notIn: postIdsToKeep, // An array of IDs of posts you want to retain
+        },
+      },
+      // Update existing posts or create new ones
+      upsert: [
+        {
+          where: { id: existingPostId1 }, // If you know the ID, update
+          update: { title: 'Updated Post Title 1' },
+          create: { title: 'New Post Title A' }, // If it's a new post, create
+        },
+        {
+          where: { id: existingPostId2 },
+          update: { title: 'Updated Post Title 2' },
+          create: { title: 'New Post Title B' },
+        },
+      ],
+      // Create new posts that are not in the existing list
+      createMany: {
+        data: [
+          { title: 'Another New Post Title' },
+        ],
+      },
+    },
+  },
+  create: {
+    email: 'elsa@prisma.io',
+    name: 'Elsa Prisma',
+    posts: {
+      create: [
+        { title: 'How to make an omelette' },
+        { title: 'How to eat an omelette' },
+      ],
+    },
+  },
+}); */
+
   async updateRecipe(
     userId: string,
     id: string,
@@ -241,7 +282,52 @@ export class RecipesService {
         data: {
           ...remainingData,
           imageUrl,
-          steps: {},
+          steps: {
+            deleteMany: {
+              displayOrder: {
+                notIn: remainingData.steps?.map((_, i) => i + 1),
+              },
+            },
+            upsert: remainingData.steps?.map((s, i) => {
+              const displayOrder = i + 1;
+              return {
+                where: { id: s.id },
+                update: {
+                  displayOrder,
+                  ...s,
+                  ingredients: {
+                    deleteMany: {
+                      id: {
+                        notIn: s.ingredients
+                          .map((ing) => ing.id)
+                          .filter((id) => id !== undefined),
+                      },
+                    },
+                    upsert: s.ingredients.map((ing, k) => {
+                      return {
+                        where: { id: ing.id },
+                        update: { ...ing, displayOrder: k + 1 },
+                        create: { ...ing, displayOrder: k + 1 },
+                      };
+                    }),
+                  },
+                },
+                create: {
+                  displayOrder,
+                  ...s,
+                  ingredients: {
+                    createMany: {
+                      data:
+                        s.ingredients.map((ing, k) => ({
+                          ...ing,
+                          displayOrder: k + 1,
+                        })) || [],
+                    },
+                  },
+                },
+              };
+            }),
+          },
           equipments: {},
           nutritionalFacts: {},
         },

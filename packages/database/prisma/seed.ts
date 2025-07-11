@@ -37,11 +37,13 @@ async function main() {
             description: recipeData.description,
             imageUrl: recipeData.imageUrl,
             steps: {
-              create: recipeData.steps.map((step) => ({
+              create: recipeData.steps.map((step, i) => ({
+                displayOrder: i + 1,
                 instruction: step.instruction,
                 ingredients: {
                   createMany: {
-                    data: step.ingredients.map((ingredient) => ({
+                    data: step.ingredients.map((ingredient, k) => ({
+                      displayOrder: k + 1,
                       name: ingredient.name,
                       amount: ingredient.amount,
                       unit: ingredient.unit as MeasurementUnit,
