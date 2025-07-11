@@ -111,6 +111,13 @@ export class TagsType {
   name: string;
 }
 
+export class UserEntity {
+  @ApiProperty()
+  id: string;
+  @ApiProperty()
+  handle: string;
+}
+
 export class RecipeEntity implements Omit<RecipeType, 'recipeTags'> {
   @ApiProperty()
   id: string;
@@ -136,11 +143,13 @@ export class RecipeEntity implements Omit<RecipeType, 'recipeTags'> {
   nutritionalFacts: NutritionalFactsEntity | null;
   @ApiProperty({ type: [String] })
   tags: string[];
-  @ApiProperty()
-  userHandle: string;
+  @ApiProperty({ type: UserEntity })
+  user: UserEntity;
 }
 
 export class RecipeMinimalEntity implements RecipeMinimalType {
+  @ApiProperty()
+  id: string;
   @ApiProperty()
   name: string;
   @ApiProperty({ type: String, nullable: true })
@@ -149,6 +158,6 @@ export class RecipeMinimalEntity implements RecipeMinimalType {
   imageUrl: string;
   @ApiProperty({ type: [String] })
   tags: string[];
-  @ApiProperty()
-  userHandle: string;
+  @ApiProperty({ type: UserEntity })
+  user: UserEntity;
 }

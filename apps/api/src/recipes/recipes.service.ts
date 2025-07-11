@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@repo/database';
 import { PrismaService } from 'src/common';
 import { S3Service } from 'src/common/s3.service';
-import { CreateRecipeDto } from './contracts';
+import { CreateRecipeDto, EditRecipeDto } from './contracts';
 
 type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
   include: {
+    user: { select: { handle: true } };
     recipeTags: {
       include: {
         tag: {
@@ -25,6 +26,7 @@ type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
 
 type RecipePrismaType = Prisma.RecipeGetPayload<{
   include: {
+    user: { select: { handle: true } };
     equipments: {
       omit: {
         id: true;
@@ -36,7 +38,7 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
     steps: {
       include: {
         ingredients: {
-          omit: { stepId: true; recipeId: true };
+          omit: { stepId: true };
         };
       };
       omit: { recipeId: true };
@@ -59,11 +61,45 @@ type RecipePrismaType = Prisma.RecipeGetPayload<{
   };
 }>;
 
+const RecipeInclude = {
+  user: { select: { handle: true } },
+  equipments: {
+    omit: {
+      id: true,
+      createdAt: true,
+      updatedAt: true,
+      recipeId: true,
+    },
+  },
+  steps: {
+    include: {
+      ingredients: {
+        omit: { stepId: true },
+      },
+    },
+    omit: { recipeId: true },
+  },
+  nutritionalFacts: {
+    omit: {
+      id: true,
+      createdAt: true,
+      updatedAt: true,
+      recipeId: true,
+    },
+  },
+  recipeTags: {
+    include: { tag: { select: { name: true } } },
+  },
+} as const;
+
+type RecipeUserType = { id: string; handle: string };
 export type RecipeType = Omit<RecipePrismaType, 'recipeTags'> & {
   tags: string[];
+  user: RecipeUserType;
 };
 export type RecipeMinimalType = Omit<RecipeMinimalPrismaType, 'recipeTags'> & {
   tags: string[];
+  user: RecipeUserType;
 };
 
 @Injectable()
@@ -75,9 +111,17 @@ export class RecipesService {
 
   transformRecipe<T extends RecipePrismaType | RecipeMinimalPrismaType>(
     recipe: T,
-  ): Omit<T, 'recipeTags'> & { tags: string[] } {
+  ): Omit<T, 'recipeTags'> & {
+    tags: string[];
+    user: RecipeUserType;
+  } {
+    const { user, userId, ...rest } = recipe;
     return {
       ...recipe,
+      user: {
+        id: userId,
+        handle: user.handle,
+      },
       tags: recipe.recipeTags.map((rt) => rt.tag.name),
     };
   }
@@ -85,6 +129,7 @@ export class RecipesService {
   async getRecipes(): Promise<RecipeMinimalType[]> {
     const recipes = await this.prisma.recipe.findMany({
       include: {
+        user: { select: { handle: true } },
         recipeTags: {
           include: { tag: { select: { name: true } } },
         },
@@ -100,29 +145,21 @@ export class RecipesService {
     return recipes.map((recipe) => this.transformRecipe(recipe));
   }
 
-  async getRecipe(userHandle: string, id: string): Promise<RecipeType> {
+  async getRecipe(userId: string, id: string): Promise<RecipeType> {
     const recipe = await this.prisma.recipe.findFirstOrThrow({
       where: {
         id,
-        userHandle,
+        user: { id: userId },
       },
-      include: {
-        equipments: true,
-        steps: {
-          include: {
-            ingredients: true,
-          },
-        },
-        nutritionalFacts: true,
-        recipeTags: {
-          include: { tag: { select: { name: true } } },
-        },
-      },
+      include: RecipeInclude,
     });
     return this.transformRecipe(recipe);
   }
 
-  async createRecipe(data: CreateRecipeDto): Promise<RecipeType> {
+  async createRecipe(
+    userId: string,
+    data: CreateRecipeDto,
+  ): Promise<RecipeType> {
     const { base64Image, tags, ...remainingData } = data;
     const s3BucketKeyName = data.name.replaceAll(' ', '_');
     const imageUrl = `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`;
@@ -131,6 +168,7 @@ export class RecipesService {
       const recipe = await this.prisma.recipe.create({
         data: {
           ...remainingData,
+          userId,
           imageUrl,
           steps: {
             create: data.steps.map((step) => ({
@@ -167,24 +205,53 @@ export class RecipesService {
             })),
           },
         },
-        include: {
-          equipments: true,
-          steps: {
-            include: {
-              ingredients: true,
-            },
-          },
-          nutritionalFacts: true,
-          recipeTags: {
-            include: { tag: { select: { name: true } } },
-          },
-        },
+        include: RecipeInclude,
       });
 
       await this.s3Service.uploadFile(
         s3BucketKeyName,
         Buffer.from(base64Image, 'base64'),
       );
+      return recipe;
+    });
+
+    return this.transformRecipe(recipe);
+  }
+
+  async updateRecipe(
+    userId: string,
+    id: string,
+    data: EditRecipeDto,
+  ): Promise<RecipeType> {
+    const { base64Image, tags, ...remainingData } = data;
+    const s3BucketKeyName = `${userId}/${id}`;
+    const imageUrl = base64Image
+      ? `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`
+      : undefined;
+
+    const recipe = await this.prisma.$transaction(async () => {
+      const recipe = await this.prisma.recipe.update({
+        where: {
+          id,
+          user: { id: userId },
+        },
+        data: {
+          ...remainingData,
+          imageUrl,
+          steps: {},
+          equipments: {},
+          nutritionalFacts: {},
+        },
+        include: RecipeInclude,
+      });
+
+      if (base64Image) {
+        await this.s3Service.uploadFile(
+          s3BucketKeyName,
+          Buffer.from(base64Image, 'base64'),
+        );
+      }
+
       return recipe;
     });
 

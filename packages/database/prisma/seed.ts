@@ -30,50 +30,50 @@ async function main() {
       }
 
       console.log('====', { name });
-        try {
-          await prisma.recipe.create({
-            data: {
-              name,
-              description: recipeData.description,
-              imageUrl: recipeData.imageUrl,
-              steps: {
-                create: recipeData.steps.map((step) => ({
-                  instruction: step.instruction,
-                  ingredients: {
-                    createMany: {
-                      data: step.ingredients.map((ingredient) => ({
-                        name: ingredient.name,
-                        amount: ingredient.amount,
-                        unit: ingredient.unit as MeasurementUnit,
-                      })),
-                    },
+      try {
+        await prisma.recipe.create({
+          data: {
+            name,
+            description: recipeData.description,
+            imageUrl: recipeData.imageUrl,
+            steps: {
+              create: recipeData.steps.map((step) => ({
+                instruction: step.instruction,
+                ingredients: {
+                  createMany: {
+                    data: step.ingredients.map((ingredient) => ({
+                      name: ingredient.name,
+                      amount: ingredient.amount,
+                      unit: ingredient.unit as MeasurementUnit,
+                    })),
                   },
-                })),
-              },
-              recipeTags: {
-                create: recipeData.tags.map((tag) => ({
-                  tag: {
-                    connectOrCreate: {
-                      where: { name: tag },
-                      create: { name: tag },
-                    },
-                  },
-                })),
-              },
-              nutritionalFacts: {
-                create: recipeData.nutritionalFacts,
-              },
-              userHandle: user.handle,
+                },
+              })),
             },
-          });
-        } catch (error) {
-          if (error instanceof PrismaClientKnownRequestError) {
-            if (error.code !== 'P2002') {
-              throw error; // Re-throw if it's not a unique constraint violation
-            }
+            recipeTags: {
+              create: recipeData.tags.map((tag) => ({
+                tag: {
+                  connectOrCreate: {
+                    where: { name: tag },
+                    create: { name: tag },
+                  },
+                },
+              })),
+            },
+            nutritionalFacts: {
+              create: recipeData.nutritionalFacts,
+            },
+            userId: user.id,
+          },
+        });
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code !== 'P2002') {
+            throw error; // Re-throw if it's not a unique constraint violation
           }
-          throw error;
         }
+        throw error;
+      }
     }
   }
 }

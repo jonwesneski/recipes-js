@@ -75,12 +75,12 @@ model Recipe {
   updatedAt                DateTime          @updatedAt
   steps                    Step[]
   equipments               Equipment[]
-  userHandle               String
-  user                     User              @relation(fields: [userHandle], references: [handle])
+  userId                   String
+  user                     User              @relation(fields: [userId], references: [id])
   recipeTags               RecipeTag[]
   nutritionalFacts         NutritionalFacts?
 
-  @@unique([userHandle, name])
+  @@unique([userId, name])
   @@map("recipes")
 }
 

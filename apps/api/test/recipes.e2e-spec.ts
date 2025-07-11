@@ -41,8 +41,8 @@ describe('RecipesController (e2e)', () => {
     recipeId = (
       await prismaService.recipe.findUniqueOrThrow({
         where: {
-          userHandle_name: {
-            userHandle: 'jon',
+          userId_name: {
+            userId: user1.id,
             name: 'Tres Leches Cake',
           },
         },
@@ -70,7 +70,7 @@ describe('RecipesController (e2e)', () => {
   describe(`GET ${basePath}/[user]/[id]`, () => {
     it('existing recipe', () => {
       return request(app.getHttpServer())
-        .get(`${basePath}/${user1!.handle}/${recipeId}`)
+        .get(`${basePath}/${user1!.id}/${recipeId}`)
         .expect(200)
         .expect((res) => {
           const emptyRecipe = new RecipeEntity();
@@ -82,13 +82,13 @@ describe('RecipesController (e2e)', () => {
 
     it('non-existing recipe', () => {
       return request(app.getHttpServer())
-        .get(`${basePath}/${user1!.handle}/123`)
+        .get(`${basePath}/${user1!.id}/123`)
         .expect(404)
         .expect({ message: 'Not Found', statusCode: 404 });
     });
   });
 
-  describe(`POST ${basePath}`, () => {
+  describe(`POST ${basePath}/[user]`, () => {
     it('create new recipe', () => {
       const sampleRecipe: CreateRecipeDto = {
         name: 'Test Recipe',
@@ -105,10 +105,9 @@ describe('RecipesController (e2e)', () => {
         nutritionalFacts: null,
         preparationTimeInMinutes: 30,
         cookingTimeInMinutes: 15,
-        userHandle: user1!.handle,
       };
       return request(app.getHttpServer())
-        .post(basePath)
+        .post(`${basePath}/${user1!.id}`)
         .send(sampleRecipe)
         .expect(201)
         .expect((res) => {
@@ -133,13 +132,14 @@ describe('RecipesController (e2e)', () => {
         nutritionalFacts: null,
         preparationTimeInMinutes: 30,
         cookingTimeInMinutes: 15,
-        userHandle: user1!.handle,
       };
 
-      await request(app.getHttpServer()).post(basePath).send(sampleRecipe);
+      await request(app.getHttpServer())
+        .post(`${basePath}/${user1!.id}`)
+        .send(sampleRecipe);
 
       return request(app.getHttpServer())
-        .post(basePath)
+        .post(`${basePath}/${user1!.id}`)
         .send(sampleRecipe)
         .expect(409)
         .expect({
@@ -151,7 +151,7 @@ describe('RecipesController (e2e)', () => {
 
     it.skip('create recipe with missing fields', () => {
       return request(app.getHttpServer())
-        .post(basePath)
+        .post(`${basePath}/${user1!.id}`)
         .send({
           name: 'Incomplete Recipe',
           steps: [],

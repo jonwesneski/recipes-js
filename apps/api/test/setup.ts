@@ -73,7 +73,7 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
             },
           })),
         },
-        userHandle: user.handle,
+        userId: user.id,
       },
     });
   }
