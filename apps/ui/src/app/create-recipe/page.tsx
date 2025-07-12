@@ -24,7 +24,7 @@ const Page = () => {
 
   const handleSubmit = () => {
     mutate(
-      { data: {} as CreateRecipeDto },
+      { userId: '', data: {} as CreateRecipeDto },
       {
         onSuccess: () => undefined,
         onError: () => undefined,

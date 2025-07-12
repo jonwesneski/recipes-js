@@ -298,13 +298,13 @@ export class RecipesService {
           ...remainingData,
           imageUrl,
           steps: {
-            // deleteMany: {
-            //   id: {
-            //     notIn: remainingData.steps
-            //       ?.map((s) => s.id)
-            //       .filter((id) => id !== undefined),
-            //   },
-            // },
+            deleteMany: {
+              id: {
+                notIn: remainingData.steps
+                  ?.map((s) => s.id)
+                  .filter((id) => id !== undefined),
+              },
+            },
             upsert: remainingData.steps?.map((s, i) => {
               return {
                 where: { id: s.id },

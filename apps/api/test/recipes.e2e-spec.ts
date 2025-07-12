@@ -208,12 +208,18 @@ describe('RecipesController (e2e)', () => {
         // cookingTimeInMinutes: 15,
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${user1!.id}/${recipe1.id}`)
+        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
-          expect(res.body.name).toBe('Test Recipe');
+          expect(res.body.name).toBe(sampleRecipe.name);
           expect(res.body.id).toBeDefined();
+          expect(res.body.preparationTimeInMinutes).toBe(
+            sampleRecipe.preparationTimeInMinutes,
+          );
+          expect(res.body.cookingTimeInMinutes).toBe(
+            sampleRecipe.cookingTimeInMinutes,
+          );
         });
     });
   });
