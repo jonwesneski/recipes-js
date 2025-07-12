@@ -1,6 +1,6 @@
 'use client'
 
-import { EditRecipeDto } from '@repo/codegen/model'
+import type { EditRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { Button } from '@repo/design-system'
