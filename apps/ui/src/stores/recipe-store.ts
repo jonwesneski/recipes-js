@@ -49,7 +49,6 @@ export type RecipeActions = {
   shouldBeFocused: (ref: RefObject<HTMLTextAreaElement | null>) => boolean;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
-  setUserHandle: (_value: string) => void;
 };
 
 export type RecipeStore = RecipeState & RecipeActions;
@@ -84,7 +83,6 @@ export const defaultInitState: RecipeState = {
   steps: [createStepItem()],
   nutritionalFacts: null,
   tags: [],
-  userHandle: '',
 };
 
 export const createRecipeStore = (
@@ -222,6 +220,5 @@ export const createRecipeStore = (
     setNutritionalFacts: (nutritionalFacts: NutritionalFactsDto) =>
       set(() => ({ nutritionalFacts })),
     setTags: (tags: string[]) => set(() => ({ tags })),
-    setUserHandle: (userHandle: string) => set(() => ({ userHandle })),
   }));
 };

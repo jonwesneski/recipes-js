@@ -1,7 +1,7 @@
 'use client'
 
-import { type CreateRecipeDto } from '@repo/codegen/model'
-import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
+import type { EditRecipeDto } from '@repo/codegen/model'
+import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { Button } from '@repo/design-system'
 import { NavigationLayout } from '@src/components/navigation'
@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 
 const Page = () => {
   const { accessToken } = useAuthentication()
-  const { mutate } = useRecipesControllerCreateRecipeV1({
+  const { mutate } = useRecipesControllerUpdateRecipeV1({
     mutation: { retry: false },
     request: {
       headers: {
@@ -24,16 +24,14 @@ const Page = () => {
 
   const handleSubmit = () => {
     mutate(
-      { userId: '', data: {} as CreateRecipeDto },
+      { userId: '', id: '', data: {} as EditRecipeDto },
       {
         onSuccess: () => undefined,
         onError: () => undefined,
       },
     )
-    // router.replace('/recipes/jon/tres-leches-cake', undefined, {
-    //   shallow: true,
-    // })
-    window.history.replaceState(null, '', '/recipes/jon/tres-leches-cake')
+
+    window.history.replaceState(null, '', '/recipes')
   }
 
   const [_tags, setTags] = useState<string[]>([])

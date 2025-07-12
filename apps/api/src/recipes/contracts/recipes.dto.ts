@@ -174,8 +174,8 @@ export class NutritionalFactsDto
   sugar?: number | null;
 }
 
-export class IngredientDto
-  implements OmitFields<Prisma.IngredientCreateInput, 'step'>
+export class CreateIngredientDto
+  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
 {
   @IsNumber()
   @Min(0)
@@ -190,11 +190,11 @@ export class IngredientDto
   name: string;
 }
 
-export class StepDto
+export class CreateStepDto
   implements
     OmitFields<
       Prisma.StepUncheckedCreateWithoutRecipeInput,
-      'recipeId' | 'ingredients' | 'instructions'
+      'displayOrder' | 'recipeId' | 'ingredients' | 'instructions'
     >
 {
   @IsString()
@@ -202,15 +202,20 @@ export class StepDto
   @ApiProperty({ type: String, nullable: true })
   instruction?: string;
   @IsArray()
-  @ApiProperty({ type: [IngredientDto] })
-  ingredients: IngredientDto[];
+  @ApiProperty({ type: [CreateIngredientDto] })
+  ingredients: CreateIngredientDto[];
 }
 
 export class CreateRecipeDto
   implements
     OmitFields<
       Prisma.RecipeUncheckedCreateInput,
-      'equipments' | 'nutritionalFacts' | 'user' | 'steps' | 'tags' | 'imageUrl'
+      | 'equipments'
+      | 'nutritionalFacts'
+      | 'userId'
+      | 'steps'
+      | 'tags'
+      | 'imageUrl'
     >
 {
   @IsNotEmpty()
@@ -221,6 +226,7 @@ export class CreateRecipeDto
   @IsOptional()
   @ApiProperty({ type: String, nullable: true })
   description?: string | null;
+  @IsString()
   @IsNotEmpty()
   @ApiProperty({ type: String })
   base64Image: string;
@@ -235,8 +241,8 @@ export class CreateRecipeDto
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes?: number | null;
   @IsArray()
-  @ApiProperty({ type: [StepDto] })
-  steps: StepDto[];
+  @ApiProperty({ type: [CreateStepDto] })
+  steps: CreateStepDto[];
   @IsOptional()
   @ValidateNested()
   @Type(() => NutritionalFactsDto)
@@ -250,8 +256,101 @@ export class CreateRecipeDto
   @IsString({ each: true })
   @ApiProperty({ type: [String] })
   equipments: string[];
+}
+
+export class EditIngredientDto
+  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
+{
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  id?: string;
+  @IsNumber()
+  @Min(0)
+  @ApiProperty({ type: Number })
+  amount: number;
+  @IsEnum(MeasurementUnit)
+  @ApiProperty({ enum: MeasurementUnit })
+  unit: MeasurementUnit;
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ type: String })
-  userHandle: string;
+  name: string;
+}
+
+export class EditStepDto
+  implements
+    OmitFields<
+      Prisma.StepUncheckedCreateWithoutRecipeInput,
+      'displayOrder' | 'recipeId' | 'ingredients' | 'instructions'
+    >
+{
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  id?: string;
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ type: String, nullable: true })
+  instruction?: string;
+  @IsArray()
+  @ApiProperty({ type: [EditIngredientDto] })
+  ingredients: EditIngredientDto[];
+}
+
+export class EditRecipeDto
+  implements
+    OmitFields<
+      Prisma.RecipeUncheckedUpdateInput,
+      | 'equipments'
+      | 'nutritionalFacts'
+      | 'userId'
+      | 'steps'
+      | 'tags'
+      | 'imageUrl'
+    >
+{
+  @IsOptional()
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  name?: string;
+  @IsNotEmpty()
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ type: String, nullable: true })
+  description?: string | null;
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  base64Image?: string;
+  @IsInt()
+  @IsOptional()
+  @Min(0)
+  @ApiProperty({ type: Number, nullable: true })
+  preparationTimeInMinutes?: number | null;
+  @IsInt()
+  @IsOptional()
+  @Min(0)
+  @ApiProperty({ type: Number, nullable: true })
+  cookingTimeInMinutes?: number | null;
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ type: [EditStepDto] })
+  steps?: EditStepDto[];
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => NutritionalFactsDto)
+  @ApiProperty({ type: NutritionalFactsDto, nullable: true })
+  nutritionalFacts?: NutritionalFactsDto;
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String] })
+  tags?: string[];
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String] })
+  equipments?: string[];
 }

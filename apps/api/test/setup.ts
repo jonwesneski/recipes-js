@@ -60,11 +60,13 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
         description: recipe.description,
         imageUrl: 'url',
         steps: {
-          create: recipe.steps.map((step) => ({
+          create: recipe.steps.map((step, i) => ({
+            displayOrder: i,
             instruction: step.instruction,
             ingredients: {
               createMany: {
-                data: step.ingredients.map((ingredient) => ({
+                data: step.ingredients.map((ingredient, k) => ({
+                  displayOrder: k,
                   name: ingredient.name,
                   amount: ingredient.amount,
                   unit: ingredient.unit as MeasurementUnit,
@@ -73,7 +75,7 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
             },
           })),
         },
-        userHandle: user.handle,
+        userId: user.id,
       },
     });
   }

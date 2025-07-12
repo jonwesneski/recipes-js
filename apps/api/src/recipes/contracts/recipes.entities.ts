@@ -72,7 +72,7 @@ export class NutritionalFactsEntity
 }
 
 export class IngredientEntity
-  implements OmitFields<Prisma.IngredientCreateInput, 'step'>
+  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
 {
   @ApiProperty()
   id: string;
@@ -92,7 +92,7 @@ export class StepEntity
   implements
     Omit<
       Prisma.StepUncheckedCreateWithoutRecipeInput,
-      'ingredients' | 'instructions'
+      'displayOrder' | 'ingredients' | 'instructions'
     >
 {
   @ApiProperty()
@@ -111,7 +111,14 @@ export class TagsType {
   name: string;
 }
 
-export class RecipeEntity implements Omit<RecipeType, 'recipeTags'> {
+export class UserEntity {
+  @ApiProperty()
+  id: string;
+  @ApiProperty()
+  handle: string;
+}
+
+export class RecipeEntity implements RecipeType {
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -136,11 +143,13 @@ export class RecipeEntity implements Omit<RecipeType, 'recipeTags'> {
   nutritionalFacts: NutritionalFactsEntity | null;
   @ApiProperty({ type: [String] })
   tags: string[];
-  @ApiProperty()
-  userHandle: string;
+  @ApiProperty({ type: UserEntity })
+  user: UserEntity;
 }
 
 export class RecipeMinimalEntity implements RecipeMinimalType {
+  @ApiProperty()
+  id: string;
   @ApiProperty()
   name: string;
   @ApiProperty({ type: String, nullable: true })
@@ -149,6 +158,6 @@ export class RecipeMinimalEntity implements RecipeMinimalType {
   imageUrl: string;
   @ApiProperty({ type: [String] })
   tags: string[];
-  @ApiProperty()
-  userHandle: string;
+  @ApiProperty({ type: UserEntity })
+  user: UserEntity;
 }

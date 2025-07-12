@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Camera, type CameraType } from 'react-camera-pro'
 
 interface RecipeCameraProps {
@@ -8,15 +8,28 @@ interface RecipeCameraProps {
 }
 export const RecipeCamera = (props: RecipeCameraProps) => {
   const camera = useRef<CameraType>(null)
+  const [scrollDisabled, setScrollDisabled] = useState<boolean>(true)
 
   const handleClick = () => {
     if (camera.current) {
       props.onImage(camera.current.takePhoto('base64url') as string)
+      setScrollDisabled(false)
     }
   }
 
+  useEffect(() => {
+    if (scrollDisabled) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
+  }, [scrollDisabled])
+
   return (
-    <div>
+    <div className="fixed top-0 left-0 w-full h-full">
       <Camera
         ref={camera}
         facingMode="environment"
