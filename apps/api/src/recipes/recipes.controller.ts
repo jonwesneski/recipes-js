@@ -78,7 +78,7 @@ export class RecipesController {
     try {
       return await this.recipesService.updateRecipe(userId, id, body);
     } catch (error) {
-      throwIfConflict(error, `Recipe with name "${body.name}" already exists.`);
+      throwIfConflict(error);
       throw error;
     }
   }

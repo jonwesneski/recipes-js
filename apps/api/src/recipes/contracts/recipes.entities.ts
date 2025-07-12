@@ -72,7 +72,7 @@ export class NutritionalFactsEntity
 }
 
 export class IngredientEntity
-  implements OmitFields<Prisma.IngredientCreateInput, 'step'>
+  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
 {
   @ApiProperty()
   id: string;

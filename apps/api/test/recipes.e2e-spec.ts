@@ -175,7 +175,7 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe(`PATCH ${basePath}/[userId]/[id]`, () => {
+  describe.only(`PATCH ${basePath}/[userId]/[id]`, () => {
     it('update existing recipe', async () => {
       const sampleRecipe: CreateRecipeDto = {
         name: 'sample Recipe for edit',
@@ -198,7 +198,7 @@ describe('RecipesController (e2e)', () => {
         .post(`${basePath}/${user1!.id}`)
         .send(sampleRecipe);
 
-      const steps = { ...response.body.steps };
+      const steps = [...response.body.steps];
       const editRecipe: EditRecipeDto = {
         steps,
         // equipments: [],

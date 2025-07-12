@@ -175,7 +175,7 @@ export class NutritionalFactsDto
 }
 
 export class CreateIngredientDto
-  implements OmitFields<Prisma.IngredientCreateInput, 'step'>
+  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
 {
   @IsNumber()
   @Min(0)
@@ -226,6 +226,7 @@ export class CreateRecipeDto
   @IsOptional()
   @ApiProperty({ type: String, nullable: true })
   description?: string | null;
+  @IsString()
   @IsNotEmpty()
   @ApiProperty({ type: String })
   base64Image: string;
@@ -258,7 +259,7 @@ export class CreateRecipeDto
 }
 
 export class EditIngredientDto
-  implements OmitFields<Prisma.IngredientCreateInput, 'step'>
+  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
 {
   @IsOptional()
   @IsString()
@@ -319,6 +320,7 @@ export class EditRecipeDto
   @ApiProperty({ type: String, nullable: true })
   description?: string | null;
   @IsOptional()
+  @IsString()
   @IsNotEmpty()
   @ApiProperty({ type: String })
   base64Image?: string;

@@ -1,5 +1,8 @@
 import { PrismaClient } from '../generated/prisma';
-export { PrismaClientKnownRequestError } from '../generated/prisma/runtime/library';
+export {
+  PrismaClientKnownRequestError,
+  skip,
+} from '../generated/prisma/runtime/library';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 

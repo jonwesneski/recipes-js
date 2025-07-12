@@ -38,7 +38,7 @@ export type RecipePrismaType = Prisma.RecipeGetPayload<{
     steps: {
       include: {
         ingredients: {
-          omit: { stepId: true };
+          omit: { stepId: true; displayOrder: true };
         };
       };
       omit: { recipeId: true; displayOrder: true };
@@ -75,7 +75,7 @@ export const RecipeInclude = {
     orderBy: { displayOrder: 'asc' },
     include: {
       ingredients: {
-        omit: { stepId: true },
+        omit: { stepId: true, displayOrder: true },
       },
     },
     omit: { recipeId: true, displayOrder: true },
@@ -176,11 +176,19 @@ export class RecipesService {
           imageUrl,
           steps: {
             create: data.steps.map((step, i) => ({
-              displayOrder: i + 1,
+              displayOrder: i,
               instruction: step.instruction,
               ingredients: {
                 createMany: {
-                  data: step.ingredients || [],
+                  data:
+                    step.ingredients.map((ingredient, k) => {
+                      return {
+                        displayOrder: k,
+                        amount: ingredient.amount,
+                        unit: ingredient.unit,
+                        name: ingredient.name,
+                      };
+                    }) || [],
                 },
               },
             })),
@@ -268,6 +276,13 @@ export class RecipesService {
     data: EditRecipeDto,
   ): Promise<RecipeType> {
     const { base64Image, tags, ...remainingData } = data;
+    // for (const key in remainingData) {
+    //   if (remainingData[key] === undefined) {
+    //     delete remainingData[key];
+    //   }
+    //   // remainingData[key] = remainingData[key] ?? skip;
+    // }
+
     const s3BucketKeyName = `${userId}/${id}`;
     const imageUrl = base64Image
       ? `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`
@@ -283,17 +298,18 @@ export class RecipesService {
           ...remainingData,
           imageUrl,
           steps: {
-            deleteMany: {
-              displayOrder: {
-                notIn: remainingData.steps?.map((_, i) => i + 1),
-              },
-            },
+            // deleteMany: {
+            //   id: {
+            //     notIn: remainingData.steps
+            //       ?.map((s) => s.id)
+            //       .filter((id) => id !== undefined),
+            //   },
+            // },
             upsert: remainingData.steps?.map((s, i) => {
-              const displayOrder = i + 1;
               return {
                 where: { id: s.id },
                 update: {
-                  displayOrder,
+                  displayOrder: i,
                   ...s,
                   ingredients: {
                     deleteMany: {
@@ -306,21 +322,21 @@ export class RecipesService {
                     upsert: s.ingredients.map((ing, k) => {
                       return {
                         where: { id: ing.id },
-                        update: { ...ing, displayOrder: k + 1 },
-                        create: { ...ing, displayOrder: k + 1 },
+                        update: { ...ing, displayOrder: k },
+                        create: { ...ing, displayOrder: k },
                       };
                     }),
                   },
                 },
                 create: {
-                  displayOrder,
+                  displayOrder: i,
                   ...s,
                   ingredients: {
                     createMany: {
                       data:
                         s.ingredients.map((ing, k) => ({
+                          displayOrder: k,
                           ...ing,
-                          displayOrder: k + 1,
                         })) || [],
                     },
                   },
