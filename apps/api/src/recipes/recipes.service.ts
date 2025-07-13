@@ -228,63 +228,12 @@ export class RecipesService {
     return this.transformRecipe(recipe);
   }
 
-  /**await prisma.user.upsert({
-  where: { email: 'elsa@prisma.io' },
-  update: {
-    name: 'Elsa Prisma Updated',
-    posts: {
-      // Delete posts not in the provided list
-      deleteMany: {
-        id: {
-          notIn: postIdsToKeep, // An array of IDs of posts you want to retain
-        },
-      },
-      // Update existing posts or create new ones
-      upsert: [
-        {
-          where: { id: existingPostId1 }, // If you know the ID, update
-          update: { title: 'Updated Post Title 1' },
-          create: { title: 'New Post Title A' }, // If it's a new post, create
-        },
-        {
-          where: { id: existingPostId2 },
-          update: { title: 'Updated Post Title 2' },
-          create: { title: 'New Post Title B' },
-        },
-      ],
-      // Create new posts that are not in the existing list
-      createMany: {
-        data: [
-          { title: 'Another New Post Title' },
-        ],
-      },
-    },
-  },
-  create: {
-    email: 'elsa@prisma.io',
-    name: 'Elsa Prisma',
-    posts: {
-      create: [
-        { title: 'How to make an omelette' },
-        { title: 'How to eat an omelette' },
-      ],
-    },
-  },
-}); */
-
   async updateRecipe(
     userId: string,
     id: string,
     data: EditRecipeDto,
   ): Promise<RecipeType> {
     const { base64Image, tags, ...remainingData } = data;
-    // for (const key in remainingData) {
-    //   if (remainingData[key] === undefined) {
-    //     delete remainingData[key];
-    //   }
-    //   // remainingData[key] = remainingData[key] ?? skip;
-    // }
-
     const s3BucketKeyName = `${userId}/${id}`;
     const imageUrl = base64Image
       ? `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`
@@ -371,8 +320,10 @@ export class RecipesService {
                 },
               })),
           },
+          // TODO: handle below
           equipments: {},
           nutritionalFacts: {},
+          //recipeTags: {},
         },
         include: RecipeInclude,
       });
