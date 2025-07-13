@@ -56,17 +56,6 @@ const Page = () => {
         <NavigationLayout>
           <div className="flex justify-center">
             <div className="block mx-5">
-              <ul contentEditable="true">
-                <li>
-                  This parent list item is editable.
-                  <ul contentEditable="false">
-                    <li className="text-red-900">
-                      error - cupes is not a unit
-                    </li>
-                  </ul>
-                </li>
-                <li>This is another editable parent list item.</li>
-              </ul>
               <Recipe />
               <Button
                 className="mt-3 mx-auto block"
