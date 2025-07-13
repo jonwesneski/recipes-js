@@ -49,6 +49,7 @@ export type RecipePrismaType = Prisma.RecipeGetPayload<{
         createdAt: true;
         updatedAt: true;
         recipeId: true;
+        userId: true;
       };
     };
     recipeTags: {
@@ -86,6 +87,7 @@ export const RecipeInclude = {
       createdAt: true,
       updatedAt: true,
       recipeId: true,
+      userId: true,
     },
   },
   recipeTags: {
@@ -305,44 +307,69 @@ export class RecipesService {
                   .filter((id) => id !== undefined),
               },
             },
-            upsert: remainingData.steps?.map((s, i) => {
-              return {
-                where: { id: s.id },
-                update: {
-                  displayOrder: i,
-                  ...s,
-                  ingredients: {
-                    deleteMany: {
-                      id: {
-                        notIn: s.ingredients
-                          .map((ing) => ing.id)
-                          .filter((id) => id !== undefined),
+            upsert: remainingData.steps
+              ?.filter((s) => s.id)
+              .map((s, i) => {
+                return {
+                  where: { id: s.id },
+                  update: {
+                    displayOrder: i,
+                    ...s,
+                    ingredients: {
+                      deleteMany: {
+                        id: {
+                          notIn: s.ingredients
+                            .map((ing) => ing.id)
+                            .filter((id) => id !== undefined),
+                        },
+                      },
+                      upsert: s.ingredients
+                        .filter((ing) => ing.id)
+                        .map((ing, k) => {
+                          return {
+                            where: { id: ing.id },
+                            update: { ...ing, displayOrder: k },
+                            create: { ...ing, displayOrder: k },
+                          };
+                        }),
+                    },
+                  },
+                  create: {
+                    displayOrder: i,
+                    ...s,
+                    ingredients: {
+                      createMany: {
+                        data:
+                          s.ingredients
+                            .filter((ing) => !ing.id)
+                            .map((ing, k) => ({
+                              displayOrder: k,
+                              ...ing,
+                            })) || [],
                       },
                     },
-                    upsert: s.ingredients.map((ing, k) => {
-                      return {
-                        where: { id: ing.id },
-                        update: { ...ing, displayOrder: k },
-                        create: { ...ing, displayOrder: k },
-                      };
-                    }),
                   },
-                },
-                create: {
-                  displayOrder: i,
-                  ...s,
-                  ingredients: {
-                    createMany: {
-                      data:
-                        s.ingredients.map((ing, k) => ({
+                };
+              }),
+            create: remainingData.steps
+              ?.filter((s) => !s.id)
+              .map((step, i) => ({
+                displayOrder: i,
+                instruction: step.instruction,
+                ingredients: {
+                  createMany: {
+                    data:
+                      step.ingredients.map((ingredient, k) => {
+                        return {
                           displayOrder: k,
-                          ...ing,
-                        })) || [],
-                    },
+                          amount: ingredient.amount,
+                          unit: ingredient.unit,
+                          name: ingredient.name,
+                        };
+                      }) || [],
                   },
                 },
-              };
-            }),
+              })),
           },
           equipments: {},
           nutritionalFacts: {},

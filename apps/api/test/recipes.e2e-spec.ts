@@ -176,7 +176,7 @@ describe('RecipesController (e2e)', () => {
   });
 
   describe.only(`PATCH ${basePath}/[userId]/[id]`, () => {
-    it('update existing recipe', async () => {
+    it('update top recipe fields', async () => {
       const sampleRecipe: CreateRecipeDto = {
         name: 'sample Recipe for edit',
         description: 'This is a test recipe',
@@ -198,29 +198,74 @@ describe('RecipesController (e2e)', () => {
         .post(`${basePath}/${user1!.id}`)
         .send(sampleRecipe);
 
-      const steps = [...response.body.steps];
       const editRecipe: EditRecipeDto = {
-        steps,
-        // equipments: [],
-        // tags: [],
-        // nutritionalFacts: null,
-        // preparationTimeInMinutes: 30,
-        // cookingTimeInMinutes: 15,
+        name: 'edit',
+        description: 'new description',
+        base64Image: '1234',
+        preparationTimeInMinutes: 15,
+        cookingTimeInMinutes: 30,
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${user1!.id}/${response.body.id}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
-          expect(res.body.name).toBe(sampleRecipe.name);
+          expect(res.body.name).toBe(editRecipe.name);
           expect(res.body.id).toBeDefined();
+          expect(res.body.description).toBe(editRecipe.description);
+          expect(res.body.imageUrl).toBeDefined();
+          expect(res.body.base64Image).not.toBeDefined();
           expect(res.body.preparationTimeInMinutes).toBe(
-            sampleRecipe.preparationTimeInMinutes,
+            editRecipe.preparationTimeInMinutes,
           );
           expect(res.body.cookingTimeInMinutes).toBe(
-            sampleRecipe.cookingTimeInMinutes,
+            editRecipe.cookingTimeInMinutes,
           );
         });
     });
+  });
+
+  it.only('update steps recipe', async () => {
+    const sampleRecipe: CreateRecipeDto = {
+      name: 'sample Recipe for edit2',
+      description: 'This is a test recipe',
+      base64Image: '123',
+      steps: [
+        {
+          instruction: 'Step 1',
+          ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
+        },
+      ],
+      tags: [],
+      equipments: [],
+      nutritionalFacts: null,
+      preparationTimeInMinutes: 30,
+      cookingTimeInMinutes: 15,
+    };
+
+    const response = await request(app.getHttpServer())
+      .post(`${basePath}/${user1!.id}`)
+      .send(sampleRecipe);
+
+    const steps = [...response.body.steps];
+    const { id, ...step } = steps[0];
+    const editRecipe: EditRecipeDto = {
+      steps: [step],
+    };
+    return request(app.getHttpServer())
+      .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+      .send(editRecipe)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.name).toBe(sampleRecipe.name);
+        expect(res.body.id).toBeDefined();
+        expect(res.body.preparationTimeInMinutes).toBe(
+          sampleRecipe.preparationTimeInMinutes,
+        );
+        expect(res.body.cookingTimeInMinutes).toBe(
+          sampleRecipe.cookingTimeInMinutes,
+        );
+        expect(res.body.steps[0].id).not.toBe(response.body.steps[0].id);
+      });
   });
 });
