@@ -123,6 +123,7 @@ describe('RecipesController (e2e)', () => {
       };
       return request(app.getHttpServer())
         .post(basePath)
+        .set('Authorization', `Bearer ${token}`)
         .send(sampleRecipe)
         .expect(201)
         .expect((res) => {
@@ -149,10 +150,14 @@ describe('RecipesController (e2e)', () => {
         cookingTimeInMinutes: 15,
       };
 
-      await request(app.getHttpServer()).post(basePath).send(sampleRecipe);
+      await request(app.getHttpServer())
+        .post(basePath)
+        .set('Authorization', `Bearer ${token}`)
+        .send(sampleRecipe);
 
       return request(app.getHttpServer())
         .post(basePath)
+        .set('Authorization', `Bearer ${token}`)
         .send(sampleRecipe)
         .expect(409)
         .expect({
@@ -165,6 +170,7 @@ describe('RecipesController (e2e)', () => {
     it('create recipe with missing fields', () => {
       return request(app.getHttpServer())
         .post(basePath)
+        .set('Authorization', `Bearer ${token}`)
         .send({
           name: 'Incomplete Recipe',
           steps: [],
@@ -205,6 +211,7 @@ describe('RecipesController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(basePath)
+        .set('Authorization', `Bearer ${token}`)
         .send(sampleRecipe)
         .expect(201);
       return response;
