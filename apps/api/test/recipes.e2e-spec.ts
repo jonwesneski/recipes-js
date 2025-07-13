@@ -103,7 +103,7 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe(`POST ${basePath}/[userId]`, () => {
+  describe(`POST ${basePath}`, () => {
     it('create new recipe', () => {
       const sampleRecipe: CreateRecipeDto = {
         name: 'Test Recipe',
@@ -122,7 +122,7 @@ describe('RecipesController (e2e)', () => {
         cookingTimeInMinutes: 15,
       };
       return request(app.getHttpServer())
-        .post(`${basePath}/${user1!.id}`)
+        .post(basePath)
         .send(sampleRecipe)
         .expect(201)
         .expect((res) => {
@@ -149,12 +149,10 @@ describe('RecipesController (e2e)', () => {
         cookingTimeInMinutes: 15,
       };
 
-      await request(app.getHttpServer())
-        .post(`${basePath}/${user1!.id}`)
-        .send(sampleRecipe);
+      await request(app.getHttpServer()).post(basePath).send(sampleRecipe);
 
       return request(app.getHttpServer())
-        .post(`${basePath}/${user1!.id}`)
+        .post(basePath)
         .send(sampleRecipe)
         .expect(409)
         .expect({
@@ -166,7 +164,7 @@ describe('RecipesController (e2e)', () => {
 
     it('create recipe with missing fields', () => {
       return request(app.getHttpServer())
-        .post(`${basePath}/${user1!.id}`)
+        .post(basePath)
         .send({
           name: 'Incomplete Recipe',
           steps: [],
@@ -186,7 +184,7 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe(`PATCH ${basePath}/[userId]/[id]`, () => {
+  describe(`PATCH ${basePath}/[id]`, () => {
     const createRecipe = async () => {
       const sampleRecipe: CreateRecipeDto = {
         name: uuidv4(),
@@ -206,7 +204,7 @@ describe('RecipesController (e2e)', () => {
       };
 
       const response = await request(app.getHttpServer())
-        .post(`${basePath}/${user1!.id}`)
+        .post(basePath)
         .send(sampleRecipe)
         .expect(201);
       return response;
@@ -224,7 +222,7 @@ describe('RecipesController (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .patch(`${basePath}/${response.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
@@ -252,7 +250,7 @@ describe('RecipesController (e2e)', () => {
         steps: [step],
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .patch(`${basePath}/${response.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
@@ -275,7 +273,7 @@ describe('RecipesController (e2e)', () => {
         steps: [step],
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .patch(`${basePath}/${response.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
@@ -298,7 +296,7 @@ describe('RecipesController (e2e)', () => {
         steps: [step],
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .patch(`${basePath}/${response.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
@@ -316,7 +314,7 @@ describe('RecipesController (e2e)', () => {
         steps: [],
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .patch(`${basePath}/${response.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(400)
