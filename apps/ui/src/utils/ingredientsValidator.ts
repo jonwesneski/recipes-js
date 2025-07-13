@@ -1,12 +1,12 @@
-import { type IngredientDto } from '@repo/codegen/model';
+import { type CreateIngredientDto } from '@repo/codegen/model';
 import { ingredientsListSchema } from '@src/zod-schemas';
 import { type ZodError } from 'zod/v4';
 
 export class IngredientsValidator {
   public stringValue: string;
-  public error?: ZodError<IngredientDto[]>;
-  public dto: IngredientDto[];
-  constructor(params: { stringValue?: string; dto?: IngredientDto[] }) {
+  public error?: ZodError<CreateIngredientDto[]>;
+  public dto: CreateIngredientDto[];
+  constructor(params: { stringValue?: string; dto?: CreateIngredientDto[] }) {
     if (typeof params.stringValue === 'string') {
       this.stringValue = params.stringValue;
       const result = ingredientsListSchema.safeParse(
