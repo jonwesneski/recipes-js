@@ -5,11 +5,13 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { throwIfConflict, throwIfNotFound } from 'src/common';
+import { parseHelper } from 'src/common/header.decorators';
 import { CreateRecipeDto, EditRecipeDto, RecipeEntity } from './contracts';
 import { RecipesService } from './recipes.service';
 
@@ -49,34 +51,38 @@ export class RecipesController {
     }
   }
 
-  @Post(':userId')
+  @Post()
   @ApiBody({ type: CreateRecipeDto })
-  @ApiParam({ name: 'userId', type: String, description: 'User of recipe' })
   @UseGuards(JwtGuard)
   async createRecipe(
-    @Param('userId') userId: string,
+    // TODO: can't get this to work in jest
+    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Body() body: CreateRecipeDto,
+    @Req() req: Request,
   ): Promise<RecipeEntity> {
     try {
-      return await this.recipesService.createRecipe(userId, body);
+      const token = parseHelper(req.headers); // Using since JwtDecodedHeader is not working in jest
+      return await this.recipesService.createRecipe(token.sub, body);
     } catch (error) {
       throwIfConflict(error, `Recipe with name "${body.name}" already exists.`);
       throw error;
     }
   }
 
-  @Patch(':userId/:id')
+  @Patch(':id')
   @ApiBody({ type: EditRecipeDto })
-  @ApiParam({ name: 'userId', type: String, description: 'User of recipe' })
   @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
   @UseGuards(JwtGuard)
   async updateRecipe(
-    @Param('userId') userId: string,
     @Param('id') id: string,
+    // TODO: can't get this to work in jest
+    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Body() body: EditRecipeDto,
+    @Req() req: Request,
   ): Promise<RecipeEntity> {
+    const token = parseHelper(req.headers); // Using since JwtDecodedHeader is not working in jest
     try {
-      return await this.recipesService.updateRecipe(userId, id, body);
+      return await this.recipesService.updateRecipe(token.sub, id, body);
     } catch (error) {
       throwIfConflict(error);
       throw error;

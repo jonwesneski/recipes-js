@@ -7,6 +7,7 @@ import { type ChangeEvent, useRef, useState } from 'react'
 
 interface PhotoInputProps {
   label: string
+  isRequired: boolean
   onCameraClick: (_value: string) => void
   onUploadClick: (_value: string) => void
 }
@@ -67,7 +68,11 @@ export const PhotoInput = (props: PhotoInputProps) => {
   }
 
   return (
-    <UnderLabel text={props.label} isRequired error={errorText}>
+    <UnderLabel
+      text={props.label}
+      isRequired={props.isRequired}
+      error={errorText}
+    >
       <div className="flex flex-col">
         <div className="self-end flex gap-5 mb-3">
           <Button

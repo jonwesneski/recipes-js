@@ -74,6 +74,7 @@ export const Steps = () => {
               <div className="w-8/10 mx-auto mt-3">
                 <PhotoInput
                   label="step photo"
+                  isRequired={false}
                   onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
                   onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
                 />

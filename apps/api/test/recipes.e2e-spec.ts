@@ -1,4 +1,5 @@
 import { CanActivate, INestApplication } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtGuard } from 'src/auth/guards';
 import { configureApp, PrismaService } from 'src/common';
@@ -25,6 +26,7 @@ describe('RecipesController (e2e)', () => {
   };
   let user1: Awaited<ReturnType<PrismaService['user']['findUnique']>>;
   let recipe1: RecipePrismaType;
+  let token: string;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -53,6 +55,14 @@ describe('RecipesController (e2e)', () => {
       },
       include: RecipeInclude,
     });
+
+    const payload = {
+      sub: user1.id,
+      email: user1.email,
+      handle: user1.handle,
+    };
+    const secret = process.env.JWT_SECRET;
+    token = new JwtService().sign(payload, { secret });
 
     await app.init();
   });
@@ -176,7 +186,7 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe.only(`PATCH ${basePath}/[userId]/[id]`, () => {
+  describe(`PATCH ${basePath}/[userId]/[id]`, () => {
     const createRecipe = async () => {
       const sampleRecipe: CreateRecipeDto = {
         name: uuidv4(),
@@ -197,7 +207,8 @@ describe('RecipesController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(`${basePath}/${user1!.id}`)
-        .send(sampleRecipe);
+        .send(sampleRecipe)
+        .expect(201);
       return response;
     };
 
@@ -211,8 +222,10 @@ describe('RecipesController (e2e)', () => {
         preparationTimeInMinutes: 15,
         cookingTimeInMinutes: 30,
       };
+
       return request(app.getHttpServer())
         .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
@@ -240,6 +253,7 @@ describe('RecipesController (e2e)', () => {
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
@@ -262,6 +276,7 @@ describe('RecipesController (e2e)', () => {
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
@@ -284,6 +299,7 @@ describe('RecipesController (e2e)', () => {
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
@@ -301,6 +317,7 @@ describe('RecipesController (e2e)', () => {
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(400)
         .expect((res) => {
