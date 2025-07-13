@@ -1,7 +1,7 @@
 import { z } from 'zod/v4';
 
 import {
-  type IngredientDto,
+  type CreateIngredientDto,
   type IngredientEntityUnit,
 } from '@repo/codegen/model';
 import { measurementUnits } from '@src/utils/measurements';
@@ -77,14 +77,14 @@ export const ingredientRowArraySchema = z
   })
   .transform((arg, ctx) => {
     if (ctx.issues.length === 0) {
-      const ingredient: IngredientDto = {
+      const ingredient: CreateIngredientDto = {
         amount: Number(arg[0]),
         unit: arg[1] as IngredientEntityUnit,
         name: arg[2],
       };
       return ingredient;
     }
-    return {} as IngredientDto;
+    return {} as CreateIngredientDto;
   });
 
 export const ingredientsListSchema = z.array(ingredientRowArraySchema);
