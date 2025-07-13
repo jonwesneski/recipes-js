@@ -3,13 +3,14 @@
 import { Button } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import Image from 'next/image'
-import { useEffect, type RefObject } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
 export const Steps = () => {
   const { steps, addStep, setImage } = useRecipeStore((state) => state)
+  const [isNewStep, setIsNewStep] = useState<boolean>(false)
 
   const handleOnResize = (
     stepRef: RefObject<HTMLDivElement | null>,
@@ -42,12 +43,18 @@ export const Steps = () => {
     }
   }
 
+  const handleOnAddClick = () => {
+    setIsNewStep(true)
+    addStep()
+  }
+
   useEffect(() => {
     const newStepRef = steps[steps.length - 1].ref.current
-    if (newStepRef) {
+    if (isNewStep && newStepRef) {
+      setIsNewStep(false)
       newStepRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }, [steps.length])
+  }, [isNewStep, steps.length])
 
   return (
     <div className="mb-10">
@@ -67,6 +74,7 @@ export const Steps = () => {
               <div className="w-8/10 mx-auto mt-3">
                 <PhotoInput
                   label="step photo"
+                  isRequired={false}
                   onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
                   onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
                 />
@@ -90,7 +98,7 @@ export const Steps = () => {
         className="float-right mt-3"
         variant="opposite"
         text="add step"
-        onClick={addStep}
+        onClick={handleOnAddClick}
       />
     </div>
   )

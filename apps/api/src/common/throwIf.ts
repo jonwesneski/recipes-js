@@ -4,7 +4,7 @@ import { PrismaClientKnownRequestError } from '@repo/database';
 export const throwIfConflict = (error: any, message?: string) => {
   if (error instanceof PrismaClientKnownRequestError) {
     if (error.code === 'P2002') {
-      throw new ConflictException(message);
+      throw new ConflictException(message ?? error.meta);
     }
   }
 };

@@ -33,18 +33,17 @@ enum MeasurementUnit {
 }
 
 model User {
-  id                 String            @id @default(cuid())
-  name               String
-  email              String            @unique
-  handle             String            @unique
-  useFractions       Boolean           @default(false)
-  useImperial        Boolean           @default(false)
-  useDarkMode        Boolean           @default(false)
-  diet               NutritionalFacts? @relation(fields: [nutritionalFactsId], references: [id])
-  nutritionalFactsId String?           @unique
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-  recipes            Recipe[]
+  id           String            @id @default(cuid())
+  name         String
+  email        String            @unique
+  handle       String            @unique
+  useFractions Boolean           @default(false)
+  useImperial  Boolean           @default(false)
+  useDarkMode  Boolean           @default(false)
+  diet         NutritionalFacts? @relation("UserNutritionalFacts")
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  recipes      Recipe[]
 
   followers  UserFollow[] @relation("UserFollows")
   followings UserFollow[] @relation("UserFollowings")
@@ -75,12 +74,12 @@ model Recipe {
   updatedAt                DateTime          @updatedAt
   steps                    Step[]
   equipments               Equipment[]
-  userHandle               String
-  user                     User              @relation(fields: [userHandle], references: [handle])
+  userId                   String
+  user                     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   recipeTags               RecipeTag[]
-  nutritionalFacts         NutritionalFacts?
+  nutritionalFacts         NutritionalFacts? @relation("RecipeNutritionalFacts")
 
-  @@unique([userHandle, name])
+  @@unique([userId, name])
   @@map("recipes")
 }
 
@@ -114,22 +113,25 @@ model NutritionalFacts {
   niacinInMg       Int?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
-  recipeId         String           @unique
-  recipe           Recipe?          @relation(fields: [recipeId], references: [id])
-  user             User?
+  recipeId         String?          @unique
+  recipe           Recipe?          @relation("RecipeNutritionalFacts", fields: [recipeId], references: [id], onDelete: Cascade)
+  userId           String?          @unique
+  user             User?            @relation("UserNutritionalFacts", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("nutritional_facts")
 }
 
 model Step {
-  id          String       @id @default(cuid())
-  ingredients Ingredient[]
-  instruction String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  recipeId    String
-  recipe      Recipe       @relation(fields: [recipeId], references: [id])
+  id           String       @id @default(cuid())
+  displayOrder Int
+  ingredients  Ingredient[]
+  instruction  String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  recipeId     String
+  recipe       Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
+  @@unique([recipeId, displayOrder])
   @@map("steps")
 }
 
@@ -145,15 +147,17 @@ model Equipment {
 }
 
 model Ingredient {
-  id        String          @id @default(cuid())
-  amount    Float
-  unit      MeasurementUnit
-  name      String
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  stepId    String
-  step      Step            @relation(fields: [stepId], references: [id])
+  id           String          @id @default(cuid())
+  displayOrder Int
+  amount       Float
+  unit         MeasurementUnit
+  name         String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  stepId       String
+  step         Step            @relation(fields: [stepId], references: [id], onDelete: Cascade)
 
+  @@unique([stepId, displayOrder])
   @@map("ingredients")
 }
 
@@ -168,10 +172,10 @@ model Tag {
 }
 
 model RecipeTag {
-  recipeId         String
-  tagId            Int
-  recipe           Recipe @relation(fields: [recipeId], references: [id])
-  tag              Tag    @relation(fields: [tagId], references: [id])
+  recipeId String
+  tagId    Int
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  tag      Tag    @relation(fields: [tagId], references: [id])
 
   @@id([recipeId, tagId])
   @@map("recipe_tags")

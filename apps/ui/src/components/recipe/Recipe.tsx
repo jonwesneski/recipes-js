@@ -48,6 +48,7 @@ export const Recipe = () => {
 
       <PhotoInput
         label="recipe photo"
+        isRequired
         onCameraClick={handleOnCameraClick}
         onUploadClick={handleOnUploadClick}
       />
