@@ -11,6 +11,7 @@ import {
 } from 'src/recipes/contracts';
 import request from 'supertest';
 import { App } from 'supertest/types';
+import { v4 as uuidv4 } from 'uuid';
 import { AppModule } from '../src/app.module';
 
 const basePath = '/v1/recipes';
@@ -176,9 +177,9 @@ describe('RecipesController (e2e)', () => {
   });
 
   describe.only(`PATCH ${basePath}/[userId]/[id]`, () => {
-    it('update top recipe fields', async () => {
+    const createRecipe = async () => {
       const sampleRecipe: CreateRecipeDto = {
-        name: 'sample Recipe for edit',
+        name: uuidv4(),
         description: 'This is a test recipe',
         base64Image: '123',
         steps: [
@@ -197,6 +198,11 @@ describe('RecipesController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post(`${basePath}/${user1!.id}`)
         .send(sampleRecipe);
+      return response;
+    };
+
+    it('update top recipe fields', async () => {
+      const response = await createRecipe();
 
       const editRecipe: EditRecipeDto = {
         name: 'edit',
@@ -223,49 +229,83 @@ describe('RecipesController (e2e)', () => {
           );
         });
     });
-  });
 
-  it.only('update steps recipe', async () => {
-    const sampleRecipe: CreateRecipeDto = {
-      name: 'sample Recipe for edit2',
-      description: 'This is a test recipe',
-      base64Image: '123',
-      steps: [
-        {
-          instruction: 'Step 1',
-          ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
-        },
-      ],
-      tags: [],
-      equipments: [],
-      nutritionalFacts: null,
-      preparationTimeInMinutes: 30,
-      cookingTimeInMinutes: 15,
-    };
+    it('replace an existing step', async () => {
+      const response = await createRecipe();
 
-    const response = await request(app.getHttpServer())
-      .post(`${basePath}/${user1!.id}`)
-      .send(sampleRecipe);
+      const steps = [...response.body.steps];
+      const { id, ...step } = steps[0];
+      const editRecipe: EditRecipeDto = {
+        steps: [step],
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.steps[0].id).not.toBe(response.body.steps[0].id);
+        });
+    });
 
-    const steps = [...response.body.steps];
-    const { id, ...step } = steps[0];
-    const editRecipe: EditRecipeDto = {
-      steps: [step],
-    };
-    return request(app.getHttpServer())
-      .patch(`${basePath}/${user1!.id}/${response.body.id}`)
-      .send(editRecipe)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.name).toBe(sampleRecipe.name);
-        expect(res.body.id).toBeDefined();
-        expect(res.body.preparationTimeInMinutes).toBe(
-          sampleRecipe.preparationTimeInMinutes,
-        );
-        expect(res.body.cookingTimeInMinutes).toBe(
-          sampleRecipe.cookingTimeInMinutes,
-        );
-        expect(res.body.steps[0].id).not.toBe(response.body.steps[0].id);
+    it('add another ingredient to step', async () => {
+      const response = await createRecipe();
+
+      const steps = [...response.body.steps];
+      const { id, ...step } = steps[0];
+      step.ingredients.push({
+        name: 'New Ingredient',
+        amount: 50,
+        unit: 'grams',
       });
+      const editRecipe: EditRecipeDto = {
+        steps: [step],
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.steps[0].id).not.toBe(response.body.steps[0].id);
+        });
+    });
+
+    it('add new ingredients to step', async () => {
+      const response = await createRecipe();
+
+      const steps = [...response.body.steps];
+      const { id, ...step } = steps[0];
+      step.ingredients[0] = {
+        name: 'New Ingredient',
+        amount: 50,
+        unit: 'grams',
+      };
+      const editRecipe: EditRecipeDto = {
+        steps: [step],
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.steps[0].id).not.toBe(response.body.steps[0].id);
+        });
+    });
+
+    it.skip('replace with empty steps', async () => {
+      // TODO: lets make empty steps not allowed; maybe throw a 400
+      // should i handle at prisma level or at controller level?
+      const response = await createRecipe();
+
+      const editRecipe: EditRecipeDto = {
+        steps: [],
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${user1!.id}/${response.body.id}`)
+        .send(editRecipe)
+        .expect(400)
+        .expect((res) => {
+          expect(res.body).toBeDefined();
+        });
+    });
   });
 });
