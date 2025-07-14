@@ -48,7 +48,7 @@ export class IngredientItemType extends ItemTypeBase<HTMLTextAreaElement> {
     shouldBeFocused?: boolean;
     ingredient?: IngredientValidator;
   } = {}) {
-    super({ keyId, ref, shouldBeFocused: shouldBeFocused });
+    super({ keyId, ref, shouldBeFocused });
     this.ingredient = ingredient;
   }
 }
@@ -67,7 +67,7 @@ export class InstructionsType extends ItemTypeBase<HTMLTextAreaElement> {
     shouldBeFocused?: boolean;
     value?: string;
   } = {}) {
-    super({ keyId, ref, shouldBeFocused: shouldBeFocused });
+    super({ keyId, ref, shouldBeFocused });
     this.value = value;
   }
 }
@@ -122,7 +122,6 @@ export type RecipeActions = {
     _instructions: string,
   ) => void;
   setImage: (ref: RefObject<HTMLDivElement | null>, _image: string) => void;
-  shouldBeFocused: (ref: RefObject<HTMLTextAreaElement | null>) => boolean;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
 };
@@ -136,7 +135,7 @@ const createStepItem = (params?: {
   return {
     keyId: crypto.randomUUID(),
     ref: createRef<HTMLDivElement>(),
-    ingredients: params?.ingredients! ?? createIngredientsItem(),
+    ingredients: params?.ingredients ?? createIngredientsItem(),
     instructions: params?.instructions ?? new InstructionsType(),
   };
 };
@@ -166,7 +165,7 @@ export const defaultInitState: RecipeState = {
 export const createRecipeStore = (
   initState: RecipeState = defaultInitState,
 ) => {
-  return createStore<RecipeStore>()((set, get) => ({
+  return createStore<RecipeStore>()((set) => ({
     ...initState,
     setName: (name: string) => set(() => ({ name })),
     setDescription: (description: string) => set(() => ({ description })),
@@ -339,17 +338,6 @@ export const createRecipeStore = (
         }
         return { steps: [...state.steps] };
       }),
-    shouldBeFocused: (ref: RefObject<HTMLTextAreaElement | null>) => {
-      return false;
-      // return get().steps.some((s) => {
-      //   if (s.ingredientsRef === ref) {
-      //     return s.shouldIngredientsBeFocused;
-      //   } else if (s.instructionsRef === ref) {
-      //     return s.shouldInstructionsBeFocused;
-      //   }
-      //   return false;
-      // });
-    },
     setNutritionalFacts: (nutritionalFacts: NutritionalFactsDto) =>
       set(() => ({ nutritionalFacts })),
     setTags: (tags: string[]) => set(() => ({ tags })),

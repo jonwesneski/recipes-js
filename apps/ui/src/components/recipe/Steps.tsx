@@ -72,7 +72,7 @@ export const Steps = () => {
                 onResize={(height: number) => handleOnResize(s.ref, height)}
               /> */}
               <InstructionsTextArea
-                ref={s.instructionsRef}
+                ref={s.instructions.ref}
                 onResize={(height: number) => handleOnResize(s.ref, height)}
               />
               <div className="w-8/10 mx-auto mt-3">

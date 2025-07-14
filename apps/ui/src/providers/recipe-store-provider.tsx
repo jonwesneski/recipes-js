@@ -5,7 +5,7 @@ import {
   createRecipeStore,
   defaultInitState,
 } from '@src/stores/recipe-store'
-import { IngredientValidator } from '@src/utils/ingredientsValidator'
+import { type IngredientValidator } from '@src/utils/ingredientsValidator'
 import {
   type ReactNode,
   type RefObject,
@@ -69,17 +69,17 @@ export const useRecipeStepIngredientsStore = (
     // setIngredients: (ingredients: IngredientsValidator) =>
     //   _stepIngredients(ref, ingredients),
     insertIngredientsSteps: (
-      ref: RefObject<HTMLTextAreaElement | null>,
+      _ref: RefObject<HTMLTextAreaElement | null>,
       ingredients: IngredientValidator[][],
-    ) => _insertIngredientsSteps(ref, ingredients),
+    ) => _insertIngredientsSteps(_ref, ingredients),
     addIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
       _addIngredient(_ref),
     removeIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
       _removeIngredient(_ref),
     updateIngredient: (
-      ref: React.RefObject<HTMLTextAreaElement | null>,
+      _ref: React.RefObject<HTMLTextAreaElement | null>,
       ingredient: IngredientValidator,
-    ) => _updateIngredient(ref, ingredient),
+    ) => _updateIngredient(_ref, ingredient),
   }
 }
 

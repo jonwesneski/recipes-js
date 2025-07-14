@@ -41,6 +41,7 @@ export const ingredientRowArraySchema = z
     }
 
     const unit = context.value[unitIndex];
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- can be undefined
     if (unit === undefined) {
       return;
     }
@@ -53,6 +54,7 @@ export const ingredientRowArraySchema = z
       });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- can be undefined
     if (context.value[unitIndex + 1] === undefined) {
       return;
     }

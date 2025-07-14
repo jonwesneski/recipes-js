@@ -4,23 +4,22 @@ import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import React, { useEffect } from 'react'
 
 interface IngriedientRowProps {
-  id?: string
   ref: React.RefObject<HTMLTextAreaElement | null>
   value: string
   error?: string
   focusOnMount: boolean
   onChange: (
-    ref: React.RefObject<HTMLTextAreaElement | null>,
-    value: IngredientValidator,
+    _ref: React.RefObject<HTMLTextAreaElement | null>,
+    _value: IngredientValidator,
   ) => void
   onPaste: (
-    ref: React.RefObject<HTMLTextAreaElement | null>,
-    value: string,
+    _ref: React.RefObject<HTMLTextAreaElement | null>,
+    _value: string,
   ) => void
-  onEnterPressed: (ref: React.RefObject<HTMLTextAreaElement | null>) => void
-  onArrowUp: (ref: React.RefObject<HTMLTextAreaElement | null>) => void
-  onArrowDown: (ref: React.RefObject<HTMLTextAreaElement | null>) => void
-  onRemove: (ref: React.RefObject<HTMLTextAreaElement | null>) => void
+  onEnterPressed: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
+  onArrowUp: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
+  onArrowDown: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
+  onRemove: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
 }
 export const IngredientRow = (props: IngriedientRowProps) => {
   useEffect(() => {
@@ -98,7 +97,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
   }
 
   return (
-    <React.Fragment key={props.id}>
+    <>
       <textarea
         data-testid="ingredient-text-area"
         rows={1}
@@ -109,11 +108,11 @@ export const IngredientRow = (props: IngriedientRowProps) => {
         onPaste={handleOnPaste}
         onKeyDown={handleKeyDown}
       />
-      {props.error && (
+      {props.error && props.error.length > 0 ? (
         <div className="text-red-500 text-sm mt-1 bg-transparent">
           {props.error}
         </div>
-      )}
-    </React.Fragment>
+      ) : null}
+    </>
   )
 }
