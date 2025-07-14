@@ -56,7 +56,7 @@ export const useRecipeStepIngredientsStore = (
   const {
     steps,
     // setIngredients: _stepIngredients,
-    // insertIngredientsSteps: _insertIngredientsSteps,
+    insertIngredientsSteps: _insertIngredientsSteps,
     addIngredient: _addIngredient,
     removeIngredient: _removeIngredient,
     updateIngredient: _updateIngredient,
@@ -68,14 +68,16 @@ export const useRecipeStepIngredientsStore = (
     // shouldBeFocused: step?.shouldIngredientsBeFocused,
     // setIngredients: (ingredients: IngredientsValidator) =>
     //   _stepIngredients(ref, ingredients),
-    // insertIngredientsSteps: (ingredients: IngredientsValidator[]) =>
-    //   _insertIngredientsSteps(ref, ingredients),
-    addIngredient: (_ref: React.RefObject<HTMLInputElement | null>) =>
+    insertIngredientsSteps: (
+      ref: RefObject<HTMLTextAreaElement | null>,
+      ingredients: IngredientValidator[][],
+    ) => _insertIngredientsSteps(ref, ingredients),
+    addIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
       _addIngredient(_ref),
-    removeIngredient: (_ref: React.RefObject<HTMLInputElement | null>) =>
+    removeIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
       _removeIngredient(_ref),
     updateIngredient: (
-      ref: React.RefObject<HTMLInputElement | null>,
+      ref: React.RefObject<HTMLTextAreaElement | null>,
       ingredient: IngredientValidator,
     ) => _updateIngredient(ref, ingredient),
   }

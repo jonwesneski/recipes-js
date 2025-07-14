@@ -5,18 +5,22 @@ import React, { useEffect } from 'react'
 
 interface IngriedientRowProps {
   id?: string
-  ref: React.RefObject<HTMLInputElement | null>
+  ref: React.RefObject<HTMLTextAreaElement | null>
   value: string
   error?: string
   focusOnMount: boolean
   onChange: (
-    ref: React.RefObject<HTMLInputElement | null>,
+    ref: React.RefObject<HTMLTextAreaElement | null>,
     value: IngredientValidator,
   ) => void
-  onEnterPressed: (ref: React.RefObject<HTMLInputElement | null>) => void
-  onArrowUp: (ref: React.RefObject<HTMLInputElement | null>) => void
-  onArrowDown: (ref: React.RefObject<HTMLInputElement | null>) => void
-  onRemove: (ref: React.RefObject<HTMLInputElement | null>) => void
+  onPaste: (
+    ref: React.RefObject<HTMLTextAreaElement | null>,
+    value: string,
+  ) => void
+  onEnterPressed: (ref: React.RefObject<HTMLTextAreaElement | null>) => void
+  onArrowUp: (ref: React.RefObject<HTMLTextAreaElement | null>) => void
+  onArrowDown: (ref: React.RefObject<HTMLTextAreaElement | null>) => void
+  onRemove: (ref: React.RefObject<HTMLTextAreaElement | null>) => void
 }
 export const IngredientRow = (props: IngriedientRowProps) => {
   useEffect(() => {
@@ -31,10 +35,9 @@ export const IngredientRow = (props: IngriedientRowProps) => {
       }
       props.ref.current.focus()
     }
-    console.log(props.focusOnMount, props.ref.current?.value)
   }, [])
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     switch (event.key) {
       case 'Enter':
         props.onEnterPressed(props.ref)
@@ -56,7 +59,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     }
   }
 
-  const handleInput = (event: React.InputEvent<HTMLInputElement>) => {
+  const handleInput = (event: React.InputEvent<HTMLTextAreaElement>) => {
     const inputType = event.nativeEvent.inputType
     switch (inputType) {
       case 'insertText':
@@ -68,7 +71,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
         )
         break
       case 'insertFromPaste':
-        console.log('Text pasted:', event.currentTarget.value)
+        props.onPaste(props.ref, event.currentTarget.value)
         break
       case 'deleteContentBackward':
         props.onChange(
@@ -85,9 +88,17 @@ export const IngredientRow = (props: IngriedientRowProps) => {
 
   return (
     <React.Fragment key={props.id}>
-      <input
+      {/* <input
         ref={props.ref}
         className="block focus:outline-none bg-transparent"
+        value={props.value}
+        onInput={handleInput}
+        onKeyDown={handleKeyDown}
+      /> */}
+      <textarea
+        rows={1}
+        ref={props.ref}
+        className="block focus:outline-none bg-transparent resize-none"
         value={props.value}
         onInput={handleInput}
         onKeyDown={handleKeyDown}

@@ -16,8 +16,13 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
   let textAreaRef = useRef<HTMLDivElement>(null)
   textAreaRef = props.ref ?? textAreaRef
-  const { ingredients, addIngredient, removeIngredient, updateIngredient } =
-    useRecipeStepIngredientsStore(textAreaRef)
+  const {
+    ingredients,
+    addIngredient,
+    removeIngredient,
+    updateIngredient,
+    insertIngredientsSteps,
+  } = useRecipeStepIngredientsStore(textAreaRef)
 
   const getCaretPosition = (element: HTMLInputElement) => {
     const position: { row: number; column: number } = {
@@ -42,28 +47,30 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
   }
 
   const handleChange = (
-    ref: React.RefObject<HTMLInputElement | null>,
+    ref: React.RefObject<HTMLTextAreaElement | null>,
     ingredient: IngredientValidator,
   ) => {
     updateIngredient(ref, ingredient)
   }
 
-  const handleNewRow = (ref: React.RefObject<HTMLInputElement | null>) => {
+  const handleNewRow = (ref: React.RefObject<HTMLTextAreaElement | null>) => {
     addIngredient(ref)
   }
 
-  const handleRemove = (ref: React.RefObject<HTMLInputElement | null>) => {
+  const handleRemove = (ref: React.RefObject<HTMLTextAreaElement | null>) => {
     removeIngredient(ref)
   }
 
-  const handleArrowUp = (ref: React.RefObject<HTMLInputElement | null>) => {
+  const handleArrowUp = (ref: React.RefObject<HTMLTextAreaElement | null>) => {
     const index = ingredients?.items.findIndex((item) => item.ref === ref)
     if (index && index > 0) {
       ingredients?.items[index - 1].ref.current?.focus()
     }
   }
 
-  const handleArrowDown = (ref: React.RefObject<HTMLInputElement | null>) => {
+  const handleArrowDown = (
+    ref: React.RefObject<HTMLTextAreaElement | null>,
+  ) => {
     const index = ingredients?.items.findIndex((item) => item.ref === ref)
     if (index !== undefined && index < (ingredients?.items.length || 0) - 1) {
       ingredients?.items[index + 1].ref.current?.focus()
@@ -79,6 +86,24 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
     if (ingredients?.items.length) {
       ingredients.items[ingredients.items.length - 1].ref.current?.focus()
     }
+  }
+
+  /* When some pastes in recipes that are already separated by '\r\n\r\n'
+   * we will add new steps for them
+   */
+  const handleOnPaste = (
+    ref: React.RefObject<HTMLTextAreaElement | null>,
+    value: string,
+  ) => {
+    const dataListofList = value.includes('\r')
+      ? value.split('\r\n\r\n').map((v) => v.split('\r\n'))
+      : value.split('\n\n').map((v) => v.split('\n'))
+    insertIngredientsSteps(
+      ref,
+      dataListofList.map((dl) =>
+        dl.map((d) => new IngredientValidator({ stringValue: d })),
+      ),
+    )
   }
 
   const _handleShowPopUp = (row: HTMLInputElement) => {
@@ -113,6 +138,7 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
           error={item.ingredient.error?.issues[0].message}
           focusOnMount={item.shouldIngredientBeFocused}
           onChange={handleChange}
+          onPaste={handleOnPaste}
           onEnterPressed={handleNewRow}
           onRemove={handleRemove}
           onArrowDown={handleArrowDown}
