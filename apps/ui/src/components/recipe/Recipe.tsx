@@ -3,8 +3,6 @@
 import { TextLabel } from '@repo/design-system'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { EditableUl } from './IngredientsTextArea.experimental2'
-import { EditableUl3 } from './IngredientsTextArea.experimental3'
 import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
@@ -29,8 +27,6 @@ export const Recipe = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      <EditableUl />
-      <EditableUl3 />
       <TextLabel
         ref={nameRef}
         name="recipe"

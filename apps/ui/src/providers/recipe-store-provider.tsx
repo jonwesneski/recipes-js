@@ -5,7 +5,7 @@ import {
   createRecipeStore,
   defaultInitState,
 } from '@src/stores/recipe-store'
-import { type IngredientsValidator } from '@src/utils/ingredientsValidator'
+import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import {
   type ReactNode,
   type RefObject,
@@ -51,22 +51,30 @@ export const useRecipeStore = <T,>(selector: (_store: RecipeStore) => T): T => {
 }
 
 export const useRecipeStepIngredientsStore = (
-  ref: RefObject<HTMLTextAreaElement | null>,
+  ref: RefObject<HTMLDivElement | null>,
 ) => {
   const {
     steps,
-    setIngredients: _stepIngredients,
-    insertIngredientsSteps: _insertIngredientsSteps,
+    // setIngredients: _stepIngredients,
+    // insertIngredientsSteps: _insertIngredientsSteps,
+    addIngredient: _addIngredient,
+    updateIngredientItem: _addIngredientItem,
   } = useRecipeStore((state) => state)
-  const step = steps.find((s) => s.ingredientsRef === ref)
+  const step = steps.find((s) => s.ingredients.ref === ref)
   return {
     ingredients: step?.ingredients,
-    ingredientsRef: step?.ingredientsRef,
-    shouldBeFocused: step?.shouldIngredientsBeFocused,
-    setIngredients: (ingredients: IngredientsValidator) =>
-      _stepIngredients(ref, ingredients),
-    insertIngredientsSteps: (ingredients: IngredientsValidator[]) =>
-      _insertIngredientsSteps(ref, ingredients),
+    // ingredientsRef: step?.ingredients.ref,
+    // shouldBeFocused: step?.shouldIngredientsBeFocused,
+    // setIngredients: (ingredients: IngredientsValidator) =>
+    //   _stepIngredients(ref, ingredients),
+    // insertIngredientsSteps: (ingredients: IngredientsValidator[]) =>
+    //   _insertIngredientsSteps(ref, ingredients),
+    addIngredient: (_ref: React.RefObject<HTMLInputElement | null>) =>
+      _addIngredient(_ref),
+    addIngredientItem: (
+      ref: React.RefObject<HTMLInputElement | null>,
+      ingredient: IngredientValidator,
+    ) => _addIngredientItem(ref, ingredient),
   }
 }
 

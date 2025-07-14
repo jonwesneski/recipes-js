@@ -1,82 +1,11 @@
 /* eslint-disable -- experimental */
 'use client'
 
-import React, { createRef, useEffect, useRef, useState } from 'react'
-
-interface DivProps {
-  ref: React.RefObject<HTMLInputElement | null>
-  value: string
-  focusOnMount: boolean
-  onChange: (
-    ref: React.RefObject<HTMLInputElement | null>,
-    value: string,
-  ) => void
-  onEnterPressed: (ref: React.RefObject<HTMLInputElement | null>) => void
-}
-const IngredientRow = (props: DivProps) => {
-  //const [value, setValue] = useState('')
-  //const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (props.focusOnMount && props.ref.current) {
-      const sel = window.getSelection()
-      console.log('Setting focus on:', props.ref.current)
-      if (sel) {
-        console.log('Selection exists:', sel)
-        const range = document.createRange()
-        range.setStart(props.ref.current, props.ref.current.value.length)
-        range.collapse(true)
-        sel.removeAllRanges()
-        sel.addRange(range)
-      }
-      props.ref.current.focus()
-    }
-  }, [])
-
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   console.log('Change event:', event.target.value)
-  //   setValue(event.target.value)
-  //   props.onChange(props.ref, event)
-  // }
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      props.onEnterPressed(props.ref)
-      event.preventDefault()
-    }
-  }
-
-  const handleInput = (event: React.InputEvent<HTMLInputElement>) => {
-    console.log('Input event:', event)
-    const inputType = event.nativeEvent.inputType
-    if (inputType === 'insertText') {
-      const currentValue = event.currentTarget.value
-      // setValue((prev) => {
-      // const newValue = prev + currentValue
-      props.onChange(props.ref, event.currentTarget.value)
-      //   return newValue
-      // })
-    } else if (inputType === 'insertFromPaste') {
-      console.log('Text pasted:', event.currentTarget.value)
-    } else if (inputType === 'deleteContentBackward') {
-      // Handle backspace or delete key
-      console.log('Backspace or delete key pressed')
-    } else {
-      console.log(`Unsupported input type: ${inputType}`)
-    }
-  }
-
-  return (
-    <input
-      ref={props.ref}
-      className="block focus:outline-none focus:bg-transparent"
-      value={props.value}
-      //onChange={handleChange}
-      onInput={handleInput}
-      onKeyDown={handleKeyDown}
-    />
-  )
-}
+import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
+import { IngredientValidator } from '@src/utils/ingredientsValidator'
+import React, { RefObject, useRef, useState } from 'react'
+import { IngredientRow } from './IngredientRow'
+import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 type InputsType = {
   content: string
@@ -85,110 +14,148 @@ type InputsType = {
   focusOnMount: boolean
 }
 
-export const EditableUl3 = () => {
+interface IngredientsTextAreaProps {
+  ref?: RefObject<HTMLDivElement | null>
+  onResize: (_height: number) => void
+}
+export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
+  const [isPopupVisible, setIsPopupVisible] = useState(false)
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
+  let textAreaRef = useRef<HTMLDivElement>(null)
+  textAreaRef = props.ref ?? textAreaRef
+  const { ingredients, addIngredient, addIngredientItem } =
+    useRecipeStepIngredientsStore(textAreaRef)
   const [content, setContent] = useState<InputsType[]>([
     { content: '', ref: useRef<HTMLInputElement>(null), focusOnMount: true },
   ])
-  const textAreaRef = useRef<HTMLUListElement>(null)
-  const [error, setError] = useState<string | undefined>()
 
-  const handleInput = (
-    ref: React.RefObject<HTMLInputElement | null>,
-    event: React.FormEvent<HTMLInputElement>,
-  ) => {
-    console.log('Input event:', event.currentTarget.innerText)
-    console.log(event.nativeEvent)
-    setError('error')
-    //setCaretAtEnd(event.currentTarget)
+  const getCaretPosition = (element: HTMLInputElement) => {
+    const position: { row: number; column: number } = {
+      row: 0,
+      column: 0,
+    }
+
+    // Calcuate row position
+    // // do we care about row position?
+    const cursorPosition = element.selectionStart || 0
+    const textBeforeCursor = element.value.substring(0, cursorPosition)
+    const row = textBeforeCursor.split('\n').length
+
+    // Calculate column position we have 3 columns in textarea
+    const currentRowText = textBeforeCursor.split('\n')[row - 1] || ''
+    const column = currentRowText.split(' ').length
+
+    position.row = row - 1
+    position.column = column - 1
+
+    return position
   }
-
-  // const setCaretAtEnd = (element: HTMLUListElement) => {
-  //   const range = document.createRange()
-  //   range.selectNodeContents(element)
-  //   range.collapse(false)
-  //   const selection = window.getSelection()!
-  //   selection.removeAllRanges()
-  //   selection.addRange(range)
-  //   element.focus()
-  // }
-
-  // const getCaretPosition = (element: HTMLUListElement) => {
-  //   const position: { row: number; column: number } = {
-  //     row: 0,
-  //     column: 0,
-  //   }
-
-  //   var caretPosition = 0
-  //   var selection = window.getSelection()!
-  //   if (selection.rangeCount) {
-  //     var range = selection.getRangeAt(0)
-  //     if (range.commonAncestorContainer.parentNode == element) {
-  //       caretPosition = range.endOffset
-  //     }
-  //   }
-
-  //   const textBeforeCursor = element.innerText.substring(0, caretPosition)
-  //   const row = textBeforeCursor.split('\n').length
-
-  //   // Calculate column position we have 3 columns in textarea
-  //   const currentRowText = textBeforeCursor.split('\n')[row - 1] || ''
-  //   const column = currentRowText.split(' ').length
-
-  //   position.row = row - 1
-  //   position.column = column - 1
-
-  //   return position
-  // }
 
   const handleChange = (
     ref: React.RefObject<HTMLInputElement | null>,
-    value: string,
+    ingredient: IngredientValidator,
   ) => {
-    console.log('Change event:', value)
+    // todo make a method that updates 1 ingredient row
+    console.log(ingredient)
+    addIngredientItem(ref, ingredient)
+    // setContent((prev) => {
+    //   const index = prev.findIndex((item) => item.ref === ref)
+    //   if (index !== -1) {
+    //     const newContent = [...prev]
+    //     newContent[index] = {
+    //       ...newContent[index],
+    //       content: ingredient.stringValue,
+    //       error: ingredient.error?.issues[0].message,
+    //     }
+    //     return newContent
+    //   }
+    //   return prev
+    // })
+  }
+
+  const handleNewRow = (ref: React.RefObject<HTMLInputElement | null>) => {
+    console.log('handleNewRow', ref)
+    addIngredient(ref)
+    // setContent((prev) => {
+    //   const index = prev.findIndex((item) => item.ref === ref)
+    //   if (index === -1) {
+    //     return prev
+    //   }
+    //   for (let i = index + 1; i < prev.length; i++) {
+    //     prev[i].focusOnMount = false
+    //   }
+    //   return [
+    //     ...prev.slice(0, index + 1),
+    //     { content: '', ref: createRef<HTMLInputElement>(), focusOnMount: true },
+    //     ...prev.slice(index + 1),
+    //   ]
+    // })
+  }
+
+  const handleRemove = (ref: React.RefObject<HTMLInputElement | null>) => {
     setContent((prev) => {
       const index = prev.findIndex((item) => item.ref === ref)
-      if (index !== -1) {
-        const newContent = [...prev]
-        newContent[index] = {
-          ...newContent[index],
-          content: value,
-        }
-        return newContent
+      if (index === -1 || prev.length <= 1) {
+        return prev
       }
-      return prev
+      return prev.toSpliced(index, 1)
     })
   }
 
-  const handleKeyDown = (ref: React.RefObject<HTMLInputElement | null>) => {
-    setContent((prev) => {
-      const index = prev.findIndex((item) => item.ref === ref)
-      if (index === -1) {
-        return prev
+  const handleFocus = () => {
+    for (const item of ingredients?.items || []) {
+      if (document.activeElement === item.ref.current) {
+        return
       }
-      for (let i = index + 1; i < prev.length; i++) {
-        prev[i].focusOnMount = false
-      }
-      return [
-        ...prev.slice(0, index + 1),
-        { content: '', ref: createRef<HTMLInputElement>(), focusOnMount: true },
-        ...prev.slice(index + 1),
-      ]
-    })
+    }
+    if (ingredients?.items.length) {
+      ingredients.items[ingredients.items.length - 1].ref.current?.focus()
+    }
+  }
+
+  const _handleShowPopUp = (row: HTMLInputElement) => {
+    const rect = row.getBoundingClientRect()
+    const position = getCaretPosition(row)
+    // is caret in measurement-unit column
+    if (position.column === 1) {
+      const x = rect.width / 6
+      const y = position.row + 1
+      const yMultipler = y * 10
+      setPopupPosition({
+        x: rect.x - x,
+        y: rect.y + yMultipler + 50,
+      })
+      setIsPopupVisible(true)
+    } else {
+      setIsPopupVisible(false)
+    }
   }
 
   return (
-    <div>
-      {content.map((item, index) => (
+    <div
+      ref={textAreaRef}
+      className="focus-within:bg-input-focus-background"
+      onClick={handleFocus}
+    >
+      {ingredients?.items.map((item, index) => (
         <React.Fragment key={index}>
           <IngredientRow
             ref={item.ref}
-            value={item.content}
-            focusOnMount={item.focusOnMount}
+            value={item.ingredient.stringValue}
+            error={item.ingredient.error?.issues[0].message}
+            focusOnMount={item.shouldIngredientBeFocused}
             onChange={handleChange}
-            onEnterPressed={handleKeyDown}
+            onEnterPressed={handleNewRow}
+            onRemove={handleRemove}
           />
         </React.Fragment>
       ))}
+      {isPopupVisible ? (
+        <IngredientsMeasurementPopUp
+          top={popupPosition.y}
+          left={popupPosition.x}
+        />
+      ) : null}
     </div>
   )
 }
