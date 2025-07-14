@@ -23,11 +23,11 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
   let textAreaRef = useRef<HTMLDivElement>(null)
   textAreaRef = props.ref ?? textAreaRef
-  const { ingredients, addIngredient, addIngredientItem } =
+  const { ingredients, addIngredient, removeIngredient, updateIngredient } =
     useRecipeStepIngredientsStore(textAreaRef)
-  const [content, setContent] = useState<InputsType[]>([
-    { content: '', ref: useRef<HTMLInputElement>(null), focusOnMount: true },
-  ])
+  // const [content, setContent] = useState<InputsType[]>([
+  //   { content: '', ref: useRef<HTMLInputElement>(null), focusOnMount: true },
+  // ])
 
   const getCaretPosition = (element: HTMLInputElement) => {
     const position: { row: number; column: number } = {
@@ -57,7 +57,7 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
   ) => {
     // todo make a method that updates 1 ingredient row
     console.log(ingredient)
-    addIngredientItem(ref, ingredient)
+    updateIngredient(ref, ingredient)
     // setContent((prev) => {
     //   const index = prev.findIndex((item) => item.ref === ref)
     //   if (index !== -1) {
@@ -93,13 +93,22 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
   }
 
   const handleRemove = (ref: React.RefObject<HTMLInputElement | null>) => {
-    setContent((prev) => {
-      const index = prev.findIndex((item) => item.ref === ref)
-      if (index === -1 || prev.length <= 1) {
-        return prev
-      }
-      return prev.toSpliced(index, 1)
-    })
+    removeIngredient(ref)
+  }
+
+  const handleArrowUp = (ref: React.RefObject<HTMLInputElement | null>) => {
+    const index = ingredients?.items.findIndex((item) => item.ref === ref)
+    if (index && index > 0) {
+      ingredients?.items[index - 1].ref.current?.focus()
+    }
+  }
+
+  const handleArrowDown = (ref: React.RefObject<HTMLInputElement | null>) => {
+    console.log('handleArrowDown', ref)
+    const index = ingredients?.items.findIndex((item) => item.ref === ref)
+    if (index !== undefined && index < (ingredients?.items.length || 0) - 1) {
+      ingredients?.items[index + 1].ref.current?.focus()
+    }
   }
 
   const handleFocus = () => {
@@ -147,6 +156,8 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
             onChange={handleChange}
             onEnterPressed={handleNewRow}
             onRemove={handleRemove}
+            onArrowDown={handleArrowDown}
+            onArrowUp={handleArrowUp}
           />
         </React.Fragment>
       ))}

@@ -58,7 +58,8 @@ export const useRecipeStepIngredientsStore = (
     // setIngredients: _stepIngredients,
     // insertIngredientsSteps: _insertIngredientsSteps,
     addIngredient: _addIngredient,
-    updateIngredientItem: _addIngredientItem,
+    removeIngredient: _removeIngredient,
+    updateIngredient: _updateIngredient,
   } = useRecipeStore((state) => state)
   const step = steps.find((s) => s.ingredients.ref === ref)
   return {
@@ -71,10 +72,12 @@ export const useRecipeStepIngredientsStore = (
     //   _insertIngredientsSteps(ref, ingredients),
     addIngredient: (_ref: React.RefObject<HTMLInputElement | null>) =>
       _addIngredient(_ref),
-    addIngredientItem: (
+    removeIngredient: (_ref: React.RefObject<HTMLInputElement | null>) =>
+      _removeIngredient(_ref),
+    updateIngredient: (
       ref: React.RefObject<HTMLInputElement | null>,
       ingredient: IngredientValidator,
-    ) => _addIngredientItem(ref, ingredient),
+    ) => _updateIngredient(ref, ingredient),
   }
 }
 

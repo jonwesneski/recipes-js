@@ -51,7 +51,8 @@ export type RecipeActions = {
   ) => void;
   removeStep: (_stepId: string) => void;
   addIngredient: (ref: React.RefObject<HTMLInputElement | null>) => void;
-  updateIngredientItem: (
+  removeIngredient: (ref: React.RefObject<HTMLInputElement | null>) => void;
+  updateIngredient: (
     ref: RefObject<HTMLDivElement | null>,
     _ingredient: IngredientValidator,
   ) => void;
@@ -162,7 +163,20 @@ export const createRecipeStore = (
         return { state };
       });
     },
-    updateIngredientItem: (
+    removeIngredient: (ref: React.RefObject<HTMLInputElement | null>) => {
+      set((state) => {
+        for (let s = 0; s < state.steps.length; s++) {
+          for (let i = 0; i < state.steps[s].ingredients.items.length; i++) {
+            if (state.steps[s].ingredients.items[i].ref === ref) {
+              state.steps[s].ingredients.items.splice(i, 1);
+              return { steps: [...state.steps] };
+            }
+          }
+        }
+        return { state };
+      });
+    },
+    updateIngredient: (
       ref: RefObject<HTMLDivElement | null>,
       ingredient: IngredientValidator,
     ) =>

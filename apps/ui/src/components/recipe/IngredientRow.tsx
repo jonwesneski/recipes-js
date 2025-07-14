@@ -13,6 +13,8 @@ interface IngriedientRowProps {
     value: IngredientValidator,
   ) => void
   onEnterPressed: (ref: React.RefObject<HTMLInputElement | null>) => void
+  onArrowUp: (ref: React.RefObject<HTMLInputElement | null>) => void
+  onArrowDown: (ref: React.RefObject<HTMLInputElement | null>) => void
   onRemove: (ref: React.RefObject<HTMLInputElement | null>) => void
 }
 export const IngredientRow = (props: IngriedientRowProps) => {
@@ -31,12 +33,24 @@ export const IngredientRow = (props: IngriedientRowProps) => {
   //   }, [])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      props.onEnterPressed(props.ref)
-      event.preventDefault()
-      event.currentTarget.value
-    } else if (event.key === 'Backspace' && event.currentTarget.value === '') {
-      props.onRemove(props.ref)
+    switch (event.key) {
+      case 'Enter':
+        props.onEnterPressed(props.ref)
+        event.preventDefault()
+        break
+      case 'Backspace':
+        if (event.currentTarget.value === '') {
+          props.onRemove(props.ref)
+        }
+        break
+      case 'ArrowUp':
+        props.onArrowUp(props.ref)
+        break
+      case 'ArrowDown':
+        props.onArrowDown(props.ref)
+        break
+      default:
+        break
     }
   }
 
