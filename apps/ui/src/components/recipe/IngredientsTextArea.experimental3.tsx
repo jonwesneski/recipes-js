@@ -127,6 +127,7 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
   return (
     <div
       ref={textAreaRef}
+      data-testid="ingredients-text-area"
       className="focus-within:bg-input-focus-background"
       onClick={handleFocus}
     >

@@ -24,7 +24,7 @@ export class ItemTypeBase<T> {
   }
 
   get shouldBeFocused(): boolean {
-    if (this.shouldBeFocused) {
+    if (this._shouldBeFocused) {
       this._shouldBeFocused = false; // reset after getting
       return true;
     }
@@ -209,6 +209,9 @@ export const createRecipeStore = (
         for (let s = 0; s < state.steps.length; s++) {
           for (let i = 0; i < state.steps[s].ingredients.items.length; i++) {
             if (state.steps[s].ingredients.items[i].ref === ref) {
+              if (state.steps[s].ingredients.items.length <= 1) {
+                return { state };
+              }
               state.steps[s].ingredients.items.splice(i, 1);
               return { steps: [...state.steps] };
             }
@@ -251,14 +254,20 @@ export const createRecipeStore = (
         for (let s = 0; s < state.steps.length; s++) {
           for (let i = 0; i < state.steps[s].ingredients.items.length; i++) {
             if (state.steps[s].ingredients.items[i].ref === ref) {
-              const currentIngredient =
-                state.steps[s].ingredients.items[i].ingredient;
-              const updatedCurrentIngredient = new IngredientValidator({
-                stringValue:
-                  currentIngredient.stringValue + ingredients[0][0].stringValue,
-              });
-              state.steps[s].ingredients.items[i].ingredient =
-                updatedCurrentIngredient;
+              for (let t = 0; t < ingredients[0].length; t++) {
+                if (t === 0) {
+                  state.steps[s].ingredients.items[i].ingredient =
+                    new IngredientValidator({
+                      stringValue:
+                        state.steps[s].ingredients.items[i].ingredient
+                          .stringValue + ingredients[0][t].stringValue,
+                    });
+                } else {
+                  state.steps[s].ingredients.items.push(
+                    new IngredientItemType({ ingredient: ingredients[0][t] }),
+                  );
+                }
+              }
 
               for (let j = 1; j < ingredients.length; j++) {
                 state.steps.push(createStepItem());

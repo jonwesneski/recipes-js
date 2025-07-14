@@ -59,6 +59,17 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     }
   }
 
+  /** This is just for testing purposes; I can get a textarea to do a
+   * navtiveEvent.inputType === 'insertFromPaste'. So, simulating here
+   */
+  const handleOnPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    event.preventDefault()
+    handleInput({
+      nativeEvent: { inputType: 'insertFromPaste' },
+      currentTarget: { value: event.clipboardData.getData('text/plain') },
+    } as unknown as React.InputEvent<HTMLTextAreaElement>)
+  }
+
   const handleInput = (event: React.InputEvent<HTMLTextAreaElement>) => {
     const inputType = event.nativeEvent.inputType
     switch (inputType) {
@@ -88,19 +99,14 @@ export const IngredientRow = (props: IngriedientRowProps) => {
 
   return (
     <React.Fragment key={props.id}>
-      {/* <input
-        ref={props.ref}
-        className="block focus:outline-none bg-transparent"
-        value={props.value}
-        onInput={handleInput}
-        onKeyDown={handleKeyDown}
-      /> */}
       <textarea
+        data-testid="ingredient-text-area"
         rows={1}
         ref={props.ref}
         className="block focus:outline-none bg-transparent resize-none"
         value={props.value}
         onInput={handleInput}
+        onPaste={handleOnPaste}
         onKeyDown={handleKeyDown}
       />
       {props.error && (
