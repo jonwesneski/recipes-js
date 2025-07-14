@@ -4,37 +4,71 @@ import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { createRef, type RefObject } from 'react';
 import { createStore } from 'zustand/vanilla';
 
-export class IngredientItemType {
+export class ItemTypeBase<T> {
   keyId: string;
-  ref: RefObject<HTMLTextAreaElement | null>;
+  ref: RefObject<T | null>;
+  private _shouldBeFocused: boolean;
+
+  constructor({
+    keyId = crypto.randomUUID(),
+    ref = createRef<T>(),
+    shouldBeFocused = false,
+  }: {
+    keyId?: string;
+    ref?: RefObject<T | null>;
+    shouldBeFocused?: boolean;
+  } = {}) {
+    this.keyId = keyId;
+    this.ref = ref;
+    this._shouldBeFocused = shouldBeFocused;
+  }
+
+  get shouldBeFocused(): boolean {
+    if (this.shouldBeFocused) {
+      this._shouldBeFocused = false; // reset after getting
+      return true;
+    }
+    return this._shouldBeFocused;
+  }
+}
+
+export class IngredientItemType extends ItemTypeBase<HTMLTextAreaElement> {
   ingredient: IngredientValidator;
-  private _shouldIngredientBeFocused: boolean;
 
   constructor({
     keyId = crypto.randomUUID(),
     ref = createRef<HTMLTextAreaElement>(),
+    shouldBeFocused = false,
     ingredient = new IngredientValidator({
       stringValue: '',
     }),
-    shouldIngredientBeFocused = false,
   }: {
     keyId?: string;
     ref?: RefObject<HTMLTextAreaElement | null>;
+    shouldBeFocused?: boolean;
     ingredient?: IngredientValidator;
-    shouldIngredientBeFocused?: boolean;
   } = {}) {
-    this.keyId = keyId;
-    this.ref = ref;
+    super({ keyId, ref, shouldBeFocused: shouldBeFocused });
     this.ingredient = ingredient;
-    this._shouldIngredientBeFocused = shouldIngredientBeFocused;
   }
+}
 
-  get shouldIngredientBeFocused(): boolean {
-    if (this._shouldIngredientBeFocused) {
-      this._shouldIngredientBeFocused = false; // reset after getting
-      return true;
-    }
-    return this._shouldIngredientBeFocused;
+export class InstructionsType extends ItemTypeBase<HTMLTextAreaElement> {
+  value: string;
+
+  constructor({
+    keyId = crypto.randomUUID(),
+    ref = createRef<HTMLTextAreaElement>(),
+    shouldBeFocused = false,
+    value = '',
+  }: {
+    keyId?: string;
+    ref?: RefObject<HTMLTextAreaElement | null>;
+    shouldBeFocused?: boolean;
+    value?: string;
+  } = {}) {
+    super({ keyId, ref, shouldBeFocused: shouldBeFocused });
+    this.value = value;
   }
 }
 
@@ -48,9 +82,7 @@ export type StepsItemType = {
   keyId: string;
   ref: RefObject<HTMLDivElement | null>;
   ingredients: IngredientItemsType;
-  instructionsRef?: RefObject<HTMLTextAreaElement | null>;
-  instructions: string;
-  shouldInstructionsBeFocused: boolean;
+  instructions: InstructionsType;
   image?: string;
 };
 
@@ -99,17 +131,13 @@ export type RecipeStore = RecipeState & RecipeActions;
 
 const createStepItem = (params?: {
   ingredients?: IngredientItemsType;
-  instructions?: string;
-  shouldIngredientsBeFocused?: boolean;
-  shouldInstructionsBeFocused?: boolean;
+  instructions?: InstructionsType;
 }): StepsItemType => {
   return {
     keyId: crypto.randomUUID(),
     ref: createRef<HTMLDivElement>(),
     ingredients: params?.ingredients! ?? createIngredientsItem(),
-    instructionsRef: createRef<HTMLTextAreaElement>(),
-    instructions: params?.instructions ?? '',
-    shouldInstructionsBeFocused: params?.shouldInstructionsBeFocused ?? false,
+    instructions: params?.instructions ?? new InstructionsType(),
   };
 };
 
@@ -166,7 +194,7 @@ export const createRecipeStore = (
             if (state.steps[s].ingredients.items[i].ref === ref) {
               state.steps[s].ingredients.items = [
                 ...state.steps[s].ingredients.items.slice(0, i + 1),
-                new IngredientItemType({ shouldIngredientBeFocused: true }),
+                new IngredientItemType({ shouldBeFocused: true }),
                 ...state.steps[s].ingredients.items.slice(i + 1),
               ];
               return { steps: state.steps };
@@ -251,9 +279,11 @@ export const createRecipeStore = (
       instructions: string,
     ) =>
       set((state) => {
-        const index = state.steps.findIndex((s) => s.instructionsRef === ref);
+        const index = state.steps.findIndex((s) => s.instructions.ref === ref);
         if (index !== -1) {
-          state.steps[index].instructions = instructions;
+          state.steps[index].instructions = new InstructionsType({
+            value: instructions,
+          });
         }
         return { steps: [...state.steps] };
       }),
@@ -262,9 +292,9 @@ export const createRecipeStore = (
       instructions: string[],
     ) =>
       set((state) => {
-        let index = state.steps.findIndex((s) => s.instructionsRef === ref);
+        let index = state.steps.findIndex((s) => s.instructions.ref === ref);
         const inserts = instructions.map((i) =>
-          createStepItem({ instructions: i }),
+          createStepItem({ instructions: new InstructionsType({ value: i }) }),
         );
         const current = state.steps.map((s) =>
           createStepItem({
@@ -273,15 +303,16 @@ export const createRecipeStore = (
           }),
         );
         if (inserts.length) {
-          inserts[inserts.length - 1].shouldInstructionsBeFocused = true;
+          inserts[inserts.length - 1].instructions = new InstructionsType({
+            value: inserts[inserts.length - 1].instructions.value,
+            shouldBeFocused: true,
+          });
         }
         if (index !== -1) {
           for (const insert of inserts) {
             if (current[index]) {
               current[index].instructions = insert.instructions;
-              current[index].instructionsRef = insert.instructionsRef;
-              current[index].shouldInstructionsBeFocused =
-                insert.shouldInstructionsBeFocused;
+              current[index].instructions = insert.instructions;
             } else {
               current.push(insert);
             }

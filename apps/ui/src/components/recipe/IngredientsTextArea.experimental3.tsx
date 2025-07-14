@@ -88,7 +88,7 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
     }
   }
 
-  /* When some pastes in recipes that are already separated by '\r\n\r\n'
+  /* When some pastes in recipes that are already separated by linebreaks
    * we will add new steps for them
    */
   const handleOnPaste = (
@@ -136,7 +136,7 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
           ref={item.ref}
           value={item.ingredient.stringValue}
           error={item.ingredient.error?.issues[0].message}
-          focusOnMount={item.shouldIngredientBeFocused}
+          focusOnMount={item.shouldBeFocused}
           onChange={handleChange}
           onPaste={handleOnPaste}
           onEnterPressed={handleNewRow}

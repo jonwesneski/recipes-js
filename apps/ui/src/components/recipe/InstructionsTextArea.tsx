@@ -13,15 +13,11 @@ interface InstructionsTextAreaProps {
 export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
   let textAreaRef = useRef<HTMLTextAreaElement>(null)
   textAreaRef = props.ref ?? textAreaRef
-  const {
-    instructions,
-    setInstructions,
-    shouldBeFocused,
-    insertInstructionsSteps,
-  } = useRecipeStepInstructionsStore(textAreaRef)
+  const { instructions, setInstructions, insertInstructionsSteps } =
+    useRecipeStepInstructionsStore(textAreaRef)
 
   useEffect(() => {
-    if (textAreaRef.current && shouldBeFocused) {
+    if (textAreaRef.current && instructions?.shouldBeFocused) {
       textAreaRef.current.focus()
       textAreaRef.current.setSelectionRange(
         textAreaRef.current.value.length,
@@ -57,7 +53,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
       ref={textAreaRef}
       className="min-h-32 min-w-80 grow-1"
       variant="shadowRB"
-      value={instructions}
+      value={instructions?.value}
       placeholder={placeholder}
       onChange={handleInputChange}
       onResize={handleOnResize}

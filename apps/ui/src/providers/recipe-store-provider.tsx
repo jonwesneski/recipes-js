@@ -91,11 +91,9 @@ export const useRecipeStepInstructionsStore = (
     setInstructions: _stepInstructions,
     insertInstructionsSteps: _insertInstructionsSteps,
   } = useRecipeStore((state) => state)
-  const step = steps.find((s) => s.instructionsRef === ref)
+  const step = steps.find((s) => s.instructions.ref === ref)
   return {
     instructions: step?.instructions,
-    instructionsRef: step?.instructionsRef,
-    shouldBeFocused: step?.shouldInstructionsBeFocused,
     setInstructions: (instructions: string) =>
       _stepInstructions(ref, instructions),
     insertInstructionsSteps: (instructions: string[]) =>
