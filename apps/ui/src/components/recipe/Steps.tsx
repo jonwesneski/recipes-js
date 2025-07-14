@@ -4,7 +4,7 @@ import { Button } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import Image from 'next/image'
 import { useEffect, useState, type RefObject } from 'react'
-import { IngredientsTextArea3 } from './IngredientsTextArea.experimental3'
+import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
@@ -63,14 +63,10 @@ export const Steps = () => {
           <div key={s.keyId} className="mb-5">
             <h1 className="font-bold">step {index + 1}.</h1>
             <div ref={s.ref} className="flex flex-col md:flex-row">
-              <IngredientsTextArea3
+              <IngredientsTextArea
                 ref={s.ingredients.ref}
                 onResize={(height: number) => handleOnResize(s.ref, height)}
               />
-              {/* <IngredientsTextArea
-                ref={s.ingredientsRef}
-                onResize={(height: number) => handleOnResize(s.ref, height)}
-              /> */}
               <InstructionsTextArea
                 ref={s.instructions.ref}
                 onResize={(height: number) => handleOnResize(s.ref, height)}
