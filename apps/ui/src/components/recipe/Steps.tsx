@@ -60,7 +60,7 @@ export const Steps = () => {
     <div className="mb-10">
       {steps.map((s, index) => {
         return (
-          <div key={s.id} className="mb-5">
+          <div key={s.keyId} className="mb-5">
             <h1 className="font-bold">step {index + 1}.</h1>
             <div ref={s.ref} className="flex flex-col md:flex-row">
               <IngredientsTextArea3

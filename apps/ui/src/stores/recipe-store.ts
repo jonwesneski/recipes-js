@@ -4,20 +4,48 @@ import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { createRef, type RefObject } from 'react';
 import { createStore } from 'zustand/vanilla';
 
-export type IngredientItemType = {
+export class IngredientItemType {
+  keyId: string;
   ref: RefObject<HTMLInputElement | null>;
   ingredient: IngredientValidator;
-  shouldIngredientBeFocused: boolean;
-};
+  private _shouldIngredientBeFocused: boolean;
+
+  constructor({
+    keyId = crypto.randomUUID(),
+    ref = createRef<HTMLInputElement>(),
+    ingredient = new IngredientValidator({
+      stringValue: '',
+    }),
+    shouldIngredientBeFocused = false,
+  }: {
+    keyId?: string;
+    ref?: RefObject<HTMLInputElement | null>;
+    ingredient?: IngredientValidator;
+    shouldIngredientBeFocused?: boolean;
+  } = {}) {
+    this.keyId = keyId;
+    this.ref = ref;
+    this.ingredient = ingredient;
+    this._shouldIngredientBeFocused = shouldIngredientBeFocused;
+  }
+
+  get shouldIngredientBeFocused(): boolean {
+    if (this._shouldIngredientBeFocused) {
+      this._shouldIngredientBeFocused = false; // reset after getting
+      return true;
+    }
+    return this._shouldIngredientBeFocused;
+  }
+}
 
 export type IngredientItemsType = {
-  id: string;
+  keyId: string;
   ref: RefObject<HTMLDivElement | null>;
   items: IngredientItemType[];
 };
 
 export type StepsItemType = {
-  id: string;
+  keyId: string;
   ref: RefObject<HTMLDivElement | null>;
   //ingredientsRef?: RefObject<HTMLDivElement | null>;
   //ingredients: IngredientsValidator;
@@ -79,7 +107,7 @@ const createStepItem = (params?: {
   shouldInstructionsBeFocused?: boolean;
 }): StepsItemType => {
   return {
-    id: crypto.randomUUID(),
+    keyId: crypto.randomUUID(),
     ref: createRef<HTMLDivElement>(),
     //ingredientsRef: createRef<HTMLDivElement>(),
     ingredients: params?.ingredients! ?? createIngredientsItem(),
@@ -92,15 +120,9 @@ const createStepItem = (params?: {
 
 const createIngredientsItem = (): IngredientItemsType => {
   return {
-    id: crypto.randomUUID(),
+    keyId: crypto.randomUUID(),
     ref: createRef<HTMLInputElement>(),
-    items: [
-      {
-        ref: createRef<HTMLInputElement>(),
-        ingredient: new IngredientValidator({ stringValue: '' }),
-        shouldIngredientBeFocused: false,
-      },
-    ],
+    items: [new IngredientItemType()],
   };
 };
 
@@ -135,7 +157,7 @@ export const createRecipeStore = (
     },
     removeStep: (stepId: string) => {
       set((state) => {
-        const index = state.steps.findIndex((s) => s.id === stepId);
+        const index = state.steps.findIndex((s) => s.keyId === stepId);
         if (index !== -1) {
           return { steps: state.steps.toSpliced(index, 1) };
         }
@@ -147,16 +169,21 @@ export const createRecipeStore = (
         for (let s = 0; s < state.steps.length; s++) {
           for (let i = 0; i < state.steps[s].ingredients.items.length; i++) {
             if (state.steps[s].ingredients.items[i].ref === ref) {
+              console.log(
+                state.steps[s].ingredients.items
+                  .slice(0, i + 1)
+                  .map((i) => i.ingredient.stringValue),
+                'new',
+                state.steps[s].ingredients.items
+                  .slice(i + 1)
+                  .map((i) => i.ingredient.stringValue),
+              );
               state.steps[s].ingredients.items = [
                 ...state.steps[s].ingredients.items.slice(0, i + 1),
-                {
-                  ref: createRef<HTMLInputElement>(),
-                  ingredient: new IngredientValidator({ stringValue: '' }),
-                  shouldIngredientBeFocused: true,
-                },
+                new IngredientItemType({ shouldIngredientBeFocused: true }),
                 ...state.steps[s].ingredients.items.slice(i + 1),
               ];
-              return { steps: [...state.steps] };
+              return { steps: state.steps };
             }
           }
         }

@@ -1,9 +1,10 @@
 'use client'
 
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface IngriedientRowProps {
+  id?: string
   ref: React.RefObject<HTMLInputElement | null>
   value: string
   error?: string
@@ -18,19 +19,20 @@ interface IngriedientRowProps {
   onRemove: (ref: React.RefObject<HTMLInputElement | null>) => void
 }
 export const IngredientRow = (props: IngriedientRowProps) => {
-  //   useEffect(() => {
-  //     if (props.focusOnMount && props.ref.current) {
-  //       const selection = window.getSelection()
-  //       if (selection) {
-  //         const range = document.createRange()
-  //         range.setStart(props.ref.current, props.ref.current.value.length)
-  //         range.collapse(true)
-  //         selection.removeAllRanges()
-  //         selection.addRange(range)
-  //       }
-  //       props.ref.current.focus()
-  //     }
-  //   }, [])
+  useEffect(() => {
+    if (props.focusOnMount && props.ref.current) {
+      const selection = window.getSelection()
+      if (selection) {
+        const range = document.createRange()
+        range.setStart(props.ref.current, props.ref.current.value.length)
+        range.collapse(true)
+        selection.removeAllRanges()
+        selection.addRange(range)
+      }
+      props.ref.current.focus()
+    }
+    console.log(props.focusOnMount, props.ref.current?.value)
+  }, [])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     switch (event.key) {
@@ -82,7 +84,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
   }
 
   return (
-    <React.Fragment>
+    <React.Fragment key={props.id}>
       <input
         ref={props.ref}
         className="block focus:outline-none bg-transparent"

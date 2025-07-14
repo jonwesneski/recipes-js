@@ -7,13 +7,6 @@ import React, { RefObject, useRef, useState } from 'react'
 import { IngredientRow } from './IngredientRow'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
-type InputsType = {
-  content: string
-  error?: string
-  ref: React.RefObject<HTMLInputElement | null>
-  focusOnMount: boolean
-}
-
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLDivElement | null>
   onResize: (_height: number) => void
@@ -25,9 +18,6 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
   textAreaRef = props.ref ?? textAreaRef
   const { ingredients, addIngredient, removeIngredient, updateIngredient } =
     useRecipeStepIngredientsStore(textAreaRef)
-  // const [content, setContent] = useState<InputsType[]>([
-  //   { content: '', ref: useRef<HTMLInputElement>(null), focusOnMount: true },
-  // ])
 
   const getCaretPosition = (element: HTMLInputElement) => {
     const position: { row: number; column: number } = {
@@ -55,41 +45,11 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
     ref: React.RefObject<HTMLInputElement | null>,
     ingredient: IngredientValidator,
   ) => {
-    // todo make a method that updates 1 ingredient row
-    console.log(ingredient)
     updateIngredient(ref, ingredient)
-    // setContent((prev) => {
-    //   const index = prev.findIndex((item) => item.ref === ref)
-    //   if (index !== -1) {
-    //     const newContent = [...prev]
-    //     newContent[index] = {
-    //       ...newContent[index],
-    //       content: ingredient.stringValue,
-    //       error: ingredient.error?.issues[0].message,
-    //     }
-    //     return newContent
-    //   }
-    //   return prev
-    // })
   }
 
   const handleNewRow = (ref: React.RefObject<HTMLInputElement | null>) => {
-    console.log('handleNewRow', ref)
     addIngredient(ref)
-    // setContent((prev) => {
-    //   const index = prev.findIndex((item) => item.ref === ref)
-    //   if (index === -1) {
-    //     return prev
-    //   }
-    //   for (let i = index + 1; i < prev.length; i++) {
-    //     prev[i].focusOnMount = false
-    //   }
-    //   return [
-    //     ...prev.slice(0, index + 1),
-    //     { content: '', ref: createRef<HTMLInputElement>(), focusOnMount: true },
-    //     ...prev.slice(index + 1),
-    //   ]
-    // })
   }
 
   const handleRemove = (ref: React.RefObject<HTMLInputElement | null>) => {
@@ -104,7 +64,6 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
   }
 
   const handleArrowDown = (ref: React.RefObject<HTMLInputElement | null>) => {
-    console.log('handleArrowDown', ref)
     const index = ingredients?.items.findIndex((item) => item.ref === ref)
     if (index !== undefined && index < (ingredients?.items.length || 0) - 1) {
       ingredients?.items[index + 1].ref.current?.focus()
@@ -146,20 +105,19 @@ export const IngredientsTextArea3 = (props: IngredientsTextAreaProps) => {
       className="focus-within:bg-input-focus-background"
       onClick={handleFocus}
     >
-      {ingredients?.items.map((item, index) => (
-        <React.Fragment key={index}>
-          <IngredientRow
-            ref={item.ref}
-            value={item.ingredient.stringValue}
-            error={item.ingredient.error?.issues[0].message}
-            focusOnMount={item.shouldIngredientBeFocused}
-            onChange={handleChange}
-            onEnterPressed={handleNewRow}
-            onRemove={handleRemove}
-            onArrowDown={handleArrowDown}
-            onArrowUp={handleArrowUp}
-          />
-        </React.Fragment>
+      {ingredients?.items.map((item) => (
+        <IngredientRow
+          key={item.keyId}
+          ref={item.ref}
+          value={item.ingredient.stringValue}
+          error={item.ingredient.error?.issues[0].message}
+          focusOnMount={item.shouldIngredientBeFocused}
+          onChange={handleChange}
+          onEnterPressed={handleNewRow}
+          onRemove={handleRemove}
+          onArrowDown={handleArrowDown}
+          onArrowUp={handleArrowUp}
+        />
       ))}
       {isPopupVisible ? (
         <IngredientsMeasurementPopUp
