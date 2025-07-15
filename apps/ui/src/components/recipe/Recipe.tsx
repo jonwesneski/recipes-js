@@ -42,9 +42,10 @@ export const Recipe = () => {
         isRequired={false}
       />
 
-      <TimeTextLabel name="prep-time" label="prep time" />
-
-      <TimeTextLabel name="cook-time" label="cook time" />
+      <div className="flex">
+        <TimeTextLabel name="prep-time" label="prep time" />
+        <TimeTextLabel name="cook-time" label="cook time" />
+      </div>
 
       <PhotoInput
         label="recipe photo"
@@ -62,8 +63,9 @@ export const Recipe = () => {
           alt="taken"
         />
       )}
-
+      <hr className="h-1 bg-text border-none" />
       <Steps />
+      <hr className="h-1 bg-text border-none" />
     </div>
   )
 }

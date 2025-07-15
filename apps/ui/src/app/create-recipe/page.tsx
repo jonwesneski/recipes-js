@@ -55,7 +55,7 @@ const Page = () => {
       <CameraProvider>
         <NavigationLayout>
           <div className="flex justify-center">
-            <div className="block mx-5">
+            <div>
               <Recipe />
               <Button
                 className="mt-3 mx-auto block"
