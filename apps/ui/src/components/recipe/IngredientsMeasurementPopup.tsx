@@ -2,7 +2,6 @@
 
 import { type IngredientEntityUnit } from '@repo/codegen/model'
 import { measurementUnitsAbbreviated } from '@src/utils/measurements'
-import React from 'react'
 
 interface IngredientsMeasurementPopUpProps {
   top: number
@@ -26,11 +25,9 @@ export const IngredientsMeasurementPopUp = (
       <div className="grid grid-cols-4 gap-3">
         {Object.keys(measurementUnitsAbbreviated).map((m) => {
           return (
-            <React.Fragment key={m}>
-              <div className="bg-green-300 hover:bg-amber-300">
-                {measurementUnitsAbbreviated[m as IngredientEntityUnit]}
-              </div>
-            </React.Fragment>
+            <div key={m} className="bg-green-300 hover:bg-amber-300">
+              {measurementUnitsAbbreviated[m as IngredientEntityUnit]}
+            </div>
           )
         })}
       </div>

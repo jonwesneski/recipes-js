@@ -7,6 +7,11 @@ import React, { RefObject, useRef, useState } from 'react'
 import { IngredientRow } from './IngredientRow'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
+// const placeholder = `0.5 cups fresh basil
+// 1 1/4 cups peanuts
+// 3 whole eggs
+// 1 pinch salt`
+
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLDivElement | null>
   onResize: (_height: number) => void
@@ -24,7 +29,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     insertIngredientsSteps,
   } = useRecipeStepIngredientsStore(textAreaRef)
 
-  const getCaretPosition = (element: HTMLInputElement) => {
+  const getCaretPosition = (element: HTMLTextAreaElement) => {
     const position: { row: number; column: number } = {
       row: 0,
       column: 0,
@@ -64,7 +69,15 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const handleArrowUp = (ref: React.RefObject<HTMLTextAreaElement | null>) => {
     const index = ingredients?.items.findIndex((item) => item.ref === ref)
     if (index && index > 0) {
-      ingredients?.items[index - 1].ref.current?.focus()
+      const row = ingredients?.items[index - 1].ref.current
+      row?.focus()
+      const rangeValue = Math.min(
+        row?.value.length || 0,
+        ref.current?.selectionStart || 0,
+      )
+
+      // This is not working for some reason; but should
+      row?.setSelectionRange(rangeValue, rangeValue)
     }
   }
 
@@ -73,7 +86,15 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   ) => {
     const index = ingredients?.items.findIndex((item) => item.ref === ref)
     if (index !== undefined && index < (ingredients?.items.length || 0) - 1) {
-      ingredients?.items[index + 1].ref.current?.focus()
+      const row = ingredients?.items[index + 1].ref.current
+      row?.focus()
+      const rangeValue = Math.min(
+        row?.value.length || 0,
+        ref.current?.selectionStart || 0,
+      )
+
+      // This is not working for some reason; but should
+      row?.setSelectionRange(rangeValue, rangeValue)
     }
   }
 
@@ -106,7 +127,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     )
   }
 
-  const _handleShowPopUp = (row: HTMLInputElement) => {
+  const _handleShowPopUp = (row: HTMLTextAreaElement) => {
     const rect = row.getBoundingClientRect()
     const position = getCaretPosition(row)
     // is caret in measurement-unit column
@@ -128,7 +149,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     <div
       ref={textAreaRef}
       data-testid="ingredients-text-area"
-      className="focus-within:bg-input-focus-background"
+      className="focus-within:bg-input-focus-background min-h-32 min-w-80 grow-1 shadow-[-4px_-4px] border"
       onClick={handleFocus}
     >
       {ingredients?.items.map((item) => (
@@ -146,12 +167,12 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
           onArrowUp={handleArrowUp}
         />
       ))}
-      {isPopupVisible ? (
+      {isPopupVisible && (
         <IngredientsMeasurementPopUp
           top={popupPosition.y}
           left={popupPosition.x}
         />
-      ) : null}
+      )}
     </div>
   )
 }

@@ -102,7 +102,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
         data-testid="ingredient-text-area"
         rows={1}
         ref={props.ref}
-        className="block focus:outline-none bg-transparent resize-none"
+        className="block focus:outline-none bg-transparent resize-none pl-2"
         value={props.value}
         onInput={handleInput}
         onPaste={handleOnPaste}
