@@ -30,6 +30,13 @@ export class ItemTypeBase<T> {
     }
     return this._shouldBeFocused;
   }
+
+  set shouldBeFocused(value: boolean) {
+    if (value) {
+      this.keyId = crypto.randomUUID();
+    }
+    this._shouldBeFocused = value;
+  }
 }
 
 export class IngredientItemType extends ItemTypeBase<HTMLTextAreaElement> {
@@ -210,6 +217,9 @@ export const createRecipeStore = (
             if (state.steps[s].ingredients.items[i].ref === ref) {
               if (state.steps[s].ingredients.items.length <= 1) {
                 return { state };
+              }
+              if (state.steps[s].ingredients.items[i - 1]) {
+                state.steps[s].ingredients.items[i - 1].shouldBeFocused = true;
               }
               state.steps[s].ingredients.items.splice(i, 1);
               return { steps: [...state.steps] };

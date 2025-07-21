@@ -7,7 +7,7 @@ import {
 import { measurementUnits } from '@src/utils/measurements';
 
 // 1/222 or 1 1/222
-const fractionRegex =
+export const fractionRegex =
   /([1-9]\/[1-9]{1}\d{0,2}|\d+(\s{1}[1-9]\/[1-9]{1}\d{0,2}){1})/;
 
 const upToFiveWordsRegex = /^\s*[a-zA-Z]+(?: [a-zA-Z]+){0,4}\s*$/;

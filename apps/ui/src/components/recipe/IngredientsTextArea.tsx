@@ -5,12 +5,14 @@ import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provi
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import React, { RefObject, useRef, useState } from 'react'
 import { IngredientRow } from './IngredientRow'
-import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
-// const placeholder = `0.5 cups fresh basil
-// 1 1/4 cups peanuts
-// 3 whole eggs
-// 1 pinch salt`
+const placeholder = `0.5 cups fresh basil
+1 1/4 cups peanuts
+3 whole eggs
+1 pinch salt`
+const placeholderSplit = placeholder.split('\n')
+
+type PositionType = { row: number; column: number }
 
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLDivElement | null>
@@ -63,6 +65,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleRemove = (ref: React.RefObject<HTMLTextAreaElement | null>) => {
+    handleArrowUp(ref)
     removeIngredient(ref)
   }
 
@@ -93,7 +96,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         ref.current?.selectionStart || 0,
       )
 
-      // This is not working for some reason; but should
       row?.setSelectionRange(rangeValue, rangeValue)
     }
   }
@@ -127,35 +129,18 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     )
   }
 
-  const _handleShowPopUp = (row: HTMLTextAreaElement) => {
-    const rect = row.getBoundingClientRect()
-    const position = getCaretPosition(row)
-    // is caret in measurement-unit column
-    if (position.column === 1) {
-      const x = rect.width / 6
-      const y = position.row + 1
-      const yMultipler = y * 10
-      setPopupPosition({
-        x: rect.x - x,
-        y: rect.y + yMultipler + 50,
-      })
-      setIsPopupVisible(true)
-    } else {
-      setIsPopupVisible(false)
-    }
-  }
-
   return (
     <div
       ref={textAreaRef}
       data-testid="ingredients-text-area"
-      className="focus-within:bg-input-focus-background min-h-32 min-w-80 grow-1 shadow-[-4px_-4px] border"
+      className="focus-within:bg-input-focus-background min-h-32 min-w-80 grow-1 shadow-[-4px_-4px] border p-2"
       onClick={handleFocus}
     >
-      {ingredients?.items.map((item) => (
+      {ingredients?.items.map((item, i) => (
         <IngredientRow
           key={item.keyId}
           ref={item.ref}
+          placeholder={placeholderSplit[i]}
           value={item.ingredient.stringValue}
           error={item.ingredient.error?.issues[0].message}
           focusOnMount={item.shouldBeFocused}
@@ -167,12 +152,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
           onArrowUp={handleArrowUp}
         />
       ))}
-      {isPopupVisible && (
-        <IngredientsMeasurementPopUp
-          top={popupPosition.y}
-          left={popupPosition.x}
-        />
-      )}
     </div>
   )
 }
