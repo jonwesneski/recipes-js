@@ -35,18 +35,17 @@ export const IngredientsMeasurementPopUp = (
         position: 'absolute',
         top: props.top,
         left: props.left,
-        backgroundColor: 'white',
-        border: '1px solid black',
         padding: '10px',
         zIndex: 1000,
       }}
+      className="border"
     >
       <div className="grid grid-cols-4 gap-3">
         {Object.keys(measurementUnitsAbbreviated).map((m) => {
           return (
             <div
               key={m}
-              className="bg-green-300 hover:bg-amber-300"
+              className="border-b hover:border"
               onClick={() => props.onClick(m as IngredientEntityUnit)}
             >
               {measurementUnitsAbbreviated[m as IngredientEntityUnit]}
