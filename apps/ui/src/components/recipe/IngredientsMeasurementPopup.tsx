@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react'
 interface IngredientsMeasurementPopUpProps {
   top: number
   left: number
-  onClick: (value: IngredientEntityUnit) => void
+  onClick: (_value: IngredientEntityUnit) => void
   onBlur: () => void
 }
 export const IngredientsMeasurementPopUp = (
@@ -46,7 +46,14 @@ export const IngredientsMeasurementPopUp = (
             <div
               key={m}
               className="border-b hover:border"
+              role="button"
+              tabIndex={0}
               onClick={() => props.onClick(m as IngredientEntityUnit)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  props.onClick(m as IngredientEntityUnit)
+                }
+              }}
             >
               {measurementUnitsAbbreviated[m as IngredientEntityUnit]}
             </div>

@@ -21,6 +21,7 @@ type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
     updatedAt: true;
     preparationTimeInMinutes: true;
     cookingTimeInMinutes: true;
+    isPublic: true;
   };
 }>;
 

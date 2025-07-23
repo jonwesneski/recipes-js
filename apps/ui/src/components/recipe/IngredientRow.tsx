@@ -1,6 +1,6 @@
 'use client'
 
-import { IngredientEntityUnit } from '@repo/codegen/model'
+import type { IngredientEntityUnit } from '@repo/codegen/model'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { useEffect, useState } from 'react'
@@ -119,10 +119,12 @@ export const IngredientRow = (props: IngriedientRowProps) => {
   }
 
   const _handleShowPopUp = (ingredientValidator: IngredientValidator) => {
-    const rect = props.ref.current!.getBoundingClientRect()
-    const position = getCaretPosition(props.ref.current!)
-    if (ingredientValidator.error?.issues[0].message.includes('unit')) {
-      _handleMeasurementPopUp(position, rect)
+    if (props.ref.current) {
+      const rect = props.ref.current.getBoundingClientRect()
+      const position = getCaretPosition(props.ref.current)
+      if (ingredientValidator.error?.issues[0].message.includes('unit')) {
+        _handleMeasurementPopUp(position, rect)
+      }
     }
   }
 
@@ -144,7 +146,12 @@ export const IngredientRow = (props: IngriedientRowProps) => {
   }
 
   function handleMeasurementClick(value: IngredientEntityUnit): void {
-    const items = props.ref.current!.textContent.split(' ')
+    const text = props.ref.current?.textContent
+    if (!text) {
+      return
+    }
+
+    const items = text.split(' ')
     if (fractionRegex.test(items[1])) {
       items[2] = value
     } else {
@@ -179,14 +186,14 @@ export const IngredientRow = (props: IngriedientRowProps) => {
           {props.error}
         </div>
       ) : null}
-      {isPopupVisible && (
+      {isPopupVisible ? (
         <IngredientsMeasurementPopUp
           top={popupPosition.y}
           left={popupPosition.x}
           onClick={handleMeasurementClick}
           onBlur={handleHideMeasurement}
         />
-      )}
+      ) : null}
     </>
   )
 }

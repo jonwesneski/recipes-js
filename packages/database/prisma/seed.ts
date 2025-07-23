@@ -36,6 +36,7 @@ async function main() {
             name,
             description: recipeData.description,
             imageUrl: recipeData.imageUrl,
+            isPublic: true,
             steps: {
               create: recipeData.steps.map((step, i) => ({
                 displayOrder: i + 1,
