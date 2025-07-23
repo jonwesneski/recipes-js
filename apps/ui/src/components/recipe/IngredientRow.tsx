@@ -28,6 +28,7 @@ interface IngriedientRowProps {
   onRemove: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
 }
 export const IngredientRow = (props: IngriedientRowProps) => {
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
   const [isPopupVisible, setIsPopupVisible] = useState(false)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
 
@@ -36,6 +37,22 @@ export const IngredientRow = (props: IngriedientRowProps) => {
       props.ref.current.selectionStart = props.ref.current.value.length
       props.ref.current.selectionEnd = props.ref.current.value.length
       props.ref.current.focus()
+    }
+  }, [])
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 640px)')
+
+    const handleMediaQueryChange = (event: MediaQueryListEvent) => {
+      setIsSmallScreen(event.matches)
+    }
+
+    setIsSmallScreen(mediaQuery.matches)
+
+    mediaQuery.addEventListener('change', handleMediaQueryChange)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleMediaQueryChange)
     }
   }, [])
 
@@ -122,27 +139,26 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     if (props.ref.current) {
       const rect = props.ref.current.getBoundingClientRect()
       const position = getCaretPosition(props.ref.current)
-      if (ingredientValidator.error?.issues[0].message.includes('unit')) {
+      // has unit error and is caret in measurement-unit column
+      if (
+        ingredientValidator.error?.issues[0].message.includes('unit') &&
+        position.column === 1
+      ) {
         _handleMeasurementPopUp(position, rect)
       }
     }
   }
 
   const _handleMeasurementPopUp = (position: PositionType, rect: DOMRect) => {
-    // is caret in measurement-unit column
-    if (position.column === 1) {
-      const x = rect.width / 6
-      const y = position.row + 1
-      const yMultipler = y * 10
-      console.log(x, rect.width, rect.x)
-      setPopupPosition({
-        x: rect.x - x,
-        y: rect.y + yMultipler + 50,
-      })
-      setIsPopupVisible(true)
-    } else {
-      setIsPopupVisible(false)
-    }
+    const y = position.row + 1
+    let yMultipler = y * 10
+    yMultipler = isSmallScreen ? -yMultipler : yMultipler
+    const yOffset = isSmallScreen ? -50 : 150
+    setPopupPosition({
+      x: rect.x,
+      y: rect.y + yMultipler + yOffset,
+    })
+    setIsPopupVisible(true)
   }
 
   function handleMeasurementClick(value: IngredientEntityUnit): void {

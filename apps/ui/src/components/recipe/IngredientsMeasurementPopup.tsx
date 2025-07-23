@@ -45,7 +45,7 @@ export const IngredientsMeasurementPopUp = (
           return (
             <div
               key={m}
-              className="border-b hover:border"
+              className="border px-1 bg-text text-background hover:underline"
               role="button"
               tabIndex={0}
               onClick={() => props.onClick(m as IngredientEntityUnit)}
