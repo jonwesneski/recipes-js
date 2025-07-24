@@ -27,7 +27,7 @@ type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
 
 export type RecipePrismaType = Prisma.RecipeGetPayload<{
   include: {
-    user: { select: { handle: true } };
+    user: { select: { handle: true; id: true } };
     equipments: {
       omit: {
         id: true;
@@ -64,7 +64,7 @@ export type RecipePrismaType = Prisma.RecipeGetPayload<{
 }>;
 
 export const RecipeInclude = {
-  user: { select: { handle: true } },
+  user: { select: { handle: true, id: true } },
   equipments: {
     omit: {
       id: true,
@@ -219,10 +219,12 @@ export class RecipesService {
         include: RecipeInclude,
       });
 
-      await this.s3Service.uploadFile(
-        s3BucketKeyName,
-        Buffer.from(base64Image, 'base64'),
-      );
+      if (base64Image) {
+        await this.s3Service.uploadFile(
+          s3BucketKeyName,
+          Buffer.from(base64Image, 'base64'),
+        );
+      }
       return recipe;
     });
 

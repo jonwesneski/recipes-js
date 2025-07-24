@@ -1,21 +1,52 @@
 'use client'
 
 import { TextLabel } from '@repo/design-system'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
 
 export const Recipe = () => {
   const nameRef = useRef<HTMLInputElement>(null)
-  const [_image, setImage] = useState<string | undefined>(undefined)
+  const {
+    setName,
+    setDescription,
+    setCookingTimeInMinutes,
+    setPreparationTimeInMinutes,
+    setImage,
+    base64Image,
+  } = useRecipeStore((state) => state)
 
   useEffect(() => {
     if (nameRef.current) {
       nameRef.current.focus()
     }
   }, [])
+
+  const handleOnNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value)
+  }
+
+  const handleOnDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setDescription(event.target.value)
+  }
+
+  const handleOnPrepChange = (time: string) => {
+    setPreparationTimeInMinutes(_convertToMinutes(time))
+  }
+
+  const handleOnCookChange = (time: string) => {
+    setCookingTimeInMinutes(_convertToMinutes(time))
+  }
+
+  const _convertToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':')
+    return parseInt(hours) * 60 + parseInt(minutes)
+  }
 
   const handleOnCameraClick = (image: string) => {
     setImage(image)
@@ -33,6 +64,7 @@ export const Recipe = () => {
         placeholder="Recipe name"
         label="recipe name"
         isRequired
+        onChange={handleOnNameChange}
       />
 
       <TextLabel
@@ -40,11 +72,20 @@ export const Recipe = () => {
         placeholder="Short description"
         label="description"
         isRequired={false}
+        onChange={handleOnDescriptionChange}
       />
 
       <div className="flex">
-        <TimeTextLabel name="prep-time" label="prep time" />
-        <TimeTextLabel name="cook-time" label="cook time" />
+        <TimeTextLabel
+          name="prep-time"
+          label="prep time"
+          onChange={handleOnPrepChange}
+        />
+        <TimeTextLabel
+          name="cook-time"
+          label="cook time"
+          onChange={handleOnCookChange}
+        />
       </div>
 
       <PhotoInput
@@ -54,15 +95,15 @@ export const Recipe = () => {
         onUploadClick={handleOnUploadClick}
       />
 
-      {_image !== undefined && (
+      {base64Image ? (
         <Image
-          src={_image}
+          src={base64Image}
           className="w-9/10 h-auto mx-auto"
           width={0}
           height={0}
           alt="taken"
         />
-      )}
+      ) : null}
       <hr className="h-1 bg-text border-none" />
       <Steps />
       <hr className="h-1 bg-text border-none" />

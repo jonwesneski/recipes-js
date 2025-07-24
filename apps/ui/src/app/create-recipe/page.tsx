@@ -1,18 +1,19 @@
 'use client'
 
-import { type CreateRecipeDto } from '@repo/codegen/model'
+import { type RecipeEntity } from '@repo/codegen/model'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { Button } from '@repo/design-system'
 import { NavigationLayout } from '@src/components/navigation'
 import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
-import { CameraProvider } from '@src/providers/CameraProvider'
-import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const Page = () => {
   const { accessToken } = useAuthentication()
+  const { makeCreateDto } = useRecipeStore((state) => state)
   const { mutate } = useRecipesControllerCreateRecipeV1({
     mutation: { retry: false },
     request: {
@@ -21,19 +22,23 @@ const Page = () => {
       },
     },
   })
+  const router = useRouter()
 
   const handleSubmit = () => {
     mutate(
-      { data: {} as CreateRecipeDto },
+      { data: makeCreateDto() },
       {
-        onSuccess: () => undefined,
+        onSuccess: (data) => {
+          const _data = data as unknown as RecipeEntity
+          router.push(`/recipes/${_data.user.id}/${_data.id}`)
+        },
         onError: () => undefined,
       },
     )
     // router.replace('/recipes/jon/tres-leches-cake', undefined, {
     //   shallow: true,
     // })
-    window.history.replaceState(null, '', '/recipes/jon/tres-leches-cake')
+    //window.history.replaceState(null, '', '/recipes/jon/tres-leches-cake')
   }
 
   const [_tags, setTags] = useState<string[]>([])
@@ -51,23 +56,22 @@ const Page = () => {
   }, [])
 
   return (
-    <RecipeStoreProvider initialState={{ editEnabled: true }}>
-      <CameraProvider>
-        <NavigationLayout>
-          <div className="flex justify-center">
-            <div>
-              <Recipe />
-              <Button
-                className="mt-3 mx-auto block"
-                text="submit"
-                variant="opposite"
-                onClick={() => handleSubmit()}
-              />
-            </div>
-          </div>
-        </NavigationLayout>
-      </CameraProvider>
-    </RecipeStoreProvider>
+    <NavigationLayout>
+      <div className="flex justify-center">
+        <div>
+          <Recipe />
+          <Button
+            className="mt-3 mx-auto block"
+            text="submit"
+            variant="opposite"
+            onClick={() => {
+              console.log('asdfasdf')
+              handleSubmit()
+            }}
+          />
+        </div>
+      </div>
+    </NavigationLayout>
   )
 }
 export default Page

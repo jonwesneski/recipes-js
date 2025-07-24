@@ -1,5 +1,6 @@
 import { Label } from '@repo/design-system'
 import {
+  useEffect,
   useRef,
   useState,
   type DetailedHTMLProps,
@@ -8,12 +9,17 @@ import {
 
 export type TimeTextLabelProps = Omit<
   DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-  'style' | 'className' | 'type'
-> & { label: string }
-export const TimeTextLabel = (props: TimeTextLabelProps) => {
+  'style' | 'className' | 'type' | 'onChange'
+> & { label: string; onChange: (_value: string) => void }
+export const TimeTextLabel = (_props: TimeTextLabelProps) => {
+  const { onChange, ...props } = _props
   const placeholder = '00:00'
   const [time, setTime] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    onChange(time)
+  }, [time])
 
   const handleOnInput = (event: React.InputEvent<HTMLInputElement>) => {
     if (

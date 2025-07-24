@@ -9,6 +9,7 @@ interface TextLabelProps {
   ref?: React.Ref<HTMLInputElement>
   variant?: InputProps['variant']
   error?: string
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 export const TextLabel = (props: TextLabelProps) => {
   return (
@@ -25,6 +26,7 @@ export const TextLabel = (props: TextLabelProps) => {
         placeholder={props.placeholder}
         variant={props.variant}
         className="border-b-0 flex-1"
+        onChange={props.onChange}
         isBlock
       />
     </UnderLabel>

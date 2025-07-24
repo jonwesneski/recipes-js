@@ -104,6 +104,7 @@ export type RecipeActions = {
   setDescription: (_value: string) => void;
   setPreparationTimeInMinutes: (_value: number) => void;
   setCookingTimeInMinutes: (_value: number) => void;
+  setImage: (_value: string) => void;
   addStep: () => void;
   insertIngredientsSteps: (
     ref: RefObject<HTMLTextAreaElement | null>,
@@ -128,9 +129,10 @@ export type RecipeActions = {
     ref: RefObject<HTMLTextAreaElement | null>,
     _instructions: string,
   ) => void;
-  setImage: (ref: RefObject<HTMLDivElement | null>, _image: string) => void;
+  setStepImage: (ref: RefObject<HTMLDivElement | null>, _image: string) => void;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
+  makeCreateDto: () => CreateRecipeDto;
 };
 
 export type RecipeStore = RecipeState & RecipeActions;
@@ -160,19 +162,20 @@ export const defaultInitState: RecipeState = {
   id: '',
   name: '',
   description: null,
-  base64Image: '',
+  base64Image: null,
   preparationTimeInMinutes: null,
   cookingTimeInMinutes: null,
   equipments: [],
   steps: [createStepItem()],
   nutritionalFacts: null,
+  isPublic: true,
   tags: [],
 };
 
 export const createRecipeStore = (
   initState: RecipeState = defaultInitState,
 ) => {
-  return createStore<RecipeStore>()((set) => ({
+  return createStore<RecipeStore>()((set, get) => ({
     ...initState,
     setName: (name: string) => set(() => ({ name })),
     setDescription: (description: string) => set(() => ({ description })),
@@ -180,6 +183,7 @@ export const createRecipeStore = (
       set(() => ({ preparationTimeInMinutes })),
     setCookingTimeInMinutes: (cookingTimeInMinutes: number) =>
       set(() => ({ cookingTimeInMinutes })),
+    setImage: (base64Image: string) => set(() => ({ base64Image })),
     setSteps: (steps: StepsItemType[]) => set(() => ({ steps })),
     addStep: () => {
       set((state) => ({ steps: [...state.steps, createStepItem()] }));
@@ -340,7 +344,7 @@ export const createRecipeStore = (
         }
         return { steps: [...current, ...inserts] };
       }),
-    setImage: (ref: RefObject<HTMLDivElement | null>, image: string) =>
+    setStepImage: (ref: RefObject<HTMLDivElement | null>, image: string) =>
       set((state) => {
         const index = state.steps.findIndex((s) => s.ref === ref);
         if (index !== -1) {
@@ -351,5 +355,19 @@ export const createRecipeStore = (
     setNutritionalFacts: (nutritionalFacts: NutritionalFactsDto) =>
       set(() => ({ nutritionalFacts })),
     setTags: (tags: string[]) => set(() => ({ tags })),
+    makeCreateDto: () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
+      const { id, editEnabled, ...recipe } = get();
+      return {
+        ...recipe,
+        steps: recipe.steps.map((s) => {
+          return {
+            ingredients: s.ingredients.items.map((i) => i.ingredient.dto),
+            instruction: s.instructions.value,
+            base64Image: '', //TODO
+          };
+        }),
+      };
+    },
   }));
 };

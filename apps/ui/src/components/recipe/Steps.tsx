@@ -9,7 +9,7 @@ import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
 export const Steps = () => {
-  const { steps, addStep, setImage } = useRecipeStore((state) => state)
+  const { steps, addStep, setStepImage } = useRecipeStore((state) => state)
   const [isNewStep, setIsNewStep] = useState<boolean>(false)
 
   const handleOnResize = (
@@ -26,7 +26,7 @@ export const Steps = () => {
     image: string,
   ) => {
     try {
-      setImage(stepRef, image)
+      setStepImage(stepRef, image)
     } catch (error) {
       console.log(error)
     }
@@ -37,7 +37,7 @@ export const Steps = () => {
     image: string,
   ) => {
     try {
-      setImage(stepRef, image)
+      setStepImage(stepRef, image)
     } catch (error) {
       console.log(error)
     }
