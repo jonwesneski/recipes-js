@@ -187,7 +187,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
   return (
     <>
       <textarea
-        data-testid="ingredient-text-area"
+        data-testid="ingredient-row"
         rows={1}
         ref={props.ref}
         className="block focus:outline-none bg-transparent resize-none"

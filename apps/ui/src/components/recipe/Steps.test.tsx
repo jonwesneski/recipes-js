@@ -21,7 +21,7 @@ const localStorageMock = {
 Object.defineProperty(global, 'localStorage', { value: localStorageMock })
 localStorageMock.getItem.mockImplementation(() => 'jwtvalue')
 
-const INGREDIENT_ID = 'ingredient-text-area'
+const INGREDIENT_ID = 'ingredient-row'
 const INSTRUCTIONS_ID = 'instructions-text-area'
 
 const ingredientsString = '2 cups flour\n\n1 ounces sugar\n\n2 grams paste'

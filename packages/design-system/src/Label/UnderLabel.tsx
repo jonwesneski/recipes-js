@@ -8,7 +8,7 @@ type LabelProps = Omit<
 > & { text: string; isRequired: boolean; error?: string; children: ReactNode }
 export const UnderLabel = (props: LabelProps) => {
   return (
-    <div className="relative">
+    <div className="relative flex flex-col">
       {Boolean(props.isRequired) && (
         <span className="absolute -left-3 text-red-900">*</span>
       )}
