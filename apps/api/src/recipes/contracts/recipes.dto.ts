@@ -3,6 +3,7 @@ import { MeasurementUnit, Prisma } from '@repo/database';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -256,6 +257,8 @@ export class CreateRecipeDto
   @IsString({ each: true })
   @ApiProperty({ type: [String] })
   equipments: string[];
+  @IsBoolean()
+  isPublic: boolean;
 }
 
 export class EditIngredientDto
@@ -353,4 +356,7 @@ export class EditRecipeDto
   @IsString({ each: true })
   @ApiProperty({ type: [String] })
   equipments?: string[];
+  @IsOptional()
+  @IsBoolean()
+  isPublic?: boolean;
 }

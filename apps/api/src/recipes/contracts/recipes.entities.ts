@@ -105,6 +105,8 @@ export class StepEntity
   instruction: string | null;
   @ApiProperty({ type: [IngredientEntity] })
   ingredients: IngredientEntity[];
+  @ApiProperty({ type: String, nullable: true })
+  imageUrl: string | null;
 }
 
 export class TagsType {
@@ -133,8 +135,8 @@ export class RecipeEntity implements RecipeType {
   preparationTimeInMinutes: number | null;
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes: number | null;
-  @ApiProperty()
-  imageUrl: string;
+  @ApiProperty({ type: String, nullable: true })
+  imageUrl: string | null;
   @ApiProperty({ type: [EquipmentEntity] })
   equipments: EquipmentEntity[];
   @ApiProperty({ type: [StepEntity] })
@@ -145,6 +147,8 @@ export class RecipeEntity implements RecipeType {
   tags: string[];
   @ApiProperty({ type: UserEntity })
   user: UserEntity;
+  @ApiProperty()
+  isPublic: boolean;
 }
 
 export class RecipeMinimalEntity implements RecipeMinimalType {

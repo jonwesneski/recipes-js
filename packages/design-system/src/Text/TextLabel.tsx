@@ -24,7 +24,7 @@ export const TextLabel = (props: TextLabelProps) => {
         name={props.name}
         placeholder={props.placeholder}
         variant={props.variant}
-        className="border-b-0"
+        className="border-b-0 flex-1"
         isBlock
       />
     </UnderLabel>

@@ -12,8 +12,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@repo/design-system": "workspace:*",
     "@repo/codegen": "workspace:*",
+    "@repo/design-system": "workspace:*",
     "@tanstack/react-query": "^5.80.7",
     "jwt-decode": "^4.0.0",
     "next": "^15.3.3",

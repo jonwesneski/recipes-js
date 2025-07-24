@@ -21,7 +21,7 @@ const localStorageMock = {
 Object.defineProperty(global, 'localStorage', { value: localStorageMock })
 localStorageMock.getItem.mockImplementation(() => 'jwtvalue')
 
-const INGREDIENTS_ID = 'ingredients-text-area'
+const INGREDIENT_ID = 'ingredient-row'
 const INSTRUCTIONS_ID = 'instructions-text-area'
 
 const ingredientsString = '2 cups flour\n\n1 ounces sugar\n\n2 grams paste'
@@ -31,23 +31,25 @@ describe('Steps', () => {
   describe('On New', () => {
     it('Initial Load', async () => {
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
-      const ingredients = await findAllByTestId(INGREDIENTS_ID)
+      const ingredients = await findAllByTestId(INGREDIENT_ID)
       const instructions = await findAllByTestId(INSTRUCTIONS_ID)
       expect(ingredients.length).toBe(1)
       expect(instructions.length).toBe(1)
     })
 
-    it('Pasting ingredients: Windows', async () => {
-      const dataList = ingredientsString
-        .replaceAll('\n\n', '\r\n\r\n')
-        .split('\r\n\r\n')
+    it.only('Pasting ingredients: Windows', async () => {
+      const ingredientsStringFromWindows = ingredientsString.replaceAll(
+        '\n\n',
+        '\r\n\r\n',
+      )
+      const dataList = ingredientsStringFromWindows.split('\r\n\r\n')
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
-      let ingredients = await findAllByTestId(INGREDIENTS_ID)
+      let ingredients = await findAllByTestId(INGREDIENT_ID)
 
       ingredients[0].focus()
-      await userEvent.paste(ingredientsString)
+      await userEvent.paste(ingredientsStringFromWindows)
 
-      ingredients = await findAllByTestId(INGREDIENTS_ID)
+      ingredients = await findAllByTestId(INGREDIENT_ID)
       expect(ingredients.length).toBe(3)
       ingredients.forEach((i, index) => {
         expect(i.textContent).toBe(dataList[index])
@@ -63,12 +65,12 @@ describe('Steps', () => {
     it('Pasting ingredients: Linux', async () => {
       const dataList = ingredientsString.split('\n\n')
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
-      let ingredients = await findAllByTestId(INGREDIENTS_ID)
+      let ingredients = await findAllByTestId(INGREDIENT_ID)
 
       ingredients[0].focus()
       await userEvent.paste(ingredientsString)
 
-      ingredients = await findAllByTestId(INGREDIENTS_ID)
+      ingredients = await findAllByTestId(INGREDIENT_ID)
       expect(ingredients.length).toBe(3)
       ingredients.forEach((i, index) => {
         expect(i.textContent).toBe(dataList[index])
@@ -82,14 +84,16 @@ describe('Steps', () => {
     })
 
     it('Pasting instructions: Windows', async () => {
-      const dataList = instructionsString
-        .replaceAll('\n\n', '\r\n\r\n')
-        .split('\r\n\r\n')
+      const instructionStringFromWindows = ingredientsString.replaceAll(
+        '\n\n',
+        '\r\n\r\n',
+      )
+      const dataList = instructionStringFromWindows.split('\r\n\r\n')
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let instructions = await findAllByTestId(INSTRUCTIONS_ID)
 
       instructions[0].focus()
-      await userEvent.paste(instructionsString)
+      await userEvent.paste(instructionStringFromWindows)
 
       instructions = await findAllByTestId(INSTRUCTIONS_ID)
       expect(instructions.length).toBe(3)
@@ -97,7 +101,7 @@ describe('Steps', () => {
         expect(i.textContent).toBe(dataList[index])
       })
 
-      const ingredients = await findAllByTestId(INGREDIENTS_ID)
+      const ingredients = await findAllByTestId(INGREDIENT_ID)
       expect(ingredients.length).toBe(3)
       ingredients.forEach((i) => {
         expect(i.textContent).toBe('')
@@ -118,7 +122,7 @@ describe('Steps', () => {
         expect(i.textContent).toBe(dataList[index])
       })
 
-      const ingredients = await findAllByTestId(INGREDIENTS_ID)
+      const ingredients = await findAllByTestId(INGREDIENT_ID)
       expect(ingredients.length).toBe(3)
       ingredients.forEach((i) => {
         expect(i.textContent).toBe('')
@@ -129,7 +133,7 @@ describe('Steps', () => {
       const ingredientsList = ingredientsString.split('\n\n')
       const instructionsList = instructionsString.split('\n\n')
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
-      let ingredients = await findAllByTestId(INGREDIENTS_ID)
+      let ingredients = await findAllByTestId(INGREDIENT_ID)
 
       ingredients[0].focus()
       await userEvent.paste(ingredientsString)
@@ -137,7 +141,7 @@ describe('Steps', () => {
       instructions[1].focus()
       await userEvent.paste(instructionsString)
 
-      ingredients = await findAllByTestId(INGREDIENTS_ID)
+      ingredients = await findAllByTestId(INGREDIENT_ID)
       expect(ingredients.length).toBe(4)
       ingredients.forEach((i, index) => {
         if (index === 3) {

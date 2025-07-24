@@ -5,7 +5,7 @@ import {
   createRecipeStore,
   defaultInitState,
 } from '@src/stores/recipe-store'
-import { type IngredientsValidator } from '@src/utils/ingredientsValidator'
+import { type IngredientValidator } from '@src/utils/ingredientsValidator'
 import {
   type ReactNode,
   type RefObject,
@@ -51,22 +51,35 @@ export const useRecipeStore = <T,>(selector: (_store: RecipeStore) => T): T => {
 }
 
 export const useRecipeStepIngredientsStore = (
-  ref: RefObject<HTMLTextAreaElement | null>,
+  ref: RefObject<HTMLDivElement | null>,
 ) => {
   const {
     steps,
-    setIngredients: _stepIngredients,
+    // setIngredients: _stepIngredients,
     insertIngredientsSteps: _insertIngredientsSteps,
+    addIngredient: _addIngredient,
+    removeIngredient: _removeIngredient,
+    updateIngredient: _updateIngredient,
   } = useRecipeStore((state) => state)
-  const step = steps.find((s) => s.ingredientsRef === ref)
+  const step = steps.find((s) => s.ingredients.ref === ref)
   return {
     ingredients: step?.ingredients,
-    ingredientsRef: step?.ingredientsRef,
-    shouldBeFocused: step?.shouldIngredientsBeFocused,
-    setIngredients: (ingredients: IngredientsValidator) =>
-      _stepIngredients(ref, ingredients),
-    insertIngredientsSteps: (ingredients: IngredientsValidator[]) =>
-      _insertIngredientsSteps(ref, ingredients),
+    // ingredientsRef: step?.ingredients.ref,
+    // shouldBeFocused: step?.shouldIngredientsBeFocused,
+    // setIngredients: (ingredients: IngredientsValidator) =>
+    //   _stepIngredients(ref, ingredients),
+    insertIngredientsSteps: (
+      _ref: RefObject<HTMLTextAreaElement | null>,
+      ingredients: IngredientValidator[][],
+    ) => _insertIngredientsSteps(_ref, ingredients),
+    addIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
+      _addIngredient(_ref),
+    removeIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
+      _removeIngredient(_ref),
+    updateIngredient: (
+      _ref: React.RefObject<HTMLTextAreaElement | null>,
+      ingredient: IngredientValidator,
+    ) => _updateIngredient(_ref, ingredient),
   }
 }
 
@@ -78,11 +91,9 @@ export const useRecipeStepInstructionsStore = (
     setInstructions: _stepInstructions,
     insertInstructionsSteps: _insertInstructionsSteps,
   } = useRecipeStore((state) => state)
-  const step = steps.find((s) => s.instructionsRef === ref)
+  const step = steps.find((s) => s.instructions.ref === ref)
   return {
     instructions: step?.instructions,
-    instructionsRef: step?.instructionsRef,
-    shouldBeFocused: step?.shouldInstructionsBeFocused,
     setInstructions: (instructions: string) =>
       _stepInstructions(ref, instructions),
     insertInstructionsSteps: (instructions: string[]) =>

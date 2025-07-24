@@ -109,6 +109,7 @@ describe('RecipesController (e2e)', () => {
         name: 'Test Recipe',
         description: 'This is a test recipe',
         base64Image: '123',
+        isPublic: true,
         steps: [
           {
             instruction: 'Step 1',
@@ -137,6 +138,7 @@ describe('RecipesController (e2e)', () => {
         name: 'sample Recipe',
         description: 'This is a test recipe',
         base64Image: '123',
+        isPublic: true,
         steps: [
           {
             instruction: 'Step 1',
@@ -196,6 +198,7 @@ describe('RecipesController (e2e)', () => {
         name: uuidv4(),
         description: 'This is a test recipe',
         base64Image: '123',
+        isPublic: true,
         steps: [
           {
             instruction: 'Step 1',
