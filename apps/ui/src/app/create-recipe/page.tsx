@@ -35,10 +35,6 @@ const Page = () => {
         onError: () => undefined,
       },
     )
-    // router.replace('/recipes/jon/tres-leches-cake', undefined, {
-    //   shallow: true,
-    // })
-    //window.history.replaceState(null, '', '/recipes/jon/tres-leches-cake')
   }
 
   const [_tags, setTags] = useState<string[]>([])
