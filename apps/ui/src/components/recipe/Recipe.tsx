@@ -1,9 +1,10 @@
 'use client'
 
+import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import Image from 'next/image'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
@@ -23,6 +24,22 @@ export const Recipe = () => {
     if (nameRef.current) {
       nameRef.current.focus()
     }
+  }, [])
+
+  const [_tags, setTags] = useState<string[]>([])
+  useEffect(() => {
+    // todo add params
+    const fetchTags = async (nextCursor?: number) => {
+      const currentTags = await tagsControllerTagNameListV1({
+        params: { cursorId: nextCursor },
+      })
+      setTags((tags) => [...tags, ...currentTags.data])
+      if (currentTags.pagination.nextCursor !== null) {
+        await fetchTags(currentTags.pagination.nextCursor)
+      }
+    }
+
+    fetchTags().catch((e: unknown) => console.log(e))
   }, [])
 
   const handleOnNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
