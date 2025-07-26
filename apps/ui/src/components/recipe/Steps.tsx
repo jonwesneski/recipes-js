@@ -62,7 +62,7 @@ export const Steps = () => {
         return (
           <div key={s.keyId} className="mb-5">
             <h1 className="font-bold">step {index + 1}.</h1>
-            <div ref={s.ref} className="flex flex-col md:flex-row">
+            <div ref={s.ref} className="flex flex-col md:flex-row gap-2">
               <IngredientsTextArea
                 ref={s.ingredients.ref}
                 onResize={(height: number) => handleOnResize(s.ref, height)}

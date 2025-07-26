@@ -1,16 +1,15 @@
-import { type MouseEventHandler } from 'react'
+import type { ButtonHTMLAttributes, DetailedHTMLProps } from 'react'
 import { mergeCss } from '../utils'
 
-interface ButtonProps {
-  text: string
-  variant?: 'default' | 'opposite'
-  onClick?: MouseEventHandler<HTMLButtonElement>
-  className?: string
-}
+export type ButtonProps = Omit<
+  DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
+  'style'
+> & { variant?: 'default' | 'opposite'; text: string }
 export const Button = ({ variant = 'default', ...props }: ButtonProps) => {
   return (
     <button
-      type="button"
+      {...props}
+      type={props.type ? props.type : 'button'}
       className={mergeCss(
         'px-2 py-1 border-2 font-semibold hover:underline',
         {
@@ -25,7 +24,6 @@ export const Button = ({ variant = 'default', ...props }: ButtonProps) => {
         },
         props.className,
       )}
-      onClick={props.onClick}
     >
       {`${props.text}.`}
     </button>

@@ -3,6 +3,7 @@ import type { CreateRecipeDto, NutritionalFactsDto } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { createRef, type RefObject } from 'react';
 import { createStore } from 'zustand/vanilla';
+import { applyMiddleware } from './middleware';
 
 export class ItemTypeBase<T> {
   keyId: string;
@@ -97,6 +98,7 @@ export type RecipeState = Omit<CreateRecipeDto, 'steps'> & {
   id: string;
   editEnabled: boolean;
   steps: StepsItemType[];
+  isValid: boolean;
 };
 
 export type RecipeActions = {
@@ -170,204 +172,247 @@ export const defaultInitState: RecipeState = {
   nutritionalFacts: null,
   isPublic: true,
   tags: [],
+  isValid: false,
 };
 
 export const createRecipeStore = (
   initState: RecipeState = defaultInitState,
 ) => {
-  return createStore<RecipeStore>()((set, get) => ({
-    ...initState,
-    setName: (name: string) => set(() => ({ name })),
-    setDescription: (description: string) => set(() => ({ description })),
-    setPreparationTimeInMinutes: (preparationTimeInMinutes: number) =>
-      set(() => ({ preparationTimeInMinutes })),
-    setCookingTimeInMinutes: (cookingTimeInMinutes: number) =>
-      set(() => ({ cookingTimeInMinutes })),
-    setImage: (base64Image: string) => set(() => ({ base64Image })),
-    setSteps: (steps: StepsItemType[]) => set(() => ({ steps })),
-    addStep: () => {
-      set((state) => ({ steps: [...state.steps, createStepItem()] }));
-    },
-    removeStep: (stepId: string) => {
-      set((state) => {
-        const index = state.steps.findIndex((s) => s.keyId === stepId);
-        if (index !== -1) {
-          return { steps: state.steps.toSpliced(index, 1) };
-        }
-        return {};
-      });
-    },
-    addIngredient: (ref: React.RefObject<HTMLTextAreaElement | null>) => {
-      set((state) => {
-        for (let s = 0; s < state.steps.length; s++) {
-          for (let i = 0; i < state.steps[s].ingredients.items.length; i++) {
-            if (state.steps[s].ingredients.items[i].ref === ref) {
-              state.steps[s].ingredients.items = [
-                ...state.steps[s].ingredients.items.slice(0, i + 1),
-                new IngredientItemType({ shouldBeFocused: true }),
-                ...state.steps[s].ingredients.items.slice(i + 1),
-              ];
-              return { steps: state.steps };
+  return createStore<RecipeStore>()(
+    applyMiddleware<RecipeStore>({
+      afterMiddlware: (_, set) => {
+        set((state) => ({
+          isValid:
+            state.name !== '' &&
+            state.steps.every((s) =>
+              s.ingredients.items.every(
+                (i) => i.ingredient.error === undefined,
+              ),
+            ),
+        }));
+      },
+      store: (set, get) => ({
+        ...initState,
+        setName: (name: string) => set(() => ({ name })),
+        setDescription: (description: string) => set(() => ({ description })),
+        setPreparationTimeInMinutes: (preparationTimeInMinutes: number) =>
+          set(() => ({ preparationTimeInMinutes })),
+        setCookingTimeInMinutes: (cookingTimeInMinutes: number) =>
+          set(() => ({ cookingTimeInMinutes })),
+        setImage: (base64Image: string) => set(() => ({ base64Image })),
+        setSteps: (steps: StepsItemType[]) => set(() => ({ steps })),
+        addStep: () => {
+          set((state) => ({ steps: [...state.steps, createStepItem()] }));
+        },
+        removeStep: (stepId: string) => {
+          set((state) => {
+            const index = state.steps.findIndex((s) => s.keyId === stepId);
+            if (index !== -1) {
+              return { steps: state.steps.toSpliced(index, 1) };
             }
-          }
-        }
-        return { state };
-      });
-    },
-    removeIngredient: (ref: React.RefObject<HTMLTextAreaElement | null>) => {
-      set((state) => {
-        for (let s = 0; s < state.steps.length; s++) {
-          for (let i = 0; i < state.steps[s].ingredients.items.length; i++) {
-            if (state.steps[s].ingredients.items[i].ref === ref) {
-              if (state.steps[s].ingredients.items.length <= 1) {
-                return { state };
-              }
-              if (state.steps[s].ingredients.items[i - 1]) {
-                state.steps[s].ingredients.items[i - 1].shouldBeFocused = true;
-              }
-              state.steps[s].ingredients.items.splice(i, 1);
-              return { steps: [...state.steps] };
-            }
-          }
-        }
-        return { state };
-      });
-    },
-    updateIngredient: (
-      ref: RefObject<HTMLTextAreaElement | null>,
-      ingredient: IngredientValidator,
-    ) =>
-      set((state) => {
-        for (let s = 0; s < state.steps.length; s++) {
-          for (let i = 0; i < state.steps[s].ingredients.items.length; i++) {
-            if (state.steps[s].ingredients.items[i].ref === ref) {
-              state.steps[s].ingredients.items[i].ingredient = ingredient;
-              return { steps: [...state.steps] };
-            }
-          }
-        }
-        return { state };
-      }),
-    // setIngredients: (
-    //   ref: RefObject<HTMLDivElement | null>,
-    //   ingredients: IngredientsValidator,
-    // ) =>
-    //   set((state) => {
-    //     const index = state.steps.findIndex((s) => s.ingredientsRef === ref);
-    //     if (index !== -1) {
-    //       state.steps[index].ingredients = ingredients;
-    //     }
-    //     return { steps: [...state.steps] };
-    //   }),
-    insertIngredientsSteps: (
-      ref: RefObject<HTMLTextAreaElement | null>,
-      ingredients: IngredientValidator[][],
-    ) =>
-      set((state) => {
-        for (let s = 0; s < state.steps.length; s++) {
-          for (let i = 0; i < state.steps[s].ingredients.items.length; i++) {
-            if (state.steps[s].ingredients.items[i].ref === ref) {
-              for (let t = 0; t < ingredients[0].length; t++) {
-                if (t === 0) {
-                  state.steps[s].ingredients.items[i].ingredient =
-                    new IngredientValidator({
-                      stringValue:
-                        state.steps[s].ingredients.items[i].ingredient
-                          .stringValue + ingredients[0][t].stringValue,
-                    });
-                } else {
-                  state.steps[s].ingredients.items.push(
-                    new IngredientItemType({ ingredient: ingredients[0][t] }),
-                  );
+            return {};
+          });
+        },
+        addIngredient: (ref: React.RefObject<HTMLTextAreaElement | null>) => {
+          set((state) => {
+            for (let s = 0; s < state.steps.length; s++) {
+              for (
+                let i = 0;
+                i < state.steps[s].ingredients.items.length;
+                i++
+              ) {
+                if (state.steps[s].ingredients.items[i].ref === ref) {
+                  state.steps[s].ingredients.items = [
+                    ...state.steps[s].ingredients.items.slice(0, i + 1),
+                    new IngredientItemType({ shouldBeFocused: true }),
+                    ...state.steps[s].ingredients.items.slice(i + 1),
+                  ];
+                  return { steps: state.steps };
                 }
               }
-
-              for (let j = 1; j < ingredients.length; j++) {
-                state.steps.push(createStepItem());
-                state.steps[state.steps.length - 1].ingredients.items =
-                  ingredients[j].map(
-                    (ing) => new IngredientItemType({ ingredient: ing }),
-                  );
+            }
+            return { state };
+          });
+        },
+        removeIngredient: (
+          ref: React.RefObject<HTMLTextAreaElement | null>,
+        ) => {
+          set((state) => {
+            for (let s = 0; s < state.steps.length; s++) {
+              for (
+                let i = 0;
+                i < state.steps[s].ingredients.items.length;
+                i++
+              ) {
+                if (state.steps[s].ingredients.items[i].ref === ref) {
+                  if (state.steps[s].ingredients.items.length <= 1) {
+                    return { state };
+                  }
+                  if (state.steps[s].ingredients.items[i - 1]) {
+                    state.steps[s].ingredients.items[i - 1].shouldBeFocused =
+                      true;
+                  }
+                  state.steps[s].ingredients.items.splice(i, 1);
+                  return { steps: [...state.steps] };
+                }
               }
-
-              return { steps: [...state.steps] };
             }
-          }
-        }
-        return { state };
-      }),
-    setInstructions: (
-      ref: RefObject<HTMLTextAreaElement | null>,
-      instructions: string,
-    ) =>
-      set((state) => {
-        const index = state.steps.findIndex((s) => s.instructions.ref === ref);
-        if (index !== -1) {
-          state.steps[index].instructions = new InstructionsType({
-            value: instructions,
+            return { state };
           });
-        }
-        return { steps: [...state.steps] };
-      }),
-    insertInstructionsSteps: (
-      ref: RefObject<HTMLTextAreaElement | null>,
-      instructions: string[],
-    ) =>
-      set((state) => {
-        let index = state.steps.findIndex((s) => s.instructions.ref === ref);
-        const inserts = instructions.map((i) =>
-          createStepItem({ instructions: new InstructionsType({ value: i }) }),
-        );
-        const current = state.steps.map((s) =>
-          createStepItem({
-            ingredients: s.ingredients,
-            instructions: s.instructions,
+        },
+        updateIngredient: (
+          ref: RefObject<HTMLTextAreaElement | null>,
+          ingredient: IngredientValidator,
+        ) =>
+          set((state) => {
+            for (let s = 0; s < state.steps.length; s++) {
+              for (
+                let i = 0;
+                i < state.steps[s].ingredients.items.length;
+                i++
+              ) {
+                if (state.steps[s].ingredients.items[i].ref === ref) {
+                  state.steps[s].ingredients.items[i].ingredient = ingredient;
+                  return { steps: [...state.steps] };
+                }
+              }
+            }
+            return { state };
           }),
-        );
-        if (inserts.length) {
-          inserts[inserts.length - 1].instructions = new InstructionsType({
-            value: inserts[inserts.length - 1].instructions.value,
-            shouldBeFocused: true,
-          });
-        }
-        if (index !== -1) {
-          for (const insert of inserts) {
-            if (current[index]) {
-              current[index].instructions = insert.instructions;
-              current[index].instructions = insert.instructions;
-            } else {
-              current.push(insert);
+        // setIngredients: (
+        //   ref: RefObject<HTMLDivElement | null>,
+        //   ingredients: IngredientsValidator,
+        // ) =>
+        //   set((state) => {
+        //     const index = state.steps.findIndex((s) => s.ingredientsRef === ref);
+        //     if (index !== -1) {
+        //       state.steps[index].ingredients = ingredients;
+        //     }
+        //     return { steps: [...state.steps] };
+        //   }),
+        insertIngredientsSteps: (
+          ref: RefObject<HTMLTextAreaElement | null>,
+          ingredients: IngredientValidator[][],
+        ) =>
+          set((state) => {
+            for (let s = 0; s < state.steps.length; s++) {
+              for (
+                let i = 0;
+                i < state.steps[s].ingredients.items.length;
+                i++
+              ) {
+                if (state.steps[s].ingredients.items[i].ref === ref) {
+                  for (let t = 0; t < ingredients[0].length; t++) {
+                    if (t === 0) {
+                      state.steps[s].ingredients.items[i].ingredient =
+                        new IngredientValidator({
+                          stringValue:
+                            state.steps[s].ingredients.items[i].ingredient
+                              .stringValue + ingredients[0][t].stringValue,
+                        });
+                    } else {
+                      state.steps[s].ingredients.items.push(
+                        new IngredientItemType({
+                          ingredient: ingredients[0][t],
+                        }),
+                      );
+                    }
+                  }
+
+                  for (let j = 1; j < ingredients.length; j++) {
+                    state.steps.push(createStepItem());
+                    state.steps[state.steps.length - 1].ingredients.items =
+                      ingredients[j].map(
+                        (ing) => new IngredientItemType({ ingredient: ing }),
+                      );
+                  }
+
+                  return { steps: [...state.steps] };
+                }
+              }
             }
-            index++;
-          }
-          return { steps: current };
-        }
-        return { steps: [...current, ...inserts] };
-      }),
-    setStepImage: (ref: RefObject<HTMLDivElement | null>, image: string) =>
-      set((state) => {
-        const index = state.steps.findIndex((s) => s.ref === ref);
-        if (index !== -1) {
-          state.steps[index].image = image;
-        }
-        return { steps: [...state.steps] };
-      }),
-    setNutritionalFacts: (nutritionalFacts: NutritionalFactsDto) =>
-      set(() => ({ nutritionalFacts })),
-    setTags: (tags: string[]) => set(() => ({ tags })),
-    makeCreateDto: () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
-      const { id, editEnabled, ...recipe } = get();
-      return {
-        ...recipe,
-        steps: recipe.steps.map((s) => {
+            return { state };
+          }),
+        setInstructions: (
+          ref: RefObject<HTMLTextAreaElement | null>,
+          instructions: string,
+        ) =>
+          set((state) => {
+            const index = state.steps.findIndex(
+              (s) => s.instructions.ref === ref,
+            );
+            if (index !== -1) {
+              state.steps[index].instructions = new InstructionsType({
+                value: instructions,
+              });
+            }
+            return { steps: [...state.steps] };
+          }),
+        insertInstructionsSteps: (
+          ref: RefObject<HTMLTextAreaElement | null>,
+          instructions: string[],
+        ) =>
+          set((state) => {
+            let index = state.steps.findIndex(
+              (s) => s.instructions.ref === ref,
+            );
+            const inserts = instructions.map((i) =>
+              createStepItem({
+                instructions: new InstructionsType({ value: i }),
+              }),
+            );
+            const current = state.steps.map((s) =>
+              createStepItem({
+                ingredients: s.ingredients,
+                instructions: s.instructions,
+              }),
+            );
+            if (inserts.length) {
+              inserts[inserts.length - 1].instructions = new InstructionsType({
+                value: inserts[inserts.length - 1].instructions.value,
+                shouldBeFocused: true,
+              });
+            }
+            if (index !== -1) {
+              for (const insert of inserts) {
+                if (current[index]) {
+                  current[index].instructions = insert.instructions;
+                  current[index].instructions = insert.instructions;
+                } else {
+                  current.push(insert);
+                }
+                index++;
+              }
+              return { steps: current };
+            }
+            return { steps: [...current, ...inserts] };
+          }),
+        setStepImage: (ref: RefObject<HTMLDivElement | null>, image: string) =>
+          set((state) => {
+            const index = state.steps.findIndex((s) => s.ref === ref);
+            if (index !== -1) {
+              state.steps[index].image = image;
+            }
+            return { steps: [...state.steps] };
+          }),
+        setNutritionalFacts: (nutritionalFacts: NutritionalFactsDto) =>
+          set(() => ({ nutritionalFacts })),
+        setTags: (tags: string[]) => set(() => ({ tags })),
+        makeCreateDto: () => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
+          const { id, editEnabled, ...recipe } = get();
           return {
-            ingredients: s.ingredients.items.map((i) => i.ingredient.dto),
-            instruction: s.instructions.value,
-            base64Image: '', //TODO
+            ...recipe,
+            steps: recipe.steps.map((s) => {
+              return {
+                ingredients: s.ingredients.items.map((i) => i.ingredient.dto),
+                instruction: s.instructions.value,
+                base64Image: '', //TODO
+              };
+            }),
           };
-        }),
-      };
-    },
-  }));
+        },
+      }),
+    }),
+  );
 };

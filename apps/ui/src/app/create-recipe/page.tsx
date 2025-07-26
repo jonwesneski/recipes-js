@@ -8,6 +8,7 @@ import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useRouter } from 'next/navigation'
+import { type FormEvent } from 'react'
 
 const Page = () => {
   const { accessToken } = useAuthentication()
@@ -22,7 +23,9 @@ const Page = () => {
   })
   const router = useRouter()
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
     mutate(
       { data: makeCreateDto() },
       {
@@ -37,17 +40,18 @@ const Page = () => {
 
   return (
     <NavigationLayout>
-      <div className="flex justify-center">
-        <div>
-          <Recipe />
-          <Button
-            className="mt-3 mx-auto block"
-            text="submit"
-            variant="opposite"
-            onClick={handleSubmit}
-          />
-        </div>
-      </div>
+      <form
+        className="flex justify-center flex-col px-3"
+        onSubmit={handleSubmit}
+      >
+        <Recipe />
+        <Button
+          className="mt-3 mx-auto block"
+          text="submit"
+          variant="opposite"
+          type="submit"
+        />
+      </form>
     </NavigationLayout>
   )
 }
