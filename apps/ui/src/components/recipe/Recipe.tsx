@@ -43,7 +43,7 @@ export const Recipe = () => {
   }, [])
 
   const handleOnNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value)
+    setName({ value: event.target.value })
   }
 
   const handleOnDescriptionChange = (

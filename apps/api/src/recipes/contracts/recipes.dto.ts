@@ -223,7 +223,7 @@ export class CreateRecipeDto
       | 'imageUrl'
     >
 {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'should not be empty' })
   @ApiProperty({ type: String })
   name: string;
   @IsNotEmpty()

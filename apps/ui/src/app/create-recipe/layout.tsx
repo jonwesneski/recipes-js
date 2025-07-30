@@ -3,7 +3,7 @@ import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <RecipeStoreProvider initialState={{ editEnabled: true }}>
+    <RecipeStoreProvider>
       <CameraProvider>{children}</CameraProvider>
     </RecipeStoreProvider>
   )

@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   INestApplication,
+  ValidationError,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
@@ -25,6 +27,14 @@ export function configureApp(app: INestApplication<any>) {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (validationErrors: ValidationError[] = []) => {
+        return new BadRequestException(
+          validationErrors.reduce((acc, error) => {
+            acc[error.property] = Object.values(error.constraints!).join(', ');
+            return acc;
+          }, {}),
+        );
+      },
     }),
   );
   app.useLogger(app.get(Logger));

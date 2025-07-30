@@ -1,6 +1,5 @@
 'use client'
 
-import { type RecipeEntity } from '@repo/codegen/model'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { Button } from '@repo/design-system'
 import { NavigationLayout } from '@src/components/navigation'
@@ -12,7 +11,7 @@ import { type FormEvent } from 'react'
 
 const Page = () => {
   const { accessToken } = useAuthentication()
-  const { makeCreateDto } = useRecipeStore((state) => state)
+  const { makeCreateDto, setBadRequest } = useRecipeStore((state) => state)
   const { mutate } = useRecipesControllerCreateRecipeV1({
     mutation: { retry: false },
     request: {
@@ -30,10 +29,11 @@ const Page = () => {
       { data: makeCreateDto() },
       {
         onSuccess: (data) => {
-          const _data = data as unknown as RecipeEntity
-          router.push(`/recipes/${_data.user.id}/${_data.id}`)
+          router.push(`/recipes/${data.user.id}/${data.id}`)
         },
-        onError: () => undefined,
+        onError: (error) => {
+          setBadRequest(error.response?.data!)
+        },
       },
     )
   }

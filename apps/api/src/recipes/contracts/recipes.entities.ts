@@ -151,6 +151,8 @@ export class RecipeEntity implements RecipeType {
   isPublic: boolean;
 }
 
+// export class BadRequestRecipeEntity extends PartialType(CreateRecipeDto) {}
+
 export class RecipeMinimalEntity implements RecipeMinimalType {
   @ApiProperty()
   id: string;

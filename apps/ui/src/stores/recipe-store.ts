@@ -94,15 +94,20 @@ export type StepsItemType = {
   image?: string;
 };
 
-export type RecipeState = Omit<CreateRecipeDto, 'steps'> & {
+type InputType<T> = {
+  value: T;
+  error?: string;
+};
+
+export type RecipeState = Omit<CreateRecipeDto, 'name' | 'steps'> & {
   id: string;
-  editEnabled: boolean;
+  name: InputType<string>;
   steps: StepsItemType[];
   isValid: boolean;
 };
 
 export type RecipeActions = {
-  setName: (_value: string) => void;
+  setName: (_data: InputType<string>) => void;
   setDescription: (_value: string) => void;
   setPreparationTimeInMinutes: (_value: number) => void;
   setCookingTimeInMinutes: (_value: number) => void;
@@ -135,6 +140,7 @@ export type RecipeActions = {
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
+  setBadRequest: (data: Partial<CreateRecipeDto>) => void;
 };
 
 export type RecipeStore = RecipeState & RecipeActions;
@@ -160,9 +166,8 @@ const createIngredientsItem = (): IngredientItemsType => {
 };
 
 export const defaultInitState: RecipeState = {
-  editEnabled: false,
   id: '',
-  name: '',
+  name: { value: '' },
   description: null,
   base64Image: null,
   preparationTimeInMinutes: null,
@@ -183,7 +188,7 @@ export const createRecipeStore = (
       afterMiddlware: (_, set) => {
         set((state) => ({
           isValid:
-            state.name !== '' &&
+            state.name.value !== '' &&
             state.steps.every((s) =>
               s.ingredients.items.every(
                 (i) => i.ingredient.error === undefined,
@@ -193,7 +198,7 @@ export const createRecipeStore = (
       },
       store: (set, get) => ({
         ...initState,
-        setName: (name: string) => set(() => ({ name })),
+        setName: (data: InputType<string>) => set(() => ({ name: data })),
         setDescription: (description: string) => set(() => ({ description })),
         setPreparationTimeInMinutes: (preparationTimeInMinutes: number) =>
           set(() => ({ preparationTimeInMinutes })),
@@ -400,9 +405,10 @@ export const createRecipeStore = (
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
-          const { id, editEnabled, ...recipe } = get();
+          const { id, isValid, name, ...recipe } = get();
           return {
             ...recipe,
+            name: name.value,
             steps: recipe.steps.map((s) => {
               return {
                 ingredients: s.ingredients.items.map((i) => i.ingredient.dto),
@@ -411,6 +417,13 @@ export const createRecipeStore = (
               };
             }),
           };
+        },
+        setBadRequest: (data: Partial<CreateRecipeDto>) => {
+          set((state) => {
+            state.name.error = data.name;
+            console.log(state.name, 'ff');
+            return state;
+          });
         },
       }),
     }),
