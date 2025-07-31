@@ -208,7 +208,7 @@ export class CreateStepDto
   @IsString()
   @IsOptional()
   @ApiProperty({ type: String })
-  base64Image: string;
+  base64Image?: string;
 }
 
 export class CreateRecipeDto
@@ -247,6 +247,8 @@ export class CreateRecipeDto
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes?: number | null;
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateStepDto)
   @ApiProperty({ type: [CreateStepDto] })
   steps: CreateStepDto[];
   @IsOptional()

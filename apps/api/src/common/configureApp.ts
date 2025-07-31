@@ -8,6 +8,25 @@ import {
 import { json, urlencoded } from 'express';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
+type NestedRecord = { [k: string]: string | NestedRecord };
+const buildValidationErrorResponse = (
+  validationErrors: ValidationError[] = [],
+  response: NestedRecord = {},
+) => {
+  for (const validationError of validationErrors) {
+    if (validationError.children?.length) {
+      response[validationError.property] = buildValidationErrorResponse(
+        validationError.children,
+      );
+    } else {
+      response[validationError.property] = Object.values(
+        validationError.constraints!,
+      ).join(', ');
+    }
+  }
+  return response;
+};
+
 export function configureApp(app: INestApplication<any>) {
   app.enableCors({
     origin: [
@@ -29,10 +48,7 @@ export function configureApp(app: INestApplication<any>) {
       transform: true,
       exceptionFactory: (validationErrors: ValidationError[] = []) => {
         return new BadRequestException(
-          validationErrors.reduce((acc, error) => {
-            acc[error.property] = Object.values(error.constraints!).join(', ');
-            return acc;
-          }, {}),
+          buildValidationErrorResponse(validationErrors),
         );
       },
     }),
