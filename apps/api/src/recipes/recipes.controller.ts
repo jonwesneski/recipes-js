@@ -13,12 +13,16 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiParam,
-  PartialType,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { throwIfConflict, throwIfNotFound } from 'src/common';
 import { parseHelper } from 'src/common/header.decorators';
-import { CreateRecipeDto, EditRecipeDto, RecipeEntity } from './contracts';
+import {
+  BadRequestRecipeEntity,
+  CreateRecipeDto,
+  EditRecipeDto,
+  RecipeEntity,
+} from './contracts';
 import { RecipesService } from './recipes.service';
 
 @Controller({
@@ -60,7 +64,7 @@ export class RecipesController {
   @Post()
   @ApiBody({ type: CreateRecipeDto })
   @ApiOkResponse({ type: RecipeEntity })
-  @ApiBadRequestResponse({ type: PartialType(CreateRecipeDto) })
+  @ApiBadRequestResponse({ type: BadRequestRecipeEntity })
   @UseGuards(JwtGuard)
   async createRecipe(
     // TODO: can't get this to work in jest

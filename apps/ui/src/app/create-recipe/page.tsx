@@ -32,7 +32,9 @@ const Page = () => {
           router.push(`/recipes/${data.user.id}/${data.id}`)
         },
         onError: (error) => {
-          setBadRequest(error.response?.data!)
+          if (error.response?.data) {
+            setBadRequest(error.response.data)
+          }
         },
       },
     )

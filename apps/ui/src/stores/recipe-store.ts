@@ -1,5 +1,9 @@
 /* eslint-disable no-unused-vars -- its fine zustand */
-import type { CreateRecipeDto, NutritionalFactsDto } from '@repo/codegen/model';
+import type {
+  BadRequestRecipeEntity,
+  CreateRecipeDto,
+  NutritionalFactsDto,
+} from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { createRef, type RefObject } from 'react';
 import { createStore } from 'zustand/vanilla';
@@ -140,7 +144,7 @@ export type RecipeActions = {
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
-  setBadRequest: (data: Partial<CreateRecipeDto>) => void;
+  setBadRequest: (_data: BadRequestRecipeEntity) => void;
 };
 
 export type RecipeStore = RecipeState & RecipeActions;
@@ -418,12 +422,10 @@ export const createRecipeStore = (
             }),
           };
         },
-        setBadRequest: (data: Partial<CreateRecipeDto>) => {
-          set((state) => {
-            state.name.error = data.name;
-            console.log(state.name, 'ff');
-            return state;
-          });
+        setBadRequest: (data: BadRequestRecipeEntity) => {
+          set((state) => ({
+            name: { value: state.name.value, error: data.name },
+          }));
         },
       }),
     }),
