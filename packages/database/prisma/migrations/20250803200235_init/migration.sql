@@ -38,7 +38,9 @@ CREATE TABLE "recipes" (
     "isPublic" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "userId" TEXT NOT NULL
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "recipes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -118,16 +120,18 @@ CREATE TABLE "ingredients" (
 
 -- CreateTable
 CREATE TABLE "tags" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "tags_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "recipe_tags" (
     "recipeId" TEXT NOT NULL,
-    "tagId" INTEGER NOT NULL,
+    "tagId" TEXT NOT NULL,
 
     CONSTRAINT "recipe_tags_pkey" PRIMARY KEY ("recipeId","tagId")
 );
@@ -137,9 +141,6 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_handle_key" ON "users"("handle");
-
--- CreateIndex
-CREATE UNIQUE INDEX "recipes_id_key" ON "recipes"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "recipes_userId_name_key" ON "recipes"("userId", "name");
@@ -158,9 +159,6 @@ CREATE UNIQUE INDEX "equipments_name_key" ON "equipments"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ingredients_stepId_displayOrder_key" ON "ingredients"("stepId", "displayOrder");
-
--- CreateIndex
-CREATE UNIQUE INDEX "tags_id_key" ON "tags"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tags_name_key" ON "tags"("name");
