@@ -5,6 +5,7 @@ export default () => {
   const [tags, setTags] = useState<string[]>([]);
 
   const fetchTags = async () => {
+    // todo add params cursor & input
     const currentTags = await tagsControllerTagNameListV1();
     setTags((tags) => [...tags, ...currentTags.data]);
     if (currentTags.pagination.nextCursor !== null) {
