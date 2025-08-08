@@ -1,9 +1,10 @@
 'use client'
 
+import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import Image from 'next/image'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
@@ -25,6 +26,22 @@ export const Recipe = () => {
     }
   }, [])
 
+  const [_tags, setTags] = useState<string[]>([])
+  useEffect(() => {
+    // todo add params
+    const fetchTags = async (nextCursor?: number) => {
+      const currentTags = await tagsControllerTagNameListV1({
+        params: { cursorId: nextCursor },
+      })
+      setTags((tags) => [...tags, ...currentTags.data])
+      if (currentTags.pagination.nextCursor !== null) {
+        await fetchTags(currentTags.pagination.nextCursor)
+      }
+    }
+
+    fetchTags().catch((e: unknown) => console.log(e))
+  }, [])
+
   const handleOnNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName({ value: event.target.value })
   }
@@ -32,15 +49,15 @@ export const Recipe = () => {
   const handleOnDescriptionChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setDescription({ value: event.target.value })
+    setDescription(event.target.value)
   }
 
   const handleOnPrepChange = (time: string) => {
-    setPreparationTimeInMinutes({ value: _convertToMinutes(time) })
+    setPreparationTimeInMinutes(_convertToMinutes(time))
   }
 
   const handleOnCookChange = (time: string) => {
-    setCookingTimeInMinutes({ value: _convertToMinutes(time) })
+    setCookingTimeInMinutes(_convertToMinutes(time))
   }
 
   const _convertToMinutes = (time: string) => {
@@ -49,11 +66,11 @@ export const Recipe = () => {
   }
 
   const handleOnCameraClick = (image: string) => {
-    setImage({ value: image })
+    setImage(image)
   }
 
   const handleOnUploadClick = (image: string) => {
-    setImage({ value: image })
+    setImage(image)
   }
 
   return (
@@ -95,9 +112,9 @@ export const Recipe = () => {
         onUploadClick={handleOnUploadClick}
       />
 
-      {base64Image.value ? (
+      {base64Image ? (
         <Image
-          src={base64Image.value}
+          src={base64Image}
           className="w-9/10 h-auto mx-auto"
           width={0}
           height={0}

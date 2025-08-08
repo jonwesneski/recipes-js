@@ -4,7 +4,6 @@ import type {
   CreateRecipeDto,
   NutritionalFactsDto,
 } from '@repo/codegen/model';
-import { UserInputType } from '@src/types';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { createRef, type RefObject } from 'react';
 import { createStore } from 'zustand/vanilla';
@@ -99,27 +98,24 @@ export type StepsItemType = {
   image?: string;
 };
 
-export type RecipeState = {
+type InputType<T> = {
+  value: T;
+  error?: string;
+};
+
+export type RecipeState = Omit<CreateRecipeDto, 'name' | 'steps'> & {
   id: string;
-  name: UserInputType<string>;
-  description: UserInputType<string | null>;
-  base64Image: UserInputType<string | null>;
-  preparationTimeInMinutes: UserInputType<number | null>;
-  cookingTimeInMinutes: UserInputType<number | null>;
+  name: InputType<string>;
   steps: StepsItemType[];
-  nutritionalFacts: NutritionalFactsDto | null;
-  equipments: string[];
-  tags: string[];
-  isPublic: boolean;
   isValid: boolean;
 };
 
 export type RecipeActions = {
-  setName: (_data: UserInputType<string>) => void;
-  setDescription: (_value: UserInputType<string | null>) => void;
-  setPreparationTimeInMinutes: (_value: UserInputType<number | null>) => void;
-  setCookingTimeInMinutes: (_value: UserInputType<number | null>) => void;
-  setImage: (_value: UserInputType<string | null>) => void;
+  setName: (_data: InputType<string>) => void;
+  setDescription: (_value: string) => void;
+  setPreparationTimeInMinutes: (_value: number) => void;
+  setCookingTimeInMinutes: (_value: number) => void;
+  setImage: (_value: string) => void;
   addStep: () => void;
   insertIngredientsSteps: (
     ref: RefObject<HTMLTextAreaElement | null>,
@@ -176,10 +172,10 @@ const createIngredientsItem = (): IngredientItemsType => {
 export const defaultInitState: RecipeState = {
   id: '',
   name: { value: '' },
-  description: { value: null },
-  base64Image: { value: null },
-  preparationTimeInMinutes: { value: null },
-  cookingTimeInMinutes: { value: null },
+  description: null,
+  base64Image: null,
+  preparationTimeInMinutes: null,
+  cookingTimeInMinutes: null,
   equipments: [],
   steps: [createStepItem()],
   nutritionalFacts: null,
@@ -206,17 +202,13 @@ export const createRecipeStore = (
       },
       store: (set, get) => ({
         ...initState,
-        setName: (data: UserInputType<string>) => set(() => ({ name: data })),
-        setDescription: (description: UserInputType<string | null>) =>
-          set(() => ({ description })),
-        setPreparationTimeInMinutes: (
-          preparationTimeInMinutes: UserInputType<number | null>,
-        ) => set(() => ({ preparationTimeInMinutes })),
-        setCookingTimeInMinutes: (
-          cookingTimeInMinutes: UserInputType<number | null>,
-        ) => set(() => ({ cookingTimeInMinutes })),
-        setImage: (base64Image: UserInputType<string | null>) =>
-          set(() => ({ base64Image })),
+        setName: (data: InputType<string>) => set(() => ({ name: data })),
+        setDescription: (description: string) => set(() => ({ description })),
+        setPreparationTimeInMinutes: (preparationTimeInMinutes: number) =>
+          set(() => ({ preparationTimeInMinutes })),
+        setCookingTimeInMinutes: (cookingTimeInMinutes: number) =>
+          set(() => ({ cookingTimeInMinutes })),
+        setImage: (base64Image: string) => set(() => ({ base64Image })),
         setSteps: (steps: StepsItemType[]) => set(() => ({ steps })),
         addStep: () => {
           set((state) => ({ steps: [...state.steps, createStepItem()] }));
@@ -417,14 +409,10 @@ export const createRecipeStore = (
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
-          const { id, isValid, ...recipe } = get();
+          const { id, isValid, name, ...recipe } = get();
           return {
             ...recipe,
-            name: recipe.name.value,
-            description: recipe.description.value,
-            base64Image: recipe.base64Image.value,
-            preparationTimeInMinutes: recipe.preparationTimeInMinutes.value,
-            cookingTimeInMinutes: recipe.cookingTimeInMinutes.value,
+            name: name.value,
             steps: recipe.steps.map((s) => {
               return {
                 ingredients: s.ingredients.items.map((i) => i.ingredient.dto),
