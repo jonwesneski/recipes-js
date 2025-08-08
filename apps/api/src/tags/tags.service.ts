@@ -9,20 +9,21 @@ import {
 export class TagsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getTagNames({
-    cursorId = 1,
-  }: PrismaQueryParams): Promise<PrismaResults<string[]>> {
-    const tags = await this.prisma.tag.findMany({ cursor: { id: cursorId } });
+  async getTagNames(
+    params: PrismaQueryParams,
+  ): Promise<PrismaResults<string[]>> {
+    const tags = await this.prisma.tag.findMany({
+      cursor: params.cursorId ? { id: params.cursorId } : undefined,
+      skip: params.cursorId ? 1 : undefined,
+    });
     const count = await this.prisma.tag.count();
-    const latestCursor = cursorId + tags.length;
-    const possibleNextCursor = latestCursor + 1;
 
     return {
       data: tags.map((tag) => tag.name),
       pagination: {
         totalRecords: count,
-        currentCursor: cursorId,
-        nextCursor: possibleNextCursor < count ? possibleNextCursor : null,
+        currentCursor: tags[0].id,
+        nextCursor: tags.length > 0 ? tags[tags.length - 1].id : null,
       },
     };
   }

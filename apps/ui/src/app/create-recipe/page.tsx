@@ -11,7 +11,9 @@ import { type FormEvent } from 'react'
 
 const Page = () => {
   const { accessToken } = useAuthentication()
-  const { makeCreateDto, setBadRequest } = useRecipeStore((state) => state)
+  const { makeCreateDto, setErrors: setBadRequest } = useRecipeStore(
+    (state) => state,
+  )
   const { mutate } = useRecipesControllerCreateRecipeV1({
     mutation: { retry: false },
     request: {

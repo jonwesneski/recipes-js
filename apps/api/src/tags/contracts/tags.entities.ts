@@ -3,10 +3,10 @@ import { ApiProperty } from '@nestjs/swagger';
 export class PaginationEntity {
   @ApiProperty({ type: Number })
   totalRecords: number;
-  @ApiProperty({ type: Number })
-  currentCursor: number;
-  @ApiProperty({ type: Number, nullable: true })
-  nextCursor: number | null;
+  @ApiProperty({ type: String })
+  currentCursor: string;
+  @ApiProperty({ type: String, nullable: true })
+  nextCursor: string | null;
 }
 
 export class TagNamesEntity {

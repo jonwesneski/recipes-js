@@ -98,20 +98,15 @@ export type StepsItemType = {
   image?: string;
 };
 
-type InputType<T> = {
-  value: T;
-  error?: string;
-};
-
-export type RecipeState = Omit<CreateRecipeDto, 'name' | 'steps'> & {
+export type RecipeState = Omit<CreateRecipeDto, 'steps'> & {
   id: string;
-  name: InputType<string>;
   steps: StepsItemType[];
   isValid: boolean;
+  errors: BadRequestRecipeEntity;
 };
 
 export type RecipeActions = {
-  setName: (_data: InputType<string>) => void;
+  setName: (_data: string) => void;
   setDescription: (_value: string) => void;
   setPreparationTimeInMinutes: (_value: number) => void;
   setCookingTimeInMinutes: (_value: number) => void;
@@ -144,7 +139,7 @@ export type RecipeActions = {
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
-  setBadRequest: (_data: BadRequestRecipeEntity) => void;
+  setErrors: (_data: BadRequestRecipeEntity) => void;
 };
 
 export type RecipeStore = RecipeState & RecipeActions;
@@ -171,7 +166,7 @@ const createIngredientsItem = (): IngredientItemsType => {
 
 export const defaultInitState: RecipeState = {
   id: '',
-  name: { value: '' },
+  name: '',
   description: null,
   base64Image: null,
   preparationTimeInMinutes: null,
@@ -182,6 +177,7 @@ export const defaultInitState: RecipeState = {
   isPublic: true,
   tags: [],
   isValid: false,
+  errors: {},
 };
 
 export const createRecipeStore = (
@@ -192,7 +188,7 @@ export const createRecipeStore = (
       afterMiddlware: (_, set) => {
         set((state) => ({
           isValid:
-            state.name.value !== '' &&
+            state.name !== '' &&
             state.steps.every((s) =>
               s.ingredients.items.every(
                 (i) => i.ingredient.error === undefined,
@@ -202,7 +198,7 @@ export const createRecipeStore = (
       },
       store: (set, get) => ({
         ...initState,
-        setName: (data: InputType<string>) => set(() => ({ name: data })),
+        setName: (name: string) => set(() => ({ name })),
         setDescription: (description: string) => set(() => ({ description })),
         setPreparationTimeInMinutes: (preparationTimeInMinutes: number) =>
           set(() => ({ preparationTimeInMinutes })),
@@ -409,10 +405,9 @@ export const createRecipeStore = (
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
-          const { id, isValid, name, ...recipe } = get();
+          const { id, isValid, errors, ...recipe } = get();
           return {
             ...recipe,
-            name: name.value,
             steps: recipe.steps.map((s) => {
               return {
                 ingredients: s.ingredients.items.map((i) => i.ingredient.dto),
@@ -422,10 +417,8 @@ export const createRecipeStore = (
             }),
           };
         },
-        setBadRequest: (data: BadRequestRecipeEntity) => {
-          set((state) => ({
-            name: { value: state.name.value, error: data.name },
-          }));
+        setErrors: (errors: BadRequestRecipeEntity) => {
+          set(() => ({ errors }));
         },
       }),
     }),

@@ -1,10 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 export class BaseQueryDto {
   @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  cursorId?: number;
+  @IsString()
+  @Type(() => String)
+  cursorId?: string;
 
   @IsOptional()
   @IsInt()
