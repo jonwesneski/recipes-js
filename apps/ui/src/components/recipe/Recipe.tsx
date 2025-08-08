@@ -9,6 +9,7 @@ import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
 
 export const Recipe = () => {
+  const divRef = useRef<HTMLDivElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
   const {
     setName,
@@ -17,6 +18,7 @@ export const Recipe = () => {
     setPreparationTimeInMinutes,
     setImage,
     base64Image,
+    errors,
   } = useRecipeStore((state) => state)
 
   useEffect(() => {
@@ -24,6 +26,20 @@ export const Recipe = () => {
       nameRef.current.focus()
     }
   }, [])
+
+  useEffect(() => {
+    const firstError = Object.keys(errors)[0]
+    if (firstError && divRef.current) {
+      const element = divRef.current.querySelector(
+        `[data-error-for="${firstError}"]`,
+      )
+
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        ;(element as HTMLElement).focus({ preventScroll: true })
+      }
+    }
+  }, [errors])
 
   const handleOnNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value)
@@ -57,10 +73,11 @@ export const Recipe = () => {
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div ref={divRef} className="flex flex-col gap-10">
       <TextLabel
         ref={nameRef}
-        name="recipe"
+        name="name"
+        error={errors.name}
         placeholder="Recipe name"
         label="recipe name"
         isRequired

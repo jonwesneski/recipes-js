@@ -23,6 +23,7 @@ export const TextLabel = (props: TextLabelProps) => {
         ref={props.ref}
         id={props.name}
         name={props.name}
+        data-error-for={props.name}
         placeholder={props.placeholder}
         variant={props.variant}
         className="border-b-0 flex-1 block"
