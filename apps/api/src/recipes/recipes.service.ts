@@ -282,6 +282,8 @@ export class RecipesService {
     var s3BucketKeyName = `${userId}/${id}`;
     if (stepIndex !== undefined) {
       s3BucketKeyName += `/step-${stepIndex}`;
+    } else {
+      s3BucketKeyName += `/main`;
     }
     return {
       s3BucketKeyName,
