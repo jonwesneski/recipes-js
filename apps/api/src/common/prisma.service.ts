@@ -12,7 +12,7 @@ export type PrismaResults<T> = {
   data: T;
   pagination: {
     totalRecords: number;
-    currentCursor: string;
+    currentCursor: string | null;
     nextCursor: string | null;
   };
 };

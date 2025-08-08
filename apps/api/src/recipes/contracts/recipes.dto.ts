@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
 import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsBoolean,
   IsEnum,
@@ -204,10 +205,13 @@ export class CreateStepDto
   instruction?: string;
   @IsArray()
   @ApiProperty({ type: [CreateIngredientDto] })
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateIngredientDto)
   ingredients: CreateIngredientDto[];
   @IsString()
   @IsOptional()
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, nullable: true })
   base64Image?: string;
 }
 
@@ -223,6 +227,7 @@ export class CreateRecipeDto
       | 'imageUrl'
     >
 {
+  @IsString()
   @IsNotEmpty({ message: 'should not be empty' })
   @ApiProperty({ type: String })
   name: string;
@@ -305,7 +310,9 @@ export class EditStepDto
   @ApiProperty({ type: String, nullable: true })
   instruction?: string;
   @IsArray()
+  @ArrayNotEmpty()
   @ApiProperty({ type: [EditIngredientDto] })
+  @Type(() => EditIngredientDto)
   ingredients: EditIngredientDto[];
 }
 
@@ -321,6 +328,7 @@ export class EditRecipeDto
       | 'imageUrl'
     >
 {
+  @IsString()
   @IsOptional()
   @IsNotEmpty()
   @ApiProperty({ type: String })
@@ -348,6 +356,7 @@ export class EditRecipeDto
   @IsOptional()
   @IsArray()
   @ApiProperty({ type: [EditStepDto] })
+  @Type(() => EditStepDto)
   steps?: EditStepDto[];
   @IsOptional()
   @ValidateNested()

@@ -16,14 +16,14 @@ export class TagsService {
       cursor: params.cursorId ? { id: params.cursorId } : undefined,
       skip: params.cursorId ? 1 : undefined,
     });
-    const count = await this.prisma.tag.count();
-
+    const totalRecords = await this.prisma.tag.count();
+    const tagsFound = tags.length > 0;
     return {
       data: tags.map((tag) => tag.name),
       pagination: {
-        totalRecords: count,
-        currentCursor: tags[0].id,
-        nextCursor: tags.length > 0 ? tags[tags.length - 1].id : null,
+        totalRecords,
+        currentCursor: tagsFound ? tags[0].id : null,
+        nextCursor: tagsFound ? tags[tags.length - 1].id : null,
       },
     };
   }

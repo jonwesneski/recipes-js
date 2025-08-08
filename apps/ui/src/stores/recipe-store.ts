@@ -95,7 +95,7 @@ export type StepsItemType = {
   ref: RefObject<HTMLDivElement | null>;
   ingredients: IngredientItemsType;
   instructions: InstructionsType;
-  image?: string;
+  image: string | null;
 };
 
 export type RecipeState = Omit<CreateRecipeDto, 'steps'> & {
@@ -153,6 +153,7 @@ const createStepItem = (params?: {
     ref: createRef<HTMLDivElement>(),
     ingredients: params?.ingredients ?? createIngredientsItem(),
     instructions: params?.instructions ?? new InstructionsType(),
+    image: null,
   };
 };
 
@@ -405,14 +406,15 @@ export const createRecipeStore = (
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
-          const { id, isValid, errors, ...recipe } = get();
+          const { id, isValid, errors, base64Image, ...recipe } = get();
           return {
             ...recipe,
+            base64Image: base64Image?.split(',')[1] ?? null,
             steps: recipe.steps.map((s) => {
               return {
                 ingredients: s.ingredients.items.map((i) => i.ingredient.dto),
                 instruction: s.instructions.value,
-                base64Image: '', //TODO
+                base64Image: s.image?.split(',')[1] ?? null,
               };
             }),
           };

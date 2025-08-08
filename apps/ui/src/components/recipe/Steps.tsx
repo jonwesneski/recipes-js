@@ -78,7 +78,7 @@ export const Steps = () => {
                   onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
                   onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
                 />
-                {s.image !== undefined && (
+                {s.image ? (
                   <Image
                     src={s.image}
                     className="w-9/10 h-auto mx-auto"
@@ -86,7 +86,7 @@ export const Steps = () => {
                     height={0}
                     alt="taken"
                   />
-                )}
+                ) : null}
               </div>
             </div>
             {index < steps.length - 1 && <hr className="mt-5" />}

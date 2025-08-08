@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { createId as cuid } from '@paralleldrive/cuid2';
 import { Prisma } from '@repo/database';
 import { PrismaService } from 'src/common';
 import { S3Service } from 'src/common/s3.service';
@@ -168,15 +169,45 @@ export class RecipesService {
     data: CreateRecipeDto,
   ): Promise<RecipeType> {
     const { base64Image, tags, ...remainingData } = data;
-    const s3BucketKeyName = data.name.replaceAll(' ', '_');
-    const imageUrl = `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`;
+    const newId = cuid();
+    const { s3BucketKeyName, s3ImageUrl } = this.makeS3ImageUrl(userId, newId);
+    const stepsS3Images =
+      remainingData.steps.reduce(
+        (acc, s, i) => {
+          if (s.base64Image) {
+            const { s3BucketKeyName, s3ImageUrl } = this.makeS3ImageUrl(
+              userId,
+              newId,
+              i,
+            );
+            acc[i] = {
+              base64Image: s.base64Image,
+              s3BucketKeyName,
+              s3ImageUrl,
+            };
+          } else {
+            acc[i] = {};
+          }
+
+          return acc;
+        },
+        {} as Record<
+          number,
+          {
+            base64Image?: string;
+            s3BucketKeyName?: string;
+            s3ImageUrl?: string;
+          }
+        >,
+      ) || {};
 
     const recipe = await this.prisma.$transaction(async () => {
       const recipe = await this.prisma.recipe.create({
         data: {
           ...remainingData,
+          id: newId,
           userId,
-          imageUrl,
+          imageUrl: s3ImageUrl,
           steps: {
             create: data.steps.map((step, i) => ({
               displayOrder: i,
@@ -194,6 +225,7 @@ export class RecipesService {
                     }) || [],
                 },
               },
+              imageUrl: stepsS3Images[i].s3ImageUrl,
             })),
           },
           nutritionalFacts: {
@@ -219,16 +251,42 @@ export class RecipesService {
         include: RecipeInclude,
       });
 
-      if (base64Image) {
-        await this.s3Service.uploadFile(
-          s3BucketKeyName,
-          Buffer.from(base64Image, 'base64'),
-        );
-      }
+      await Promise.all([
+        base64Image
+          ? this.s3Service.uploadFile(
+              s3BucketKeyName,
+              Buffer.from(base64Image, 'base64'),
+            )
+          : undefined,
+        ...Object.keys(stepsS3Images)
+          .filter((key) => stepsS3Images[key].base64Image)
+          .map((key) =>
+            this.s3Service.uploadFile(
+              stepsS3Images[key].s3BucketKeyName,
+              Buffer.from(stepsS3Images[key].base64Image, 'base64'),
+            ),
+          ),
+      ]);
+
       return recipe;
     });
 
     return this.transformRecipe(recipe);
+  }
+
+  private makeS3ImageUrl(
+    userId: string,
+    id: string,
+    stepIndex?: number,
+  ): { s3BucketKeyName: string; s3ImageUrl: string } {
+    var s3BucketKeyName = `${userId}/${id}`;
+    if (stepIndex !== undefined) {
+      s3BucketKeyName += `/step-${stepIndex}`;
+    }
+    return {
+      s3BucketKeyName,
+      s3ImageUrl: `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`,
+    };
   }
 
   async updateRecipe(
