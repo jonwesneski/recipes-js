@@ -8,7 +8,9 @@ import { RecipeInclude, RecipePrismaType } from 'src/recipes';
 import {
   CreateRecipeDto,
   EditRecipeDto,
+  EditStepDto,
   RecipeEntity,
+  StepEntity,
 } from 'src/recipes/contracts';
 import request from 'supertest';
 import { App } from 'supertest/types';
@@ -194,7 +196,7 @@ describe('RecipesController (e2e)', () => {
   });
 
   describe(`PATCH ${basePath}/[id]`, () => {
-    const createRecipe = async () => {
+    const createRecipe = async (): Promise<RecipeEntity> => {
       const sampleRecipe: CreateRecipeDto = {
         name: uuidv4(),
         description: 'This is a test recipe',
@@ -218,7 +220,31 @@ describe('RecipesController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(sampleRecipe)
         .expect(201);
-      return response;
+      return response.body as RecipeEntity;
+    };
+
+    const stepEntityToDto = (
+      entity: StepEntity[],
+      newSteps?: EditStepDto[],
+    ): EditStepDto[] => {
+      const updated: EditStepDto[] = entity.map((s) => {
+        return {
+          instruction: s.instruction || undefined,
+          ingredients: s.ingredients.map((i) => {
+            return {
+              id: i.id,
+              name: i.name,
+              amount: i.amount,
+              unit: i.unit,
+            };
+          }),
+        };
+      });
+      if (newSteps) {
+        updated.push(...newSteps);
+      }
+
+      return updated;
     };
 
     it('update top recipe fields', async () => {
@@ -233,7 +259,7 @@ describe('RecipesController (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .patch(`${basePath}/${response.body.id}`)
+        .patch(`${basePath}/${response.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
@@ -255,64 +281,64 @@ describe('RecipesController (e2e)', () => {
     it('replace an existing step', async () => {
       const response = await createRecipe();
 
-      const steps = [...response.body.steps];
-      const { id, ...step } = steps[0];
+      const steps = [...response.steps];
       const editRecipe: EditRecipeDto = {
-        steps: [step],
+        steps: stepEntityToDto(steps),
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${response.body.id}`)
+        .patch(`${basePath}/${response.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
-          expect(res.body.steps[0].id).not.toBe(response.body.steps[0].id);
+          expect(res.body.steps[0].id).not.toBe(response.steps[0].id);
         });
     });
 
     it('add another ingredient to step', async () => {
       const response = await createRecipe();
 
-      const steps = [...response.body.steps];
-      const { id, ...step } = steps[0];
-      step.ingredients.push({
-        name: 'New Ingredient',
-        amount: 50,
-        unit: 'grams',
-      });
+      const steps = [...response.steps];
       const editRecipe: EditRecipeDto = {
-        steps: [step],
+        steps: stepEntityToDto(steps, [
+          {
+            ingredients: [
+              {
+                name: 'New Ingredient',
+                amount: 50,
+                unit: 'grams',
+              },
+            ],
+          },
+        ]),
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${response.body.id}`)
+        .patch(`${basePath}/${response.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
-          expect(res.body.steps[0].id).not.toBe(response.body.steps[0].id);
+          expect(res.body.steps[0].id).not.toBe(response.steps[0].id);
         });
     });
 
     it('add new ingredients to step', async () => {
       const response = await createRecipe();
 
-      const steps = [...response.body.steps];
-      const { id, ...step } = steps[0];
-      step.ingredients[0] = {
-        name: 'New Ingredient',
-        amount: 50,
-        unit: 'grams',
-      };
+      const steps = [...response.steps];
+      steps[0].ingredients[0].name = 'New Ingredient';
+      steps[0].ingredients[0].amount = 50;
+      steps[0].ingredients[0].unit = 'grams';
       const editRecipe: EditRecipeDto = {
-        steps: [step],
+        steps: stepEntityToDto(steps),
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${response.body.id}`)
+        .patch(`${basePath}/${response.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
-          expect(res.body.steps[0].id).not.toBe(response.body.steps[0].id);
+          expect(res.body.steps[0].id).not.toBe(response.steps[0].id);
         });
     });
 
@@ -325,7 +351,7 @@ describe('RecipesController (e2e)', () => {
         steps: [],
       };
       return request(app.getHttpServer())
-        .patch(`${basePath}/${response.body.id}`)
+        .patch(`${basePath}/${response.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
         .expect(400)
