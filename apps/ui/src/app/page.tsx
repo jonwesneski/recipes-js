@@ -1,6 +1,6 @@
 'use client'
 
-import googleIcon from '@public/Google__G__logo.svg'
+import GoogleLogo from '@public/Google__G__logo.svg'
 import { CustomButton } from '@repo/design-system'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import Image from 'next/image'
@@ -30,7 +30,11 @@ const Page = () => {
             variant="opposite"
             className="flex items-start w-full"
           >
-            <Image src={googleIcon} alt="google" className="mx-4 grow-0" />
+            <Image
+              src={GoogleLogo as string}
+              alt="google"
+              className="mx-4 grow-0"
+            />
             Google.
           </CustomButton>
         </div>
