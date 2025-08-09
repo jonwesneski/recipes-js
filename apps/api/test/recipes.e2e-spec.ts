@@ -23,6 +23,9 @@ describe('RecipesController (e2e)', () => {
   const mockJwtGuard: CanActivate = { canActivate: jest.fn(() => true) };
   const mockS3Service = {
     uploadFile: jest.fn(),
+    makeS3ImageUrl: jest
+      .fn()
+      .mockReturnValue({ s3BucketKeyName: 'string', s3ImageUrl: 'string' }),
   };
   let user1: Awaited<ReturnType<PrismaService['user']['findUnique']>>;
   let recipe1: RecipePrismaType;
