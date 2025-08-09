@@ -179,7 +179,8 @@ describe('RecipesController (e2e)', () => {
             steps: {
               '0': {
                 amount: 'property amount should not exist',
-                ingredients: 'ingredients must be an array',
+                ingredients:
+                  'ingredients should not be empty, ingredients must be an array',
                 name: 'property name should not exist',
                 unit: 'property unit should not exist',
               },
