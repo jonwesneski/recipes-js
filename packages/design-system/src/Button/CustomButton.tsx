@@ -1,10 +1,16 @@
+import type { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from 'react'
 import { mergeCss } from '../utils'
-import { CustomButton, CustomButtonProps } from './CustomButton'
 
-export type ButtonProps = Omit<CustomButtonProps, 'children'> & { text: string }
-export const Button = ({ variant = 'default', ...props }: ButtonProps) => {
+export type CustomButtonProps = Omit<
+  DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
+  'style'
+> & { variant?: 'default' | 'opposite'; children: ReactNode }
+export const CustomButton = ({
+  variant = 'default',
+  ...props
+}: CustomButtonProps) => {
   return (
-    <CustomButton
+    <button
       {...props}
       type={props.type ? props.type : 'button'}
       className={mergeCss(
@@ -22,7 +28,7 @@ export const Button = ({ variant = 'default', ...props }: ButtonProps) => {
         props.className,
       )}
     >
-      {`${props.text}.`}
-    </CustomButton>
+      {props.children}
+    </button>
   )
 }

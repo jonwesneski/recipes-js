@@ -14,21 +14,17 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-
-type OmitFields<T, K extends keyof any> = Omit<
-  T,
-  'id' | 'createdAt' | 'updatedAt' | K
->;
+import { OmitPrismaFieldsDto } from 'src/common/utilityTypes';
 
 export class EquipmentDto
-  implements OmitFields<Prisma.EquipmentCreateInput, 'recipe'>
+  implements OmitPrismaFieldsDto<Prisma.EquipmentCreateInput, 'recipe'>
 {
   @ApiProperty({ type: String })
   name: string;
 }
 
 export class NutritionalFactsDto
-  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'recipe'>
+  implements OmitPrismaFieldsDto<Prisma.NutritionalFactsCreateInput, 'recipe'>
 {
   @IsNumber()
   @Min(0)
@@ -177,7 +173,8 @@ export class NutritionalFactsDto
 }
 
 export class CreateIngredientDto
-  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
+  implements
+    OmitPrismaFieldsDto<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
 {
   @IsNumber()
   @Min(0)
@@ -194,7 +191,7 @@ export class CreateIngredientDto
 
 export class CreateStepDto
   implements
-    OmitFields<
+    OmitPrismaFieldsDto<
       Prisma.StepUncheckedCreateWithoutRecipeInput,
       'displayOrder' | 'recipeId' | 'ingredients' | 'instructions'
     >
@@ -217,7 +214,7 @@ export class CreateStepDto
 
 export class CreateRecipeDto
   implements
-    OmitFields<
+    OmitPrismaFieldsDto<
       Prisma.RecipeUncheckedCreateInput,
       | 'equipments'
       | 'nutritionalFacts'
@@ -272,109 +269,4 @@ export class CreateRecipeDto
   @IsBoolean()
   @ApiProperty({ type: Boolean })
   isPublic: boolean;
-}
-
-export class EditIngredientDto
-  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
-{
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  id?: string;
-  @IsNumber()
-  @Min(0)
-  @ApiProperty({ type: Number })
-  amount: number;
-  @IsEnum(MeasurementUnit)
-  @ApiProperty({ enum: MeasurementUnit })
-  unit: MeasurementUnit;
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  name: string;
-}
-
-export class EditStepDto
-  implements
-    OmitFields<
-      Prisma.StepUncheckedCreateWithoutRecipeInput,
-      'displayOrder' | 'recipeId' | 'ingredients' | 'instructions'
-    >
-{
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  id?: string;
-  @IsString()
-  @IsOptional()
-  @ApiProperty({ type: String, nullable: true })
-  instruction?: string;
-  @IsArray()
-  @ArrayNotEmpty()
-  @ApiProperty({ type: [EditIngredientDto] })
-  @Type(() => EditIngredientDto)
-  ingredients: EditIngredientDto[];
-}
-
-export class EditRecipeDto
-  implements
-    OmitFields<
-      Prisma.RecipeUncheckedUpdateInput,
-      | 'equipments'
-      | 'nutritionalFacts'
-      | 'userId'
-      | 'steps'
-      | 'tags'
-      | 'imageUrl'
-    >
-{
-  @IsString()
-  @IsOptional()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  name?: string;
-  @IsNotEmpty()
-  @IsString()
-  @IsOptional()
-  @ApiProperty({ type: String, nullable: true })
-  description?: string | null;
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  base64Image?: string;
-  @IsInt()
-  @IsOptional()
-  @Min(0)
-  @ApiProperty({ type: Number, nullable: true })
-  preparationTimeInMinutes?: number | null;
-  @IsInt()
-  @IsOptional()
-  @Min(0)
-  @ApiProperty({ type: Number, nullable: true })
-  cookingTimeInMinutes?: number | null;
-  @IsOptional()
-  @IsArray()
-  @ApiProperty({ type: [EditStepDto] })
-  @Type(() => EditStepDto)
-  steps?: EditStepDto[];
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => NutritionalFactsDto)
-  @ApiProperty({ type: NutritionalFactsDto, nullable: true })
-  nutritionalFacts?: NutritionalFactsDto;
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  @ApiProperty({ type: [String] })
-  tags?: string[];
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  @ApiProperty({ type: [String] })
-  equipments?: string[];
-  @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ type: Boolean })
-  isPublic?: boolean;
 }

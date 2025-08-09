@@ -314,19 +314,23 @@ export class RecipesService {
                       deleteMany: {
                         id: {
                           notIn: s.ingredients
-                            .map((ing) => ing.id)
-                            .filter((id) => id !== undefined),
+                            ? s.ingredients
+                                .map((ing) => ing.id)
+                                .filter((id) => id !== undefined)
+                            : [],
                         },
                       },
                       upsert: s.ingredients
-                        .filter((ing) => ing.id)
-                        .map((ing, k) => {
-                          return {
-                            where: { id: ing.id },
-                            update: { ...ing, displayOrder: k },
-                            create: { ...ing, displayOrder: k },
-                          };
-                        }),
+                        ? s.ingredients
+                            .filter((ing) => ing.id)
+                            .map((ing, k) => {
+                              return {
+                                where: { id: ing.id },
+                                update: { ...ing, displayOrder: k },
+                                create: { ...ing, displayOrder: k },
+                              };
+                            })
+                        : [],
                     },
                   },
                   create: {
@@ -334,13 +338,14 @@ export class RecipesService {
                     ...s,
                     ingredients: {
                       createMany: {
-                        data:
-                          s.ingredients
-                            .filter((ing) => !ing.id)
-                            .map((ing, k) => ({
-                              displayOrder: k,
-                              ...ing,
-                            })) || [],
+                        data: s.ingredients
+                          ? s.ingredients
+                              .filter((ing) => !ing.id)
+                              .map((ing, k) => ({
+                                displayOrder: k,
+                                ...ing,
+                              }))
+                          : [],
                       },
                     },
                   },
@@ -353,15 +358,16 @@ export class RecipesService {
                 instruction: step.instruction,
                 ingredients: {
                   createMany: {
-                    data:
-                      step.ingredients.map((ingredient, k) => {
-                        return {
-                          displayOrder: k,
-                          amount: ingredient.amount,
-                          unit: ingredient.unit,
-                          name: ingredient.name,
-                        };
-                      }) || [],
+                    data: step.ingredients
+                      ? step.ingredients.map((ingredient, k) => {
+                          return {
+                            displayOrder: k,
+                            amount: ingredient.amount,
+                            unit: ingredient.unit,
+                            name: ingredient.name,
+                          };
+                        })
+                      : [],
                   },
                 },
               })),
