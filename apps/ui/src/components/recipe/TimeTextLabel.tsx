@@ -16,12 +16,6 @@ export const TimeTextLabel = (_props: TimeTextLabelProps) => {
   const [time, setTime] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // useEffect(() => {
-  //   if (inputRef.current) {
-  //     onChange(time)
-  //   }
-  // }, [time])
-
   const handleOnInput = (event: React.InputEvent<HTMLInputElement>) => {
     if (
       event.nativeEvent.inputType === 'insertText' &&
