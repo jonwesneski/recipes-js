@@ -30,7 +30,10 @@ const Page = ({
   return (
     <>
       {recipe && (
-        <RecipeLayout title={recipe.name} subtitle={recipe.description}>
+        <RecipeLayout
+          title={recipe.name}
+          subtitle={recipe.description ?? undefined}
+        >
           <RecipeIngredientsOverview steps={recipe.steps} />
           <RecipeSteps steps={recipe.steps} />
           {recipe.nutritionalFacts && (

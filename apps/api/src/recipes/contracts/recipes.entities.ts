@@ -101,11 +101,11 @@ export class StepEntity
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
-  @ApiProperty({ type: String, required: false })
+  @ApiProperty({ type: String, nullable: true })
   instruction: string | null;
   @ApiProperty({ type: [IngredientEntity] })
   ingredients: IngredientEntity[];
-  @ApiProperty({ type: String, required: false })
+  @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
 }
 
@@ -129,13 +129,13 @@ export class RecipeEntity implements RecipeType {
   updatedAt: Date;
   @ApiProperty()
   name: string;
-  @ApiProperty({ type: String, required: false })
+  @ApiProperty({ type: String, nullable: true })
   description: string | null;
   @ApiProperty({ type: Number, nullable: true })
   preparationTimeInMinutes: number | null;
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes: number | null;
-  @ApiProperty({ type: String, required: false })
+  @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
   @ApiProperty({ type: [EquipmentEntity] })
   equipments: EquipmentEntity[];
