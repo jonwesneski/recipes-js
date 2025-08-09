@@ -3,7 +3,7 @@ import { mergeCss } from '../utils'
 
 type LabelProps = Omit<
   DetailedHTMLProps<LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>,
-  'style' | 'type'
+  'style'
 > & { text: string }
 export const Label = ({ text, ...props }: LabelProps) => {
   return (

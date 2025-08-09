@@ -34,7 +34,7 @@ export class AuthController {
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
       res.redirect(
-        `${frontendUrl}redirect?token=${googleUser.tokens.accessToken} `,
+        `${frontendUrl}redirect?token=${googleUser.tokens.accessToken}`,
       );
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });

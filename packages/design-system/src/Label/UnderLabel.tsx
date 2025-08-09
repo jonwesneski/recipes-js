@@ -4,7 +4,7 @@ import { Label } from './Label'
 
 type LabelProps = Omit<
   DetailedHTMLProps<LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>,
-  'style' | 'type'
+  'style'
 > & { text: string; isRequired: boolean; error?: string; children: ReactNode }
 export const UnderLabel = (props: LabelProps) => {
   return (
