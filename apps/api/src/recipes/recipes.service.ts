@@ -170,16 +170,16 @@ export class RecipesService {
   ): Promise<RecipeType> {
     const { base64Image, tags, ...remainingData } = data;
     const newId = cuid();
-    const { s3BucketKeyName, s3ImageUrl } = this.makeS3ImageUrl(userId, newId);
+    const { s3BucketKeyName, s3ImageUrl } = this.s3Service.makeS3ImageUrl(
+      userId,
+      newId,
+    );
     const stepsS3Images =
       remainingData.steps.reduce(
         (acc, s, i) => {
           if (s.base64Image) {
-            const { s3BucketKeyName, s3ImageUrl } = this.makeS3ImageUrl(
-              userId,
-              newId,
-              i,
-            );
+            const { s3BucketKeyName, s3ImageUrl } =
+              this.s3Service.makeS3ImageUrl(userId, newId, i);
             acc[i] = {
               base64Image: s.base64Image,
               s3BucketKeyName,
@@ -272,23 +272,6 @@ export class RecipesService {
     });
 
     return this.transformRecipe(recipe);
-  }
-
-  private makeS3ImageUrl(
-    userId: string,
-    id: string,
-    stepIndex?: number,
-  ): { s3BucketKeyName: string; s3ImageUrl: string } {
-    var s3BucketKeyName = `${userId}/${id}`;
-    if (stepIndex !== undefined) {
-      s3BucketKeyName += `/step-${stepIndex}`;
-    } else {
-      s3BucketKeyName += `/main`;
-    }
-    return {
-      s3BucketKeyName,
-      s3ImageUrl: `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`,
-    };
   }
 
   async updateRecipe(

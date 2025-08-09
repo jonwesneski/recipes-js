@@ -258,7 +258,7 @@ export class RecipeMinimalEntity implements RecipeMinimalType {
   id: string;
   @ApiProperty()
   name: string;
-  @ApiProperty({ type: String, required: false })
+  @ApiProperty({ type: String, nullable: true })
   description: string | null;
   @ApiProperty()
   imageUrl: string;
