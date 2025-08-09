@@ -1,6 +1,5 @@
 import { Label } from '@repo/design-system'
 import {
-  useEffect,
   useRef,
   useState,
   type DetailedHTMLProps,
@@ -17,9 +16,11 @@ export const TimeTextLabel = (_props: TimeTextLabelProps) => {
   const [time, setTime] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    onChange(time)
-  }, [time])
+  // useEffect(() => {
+  //   if (inputRef.current) {
+  //     onChange(time)
+  //   }
+  // }, [time])
 
   const handleOnInput = (event: React.InputEvent<HTMLInputElement>) => {
     if (
@@ -34,6 +35,7 @@ export const TimeTextLabel = (_props: TimeTextLabelProps) => {
             '0',
           )
         if (digitString.length <= 4) {
+          onChange(transformResult(digitString))
           return transformResult(digitString)
         }
         return t
@@ -44,6 +46,7 @@ export const TimeTextLabel = (_props: TimeTextLabelProps) => {
         const digitString = nonZeros
           .slice(0, nonZeros.length - 1)
           .padStart(4, '0')
+        onChange(transformResult(digitString))
         return transformResult(digitString)
       })
     }
