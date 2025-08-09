@@ -322,10 +322,11 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    it('add new ingredients to step', async () => {
+    it('re-create ingredients to existing step', async () => {
       const response = await createRecipe();
 
       const steps = [...response.steps];
+      steps[0].ingredients[0].id = undefined as unknown as string;
       steps[0].ingredients[0].name = 'New Ingredient';
       steps[0].ingredients[0].amount = 50;
       steps[0].ingredients[0].unit = 'grams';
