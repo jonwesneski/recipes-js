@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
-import { RecipeMinimalType, RecipeType } from '../recipes.service';
+import type { RecipeMinimalType, RecipeType } from '../recipes.service';
 
 type OmitFields<T, K extends keyof any> = Omit<
   T,
@@ -113,7 +113,7 @@ export class TagsType {
   name: string;
 }
 
-export class UserEntity {
+export class RecipeUserEntity {
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -145,10 +145,112 @@ export class RecipeEntity implements RecipeType {
   nutritionalFacts: NutritionalFactsEntity | null;
   @ApiProperty({ type: [String] })
   tags: string[];
-  @ApiProperty({ type: UserEntity })
-  user: UserEntity;
+  @ApiProperty({ type: RecipeUserEntity })
+  user: RecipeUserEntity;
   @ApiProperty()
   isPublic: boolean;
+}
+
+export class BadRequestIngredientEntity {
+  @ApiProperty({ type: String, required: false })
+  amount: string;
+  @ApiProperty({ type: String, required: false })
+  unit: string;
+  @ApiProperty({ type: String, required: false })
+  name: string;
+}
+
+export class BadRequestStepEntity {
+  @ApiProperty({ type: String, required: false })
+  instruction?: string;
+  @ApiProperty({ type: [BadRequestIngredientEntity], required: false })
+  ingredients?: BadRequestIngredientEntity[];
+  @ApiProperty({ type: String })
+  base64Image?: string;
+}
+
+export class BadRequestNutritionalFactsEntity {
+  @ApiProperty({ type: String, required: false })
+  servings?: string;
+  @ApiProperty({ type: String, required: false })
+  servingAmount?: string;
+  @ApiProperty({ type: String, required: false })
+  servingUnit?: string;
+  @ApiProperty({ type: String, required: false })
+  proteinInG?: string;
+  @ApiProperty({ type: String, required: false })
+  totalFatInG?: string;
+  @ApiProperty({ type: String, required: false })
+  carbohydratesInG?: string;
+  @ApiProperty({ type: String, required: false })
+  fiberInG?: string;
+  @ApiProperty({ type: String, required: false })
+  sugarInG?: string;
+  @ApiProperty({ type: String, required: false })
+  sodiumInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  cholesterolInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  saturatedFatInG?: string;
+  @ApiProperty({ type: String, required: false })
+  transFatInG?: string;
+  @ApiProperty({ type: String, required: false })
+  potassiumInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  vitaminAInIU?: string;
+  @ApiProperty({ type: String, required: false })
+  vitaminCInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  calciumInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  ironInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  vitaminDInIU?: string;
+  @ApiProperty({ type: String, required: false })
+  vitaminB6InMg?: string;
+  @ApiProperty({ type: String, required: false })
+  vitaminB12InMg?: string;
+  @ApiProperty({ type: String, required: false })
+  magnesiumInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  folateInMcg?: string;
+  @ApiProperty({ type: String, required: false })
+  thiaminInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  riboflavinInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  niacinInMg?: string;
+  @ApiProperty({ type: String, required: false })
+  caloriesInKcal?: string;
+  @ApiProperty({ type: String, required: false })
+  fatInG?: string;
+  @ApiProperty({ type: String, required: false })
+  fiber?: string;
+  @ApiProperty({ type: String, required: false })
+  sugar?: string;
+}
+
+export class BadRequestRecipeEntity {
+  @ApiProperty({ type: String, required: false })
+  name?: string;
+  @ApiProperty({ type: String, required: false })
+  description?: string;
+  @ApiProperty({ type: String, required: false })
+  base64Image?: string;
+  @ApiProperty({ type: String, required: false })
+  preparationTimeInMinutes?: string;
+  @ApiProperty({ type: String, required: false })
+  cookingTimeInMinutes?: string;
+  @ApiProperty({ type: [BadRequestStepEntity], required: false })
+  steps?: BadRequestStepEntity[];
+  @ApiProperty({ type: BadRequestNutritionalFactsEntity, required: false })
+  nutritionalFacts?: BadRequestNutritionalFactsEntity;
+  @ApiProperty({ type: [String], required: false })
+  tags?: string[];
+  @ApiProperty({ type: [String], required: false })
+  equipments?: string[];
+  @ApiProperty({ type: String, required: false })
+  isPublic: string;
 }
 
 export class RecipeMinimalEntity implements RecipeMinimalType {
@@ -162,6 +264,6 @@ export class RecipeMinimalEntity implements RecipeMinimalType {
   imageUrl: string;
   @ApiProperty({ type: [String] })
   tags: string[];
-  @ApiProperty({ type: UserEntity })
-  user: UserEntity;
+  @ApiProperty({ type: RecipeUserEntity })
+  user: RecipeUserEntity;
 }

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@repo/database';
 
 export type PrismaQueryParams = {
-  cursorId?: number;
+  cursorId?: string;
   take?: number;
   skip?: number;
 };
@@ -12,8 +12,8 @@ export type PrismaResults<T> = {
   data: T;
   pagination: {
     totalRecords: number;
-    currentCursor: number;
-    nextCursor: number | null;
+    currentCursor: string | null;
+    nextCursor: string | null;
   };
 };
 

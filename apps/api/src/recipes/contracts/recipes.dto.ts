@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
 import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsBoolean,
   IsEnum,
@@ -204,7 +205,14 @@ export class CreateStepDto
   instruction?: string;
   @IsArray()
   @ApiProperty({ type: [CreateIngredientDto] })
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateIngredientDto)
   ingredients: CreateIngredientDto[];
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ type: String, nullable: true })
+  base64Image?: string;
 }
 
 export class CreateRecipeDto
@@ -219,7 +227,8 @@ export class CreateRecipeDto
       | 'imageUrl'
     >
 {
-  @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty({ message: 'should not be empty' })
   @ApiProperty({ type: String })
   name: string;
   @IsNotEmpty()
@@ -229,8 +238,9 @@ export class CreateRecipeDto
   description?: string | null;
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ type: String })
-  base64Image: string;
+  @IsOptional()
+  @ApiProperty({ type: String, nullable: true })
+  base64Image?: string | null;
   @IsInt()
   @IsOptional()
   @Min(0)
@@ -242,6 +252,8 @@ export class CreateRecipeDto
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes?: number | null;
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateStepDto)
   @ApiProperty({ type: [CreateStepDto] })
   steps: CreateStepDto[];
   @IsOptional()
@@ -258,6 +270,7 @@ export class CreateRecipeDto
   @ApiProperty({ type: [String] })
   equipments: string[];
   @IsBoolean()
+  @ApiProperty({ type: Boolean })
   isPublic: boolean;
 }
 
@@ -297,7 +310,9 @@ export class EditStepDto
   @ApiProperty({ type: String, nullable: true })
   instruction?: string;
   @IsArray()
+  @ArrayNotEmpty()
   @ApiProperty({ type: [EditIngredientDto] })
+  @Type(() => EditIngredientDto)
   ingredients: EditIngredientDto[];
 }
 
@@ -313,6 +328,7 @@ export class EditRecipeDto
       | 'imageUrl'
     >
 {
+  @IsString()
   @IsOptional()
   @IsNotEmpty()
   @ApiProperty({ type: String })
@@ -340,6 +356,7 @@ export class EditRecipeDto
   @IsOptional()
   @IsArray()
   @ApiProperty({ type: [EditStepDto] })
+  @Type(() => EditStepDto)
   steps?: EditStepDto[];
   @IsOptional()
   @ValidateNested()
@@ -358,5 +375,6 @@ export class EditRecipeDto
   equipments?: string[];
   @IsOptional()
   @IsBoolean()
+  @ApiProperty({ type: Boolean })
   isPublic?: boolean;
 }

@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 import { awsConfig, type AwsConfigType } from './config/aws.config';
 
+type S3ImageDataType = { s3BucketKeyName: string; s3ImageUrl: string };
 @Injectable()
 export class S3Service {
   private readonly logger = new Logger(S3Service.name);
@@ -38,5 +39,22 @@ export class S3Service {
       this.logger.error(`Error uploading file: ${JSON.stringify(err)}`);
       throw err;
     }
+  }
+
+  makeS3ImageUrl(
+    userId: string,
+    id: string,
+    stepIndex?: number,
+  ): S3ImageDataType {
+    var s3BucketKeyName = `${userId}/${id}`;
+    if (stepIndex !== undefined) {
+      s3BucketKeyName += `/step-${stepIndex}`;
+    } else {
+      s3BucketKeyName += `/main`;
+    }
+    return {
+      s3BucketKeyName,
+      s3ImageUrl: `${this.cloudFrontBaseUrl}/${s3BucketKeyName}`,
+    };
   }
 }

@@ -8,11 +8,21 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiOkResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards';
 import { throwIfConflict, throwIfNotFound } from 'src/common';
 import { parseHelper } from 'src/common/header.decorators';
-import { CreateRecipeDto, EditRecipeDto, RecipeEntity } from './contracts';
+import {
+  BadRequestRecipeEntity,
+  CreateRecipeDto,
+  EditRecipeDto,
+  RecipeEntity,
+} from './contracts';
 import { RecipesService } from './recipes.service';
 
 @Controller({
@@ -53,6 +63,8 @@ export class RecipesController {
 
   @Post()
   @ApiBody({ type: CreateRecipeDto })
+  @ApiOkResponse({ type: RecipeEntity })
+  @ApiBadRequestResponse({ type: BadRequestRecipeEntity })
   @UseGuards(JwtGuard)
   async createRecipe(
     // TODO: can't get this to work in jest

@@ -1,18 +1,19 @@
 'use client'
 
-import { type CreateRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
-import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { Button } from '@repo/design-system'
 import { NavigationLayout } from '@src/components/navigation'
 import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
-import { CameraProvider } from '@src/providers/CameraProvider'
-import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
-import { useEffect, useState } from 'react'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { useRouter } from 'next/navigation'
+import { type FormEvent } from 'react'
 
 const Page = () => {
   const { accessToken } = useAuthentication()
+  const { makeCreateDto, setErrors: setBadRequest } = useRecipeStore(
+    (state) => state,
+  )
   const { mutate } = useRecipesControllerCreateRecipeV1({
     mutation: { retry: false },
     request: {
@@ -21,53 +22,41 @@ const Page = () => {
       },
     },
   })
+  const router = useRouter()
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
     mutate(
-      { data: {} as CreateRecipeDto },
+      { data: makeCreateDto() },
       {
-        onSuccess: () => undefined,
-        onError: () => undefined,
+        onSuccess: (data) => {
+          router.push(`/recipes/${data.user.id}/${data.id}`)
+        },
+        onError: (error) => {
+          if (error.response?.data) {
+            setBadRequest(error.response.data)
+          }
+        },
       },
     )
-    // router.replace('/recipes/jon/tres-leches-cake', undefined, {
-    //   shallow: true,
-    // })
-    window.history.replaceState(null, '', '/recipes/jon/tres-leches-cake')
   }
 
-  const [_tags, setTags] = useState<string[]>([])
-  useEffect(() => {
-    // todo add params
-    const fetchTags = async () => {
-      const currentTags = await tagsControllerTagNameListV1()
-      setTags((tags) => [...tags, ...currentTags.data])
-      if (currentTags.pagination.nextCursor !== null) {
-        await fetchTags()
-      }
-    }
-
-    fetchTags().catch((e: unknown) => console.log(e))
-  }, [])
-
   return (
-    <RecipeStoreProvider initialState={{ editEnabled: true }}>
-      <CameraProvider>
-        <NavigationLayout>
-          <div className="flex justify-center">
-            <div>
-              <Recipe />
-              <Button
-                className="mt-3 mx-auto block"
-                text="submit"
-                variant="opposite"
-                onClick={() => handleSubmit()}
-              />
-            </div>
-          </div>
-        </NavigationLayout>
-      </CameraProvider>
-    </RecipeStoreProvider>
+    <NavigationLayout>
+      <form
+        className="flex justify-center flex-col px-3"
+        onSubmit={handleSubmit}
+      >
+        <Recipe />
+        <Button
+          className="mt-3 mx-auto block"
+          text="submit"
+          variant="opposite"
+          type="submit"
+        />
+      </form>
+    </NavigationLayout>
   )
 }
 export default Page

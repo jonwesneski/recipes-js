@@ -23,6 +23,9 @@ describe('RecipesController (e2e)', () => {
   const mockJwtGuard: CanActivate = { canActivate: jest.fn(() => true) };
   const mockS3Service = {
     uploadFile: jest.fn(),
+    makeS3ImageUrl: jest
+      .fn()
+      .mockReturnValue({ s3BucketKeyName: 'string', s3ImageUrl: 'string' }),
   };
   let user1: Awaited<ReturnType<PrismaService['user']['findUnique']>>;
   let recipe1: RecipePrismaType;
@@ -104,8 +107,10 @@ describe('RecipesController (e2e)', () => {
   });
 
   describe(`POST ${basePath}`, () => {
-    it('create new recipe', () => {
-      const sampleRecipe: CreateRecipeDto = {
+    const makeCreateDto = (
+      overrides?: Partial<CreateRecipeDto>,
+    ): CreateRecipeDto => {
+      return {
         name: 'Test Recipe',
         description: 'This is a test recipe',
         base64Image: '123',
@@ -121,7 +126,12 @@ describe('RecipesController (e2e)', () => {
         nutritionalFacts: null,
         preparationTimeInMinutes: 30,
         cookingTimeInMinutes: 15,
+        ...overrides,
       };
+    };
+
+    it('create new recipe', () => {
+      const sampleRecipe = makeCreateDto();
       return request(app.getHttpServer())
         .post(basePath)
         .set('Authorization', `Bearer ${token}`)
@@ -134,23 +144,7 @@ describe('RecipesController (e2e)', () => {
     });
 
     it('create existing recipe', async () => {
-      const sampleRecipe: CreateRecipeDto = {
-        name: 'sample Recipe',
-        description: 'This is a test recipe',
-        base64Image: '123',
-        isPublic: true,
-        steps: [
-          {
-            instruction: 'Step 1',
-            ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
-          },
-        ],
-        tags: [],
-        equipments: [],
-        nutritionalFacts: null,
-        preparationTimeInMinutes: 30,
-        cookingTimeInMinutes: 15,
-      };
+      const sampleRecipe = makeCreateDto({ name: 'sample Recipe' });
 
       await request(app.getHttpServer())
         .post(basePath)
@@ -174,20 +168,27 @@ describe('RecipesController (e2e)', () => {
         .post(basePath)
         .set('Authorization', `Bearer ${token}`)
         .send({
-          name: 'Incomplete Recipe',
-          steps: [],
+          name: '',
+          steps: [{ unit: true, amount: 'left', name: 0 }],
         })
         .expect(400)
         .expect((res) => {
-          expect(res.body.message).toContain('base64Image should not be empty');
-          expect(res.body.message).toContain(
-            'each value in tags must be a string',
-          );
-          expect(res.body.message).toContain('tags must be an array');
-          expect(res.body.message).toContain(
-            'each value in equipments must be a string',
-          );
-          expect(res.body.message).toContain('equipments must be an array');
+          expect(res.body).toEqual({
+            name: 'should not be empty',
+            tags: 'each value in tags must be a string, tags must be an array',
+            equipments:
+              'each value in equipments must be a string, equipments must be an array',
+            isPublic: 'isPublic must be a boolean value',
+            steps: {
+              '0': {
+                amount: 'property amount should not exist',
+                ingredients:
+                  'ingredients should not be empty, ingredients must be an array',
+                name: 'property name should not exist',
+                unit: 'property unit should not exist',
+              },
+            },
+          });
         });
     });
   });

@@ -2,7 +2,7 @@
 
 export interface IRecipeLayoutProps {
   title: string
-  subtitle: string | null
+  subtitle?: string
   children: React.ReactNode
 }
 export const RecipeLayout = (props: IRecipeLayoutProps) => {

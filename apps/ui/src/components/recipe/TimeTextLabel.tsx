@@ -8,9 +8,10 @@ import {
 
 export type TimeTextLabelProps = Omit<
   DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-  'style' | 'className' | 'type'
-> & { label: string }
-export const TimeTextLabel = (props: TimeTextLabelProps) => {
+  'style' | 'className' | 'type' | 'onChange'
+> & { label: string; onChange: (_value: string) => void }
+export const TimeTextLabel = (_props: TimeTextLabelProps) => {
+  const { onChange, ...props } = _props
   const placeholder = '00:00'
   const [time, setTime] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -28,7 +29,9 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
             '0',
           )
         if (digitString.length <= 4) {
-          return transformResult(digitString)
+          const result = transformResult(digitString)
+          onChange(result)
+          return result
         }
         return t
       })
@@ -38,7 +41,9 @@ export const TimeTextLabel = (props: TimeTextLabelProps) => {
         const digitString = nonZeros
           .slice(0, nonZeros.length - 1)
           .padStart(4, '0')
-        return transformResult(digitString)
+        const result = transformResult(digitString)
+        onChange(result)
+        return result
       })
     }
   }

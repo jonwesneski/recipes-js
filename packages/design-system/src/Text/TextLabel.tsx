@@ -1,5 +1,5 @@
 import { UnderLabel } from '../Label'
-import { Text, type InputProps } from './Text'
+import { Text, type TextProps } from './Text'
 
 interface TextLabelProps {
   name: string
@@ -7,8 +7,9 @@ interface TextLabelProps {
   label: string
   isRequired: boolean
   ref?: React.Ref<HTMLInputElement>
-  variant?: InputProps['variant']
+  variant?: TextProps['variant']
   error?: string
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 export const TextLabel = (props: TextLabelProps) => {
   return (
@@ -22,10 +23,11 @@ export const TextLabel = (props: TextLabelProps) => {
         ref={props.ref}
         id={props.name}
         name={props.name}
+        data-error-for={props.name}
         placeholder={props.placeholder}
         variant={props.variant}
-        className="border-b-0 flex-1"
-        isBlock
+        className="border-b-0 flex-1 block"
+        onChange={props.onChange}
       />
     </UnderLabel>
   )

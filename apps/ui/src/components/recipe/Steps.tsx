@@ -9,7 +9,7 @@ import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
 export const Steps = () => {
-  const { steps, addStep, setImage } = useRecipeStore((state) => state)
+  const { steps, addStep, setStepImage } = useRecipeStore((state) => state)
   const [isNewStep, setIsNewStep] = useState<boolean>(false)
 
   const handleOnResize = (
@@ -26,7 +26,7 @@ export const Steps = () => {
     image: string,
   ) => {
     try {
-      setImage(stepRef, image)
+      setStepImage(stepRef, image)
     } catch (error) {
       console.log(error)
     }
@@ -37,7 +37,7 @@ export const Steps = () => {
     image: string,
   ) => {
     try {
-      setImage(stepRef, image)
+      setStepImage(stepRef, image)
     } catch (error) {
       console.log(error)
     }
@@ -62,7 +62,7 @@ export const Steps = () => {
         return (
           <div key={s.keyId} className="mb-5">
             <h1 className="font-bold">step {index + 1}.</h1>
-            <div ref={s.ref} className="flex flex-col md:flex-row">
+            <div ref={s.ref} className="flex flex-col md:flex-row gap-2">
               <IngredientsTextArea
                 ref={s.ingredients.ref}
                 onResize={(height: number) => handleOnResize(s.ref, height)}
@@ -78,7 +78,7 @@ export const Steps = () => {
                   onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
                   onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
                 />
-                {s.image !== undefined && (
+                {s.image ? (
                   <Image
                     src={s.image}
                     className="w-9/10 h-auto mx-auto"
@@ -86,7 +86,7 @@ export const Steps = () => {
                     height={0}
                     alt="taken"
                   />
-                )}
+                ) : null}
               </div>
             </div>
             {index < steps.length - 1 && <hr className="mt-5" />}

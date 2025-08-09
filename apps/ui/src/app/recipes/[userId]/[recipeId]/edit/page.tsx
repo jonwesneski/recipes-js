@@ -49,7 +49,7 @@ const Page = () => {
   }, [])
 
   return (
-    <RecipeStoreProvider initialState={{ editEnabled: true }}>
+    <RecipeStoreProvider>
       <CameraProvider>
         <NavigationLayout>
           <div className="flex justify-center">

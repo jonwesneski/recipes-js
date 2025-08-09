@@ -51,7 +51,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
   return (
     <TextArea
       ref={textAreaRef}
-      className="min-h-32 min-w-80 grow-1 mt-2"
+      className="min-h-32 min-w-80 grow-1"
       variant="shadowRB"
       name="instructions"
       value={instructions?.value}
