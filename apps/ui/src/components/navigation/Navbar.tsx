@@ -80,11 +80,12 @@ export const Navbar = () => {
       <div className="flex-1 ml-auto flex justify-end">
         <button
           type="button"
+          className="mr-3"
           onClick={() => {
             setIsOpen((v) => !v)
           }}
         >
-          NAVBAR
+          PROFILE
         </button>
         {isOpen ? (
           <div
