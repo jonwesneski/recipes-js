@@ -30,146 +30,131 @@ export class NutritionalFactsDto
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  servings?: number | null;
+  servings: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  servingAmount?: number | null;
+  servingAmount: number | null;
   @IsOptional()
   @IsEnum(MeasurementUnit)
   @ApiProperty({ enum: MeasurementUnit, nullable: true })
-  servingUnit?: MeasurementUnit | null;
+  servingUnit: MeasurementUnit | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  proteinInG?: number | null;
+  proteinInG: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  totalFatInG?: number | null;
+  totalFatInG: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  carbohydratesInG?: number | null;
+  carbohydratesInG: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  fiberInG?: number | null;
+  fiberInG: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  sugarInG?: number | null;
+  sugarInG: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  sodiumInMg?: number | null;
+  sodiumInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  cholesterolInMg?: number | null;
+  cholesterolInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  saturatedFatInG?: number | null;
+  saturatedFatInG: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  transFatInG?: number | null;
+  transFatInG: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  potassiumInMg?: number | null;
+  potassiumInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  vitaminAInIU?: number | null;
+  vitaminAInIU: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  vitaminCInMg?: number | null;
+  vitaminCInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  calciumInMg?: number | null;
+  calciumInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  ironInMg?: number | null;
+  ironInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  vitaminDInIU?: number | null;
+  vitaminDInIU: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  vitaminB6InMg?: number | null;
+  vitaminB6InMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  vitaminB12InMg?: number | null;
+  vitaminB12InMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  magnesiumInMg?: number | null;
+  magnesiumInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  folateInMcg?: number | null;
+  folateInMcg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  thiaminInMg?: number | null;
+  thiaminInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  riboflavinInMg?: number | null;
+  riboflavinInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  niacinInMg?: number | null;
+  niacinInMg: number | null;
   @IsNumber()
   @Min(0)
   @IsOptional()
   @ApiProperty({ type: Number, nullable: true })
-  caloriesInKcal?: number | null;
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  @ApiProperty({ type: Number, nullable: true })
-  fatInG?: number | null;
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  @ApiProperty({ type: Number, nullable: true })
-  fiber?: number | null;
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  @ApiProperty({ type: Number, nullable: true })
-  sugar?: number | null;
+  caloriesInKcal: number | null;
 }
 
 export class CreateIngredientDto
@@ -199,7 +184,7 @@ export class CreateStepDto
   @IsString()
   @IsOptional()
   @ApiProperty({ type: String, nullable: true })
-  instruction?: string;
+  instruction: string;
   @IsArray()
   @ApiProperty({ type: [CreateIngredientDto] })
   @ArrayNotEmpty()
@@ -209,7 +194,7 @@ export class CreateStepDto
   @IsString()
   @IsOptional()
   @ApiProperty({ type: String, nullable: true })
-  base64Image?: string;
+  base64Image: string;
 }
 
 export class CreateRecipeDto
@@ -232,22 +217,22 @@ export class CreateRecipeDto
   @IsString()
   @IsOptional()
   @ApiProperty({ type: String, nullable: true })
-  description?: string | null;
+  description: string | null;
   @IsString()
   @IsNotEmpty()
   @IsOptional()
   @ApiProperty({ type: String, nullable: true })
-  base64Image?: string | null;
+  base64Image: string | null;
   @IsInt()
   @IsOptional()
   @Min(0)
   @ApiProperty({ type: Number, nullable: true })
-  preparationTimeInMinutes?: number | null;
+  preparationTimeInMinutes: number | null;
   @IsInt()
   @IsOptional()
   @Min(0)
   @ApiProperty({ type: Number, nullable: true })
-  cookingTimeInMinutes?: number | null;
+  cookingTimeInMinutes: number | null;
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateStepDto)
@@ -257,7 +242,7 @@ export class CreateRecipeDto
   @ValidateNested()
   @Type(() => NutritionalFactsDto)
   @ApiProperty({ type: NutritionalFactsDto, nullable: true })
-  nutritionalFacts?: NutritionalFactsDto | null;
+  nutritionalFacts: NutritionalFactsDto | null;
   @IsArray()
   @IsString({ each: true })
   @ApiProperty({ type: [String] })

@@ -97,8 +97,12 @@ export const RecipeInclude = {
 } as const;
 
 type RecipeUserType = { id: string; handle: string };
-export type RecipeType = Omit<RecipePrismaType, 'recipeTags' | 'userId'> & {
+export type RecipeType = Omit<
+  RecipePrismaType,
+  'recipeTags' | 'userId' | 'equipments'
+> & {
   tags: string[];
+  equipments: string[];
   user: RecipeUserType;
 };
 export type RecipeMinimalType = Omit<
@@ -120,15 +124,22 @@ export class RecipesService {
     recipe: T,
   ): Omit<T, 'user' | 'recipeTags' | 'userId'> & {
     tags: string[];
+    equipments?: string[];
     user: RecipeUserType;
   } {
     const { user, userId, recipeTags, ...rest } = recipe;
+
+    let equipments: string[] | undefined = undefined;
+    if ((recipe as RecipePrismaType).equipments) {
+      equipments = (recipe as RecipePrismaType).equipments.map((e) => e.name);
+    }
     return {
       ...rest,
       user: {
         id: userId,
         handle: user.handle,
       },
+      equipments,
       tags: recipeTags.map((rt) => rt.tag.name),
     };
   }
@@ -371,7 +382,17 @@ export class RecipesService {
               })),
           },
           // TODO: handle below
-          equipments: {},
+          equipments: {
+            ...(remainingData.equipments
+              ? {
+                  deleteMany: {
+                    name: {
+                      notIn: remainingData.equipments,
+                    },
+                  },
+                }
+              : {}),
+          },
           nutritionalFacts: {},
           //recipeTags: {},
         },

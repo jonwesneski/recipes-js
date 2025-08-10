@@ -17,7 +17,7 @@ export const RecipeInput = () => {
     setCookingTimeInMinutes,
     setPreparationTimeInMinutes,
     setImage,
-    base64Image,
+    imageSrc: base64Image,
     errors,
   } = useRecipeStore((state) => state)
 
