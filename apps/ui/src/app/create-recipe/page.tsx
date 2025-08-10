@@ -2,7 +2,7 @@
 
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { Button } from '@repo/design-system'
-import { Recipe } from '@src/components/recipe'
+import { RecipeInput } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useRouter } from 'next/navigation'
@@ -43,7 +43,7 @@ const Page = () => {
 
   return (
     <form className="flex justify-center flex-col px-3" onSubmit={handleSubmit}>
-      <Recipe />
+      <RecipeInput />
       <Button
         className="mt-3 mx-auto block"
         text="submit"

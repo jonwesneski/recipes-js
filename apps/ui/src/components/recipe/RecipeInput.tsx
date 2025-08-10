@@ -8,7 +8,7 @@ import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
 
-export const Recipe = () => {
+export const RecipeInput = () => {
   const divRef = useRef<HTMLDivElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
   const {

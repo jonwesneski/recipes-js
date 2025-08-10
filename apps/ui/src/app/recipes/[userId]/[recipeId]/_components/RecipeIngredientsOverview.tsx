@@ -2,10 +2,7 @@
 import type { StepEntity } from '@repo/codegen/model'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { numberToFraction } from '@src/utils/measurements'
-
-interface RecipeIngredientsOverviewProps {
-  steps: StepEntity[]
-}
+import { DetailedHTMLProps, HTMLAttributes } from 'react'
 
 type UniqueIngredientsType = Record<
   string,
@@ -33,19 +30,27 @@ const createUniqueIngredient = (steps: StepEntity[]): UniqueIngredientsType => {
   return uniqueIngredients
 }
 
-export const RecipeIngredientsOverview = (
-  props: RecipeIngredientsOverviewProps,
-) => {
-  const uniqueIngredients = createUniqueIngredient(props.steps)
+export type RecipeIngredientsOverviewProps = Omit<
+  DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+  'style'
+> & { steps: StepEntity[] }
+export const RecipeIngredientsOverview = ({
+  steps,
+  ...props
+}: RecipeIngredientsOverviewProps) => {
+  const uniqueIngredients = createUniqueIngredient(steps)
   const useFractions = useUserStore((state) => state.useFractions)
 
   return (
-    <ul className="recipe-ingredients-overview">
-      {Object.keys(uniqueIngredients).map((name, idx) => (
-        <li key={idx} style={{ listStyleType: 'none' }}>
-          {`${useFractions ? numberToFraction(uniqueIngredients[name].amount) : uniqueIngredients[name].amount} ${uniqueIngredients[name].unit} ${name}`}
-        </li>
-      ))}
-    </ul>
+    <div {...props}>
+      <h1 className="font-semibold">total ingredients:</h1>
+      <ul className="ml-2">
+        {Object.keys(uniqueIngredients).map((name, idx) => (
+          <li key={idx} style={{ listStyleType: 'none' }}>
+            {`${useFractions ? numberToFraction(uniqueIngredients[name].amount) : uniqueIngredients[name].amount} ${uniqueIngredients[name].unit} ${name}`}
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }

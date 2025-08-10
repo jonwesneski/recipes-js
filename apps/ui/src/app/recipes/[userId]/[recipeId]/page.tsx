@@ -34,7 +34,7 @@ const Page = ({
           title={recipe.name}
           subtitle={recipe.description ?? undefined}
         >
-          <RecipeIngredientsOverview steps={recipe.steps} />
+          <RecipeIngredientsOverview className="my-5" steps={recipe.steps} />
           <RecipeSteps steps={recipe.steps} />
           {recipe.nutritionalFacts && (
             <NutritionalFacts nutritionalFacts={recipe.nutritionalFacts} />
