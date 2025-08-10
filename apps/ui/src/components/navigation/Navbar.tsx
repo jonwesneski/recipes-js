@@ -2,6 +2,8 @@
 
 import { useUsersControllerUpdateUserV1 } from '@repo/codegen/users'
 import { useUserStore } from '@src/providers/use-store-provider'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 export const Navbar = () => {
@@ -12,8 +14,22 @@ export const Navbar = () => {
     useDarkMode ? 'Light' : 'Dark',
   )
   const menuRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
 
   const { mutate } = useUsersControllerUpdateUserV1()
+
+  const renderNavItems = () => {
+    switch (pathname) {
+      case '/recipes':
+        return (
+          <>
+            <Link href="/create-recipe">Add</Link>
+          </>
+        )
+      default:
+        return null
+    }
+  }
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -56,8 +72,12 @@ export const Navbar = () => {
   }, [isOpen])
 
   return (
-    <nav className="relative border-2">
-      <div className="flex justify-end">
+    <div className="flex justify-between relative border-2">
+      <div className="flex-1"></div>
+      <div className="flex-2 mx-auto flex justify-center gap-3">
+        {renderNavItems()}
+      </div>
+      <div className="flex-1 ml-auto flex justify-end">
         <button
           type="button"
           onClick={() => {
@@ -88,6 +108,6 @@ export const Navbar = () => {
           </div>
         ) : null}
       </div>
-    </nav>
+    </div>
   )
 }
