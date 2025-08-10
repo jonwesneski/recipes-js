@@ -4,7 +4,6 @@ import type { EditRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { Button } from '@repo/design-system'
-import { NavigationLayout } from '@src/components/navigation'
 import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { CameraProvider } from '@src/providers/CameraProvider'
@@ -51,19 +50,17 @@ const Page = () => {
   return (
     <RecipeStoreProvider>
       <CameraProvider>
-        <NavigationLayout>
-          <div className="flex justify-center">
-            <div className="block mx-5">
-              <Recipe />
-              <Button
-                className="mt-3 mx-auto block"
-                text="submit"
-                variant="opposite"
-                onClick={() => handleSubmit()}
-              />
-            </div>
+        <div className="flex justify-center">
+          <div className="block mx-5">
+            <Recipe />
+            <Button
+              className="mt-3 mx-auto block"
+              text="submit"
+              variant="opposite"
+              onClick={() => handleSubmit()}
+            />
           </div>
-        </NavigationLayout>
+        </div>
       </CameraProvider>
     </RecipeStoreProvider>
   )

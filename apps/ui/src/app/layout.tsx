@@ -1,4 +1,5 @@
 import '@repo/design-system/styles.css'
+import { NavigationLayout } from '@src/components/navigation'
 import { type Metadata } from 'next'
 import AppProviders from './_providers'
 import './globals.css'
@@ -19,7 +20,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           }}
         >
           <div id="root">
-            <AppProviders>{children}</AppProviders>
+            <AppProviders>
+              <NavigationLayout>{children}</NavigationLayout>
+            </AppProviders>
           </div>
         </div>
       </body>

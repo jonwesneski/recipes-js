@@ -1,5 +1,8 @@
 'use client'
 
+import { mergeCss } from '@repo/design-system'
+import useMediaQuery from '@src/hooks/useMediaQuery'
+import { usePathname } from 'next/navigation'
 import { Navbar } from './Navbar'
 
 export const NavigationLayout = ({
@@ -7,17 +10,22 @@ export const NavigationLayout = ({
 }: {
   children: React.ReactNode
 }) => {
-  return (
+  const { width, breakpointPxs } = useMediaQuery()
+  const pathname = usePathname()
+  return pathname !== '/' ? (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 hidden md:block">
+      <nav
+        className={mergeCss('fixed left-0 right-0 z-50', {
+          'bottom-0': width <= breakpointPxs.sm,
+          'top-0': width > breakpointPxs.sm,
+        })}
+      >
         <Navbar />
       </nav>
 
       <div className="flex-grow pt-10 pb-20">{children}</div>
-
-      <nav className="fixed bottom-0 left-0 right-0 z-50 block md:hidden">
-        <Navbar />
-      </nav>
     </>
+  ) : (
+    children
   )
 }

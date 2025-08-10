@@ -17,7 +17,6 @@ type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
     };
   };
   omit: {
-    id: true;
     createdAt: true;
     updatedAt: true;
     preparationTimeInMinutes: true;
@@ -143,7 +142,6 @@ export class RecipesService {
         },
       },
       omit: {
-        id: true,
         createdAt: true,
         updatedAt: true,
         preparationTimeInMinutes: true,

@@ -2,7 +2,15 @@
 
 import { useUsersControllerUpdateUserV1 } from '@repo/codegen/users'
 import { useUserStore } from '@src/providers/use-store-provider'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+
+const routeKeyMap = new Map<RegExp, string>()
+routeKeyMap.set(/^\/recipes$/, 'feed')
+routeKeyMap.set(/^\/recipes\/\w+\/\w+$/, 'recipe')
+routeKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
+routeKeyMap.set(/^\/create-recipe$/, 'create')
 
 export const Navbar = () => {
   const { handle, useDarkMode } = useUserStore((state) => state)
@@ -12,8 +20,29 @@ export const Navbar = () => {
     useDarkMode ? 'Light' : 'Dark',
   )
   const menuRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
 
   const { mutate } = useUsersControllerUpdateUserV1()
+
+  const getRouteKey = () => {
+    for (const [regex, value] of routeKeyMap) {
+      if (regex.test(pathname)) {
+        return value
+      }
+    }
+    return 'NONE'
+  }
+
+  const renderNavItems = () => {
+    const key = getRouteKey()
+    switch (key) {
+      case 'feed':
+      case 'recipe':
+        return <Link href="/create-recipe">Add</Link>
+      default:
+        return null
+    }
+  }
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -56,15 +85,20 @@ export const Navbar = () => {
   }, [isOpen])
 
   return (
-    <nav className="relative border-2">
-      <div className="flex justify-end">
+    <div className="flex justify-between relative border-2">
+      <div className="flex-1" />
+      <div className="flex-2 mx-auto flex justify-center gap-3">
+        {renderNavItems()}
+      </div>
+      <div className="flex-1 ml-auto flex justify-end">
         <button
           type="button"
+          className="mr-3"
           onClick={() => {
             setIsOpen((v) => !v)
           }}
         >
-          NAVBAR
+          PROFILE
         </button>
         {isOpen ? (
           <div
@@ -88,6 +122,6 @@ export const Navbar = () => {
           </div>
         ) : null}
       </div>
-    </nav>
+    </div>
   )
 }
