@@ -2,6 +2,7 @@
 
 import { mergeCss } from '@repo/design-system'
 import useMediaQuery from '@src/hooks/useMediaQuery'
+import { usePathname } from 'next/navigation'
 import { Navbar } from './Navbar'
 
 export const NavigationLayout = ({
@@ -10,7 +11,8 @@ export const NavigationLayout = ({
   children: React.ReactNode
 }) => {
   const { width, breakpointPxs } = useMediaQuery()
-  return (
+  const pathname = usePathname()
+  return pathname !== '/' ? (
     <>
       <nav
         className={mergeCss('fixed left-0 right-0 z-50', {
@@ -23,5 +25,7 @@ export const NavigationLayout = ({
 
       <div className="flex-grow pt-10 pb-20">{children}</div>
     </>
+  ) : (
+    children
   )
 }
