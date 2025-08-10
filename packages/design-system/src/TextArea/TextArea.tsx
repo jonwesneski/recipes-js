@@ -1,8 +1,4 @@
-import type {
-  DetailedHTMLProps,
-  RefObject,
-  TextareaHTMLAttributes,
-} from 'react'
+import type { DetailedHTMLProps, TextareaHTMLAttributes } from 'react'
 import { mergeCss } from '../utils'
 
 type TextAreaProps = Omit<
@@ -10,22 +6,12 @@ type TextAreaProps = Omit<
     TextareaHTMLAttributes<HTMLTextAreaElement>,
     HTMLTextAreaElement
   >,
-  'style' | 'className' | 'ref'
+  'style'
 > & {
-  ref: RefObject<HTMLTextAreaElement | null>
   variant?: 'shadowLT' | 'shadowRB'
-  minWidth?: string | number
-  minHeight?: string | number
-  maxWidth?: string | number
-  width?: string | number
-  className?: string
-  onResize: (_height: number) => void
+  onResize?: (_height: number) => void
 }
-export const TextArea = ({
-  variant = 'shadowLT',
-  className,
-  ...props
-}: TextAreaProps) => {
+export const TextArea = ({ variant = 'shadowLT', ...props }: TextAreaProps) => {
   const placeHolder = props.placeholder ? `${props.placeholder}...` : undefined
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -35,11 +21,13 @@ export const TextArea = ({
 
   const handleResize = () => {
     if (
+      props?.ref &&
+      'current' in props.ref &&
       props.ref.current &&
       props.ref.current.clientHeight < props.ref.current.scrollHeight
     ) {
       props.ref.current.style.overflow = 'hidden'
-      props.onResize(props.ref.current.scrollHeight)
+      props.onResize?.(props.ref.current.scrollHeight)
     }
   }
 
@@ -52,7 +40,7 @@ export const TextArea = ({
           'shadow-[-4px_-4px]': variant === 'shadowLT',
           'shadow-[4px_4px]': variant === 'shadowRB',
         },
-        className,
+        props.className,
       )}
       name={props.name}
       placeholder={placeHolder}

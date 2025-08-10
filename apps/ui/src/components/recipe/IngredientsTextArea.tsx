@@ -3,7 +3,7 @@
 
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import React, { RefObject, useRef, useState } from 'react'
+import React, { RefObject, useRef } from 'react'
 import { IngredientRow } from './IngredientRow'
 
 const placeholder = `0.5 cups fresh basil
@@ -12,15 +12,11 @@ const placeholder = `0.5 cups fresh basil
 1 pinch salt`
 const placeholderSplit = placeholder.split('\n')
 
-type PositionType = { row: number; column: number }
-
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLDivElement | null>
   onResize: (_height: number) => void
 }
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
-  const [isPopupVisible, setIsPopupVisible] = useState(false)
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
   let textAreaRef = useRef<HTMLDivElement>(null)
   textAreaRef = props.ref ?? textAreaRef
   const {
@@ -30,28 +26,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     updateIngredient,
     insertIngredientsSteps,
   } = useRecipeStepIngredientsStore(textAreaRef)
-
-  const getCaretPosition = (element: HTMLTextAreaElement) => {
-    const position: { row: number; column: number } = {
-      row: 0,
-      column: 0,
-    }
-
-    // Calcuate row position
-    // // do we care about row position?
-    const cursorPosition = element.selectionStart || 0
-    const textBeforeCursor = element.value.substring(0, cursorPosition)
-    const row = textBeforeCursor.split('\n').length
-
-    // Calculate column position we have 3 columns in textarea
-    const currentRowText = textBeforeCursor.split('\n')[row - 1] || ''
-    const column = currentRowText.split(' ').length
-
-    position.row = row - 1
-    position.column = column - 1
-
-    return position
-  }
 
   const handleChange = (
     ref: React.RefObject<HTMLTextAreaElement | null>,

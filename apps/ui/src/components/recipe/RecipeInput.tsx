@@ -107,7 +107,7 @@ export const RecipeInput = () => {
 
       <PhotoInput
         label="recipe photo"
-        isRequired
+        isRequired={false}
         onCameraClick={handleOnCameraClick}
         onUploadClick={handleOnUploadClick}
       />

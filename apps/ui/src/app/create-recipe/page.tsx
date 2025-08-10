@@ -42,7 +42,7 @@ const Page = () => {
   }
 
   return (
-    <form className="flex justify-center flex-col px-3" onSubmit={handleSubmit}>
+    <form className="flex flex-col px-3" onSubmit={handleSubmit}>
       <RecipeInput />
       <Button
         className="mt-3 mx-auto block"

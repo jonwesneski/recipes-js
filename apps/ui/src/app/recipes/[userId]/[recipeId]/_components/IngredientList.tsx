@@ -10,17 +10,18 @@ import {
 } from '@src/utils/measurements'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
 
-export const IngredientList = ({
-  ingredients,
-}: {
-  ingredients: IngredientEntity[]
-}) => {
+type IngredientParams = Omit<IngredientEntity, 'createdAt' | 'updatedAt'>
+
+interface IngredientListProps {
+  ingredients: IngredientParams[]
+}
+export const IngredientList = ({ ingredients }: IngredientListProps) => {
   const useFractions = useUserStore((state) => state.useFractions)
   const { showModal } = useCustomModal()
 
-  const handleClick = (e: React.MouseEvent, ingredient: IngredientEntity) => {
+  const handleClick = (e: React.MouseEvent, ingredient: IngredientParams) => {
+    e.preventDefault()
     if (ingredient.unit !== 'whole' && ingredient.unit !== 'pinches') {
-      e.preventDefault()
       showModal(
         ModalMeasurementConversions.name,
         () => (
@@ -35,7 +36,7 @@ export const IngredientList = ({
   }
 
   return (
-    <ul className="ingredient-list">
+    <ul>
       {ingredients.map((ingredient) => {
         return (
           <li key={ingredient.id} className="text-left">
@@ -46,8 +47,7 @@ export const IngredientList = ({
             </span>{' '}
             {/*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/}
             <a
-              // eslint-disable-next-line no-script-url -- for now
-              href="javascript:void(0)"
+              href="#"
               className={'underline decoration-dotted'}
               onClick={(e) => handleClick(e, ingredient)}
               style={{

@@ -60,8 +60,7 @@ export const NutritionalFacts = () => {
               <tr key={key}>
                 <td style={{ textAlign: 'left' }}>{name}</td>
                 <td style={{ textAlign: 'left' }}>
-                  {nutritionalFacts &&
-                  nutritionalFacts[key as keyof typeof nutritionalFacts]
+                  {nutritionalFacts?.[key as keyof typeof nutritionalFacts]
                     ? `${nutritionalFacts[key as keyof typeof nutritionalFacts]} ${unit}`
                     : `? ${unit}`}
                 </td>

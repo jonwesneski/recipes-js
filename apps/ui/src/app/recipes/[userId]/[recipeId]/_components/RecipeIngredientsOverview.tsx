@@ -49,8 +49,8 @@ export const RecipeIngredientsOverview = (
     <div {...props}>
       <h1 className="font-semibold">total ingredients:</h1>
       <ul className="ml-2">
-        {Object.keys(uniqueIngredients).map((name, idx) => (
-          <li key={idx} style={{ listStyleType: 'none' }}>
+        {Object.keys(uniqueIngredients).map((name) => (
+          <li key={name} style={{ listStyleType: 'none' }}>
             {`${useFractions ? numberToFraction(uniqueIngredients[name].amount) : uniqueIngredients[name].amount} ${uniqueIngredients[name].unit} ${name}`}
           </li>
         ))}

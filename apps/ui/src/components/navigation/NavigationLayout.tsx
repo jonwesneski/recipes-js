@@ -23,7 +23,7 @@ export const NavigationLayout = ({
         <Navbar />
       </nav>
 
-      <div className="flex-grow pt-10 pb-20">{children}</div>
+      <div className="pt-10 pb-20">{children}</div>
     </>
   ) : (
     children

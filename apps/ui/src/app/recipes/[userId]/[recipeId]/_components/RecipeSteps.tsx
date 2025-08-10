@@ -1,44 +1,30 @@
 'use client'
 
-import type { StepEntity } from '@repo/codegen/model'
-import React from 'react'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { IngredientList } from './IngredientList'
 
-interface RecipeStepsProps {
-  steps: StepEntity[]
-}
-export const RecipeSteps = (props: RecipeStepsProps) => {
+export const RecipeSteps = () => {
+  const steps = useRecipeStore((state) => state.steps)
+
   return (
-    <table
-      id="instructions"
-      className="border border-separate rounded-2xl border-gray-800"
-    >
-      <thead>
-        <tr>
-          <th>Ingredients</th>
-          <th>Instructions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {props.steps.map((step, index) => {
-          return (
-            <React.Fragment key={index}>
-              <tr>
-                <td
-                  colSpan={2}
-                  className="border-t-2 border-gray-800"
-                >{`step ${index + 1}.`}</td>
-              </tr>
-              <tr key={index}>
-                <td width="35%" className="align-top">
-                  <IngredientList ingredients={step.ingredients} />
-                </td>
-                <td className="text-left align-top">{step.instruction}</td>
-              </tr>
-            </React.Fragment>
-          )
-        })}
-      </tbody>
-    </table>
+    <div className="border">
+      {steps.map((s, index) => {
+        return (
+          <div key={s.keyId} className="mb-5">
+            <h1 className="font-bold">step {index + 1}.</h1>
+            <div ref={s.ref} className="flex flex-col md:flex-row gap-2">
+              <IngredientList
+                ingredients={s.ingredients.items.map((i) => ({
+                  id: i.keyId,
+                  ...i.ingredient.dto,
+                }))}
+              />
+              <p>{s.instructions.value}</p>
+            </div>
+            {index < steps.length - 1 && <hr className="mt-5" />}
+          </div>
+        )
+      })}
+    </div>
   )
 }
