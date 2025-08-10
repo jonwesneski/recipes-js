@@ -2,7 +2,6 @@
 
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { Button } from '@repo/design-system'
-import { NavigationLayout } from '@src/components/navigation'
 import { Recipe } from '@src/components/recipe'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
@@ -43,20 +42,15 @@ const Page = () => {
   }
 
   return (
-    <NavigationLayout>
-      <form
-        className="flex justify-center flex-col px-3"
-        onSubmit={handleSubmit}
-      >
-        <Recipe />
-        <Button
-          className="mt-3 mx-auto block"
-          text="submit"
-          variant="opposite"
-          type="submit"
-        />
-      </form>
-    </NavigationLayout>
+    <form className="flex justify-center flex-col px-3" onSubmit={handleSubmit}>
+      <Recipe />
+      <Button
+        className="mt-3 mx-auto block"
+        text="submit"
+        variant="opposite"
+        type="submit"
+      />
+    </form>
   )
 }
 export default Page
