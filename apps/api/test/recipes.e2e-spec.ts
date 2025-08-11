@@ -7,8 +7,8 @@ import { S3Service } from 'src/common/s3.service';
 import { RecipeInclude, RecipePrismaType } from 'src/recipes';
 import {
   CreateRecipeDto,
-  EditRecipeDto,
-  EditStepDto,
+  PatchRecipeDto,
+  PatchStepDto,
   RecipeEntity,
   StepEntity,
 } from 'src/recipes/contracts';
@@ -225,9 +225,9 @@ describe('RecipesController (e2e)', () => {
 
     const stepEntityToDto = (
       entity: StepEntity[],
-      newSteps?: EditStepDto[],
-    ): EditStepDto[] => {
-      const updated: EditStepDto[] = entity.map((s) => {
+      newSteps?: PatchStepDto[],
+    ): PatchStepDto[] => {
+      const updated: PatchStepDto[] = entity.map((s) => {
         return {
           instruction: s.instruction || undefined,
           ingredients: s.ingredients.map((i) => {
@@ -250,7 +250,7 @@ describe('RecipesController (e2e)', () => {
     it('update top recipe fields', async () => {
       const response = await createRecipe();
 
-      const editRecipe: EditRecipeDto = {
+      const editRecipe: PatchRecipeDto = {
         name: 'edit',
         description: 'new description',
         base64Image: '1234',
@@ -282,7 +282,7 @@ describe('RecipesController (e2e)', () => {
       const response = await createRecipe();
 
       const steps = [...response.steps];
-      const editRecipe: EditRecipeDto = {
+      const editRecipe: PatchRecipeDto = {
         steps: stepEntityToDto(steps),
       };
       return request(app.getHttpServer())
@@ -299,7 +299,7 @@ describe('RecipesController (e2e)', () => {
       const response = await createRecipe();
 
       const steps = [...response.steps];
-      const editRecipe: EditRecipeDto = {
+      const editRecipe: PatchRecipeDto = {
         steps: stepEntityToDto(steps, [
           {
             ingredients: [
@@ -330,7 +330,7 @@ describe('RecipesController (e2e)', () => {
       steps[0].ingredients[0].name = 'New Ingredient';
       steps[0].ingredients[0].amount = 50;
       steps[0].ingredients[0].unit = 'grams';
-      const editRecipe: EditRecipeDto = {
+      const editRecipe: PatchRecipeDto = {
         steps: stepEntityToDto(steps),
       };
       return request(app.getHttpServer())
@@ -348,7 +348,7 @@ describe('RecipesController (e2e)', () => {
       // should i handle at prisma level or at controller level?
       const response = await createRecipe();
 
-      const editRecipe: EditRecipeDto = {
+      const editRecipe: PatchRecipeDto = {
         steps: [],
       };
       return request(app.getHttpServer())

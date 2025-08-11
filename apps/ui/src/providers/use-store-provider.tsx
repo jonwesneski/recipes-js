@@ -33,7 +33,7 @@ export const UserStoreProvider = ({
 }: UserStoreProviderProps) => {
   const storeRef = useRef<UserStoreApi | null>(null)
 
-  storeRef.current ??= createUserStore({ ...initialState, ...defaultInitState })
+  storeRef.current ??= createUserStore({ ...defaultInitState, ...initialState })
 
   const { accessToken } = useAuthentication()
   const [isInitialized, setIsInitialized] = useState<boolean>(false)
@@ -41,28 +41,14 @@ export const UserStoreProvider = ({
   useEffect(() => {
     const fetch = async () => {
       if (typeof window !== 'undefined' && storeRef.current) {
-        const {
-          setEmail,
-          setHandle,
-          setName,
-          setUseDarkMode,
-          setUseFractions,
-          setUseImperial,
-          setDiet,
-        } = storeRef.current.getState()
+        //const { setUser } = storeRef.current.getState()
 
         setIsInitialized(true)
         if (accessToken) {
           try {
             const decodedToken = jwtGoogleSchema.parse(jwtDecode(accessToken))
-            const user = await usersControllerUserV1(decodedToken.handle)
-            setEmail(user.email)
-            setName(user.name)
-            setHandle(user.handle)
-            setUseDarkMode(user.useDarkMode)
-            setUseFractions(user.useFractions)
-            setUseImperial(user.useImperial)
-            setDiet(user.diet)
+            const user = await usersControllerUserV1(decodedToken.sub)
+            storeRef.current.setState(user)
           } catch (error) {
             console.error('Error decoding JWT:', error)
           }

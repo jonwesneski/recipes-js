@@ -2,6 +2,7 @@
 
 import { useUsersControllerUpdateUserV1 } from '@repo/codegen/users'
 import { useUserStore } from '@src/providers/use-store-provider'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -13,7 +14,7 @@ routeKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
 routeKeyMap.set(/^\/create-recipe$/, 'create')
 
 export const Navbar = () => {
-  const { handle, useDarkMode } = useUserStore((state) => state)
+  const { id, imageUrl, useDarkMode } = useUserStore((state) => state)
   const [isOpen, setIsOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(useDarkMode)
   const [lightDarkString, setLightDarkString] = useState<'Light' | 'Dark'>(
@@ -61,7 +62,7 @@ export const Navbar = () => {
       )
       setLightDarkString(() => (newValue ? 'Light' : 'Dark'))
       mutate({
-        handle,
+        id,
         data: {
           useDarkMode: newValue,
         },
@@ -98,7 +99,17 @@ export const Navbar = () => {
             setIsOpen((v) => !v)
           }}
         >
-          PROFILE
+          <Image
+            src={
+              imageUrl.length
+                ? imageUrl
+                : 'https://www.gravatar.com/avatar/?d=mp'
+            }
+            alt="profile image"
+            width={30}
+            height={30}
+            className="mx-4 grow-0"
+          />
         </button>
         {isOpen ? (
           <div

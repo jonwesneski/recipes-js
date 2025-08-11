@@ -17,7 +17,7 @@ import {
 import { OmitPrismaFieldsDto } from 'src/common/utilityTypes';
 import { NutritionalFactsDto } from './create-recipe.dto';
 
-export class EditIngredientDto
+export class PatchIngredientDto
   implements
     OmitPrismaFieldsDto<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
 {
@@ -38,7 +38,7 @@ export class EditIngredientDto
   name: string;
 }
 
-export class EditStepDto
+export class PatchStepDto
   implements
     OmitPrismaFieldsDto<
       Prisma.StepUncheckedCreateWithoutRecipeInput,
@@ -58,13 +58,13 @@ export class EditStepDto
   @IsOptional()
   @ArrayNotEmpty()
   @ValidateNested()
-  @Type(() => EditIngredientDto)
-  @ApiProperty({ type: [EditIngredientDto] })
-  @Type(() => EditIngredientDto)
-  ingredients?: EditIngredientDto[];
+  @Type(() => PatchIngredientDto)
+  @ApiProperty({ type: [PatchIngredientDto] })
+  @Type(() => PatchIngredientDto)
+  ingredients?: PatchIngredientDto[];
 }
 
-export class EditRecipeDto
+export class PatchRecipeDto
   implements
     OmitPrismaFieldsDto<
       Prisma.RecipeUncheckedUpdateInput,
@@ -105,10 +105,10 @@ export class EditRecipeDto
   @IsArray()
   @ArrayNotEmpty()
   @ValidateNested()
-  @Type(() => EditStepDto)
-  @ApiProperty({ type: [EditStepDto], required: false })
-  @Type(() => EditStepDto)
-  steps?: EditStepDto[];
+  @Type(() => PatchStepDto)
+  @ApiProperty({ type: [PatchStepDto], required: false })
+  @Type(() => PatchStepDto)
+  steps?: PatchStepDto[];
   @IsOptional()
   @ValidateNested()
   @Type(() => NutritionalFactsDto)

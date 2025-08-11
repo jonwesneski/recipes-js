@@ -1,21 +1,11 @@
 /* eslint-disable no-unused-vars -- its fine zustand */
-import type { UserEntityDiet } from '@repo/codegen/model';
+import type { UserEntity, UserEntityDiet } from '@repo/codegen/model';
 import { createStore } from 'zustand/vanilla';
 
-export type UserState = {
-  email: string;
-  name: string;
-  handle: string;
-  useFractions: boolean;
-  useImperial: boolean;
-  useDarkMode: boolean;
-  diet?: UserEntityDiet;
-};
+export type UserState = Omit<UserEntity, 'createdAt' | 'updatedAt'>;
 
 export type UserActions = {
-  setEmail: (email: string) => void;
-  setName: (name: string) => void;
-  setHandle: (handle: string) => void;
+  setUser: (user: Partial<UserState>) => void;
   setUseFractions: (useFractions: boolean) => void;
   setUseImperial: (useImperial: boolean) => void;
   setUseDarkMode: (useDarkMode: boolean) => void;
@@ -25,20 +15,21 @@ export type UserActions = {
 export type UserStore = UserState & UserActions;
 
 export const defaultInitState: UserState = {
+  id: '',
   email: '',
   name: '',
   handle: '',
   useFractions: false,
   useImperial: false,
   useDarkMode: false,
+  diet: null,
+  imageUrl: '',
 };
 
 export const createUserStore = (initState: UserState = defaultInitState) => {
   return createStore<UserStore>()((set) => ({
     ...initState,
-    setEmail: (email: string) => set(() => ({ email })),
-    setName: (name: string) => set(() => ({ name })),
-    setHandle: (handle: string) => set(() => ({ handle })),
+    setUser: (user: Partial<UserState>) => () => ({ ...user }),
     setUseFractions: (useFractions: boolean) => set(() => ({ useFractions })),
     setUseImperial: (useImperial: boolean) => set(() => ({ useImperial })),
     setUseDarkMode: (useDarkMode: boolean) => set(() => ({ useDarkMode })),

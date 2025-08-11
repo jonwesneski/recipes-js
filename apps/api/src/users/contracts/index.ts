@@ -1,2 +1,2 @@
-export * from './users.dto';
+export * from './patch-user.dto';
 export * from './users.entities';
