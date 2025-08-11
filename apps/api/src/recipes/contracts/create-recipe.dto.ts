@@ -9,11 +9,11 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   Min,
   ValidateNested,
 } from 'class-validator';
+import { IsNullable } from 'src/common/custom.class-validators';
 import { OmitPrismaFieldsDto } from 'src/common/utilityTypes';
 
 export class EquipmentDto
@@ -28,131 +28,131 @@ export class NutritionalFactsDto
 {
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   servings: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   servingAmount: number | null;
-  @IsOptional()
   @IsEnum(MeasurementUnit)
+  @IsNullable()
   @ApiProperty({ enum: MeasurementUnit, nullable: true })
   servingUnit: MeasurementUnit | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   proteinInG: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   totalFatInG: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   carbohydratesInG: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   fiberInG: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   sugarInG: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   sodiumInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   cholesterolInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   saturatedFatInG: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   transFatInG: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   potassiumInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   vitaminAInIU: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   vitaminCInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   calciumInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   ironInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   vitaminDInIU: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   vitaminB6InMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   vitaminB12InMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   magnesiumInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   folateInMcg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   thiaminInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   riboflavinInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   niacinInMg: number | null;
   @IsNumber()
   @Min(0)
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   caloriesInKcal: number | null;
 }
@@ -182,9 +182,9 @@ export class CreateStepDto
     >
 {
   @IsString()
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: String, nullable: true })
-  instruction: string;
+  instruction: string | null;
   @IsArray()
   @ApiProperty({ type: [CreateIngredientDto] })
   @ArrayNotEmpty()
@@ -192,9 +192,9 @@ export class CreateStepDto
   @Type(() => CreateIngredientDto)
   ingredients: CreateIngredientDto[];
   @IsString()
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: String, nullable: true })
-  base64Image: string;
+  base64Image: string | null;
 }
 
 export class CreateRecipeDto
@@ -215,22 +215,22 @@ export class CreateRecipeDto
   name: string;
   @IsNotEmpty()
   @IsString()
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: String, nullable: true })
   description: string | null;
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
+  @IsNullable()
   @ApiProperty({ type: String, nullable: true })
   base64Image: string | null;
   @IsInt()
-  @IsOptional()
   @Min(0)
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   preparationTimeInMinutes: number | null;
   @IsInt()
-  @IsOptional()
   @Min(0)
+  @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes: number | null;
   @IsArray()
@@ -238,7 +238,7 @@ export class CreateRecipeDto
   @Type(() => CreateStepDto)
   @ApiProperty({ type: [CreateStepDto] })
   steps: CreateStepDto[];
-  @IsOptional()
+  @IsNullable()
   @ValidateNested()
   @Type(() => NutritionalFactsDto)
   @ApiProperty({ type: NutritionalFactsDto, nullable: true })

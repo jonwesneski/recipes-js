@@ -76,6 +76,30 @@ describe('RecipesController (e2e)', () => {
     await app.close();
   });
 
+  const makeCreateDto = (
+    overrides?: Partial<CreateRecipeDto>,
+  ): CreateRecipeDto => {
+    return {
+      name: 'Test Recipe',
+      description: 'This is a test recipe',
+      base64Image: '123',
+      isPublic: true,
+      steps: [
+        {
+          instruction: 'Step 1',
+          ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
+          base64Image: null,
+        },
+      ],
+      equipments: [],
+      tags: [],
+      nutritionalFacts: null,
+      preparationTimeInMinutes: 30,
+      cookingTimeInMinutes: 15,
+      ...overrides,
+    };
+  };
+
   describe(`GET ${basePath}`, () => {
     it('no query params', () => {
       return request(app.getHttpServer())
@@ -87,10 +111,10 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe(`GET ${basePath}/[userId]/[id]`, () => {
+  describe(`GET ${basePath}/[id]`, () => {
     it('existing recipe', () => {
       return request(app.getHttpServer())
-        .get(`${basePath}/${user1!.id}/${recipe1!.id}`)
+        .get(`${basePath}/${recipe1!.id}`)
         .expect(200)
         .expect((res) => {
           const emptyRecipe = new RecipeEntity();
@@ -102,36 +126,13 @@ describe('RecipesController (e2e)', () => {
 
     it('non-existing recipe', () => {
       return request(app.getHttpServer())
-        .get(`${basePath}/${user1!.id}/123`)
+        .get(`${basePath}/123`)
         .expect(404)
         .expect({ message: 'Not Found', statusCode: 404 });
     });
   });
 
   describe(`POST ${basePath}`, () => {
-    const makeCreateDto = (
-      overrides?: Partial<CreateRecipeDto>,
-    ): CreateRecipeDto => {
-      return {
-        name: 'Test Recipe',
-        description: 'This is a test recipe',
-        base64Image: '123',
-        isPublic: true,
-        steps: [
-          {
-            instruction: 'Step 1',
-            ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
-          },
-        ],
-        equipments: [],
-        tags: [],
-        nutritionalFacts: null,
-        preparationTimeInMinutes: 30,
-        cookingTimeInMinutes: 15,
-        ...overrides,
-      };
-    };
-
     it('create new recipe', () => {
       const sampleRecipe = makeCreateDto();
       return request(app.getHttpServer())
@@ -177,10 +178,14 @@ describe('RecipesController (e2e)', () => {
         .expect((res) => {
           expect(res.body).toEqual({
             name: 'should not be empty',
-            tags: 'each value in tags must be a string, tags must be an array',
-            equipments:
-              'each value in equipments must be a string, equipments must be an array',
-            isPublic: 'isPublic must be a boolean value',
+            description:
+              'description must be a string, description should not be empty',
+            preparationTimeInMinutes:
+              'preparationTimeInMinutes must not be less than 0, preparationTimeInMinutes must be an integer number',
+            cookingTimeInMinutes:
+              'cookingTimeInMinutes must not be less than 0, cookingTimeInMinutes must be an integer number',
+            base64Image:
+              'base64Image should not be empty, base64Image must be a string',
             steps: {
               '0': {
                 amount: 'property amount should not exist',
@@ -188,8 +193,14 @@ describe('RecipesController (e2e)', () => {
                   'ingredients should not be empty, ingredients must be an array',
                 name: 'property name should not exist',
                 unit: 'property unit should not exist',
+                instruction: 'instruction must be a string',
+                base64Image: 'base64Image must be a string',
               },
             },
+            tags: 'each value in tags must be a string, tags must be an array',
+            equipments:
+              'each value in equipments must be a string, equipments must be an array',
+            isPublic: 'isPublic must be a boolean value',
           });
         });
     });
@@ -197,23 +208,7 @@ describe('RecipesController (e2e)', () => {
 
   describe(`PATCH ${basePath}/[id]`, () => {
     const createRecipe = async (): Promise<RecipeEntity> => {
-      const sampleRecipe: CreateRecipeDto = {
-        name: uuidv4(),
-        description: 'This is a test recipe',
-        base64Image: '123',
-        isPublic: true,
-        steps: [
-          {
-            instruction: 'Step 1',
-            ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
-          },
-        ],
-        tags: [],
-        equipments: [],
-        nutritionalFacts: null,
-        preparationTimeInMinutes: 30,
-        cookingTimeInMinutes: 15,
-      };
+      const sampleRecipe = makeCreateDto({ name: uuidv4() });
 
       const response = await request(app.getHttpServer())
         .post(basePath)

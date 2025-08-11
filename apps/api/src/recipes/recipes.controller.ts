@@ -42,19 +42,15 @@ export class RecipesController {
     return this.recipesService.getRecipes();
   }
 
-  @Get(':userId/:id')
+  @Get(':id')
   @ApiOkResponse({
     description: 'The recipe record',
     type: RecipeEntity,
   })
-  @ApiParam({ name: 'userId', type: String, description: 'User of recipe' })
   @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
-  async recipe(
-    @Param('userId') userId: string,
-    @Param('id') id: string,
-  ): Promise<RecipeEntity> {
+  async recipe(@Param('id') id: string): Promise<RecipeEntity> {
     try {
-      return await this.recipesService.getRecipe(userId, id);
+      return await this.recipesService.getRecipe(id);
     } catch (error) {
       throwIfNotFound(error);
       throw error;

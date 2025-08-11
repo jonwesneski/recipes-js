@@ -1,15 +1,13 @@
-/* eslint-disable no-unused-vars -- its fine zustand */
 import type { UserEntity, UserEntityDiet } from '@repo/codegen/model';
 import { createStore } from 'zustand/vanilla';
 
 export type UserState = Omit<UserEntity, 'createdAt' | 'updatedAt'>;
 
 export type UserActions = {
-  setUser: (user: Partial<UserState>) => void;
-  setUseFractions: (useFractions: boolean) => void;
-  setUseImperial: (useImperial: boolean) => void;
-  setUseDarkMode: (useDarkMode: boolean) => void;
-  setDiet: (diet: UserEntityDiet) => void;
+  setUseFractions: (_useFractions: boolean) => void;
+  setUseImperial: (_useImperial: boolean) => void;
+  setUseDarkMode: (_useDarkMode: boolean) => void;
+  setDiet: (_diet: UserEntityDiet) => void;
 };
 
 export type UserStore = UserState & UserActions;
@@ -29,7 +27,6 @@ export const defaultInitState: UserState = {
 export const createUserStore = (initState: UserState = defaultInitState) => {
   return createStore<UserStore>()((set) => ({
     ...initState,
-    setUser: (user: Partial<UserState>) => () => ({ ...user }),
     setUseFractions: (useFractions: boolean) => set(() => ({ useFractions })),
     setUseImperial: (useImperial: boolean) => set(() => ({ useImperial })),
     setUseDarkMode: (useDarkMode: boolean) => set(() => ({ useDarkMode })),
