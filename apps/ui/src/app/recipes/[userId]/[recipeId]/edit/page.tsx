@@ -1,6 +1,6 @@
 'use client'
 
-import type { EditRecipeDto } from '@repo/codegen/model'
+import type { PatchRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { Button } from '@repo/design-system'
@@ -23,7 +23,7 @@ const Page = () => {
 
   const handleSubmit = () => {
     mutate(
-      { id: '', data: {} as EditRecipeDto },
+      { id: '', data: {} as PatchRecipeDto },
       {
         onSuccess: () => undefined,
         onError: () => undefined,
