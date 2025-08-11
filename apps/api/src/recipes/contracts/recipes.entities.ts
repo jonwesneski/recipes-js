@@ -1,21 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
+import { OmitPrismaFieldsEntity } from 'src/common/utilityTypes';
 import type { RecipeMinimalType, RecipeType } from '../recipes.service';
 
-type OmitFields<T, K extends keyof any> = Omit<
-  T,
-  'id' | 'createdAt' | 'updatedAt' | K
->;
-
-export class EquipmentEntity
-  implements OmitFields<Prisma.EquipmentCreateInput, 'recipe'>
-{
-  @ApiProperty({ type: String })
-  name: string;
-}
-
 export class NutritionalFactsEntity
-  implements OmitFields<Prisma.NutritionalFactsCreateInput, 'recipe'>
+  implements
+    OmitPrismaFieldsEntity<Prisma.NutritionalFactsCreateInput, 'recipe'>
 {
   @ApiProperty({ type: Number, nullable: true })
   servings: number | null;
@@ -72,7 +62,11 @@ export class NutritionalFactsEntity
 }
 
 export class IngredientEntity
-  implements OmitFields<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
+  implements
+    OmitPrismaFieldsEntity<
+      Prisma.IngredientCreateInput,
+      'step' | 'displayOrder'
+    >
 {
   @ApiProperty()
   id: string;
@@ -137,8 +131,8 @@ export class RecipeEntity implements RecipeType {
   cookingTimeInMinutes: number | null;
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
-  @ApiProperty({ type: [EquipmentEntity] })
-  equipments: EquipmentEntity[];
+  @ApiProperty({ type: [String] })
+  equipments: string[];
   @ApiProperty({ type: [StepEntity] })
   steps: StepEntity[];
   @ApiProperty({ type: NutritionalFactsEntity, nullable: true })

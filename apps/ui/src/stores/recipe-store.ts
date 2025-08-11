@@ -90,7 +90,7 @@ export type IngredientItemsType = {
   items: IngredientItemType[];
 };
 
-export type StepsItemType = {
+export type StepItemType = {
   keyId: string;
   ref: RefObject<HTMLDivElement | null>;
   ingredients: IngredientItemsType;
@@ -98,9 +98,10 @@ export type StepsItemType = {
   image: string | null;
 };
 
-export type RecipeState = Omit<CreateRecipeDto, 'steps'> & {
+export type RecipeState = Omit<CreateRecipeDto, 'steps' | 'base64Image'> & {
   id: string;
-  steps: StepsItemType[];
+  imageSrc: string | null;
+  steps: StepItemType[];
   isValid: boolean;
   errors: BadRequestRecipeEntity;
 };
@@ -127,10 +128,6 @@ export type RecipeActions = {
     ref: RefObject<HTMLTextAreaElement | null>,
     _ingredient: IngredientValidator,
   ) => void;
-  // setIngredients: (
-  //   ref: RefObject<HTMLDivElement | null>,
-  //   _ingredients: IngredientsValidator,
-  // ) => void;
   setInstructions: (
     ref: RefObject<HTMLTextAreaElement | null>,
     _instructions: string,
@@ -144,10 +141,10 @@ export type RecipeActions = {
 
 export type RecipeStore = RecipeState & RecipeActions;
 
-const createStepItem = (params?: {
+export const createStepItem = (params?: {
   ingredients?: IngredientItemsType;
   instructions?: InstructionsType;
-}): StepsItemType => {
+}): StepItemType => {
   return {
     keyId: crypto.randomUUID(),
     ref: createRef<HTMLDivElement>(),
@@ -157,11 +154,13 @@ const createStepItem = (params?: {
   };
 };
 
-const createIngredientsItem = (): IngredientItemsType => {
+export const createIngredientsItem = (
+  items?: IngredientItemType[],
+): IngredientItemsType => {
   return {
     keyId: crypto.randomUUID(),
     ref: createRef<HTMLInputElement>(),
-    items: [new IngredientItemType()],
+    items: items ?? [new IngredientItemType()],
   };
 };
 
@@ -169,7 +168,7 @@ export const defaultInitState: RecipeState = {
   id: '',
   name: '',
   description: null,
-  base64Image: null,
+  imageSrc: null,
   preparationTimeInMinutes: null,
   cookingTimeInMinutes: null,
   equipments: [],
@@ -205,8 +204,8 @@ export const createRecipeStore = (
           set(() => ({ preparationTimeInMinutes })),
         setCookingTimeInMinutes: (cookingTimeInMinutes: number) =>
           set(() => ({ cookingTimeInMinutes })),
-        setImage: (base64Image: string) => set(() => ({ base64Image })),
-        setSteps: (steps: StepsItemType[]) => set(() => ({ steps })),
+        setImage: (imageSrc: string) => set(() => ({ imageSrc })),
+        setSteps: (steps: StepItemType[]) => set(() => ({ steps })),
         addStep: () => {
           set((state) => ({ steps: [...state.steps, createStepItem()] }));
         },
@@ -285,17 +284,6 @@ export const createRecipeStore = (
             }
             return { state };
           }),
-        // setIngredients: (
-        //   ref: RefObject<HTMLDivElement | null>,
-        //   ingredients: IngredientsValidator,
-        // ) =>
-        //   set((state) => {
-        //     const index = state.steps.findIndex((s) => s.ingredientsRef === ref);
-        //     if (index !== -1) {
-        //       state.steps[index].ingredients = ingredients;
-        //     }
-        //     return { steps: [...state.steps] };
-        //   }),
         insertIngredientsSteps: (
           ref: RefObject<HTMLTextAreaElement | null>,
           ingredients: IngredientValidator[][],
@@ -406,10 +394,10 @@ export const createRecipeStore = (
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
-          const { id, isValid, errors, base64Image, ...recipe } = get();
+          const { id, isValid, errors, imageSrc, ...recipe } = get();
           return {
             ...recipe,
-            base64Image: base64Image?.split(',')[1] ?? null,
+            base64Image: imageSrc?.split(',')[1] ?? null,
             steps: recipe.steps.map((s) => {
               return {
                 ingredients: s.ingredients.items.map((i) => i.ingredient.dto),

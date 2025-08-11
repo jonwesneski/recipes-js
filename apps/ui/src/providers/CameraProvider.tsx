@@ -1,6 +1,6 @@
 'use client'
 
-import { RecipeCamera } from '@src/components/recipe/RecipeCamera'
+import { RecipeCamera } from '@src/components/recipeInput/RecipeCamera'
 import { isImageSizeUnderLimit } from '@src/utils/imageChecker'
 import { createContext, useContext, useState, type ReactNode } from 'react'
 

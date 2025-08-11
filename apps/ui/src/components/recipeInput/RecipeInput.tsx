@@ -8,7 +8,7 @@ import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
 
-export const Recipe = () => {
+export const RecipeInput = () => {
   const divRef = useRef<HTMLDivElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
   const {
@@ -17,7 +17,7 @@ export const Recipe = () => {
     setCookingTimeInMinutes,
     setPreparationTimeInMinutes,
     setImage,
-    base64Image,
+    imageSrc: base64Image,
     errors,
   } = useRecipeStore((state) => state)
 
@@ -107,7 +107,7 @@ export const Recipe = () => {
 
       <PhotoInput
         label="recipe photo"
-        isRequired
+        isRequired={false}
         onCameraClick={handleOnCameraClick}
         onUploadClick={handleOnUploadClick}
       />
@@ -122,7 +122,7 @@ export const Recipe = () => {
         />
       ) : null}
       <hr className="h-1 bg-text border-none" />
-      <Steps />
+      <Steps className="mb-10" />
       <hr className="h-1 bg-text border-none" />
     </div>
   )

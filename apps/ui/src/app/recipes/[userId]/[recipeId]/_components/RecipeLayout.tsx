@@ -9,11 +9,12 @@ export const RecipeLayout = (props: IRecipeLayoutProps) => {
   return (
     <>
       <div
-        className="recipe-header text-center"
+        className="text-center"
         style={{ margin: 'auto', maxWidth: '800px' }}
       >
-        <h1 className="text-3xl">{props.title}</h1>
-        <h2>{props.subtitle}</h2>
+        <h1 className="text-3xl font-bold">{props.title}</h1>
+        <hr className="h-1 bg-text border-none" />
+        <p className="mt-5">{props.subtitle}</p>
       </div>
       <div
         className="recipe-content"

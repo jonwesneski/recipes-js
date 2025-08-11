@@ -191,6 +191,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
         rows={1}
         ref={props.ref}
         className="block focus:outline-none bg-transparent resize-none"
+        name="ingredient-row"
         placeholder={props.placeholder}
         value={props.value}
         onInput={handleInput}
