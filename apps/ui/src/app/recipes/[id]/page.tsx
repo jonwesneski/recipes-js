@@ -46,15 +46,11 @@ const transformRecipe = (recipe: RecipeEntity): RecipeState => {
   }
 }
 
-const Page = ({
-  params,
-}: {
-  params: Promise<{ userId: string; recipeId: string }>
-}) => {
+const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const [recipe, setRecipe] = useState<RecipeEntity | null>(null)
-  const { userId, recipeId } = use(params)
+  const { id } = use(params)
 
-  const { isSuccess, data } = useRecipesControllerRecipeV1(userId, recipeId)
+  const { isSuccess, data } = useRecipesControllerRecipeV1(id)
 
   useEffect(() => {
     if (isSuccess) {

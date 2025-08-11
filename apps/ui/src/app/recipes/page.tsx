@@ -16,13 +16,13 @@ const Page = () => {
       {isSuccess && Array.isArray(data)
         ? data.map((recipe) => (
             <div
-              key={`${recipe.user.id}-${recipe.id}`}
+              key={recipe.id}
               className="border p-4 rounded-lg shadow hover:shadow-lg transition-shadow"
             >
               <h2 className="text-xl font-bold">{recipe.name}</h2>
               <p className="text-gray-600">{recipe.description}</p>
               <p>{recipe.tags.join(' ')}</p>
-              <Button text={`/recipes/${recipe.user.id}/${recipe.id}`} />
+              <Button text={`/recipes/${recipe.id}`} />
             </div>
           ))
         : null}

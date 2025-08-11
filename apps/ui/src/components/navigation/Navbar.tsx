@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 
 const routeKeyMap = new Map<RegExp, string>()
 routeKeyMap.set(/^\/recipes$/, 'feed')
-routeKeyMap.set(/^\/recipes\/\w+\/\w+$/, 'recipe')
+routeKeyMap.set(/^\/recipes\/\w+$/, 'recipe')
 routeKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
 routeKeyMap.set(/^\/create-recipe$/, 'create')
 

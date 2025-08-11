@@ -162,11 +162,10 @@ export class RecipesService {
     return recipes.map((recipe) => this.transformRecipe(recipe));
   }
 
-  async getRecipe(userId: string, id: string): Promise<RecipeType> {
+  async getRecipe(id: string): Promise<RecipeType> {
     const recipe = await this.prisma.recipe.findFirstOrThrow({
       where: {
         id,
-        user: { id: userId },
       },
       include: RecipeInclude,
     });

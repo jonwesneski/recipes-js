@@ -41,8 +41,6 @@ export const UserStoreProvider = ({
   useEffect(() => {
     const fetch = async () => {
       if (typeof window !== 'undefined' && storeRef.current) {
-        //const { setUser } = storeRef.current.getState()
-
         setIsInitialized(true)
         if (accessToken) {
           try {
