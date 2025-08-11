@@ -1,7 +1,7 @@
 'use client'
 
 import type { IngredientEntity } from '@repo/codegen/model'
-import { useCustomModal } from '@repo/design-system'
+import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
   numberToFraction,
@@ -14,8 +14,9 @@ type IngredientParams = Omit<IngredientEntity, 'createdAt' | 'updatedAt'>
 
 interface IngredientListProps {
   ingredients: IngredientParams[]
+  className?: ClassValue
 }
-export const IngredientList = ({ ingredients }: IngredientListProps) => {
+export const IngredientList = (props: IngredientListProps) => {
   const useFractions = useUserStore((state) => state.useFractions)
   const { showModal } = useCustomModal()
 
@@ -36,8 +37,8 @@ export const IngredientList = ({ ingredients }: IngredientListProps) => {
   }
 
   return (
-    <ul>
-      {ingredients.map((ingredient) => {
+    <ul className={mergeCss('list-disc', props.className)}>
+      {props.ingredients.map((ingredient) => {
         return (
           <li key={ingredient.id} className="text-left">
             <span>

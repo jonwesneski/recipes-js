@@ -26,7 +26,7 @@ export const TextLabel = (props: TextLabelProps) => {
         data-error-for={props.name}
         placeholder={props.placeholder}
         variant={props.variant}
-        className="border-b-0 flex-1 block"
+        className="border-b-0"
         onChange={props.onChange}
       />
     </UnderLabel>

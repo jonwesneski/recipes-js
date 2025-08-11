@@ -8,7 +8,10 @@ import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
-export const Steps = () => {
+interface IStepsProps {
+  className?: string
+}
+export const Steps = (props: IStepsProps) => {
   const { steps, addStep, setStepImage } = useRecipeStore((state) => state)
   const [isNewStep, setIsNewStep] = useState<boolean>(false)
 
@@ -57,7 +60,7 @@ export const Steps = () => {
   }, [isNewStep, steps.length])
 
   return (
-    <div className="mb-10">
+    <div className={props.className}>
       {steps.map((s, index) => {
         return (
           <div key={s.keyId} className="mb-5">
@@ -71,23 +74,23 @@ export const Steps = () => {
                 ref={s.instructions.ref}
                 onResize={(height: number) => handleOnResize(s.ref, height)}
               />
-              <div className="w-8/10 mx-auto mt-3">
-                <PhotoInput
-                  label="step photo"
-                  isRequired={false}
-                  onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
-                  onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
+            </div>
+            <div className="w-8/10 mx-auto mt-3">
+              <PhotoInput
+                label="step photo"
+                isRequired={false}
+                onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
+                onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
+              />
+              {s.image ? (
+                <Image
+                  src={s.image}
+                  className="w-9/10 h-auto mx-auto"
+                  width={0}
+                  height={0}
+                  alt="taken"
                 />
-                {s.image ? (
-                  <Image
-                    src={s.image}
-                    className="w-9/10 h-auto mx-auto"
-                    width={0}
-                    height={0}
-                    alt="taken"
-                  />
-                ) : null}
-              </div>
+              ) : null}
             </div>
             {index < steps.length - 1 && <hr className="mt-5" />}
           </div>

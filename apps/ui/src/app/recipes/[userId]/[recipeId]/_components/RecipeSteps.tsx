@@ -7,13 +7,17 @@ export const RecipeSteps = () => {
   const steps = useRecipeStore((state) => state.steps)
 
   return (
-    <div className="border">
+    <section>
       {steps.map((s, index) => {
         return (
           <div key={s.keyId} className="mb-5">
             <h1 className="font-bold">step {index + 1}.</h1>
-            <div ref={s.ref} className="flex flex-col md:flex-row gap-2">
+            <div
+              ref={s.ref}
+              className="flex flex-col md:flex-row gap-2 ml-2 mt-2"
+            >
               <IngredientList
+                className="ml-4"
                 ingredients={s.ingredients.items.map((i) => ({
                   id: i.keyId,
                   ...i.ingredient.dto,
@@ -25,6 +29,6 @@ export const RecipeSteps = () => {
           </div>
         )
       })}
-    </div>
+    </section>
   )
 }

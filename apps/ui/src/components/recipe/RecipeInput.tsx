@@ -122,7 +122,7 @@ export const RecipeInput = () => {
         />
       ) : null}
       <hr className="h-1 bg-text border-none" />
-      <Steps />
+      <Steps className="mb-10" />
       <hr className="h-1 bg-text border-none" />
     </div>
   )

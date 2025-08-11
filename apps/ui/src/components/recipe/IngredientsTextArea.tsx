@@ -1,9 +1,9 @@
-/* eslint-disable -- experimental */
 'use client'
 
+import { mergeCss, type ClassValue } from '@repo/design-system'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import React, { RefObject, useRef } from 'react'
+import React, { useRef, type RefObject } from 'react'
 import { IngredientRow } from './IngredientRow'
 
 const placeholder = `0.5 cups fresh basil
@@ -14,6 +14,7 @@ const placeholderSplit = placeholder.split('\n')
 
 interface IngredientsTextAreaProps {
   ref?: RefObject<HTMLDivElement | null>
+  className?: ClassValue
   onResize: (_height: number) => void
 }
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
@@ -49,8 +50,8 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       const row = ingredients?.items[index - 1].ref.current
       row?.focus()
       const rangeValue = Math.min(
-        row?.value.length || 0,
-        ref.current?.selectionStart || 0,
+        row?.value.length ?? 0,
+        ref.current?.selectionStart ?? 0,
       )
 
       // This is not working for some reason; but should
@@ -62,12 +63,12 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     ref: React.RefObject<HTMLTextAreaElement | null>,
   ) => {
     const index = ingredients?.items.findIndex((item) => item.ref === ref)
-    if (index !== undefined && index < (ingredients?.items.length || 0) - 1) {
+    if (index !== undefined && index < (ingredients?.items.length ?? 0) - 1) {
       const row = ingredients?.items[index + 1].ref.current
       row?.focus()
       const rangeValue = Math.min(
-        row?.value.length || 0,
-        ref.current?.selectionStart || 0,
+        row?.value.length ?? 0,
+        ref.current?.selectionStart ?? 0,
       )
 
       row?.setSelectionRange(rangeValue, rangeValue)
@@ -75,7 +76,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleFocus = () => {
-    for (const item of ingredients?.items || []) {
+    for (const item of ingredients?.items ?? []) {
       if (document.activeElement === item.ref.current) {
         return
       }
@@ -107,8 +108,14 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     <div
       ref={textAreaRef}
       data-testid="ingredients-text-area"
-      className="focus-within:bg-input-focus-background min-h-32 min-w-80 grow-1 shadow-[-4px_-4px] border p-2"
+      className={mergeCss(
+        'focus-within:bg-input-focus-background min-h-32 shadow-[-4px_-4px] border p-2',
+        props.className,
+      )}
+      role="textbox"
       onClick={handleFocus}
+      tabIndex={0}
+      onKeyDown={() => undefined}
     >
       {ingredients?.items.map((item, i) => (
         <IngredientRow
