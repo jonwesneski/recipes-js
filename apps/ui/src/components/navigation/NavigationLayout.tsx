@@ -16,8 +16,8 @@ export const NavigationLayout = ({
     <>
       <nav
         className={mergeCss('fixed left-0 right-0 z-50', {
-          'bottom-0': width <= breakpointPxs.sm,
-          'top-0': width > breakpointPxs.sm,
+          'bottom-0': width < breakpointPxs.md,
+          'top-0': width >= breakpointPxs.md,
         })}
       >
         <Navbar />

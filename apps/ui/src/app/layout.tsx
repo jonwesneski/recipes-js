@@ -14,12 +14,12 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en">
       <body>
         <div
-          className="px-2 md:mx-5"
+          className="md:mx-5"
           style={{
             height: '100vh',
           }}
         >
-          <div id="root">
+          <div id="root" className="px-2">
             <AppProviders>
               <NavigationLayout>{children}</NavigationLayout>
             </AppProviders>

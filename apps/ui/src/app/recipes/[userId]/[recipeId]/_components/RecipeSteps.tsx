@@ -1,13 +1,17 @@
 'use client'
 
+import { mergeCss, type ClassValue } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { IngredientList } from './IngredientList'
 
-export const RecipeSteps = () => {
+interface IRecipeSteps {
+  className?: ClassValue
+}
+export const RecipeSteps = (props: IRecipeSteps) => {
   const steps = useRecipeStore((state) => state.steps)
 
   return (
-    <section>
+    <section className={mergeCss(undefined, props.className)}>
       {steps.map((s, index) => {
         return (
           <div key={s.keyId} className="mb-5">

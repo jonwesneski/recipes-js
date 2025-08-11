@@ -1,6 +1,7 @@
 'use client'
 
 import type { NutritionalFactsDto } from '@repo/codegen/model'
+import { type ClassValue, mergeCss } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { camelCaseToSpaces } from '@src/utils/stringHelpers'
 
@@ -38,31 +39,28 @@ const getNameAndUnit = (nutritionalFactName: string) => {
   const [name, unit] = nutritionalFactName.split('In')
   return [camelCaseToSpaces(name), unit]
 }
-export const NutritionalFacts = () => {
+
+interface INutritionalFactsProps {
+  className?: ClassValue
+}
+export const NutritionalFacts = (props: INutritionalFactsProps) => {
   const nutritionalFacts = useRecipeStore((state) => state.nutritionalFacts)
 
   return (
-    <div
-      className="nutritional-facts"
-      style={{
-        margin: '20px 0',
-        padding: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '5px',
-      }}
-    >
-      <h3>Nutritional Facts:</h3>
-      <table style={{ borderCollapse: 'collapse', margin: 'auto' }}>
+    <div className={mergeCss(undefined, props.className)}>
+      <h3 className="font-bold text-center">Nutritional Facts:</h3>
+      <table className="border border-collapse m-auto">
         <tbody>
           {Object.keys(nutritionalFactsConst).map((key) => {
             const [name, unit] = getNameAndUnit(key)
+            const _unit = unit === 'IU' ? unit : unit.toLowerCase()
             return (
-              <tr key={key}>
-                <td style={{ textAlign: 'left' }}>{name}</td>
-                <td style={{ textAlign: 'left' }}>
+              <tr className="border" key={key}>
+                <td className="text-right pl-3">{name}</td>
+                <td className="text-left px-4">
                   {nutritionalFacts?.[key as keyof typeof nutritionalFacts]
-                    ? `${nutritionalFacts[key as keyof typeof nutritionalFacts]} ${unit}`
-                    : `? ${unit}`}
+                    ? `${nutritionalFacts[key as keyof typeof nutritionalFacts]} ${_unit}`
+                    : `? ${_unit}`}
                 </td>
               </tr>
             )

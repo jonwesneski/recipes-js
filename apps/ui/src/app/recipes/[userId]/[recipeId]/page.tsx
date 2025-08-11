@@ -72,8 +72,7 @@ const Page = ({
           >
             <RecipeIngredientsOverview className="my-5" />
             <RecipeSteps />
-
-            <NutritionalFacts />
+            <NutritionalFacts className="my-28" />
           </RecipeLayout>
         </RecipeStoreProvider>
       ) : null}
