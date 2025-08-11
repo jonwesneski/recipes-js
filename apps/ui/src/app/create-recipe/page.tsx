@@ -2,7 +2,7 @@
 
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { Button } from '@repo/design-system'
-import { RecipeInput } from '@src/components/recipe'
+import { RecipeInput } from '@src/components/recipeInput'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useRouter } from 'next/navigation'
