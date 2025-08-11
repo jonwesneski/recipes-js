@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { throwIfNotFound } from 'src/common';
-import { UserPatchDto } from './contracts';
+import { PatchUserDto } from './contracts';
 import { UserEntity } from './contracts/users.entities';
 import { UsersService } from './users.service';
 
@@ -12,31 +12,31 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get(':handle')
+  @Get(':id')
   @ApiOkResponse({
     description: "user's info",
     type: UserEntity,
   })
-  @ApiParam({ name: 'handle', type: String, description: 'handle of user' })
-  async user(@Param('handle') handle: string): Promise<UserEntity> {
+  @ApiParam({ name: 'id', type: String, description: 'id of user' })
+  async user(@Param('id') id: string): Promise<UserEntity> {
     try {
-      return await this.usersService.getUser(handle);
+      return await this.usersService.getUser(id);
     } catch (error) {
       throwIfNotFound(error);
       throw error;
     }
   }
 
-  @Patch(':handle')
+  @Patch(':id')
   @ApiOkResponse({
     description: "user's info",
     type: UserEntity,
   })
-  @ApiParam({ name: 'handle', type: String, description: 'handle of user' })
+  @ApiParam({ name: 'id', type: String, description: 'id of user' })
   async updateUser(
-    @Param('handle') handle: string,
-    @Body() body: UserPatchDto,
+    @Param('id') id: string,
+    @Body() body: PatchUserDto,
   ): Promise<UserEntity> {
-    return await this.usersService.updateUser(handle, body);
+    return await this.usersService.updateUser(id, body);
   }
 }

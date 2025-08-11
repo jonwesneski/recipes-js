@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@repo/database';
 import { PrismaService } from 'src/common/prisma.service';
-import { UserPatchDto } from './contracts';
+import { PatchUserDto } from './contracts';
 
 type UserPrismaType = Prisma.UserGetPayload<{
   include: {
     diet: true;
-  };
-  omit: {
-    id: true;
   };
 }>;
 
@@ -16,19 +13,16 @@ type UserPrismaType = Prisma.UserGetPayload<{
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUser(handle: string): Promise<UserPrismaType> {
+  async getUser(id: string): Promise<UserPrismaType> {
     return await this.prisma.user.findFirstOrThrow({
-      where: { handle },
+      where: { id },
       include: { diet: true },
     });
   }
 
-  async updateUser(
-    handle: string,
-    user: UserPatchDto,
-  ): Promise<UserPrismaType> {
+  async updateUser(id: string, user: PatchUserDto): Promise<UserPrismaType> {
     return await this.prisma.user.update({
-      where: { handle },
+      where: { id },
       data: user,
       include: { diet: true },
     });

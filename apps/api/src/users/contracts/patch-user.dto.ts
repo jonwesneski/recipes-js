@@ -3,7 +3,7 @@ import { Prisma } from '@repo/database';
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { OmitPrismaFieldsDto } from 'src/common/utilityTypes';
 
-export class UserPatchDto
+export class PatchUserDto
   implements
     OmitPrismaFieldsDto<
       Prisma.UserCreateInput,

@@ -3,7 +3,7 @@ import { createId as cuid } from '@paralleldrive/cuid2';
 import { Prisma } from '@repo/database';
 import { PrismaService } from 'src/common';
 import { S3Service } from 'src/common/s3.service';
-import { CreateRecipeDto, EditRecipeDto } from './contracts';
+import { CreateRecipeDto, PatchRecipeDto } from './contracts';
 
 type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
   include: {
@@ -286,7 +286,7 @@ export class RecipesService {
   async updateRecipe(
     userId: string,
     id: string,
-    data: EditRecipeDto,
+    data: PatchRecipeDto,
   ): Promise<RecipeType> {
     const { base64Image, tags, ...remainingData } = data;
     const s3BucketKeyName = `${userId}/${id}`;

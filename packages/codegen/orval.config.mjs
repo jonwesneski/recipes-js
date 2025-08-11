@@ -1,6 +1,7 @@
 export default {
   recipes: {
     output: {
+      clean: true,
       mode: 'tags-split',
       target: './src/api',
       schemas: './src/model',

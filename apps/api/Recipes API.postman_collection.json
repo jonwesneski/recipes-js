@@ -151,14 +151,45 @@
 					"name": "recipes",
 					"item": [
 						{
-							"name": "{userHandle}",
+							"name": "{id}",
 							"item": [
 								{
-									"name": "{slug}",
-									"item": [
+									"name": "Recipes Controller recipe v1",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{host}}/v1/recipes/:userId/:id",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"v1",
+												"recipes",
+												":userId",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "userId",
+													"value": ""
+												},
+												{
+													"key": "id",
+													"value": ""
+												}
+											]
+										}
+									},
+									"response": [
 										{
-											"name": "Recipes Controller recipe v1",
-											"request": {
+											"name": "The recips record",
+											"originalRequest": {
 												"method": "GET",
 												"header": [
 													{
@@ -167,69 +198,33 @@
 													}
 												],
 												"url": {
-													"raw": "{{host}}/v1/recipes/:userHandle/:slug",
+													"raw": "{{baseUrl}}/v1/recipes/:slug",
 													"host": [
-														"{{host}}"
+														"{{baseUrl}}"
 													],
 													"path": [
 														"v1",
 														"recipes",
-														":userHandle",
 														":slug"
 													],
 													"variable": [
 														{
-															"key": "userHandle",
-															"value": "jon"
-														},
-														{
-															"key": "slug",
-															"value": "tres-leches-cake"
+															"key": "slug"
 														}
 													]
 												}
 											},
-											"response": [
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
 												{
-													"name": "The recips record",
-													"originalRequest": {
-														"method": "GET",
-														"header": [
-															{
-																"key": "Accept",
-																"value": "application/json"
-															}
-														],
-														"url": {
-															"raw": "{{baseUrl}}/v1/recipes/:slug",
-															"host": [
-																"{{baseUrl}}"
-															],
-															"path": [
-																"v1",
-																"recipes",
-																":slug"
-															],
-															"variable": [
-																{
-																	"key": "slug"
-																}
-															]
-														}
-													},
-													"status": "OK",
-													"code": 200,
-													"_postman_previewlanguage": "json",
-													"header": [
-														{
-															"key": "Content-Type",
-															"value": "application/json"
-														}
-													],
-													"cookie": [],
-													"body": "{\n  \"equipments\": [\n    {\n      \"name\": \"eiusmod sed dolor\"\n    },\n    {\n      \"name\": \"est sunt laborum Excepteur\"\n    }\n  ],\n  \"steps\": [\n    {\n      \"id\": \"in mollit ut exercitation\",\n      \"createdAt\": \"1964-06-17T03:11:26.932Z\",\n      \"updatedAt\": \"2018-02-19T13:38:27.302Z\",\n      \"recipeId\": 2614868.639866382,\n      \"instruction\": \"officia do\",\n      \"ingredients\": [\n        {\n          \"id\": \"voluptate amet\",\n          \"createdAt\": \"2007-03-24T03:47:51.295Z\",\n          \"updatedAt\": \"1995-12-26T22:23:24.599Z\",\n          \"amount\": -75221655.53504463,\n          \"unit\": \"do consectetur Excepteur veniam\",\n          \"name\": \"a\"\n        },\n        {\n          \"id\": \"ullamco\",\n          \"createdAt\": \"2006-02-22T13:31:05.746Z\",\n          \"updatedAt\": \"1969-10-25T10:53:28.131Z\",\n          \"amount\": 44975187.3629995,\n          \"unit\": \"eiusmod qui ut culpa dolor\",\n          \"name\": \"commodo minim\"\n        }\n      ]\n    },\n    {\n      \"id\": \"qui enim est\",\n      \"createdAt\": \"1986-05-29T23:53:12.084Z\",\n      \"updatedAt\": \"1993-02-24T18:27:25.404Z\",\n      \"recipeId\": -84159020.39733152,\n      \"instruction\": \"aute elit\",\n      \"ingredients\": [\n        {\n          \"id\": \"Excepteur in\",\n          \"createdAt\": \"1959-06-19T07:21:29.744Z\",\n          \"updatedAt\": \"2006-02-26T03:19:00.879Z\",\n          \"amount\": -7489670.570124567,\n          \"unit\": \"et Excepteur in labore\",\n          \"name\": \"in\"\n        },\n        {\n          \"id\": \"labore anim ullamco ad\",\n          \"createdAt\": \"1978-08-31T14:45:52.891Z\",\n          \"updatedAt\": \"1953-10-08T17:41:10.201Z\",\n          \"amount\": -39986663.57355694,\n          \"unit\": \"Duis\",\n          \"name\": \"voluptate adipisicing qui irure\"\n        }\n      ]\n    }\n  ],\n  \"nutritionalFacts\": {\n    \"proteinInG\": 7546067.993230209,\n    \"totalFatInG\": -22432293.955778435,\n    \"carbohydratesInG\": -33953714.01533844,\n    \"fiberInG\": -82950649.00102508,\n    \"sugarInG\": -99183623.71972074,\n    \"sodiumInMg\": -97596014.53904301,\n    \"cholesterolInMg\": -46524535.84840464,\n    \"saturatedFatInG\": -17307625.797967225,\n    \"transFatInG\": -51894658.53103514,\n    \"potassiumInMg\": -53057793.4784295,\n    \"vitaminAInIU\": -22808516.264947042,\n    \"vitaminCInMg\": -2169160.3078814596,\n    \"calciumInMg\": 48616318.46605432,\n    \"ironInMg\": 28067388.62680666,\n    \"vitaminDInIU\": -72547911.8417585,\n    \"vitaminB6InMg\": -45625573.80142405,\n    \"vitaminB12InMg\": -42883427.609391056,\n    \"magnesiumInMg\": -51966944.84965021,\n    \"folateInMcg\": 33547026.372279152,\n    \"thiaminInMg\": -41416439.998280905,\n    \"riboflavinInMg\": 66232659.53746989,\n    \"niacinInMg\": 48674740.858596176,\n    \"caloriesInKcal\": 93755637.78189173\n  },\n  \"tags\": [\n    \"ea do esse veniam consequat\",\n    \"qui amet\"\n  ],\n  \"id\": 37780149.049479485,\n  \"createdAt\": \"2011-07-15T10:01:42.708Z\",\n  \"updatedAt\": \"1954-06-15T04:32:25.248Z\",\n  \"name\": \"Lorem consequat nulla exercitation\",\n  \"slug\": \"p\",\n  \"description\": \"dolor\",\n  \"preparationTimeInMinutes\": 95473482.64237145,\n  \"cookingTimeInMinutes\": -36245873.2695885,\n  \"userId\": \"incididunt proident in\"\n}"
+													"key": "Content-Type",
+													"value": "application/json"
 												}
-											]
+											],
+											"cookie": [],
+											"body": "{\n  \"equipments\": [\n    {\n      \"name\": \"eiusmod sed dolor\"\n    },\n    {\n      \"name\": \"est sunt laborum Excepteur\"\n    }\n  ],\n  \"steps\": [\n    {\n      \"id\": \"in mollit ut exercitation\",\n      \"createdAt\": \"1964-06-17T03:11:26.932Z\",\n      \"updatedAt\": \"2018-02-19T13:38:27.302Z\",\n      \"recipeId\": 2614868.639866382,\n      \"instruction\": \"officia do\",\n      \"ingredients\": [\n        {\n          \"id\": \"voluptate amet\",\n          \"createdAt\": \"2007-03-24T03:47:51.295Z\",\n          \"updatedAt\": \"1995-12-26T22:23:24.599Z\",\n          \"amount\": -75221655.53504463,\n          \"unit\": \"do consectetur Excepteur veniam\",\n          \"name\": \"a\"\n        },\n        {\n          \"id\": \"ullamco\",\n          \"createdAt\": \"2006-02-22T13:31:05.746Z\",\n          \"updatedAt\": \"1969-10-25T10:53:28.131Z\",\n          \"amount\": 44975187.3629995,\n          \"unit\": \"eiusmod qui ut culpa dolor\",\n          \"name\": \"commodo minim\"\n        }\n      ]\n    },\n    {\n      \"id\": \"qui enim est\",\n      \"createdAt\": \"1986-05-29T23:53:12.084Z\",\n      \"updatedAt\": \"1993-02-24T18:27:25.404Z\",\n      \"recipeId\": -84159020.39733152,\n      \"instruction\": \"aute elit\",\n      \"ingredients\": [\n        {\n          \"id\": \"Excepteur in\",\n          \"createdAt\": \"1959-06-19T07:21:29.744Z\",\n          \"updatedAt\": \"2006-02-26T03:19:00.879Z\",\n          \"amount\": -7489670.570124567,\n          \"unit\": \"et Excepteur in labore\",\n          \"name\": \"in\"\n        },\n        {\n          \"id\": \"labore anim ullamco ad\",\n          \"createdAt\": \"1978-08-31T14:45:52.891Z\",\n          \"updatedAt\": \"1953-10-08T17:41:10.201Z\",\n          \"amount\": -39986663.57355694,\n          \"unit\": \"Duis\",\n          \"name\": \"voluptate adipisicing qui irure\"\n        }\n      ]\n    }\n  ],\n  \"nutritionalFacts\": {\n    \"proteinInG\": 7546067.993230209,\n    \"totalFatInG\": -22432293.955778435,\n    \"carbohydratesInG\": -33953714.01533844,\n    \"fiberInG\": -82950649.00102508,\n    \"sugarInG\": -99183623.71972074,\n    \"sodiumInMg\": -97596014.53904301,\n    \"cholesterolInMg\": -46524535.84840464,\n    \"saturatedFatInG\": -17307625.797967225,\n    \"transFatInG\": -51894658.53103514,\n    \"potassiumInMg\": -53057793.4784295,\n    \"vitaminAInIU\": -22808516.264947042,\n    \"vitaminCInMg\": -2169160.3078814596,\n    \"calciumInMg\": 48616318.46605432,\n    \"ironInMg\": 28067388.62680666,\n    \"vitaminDInIU\": -72547911.8417585,\n    \"vitaminB6InMg\": -45625573.80142405,\n    \"vitaminB12InMg\": -42883427.609391056,\n    \"magnesiumInMg\": -51966944.84965021,\n    \"folateInMcg\": 33547026.372279152,\n    \"thiaminInMg\": -41416439.998280905,\n    \"riboflavinInMg\": 66232659.53746989,\n    \"niacinInMg\": 48674740.858596176,\n    \"caloriesInKcal\": 93755637.78189173\n  },\n  \"tags\": [\n    \"ea do esse veniam consequat\",\n    \"qui amet\"\n  ],\n  \"id\": 37780149.049479485,\n  \"createdAt\": \"2011-07-15T10:01:42.708Z\",\n  \"updatedAt\": \"1954-06-15T04:32:25.248Z\",\n  \"name\": \"Lorem consequat nulla exercitation\",\n  \"slug\": \"p\",\n  \"description\": \"dolor\",\n  \"preparationTimeInMinutes\": 95473482.64237145,\n  \"cookingTimeInMinutes\": -36245873.2695885,\n  \"userId\": \"incididunt proident in\"\n}"
 										}
 									]
 								}
@@ -304,7 +299,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{}",
+									"raw": "{\r\n    \"name\": \"Tres Leches Cake1\",\r\n    \"description\": \"A delicious cake soaked in three types of milk\",\r\n    \"preparationTimeInMinutes\": null,\r\n    \"cookingTimeInMinutes\": null,\r\n    \"base64Image\": null,\r\n    \"userHandle\": \"jon\",\r\n    \"equipments\": [],\r\n    \"steps\": [\r\n        {\r\n            \"instruction\": \"Preheat oven to 350F and grease a 9x13 inch baking dish\",\r\n            \"ingredients\": []\r\n        },\r\n        {\r\n            \"instruction\": \"Mix the dry ingredients together in a bowl\",\r\n            \"ingredients\": [\r\n                {\r\n                    \"amount\": 1,\r\n                    \"unit\": \"cups\",\r\n                    \"name\": \"All-purpose flour\"\r\n                },\r\n                {\r\n                    \"amount\": 1.5,\r\n                    \"unit\": \"teaspoons\",\r\n                    \"name\": \"Baking powder\"\r\n                },\r\n                {\r\n                    \"amount\": 0.5,\r\n                    \"unit\": \"teaspoons\",\r\n                    \"name\": \"Salt\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"instruction\": \"Separate egg whites and yolks. Mix yolks with sugar, milk, and vanilla extract. Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool\",\r\n            \"ingredients\": [\r\n                {\r\n                    \"amount\": 5,\r\n                    \"unit\": \"whole\",\r\n                    \"name\": \"Eggs\"\r\n                },\r\n                {\r\n                    \"amount\": 0.75,\r\n                    \"unit\": \"cups\",\r\n                    \"name\": \"Sugar\"\r\n                },\r\n                {\r\n                    \"amount\": 0.33,\r\n                    \"unit\": \"cups\",\r\n                    \"name\": \"Milk\"\r\n                },\r\n                {\r\n                    \"amount\": 1,\r\n                    \"unit\": \"teaspoons\",\r\n                    \"name\": \"Vanilla extract\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"instruction\": \"Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool\",\r\n            \"ingredients\": [\r\n                {\r\n                    \"amount\": 0.25,\r\n                    \"unit\": \"cups\",\r\n                    \"name\": \"Sugar\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"instruction\": \"Mix 3 milks together, and then poke holes in cake then pour milk mixture into the cake, let it soak up the liquid. then add frosting\",\r\n            \"ingredients\": [\r\n                {\r\n                    \"amount\": 0.33,\r\n                    \"unit\": \"cups\",\r\n                    \"name\": \"coconut milk\"\r\n                },\r\n                {\r\n                    \"amount\": 12,\r\n                    \"unit\": \"ounces\",\r\n                    \"name\": \"evaporated milk\"\r\n                },\r\n                {\r\n                    \"amount\": 14,\r\n                    \"unit\": \"ounces\",\r\n                    \"name\": \"Sweetened condensed milk\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"nutritionalFacts\": {\r\n        \"servings\": null,\r\n        \"servingAmount\": null,\r\n        \"servingUnit\": null,\r\n        \"caloriesInKcal\": 350,\r\n        \"totalFatInG\": 12,\r\n        \"saturatedFatInG\": 5,\r\n        \"transFatInG\": 0,\r\n        \"cholesterolInMg\": 100,\r\n        \"sodiumInMg\": 200,\r\n        \"carbohydratesInG\": 50,\r\n        \"fiberInG\": 1,\r\n        \"sugarInG\": 30,\r\n        \"proteinInG\": 6,\r\n        \"vitaminAInIU\": 10,\r\n        \"vitaminCInMg\": 0,\r\n        \"vitaminDInIU\": 0,\r\n        \"vitaminB6InMg\": 0,\r\n        \"vitaminB12InMg\": 0,\r\n        \"calciumInMg\": 0,\r\n        \"ironInMg\": 0,\r\n        \"magnesiumInMg\": 0,\r\n        \"potassiumInMg\": null,\r\n        \"folateInMcg\": 0,\r\n        \"thiaminInMg\": 0,\r\n        \"riboflavinInMg\": 0,\r\n        \"niacinInMg\": 0\r\n    },\r\n    \"tags\": []\r\n}",
 									"options": {
 										"raw": {
 											"headerFamily": "json",
@@ -449,71 +444,73 @@
 					"name": "users",
 					"item": [
 						{
-							"name": "User",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{}"
-								},
-								"url": {
-									"raw": "{{host}}/v1/users/:handle",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"v1",
-										"users",
-										":handle"
-									],
-									"variable": [
-										{
-											"key": "handle",
-											"value": ""
+							"name": "{id}",
+							"item": [
+								{
+									"name": "User",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/v1/users/:id",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"v1",
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": ""
+												}
+											]
 										}
-									]
+									},
+									"response": []
+								},
+								{
+									"name": "Update User",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/v1/users/:id",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"v1",
+												"users",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": ""
+												}
+											]
+										}
+									},
+									"response": []
 								}
-							},
-							"response": []
+							]
 						},
 						{
-							"name": "Update User",
+							"name": "Users",
 							"request": {
-								"method": "PATCH",
+								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"jon\",\r\n    \"handle\": \"jon\",\r\n    \"useFractions\": false,\r\n    \"useImperial\": false,\r\n    \"useDarkMode\": false\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "{{host}}/v1/users/:handle",
+									"raw": "{{host}}/v1/users",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"v1",
-										"users",
-										":handle"
-									],
-									"variable": [
-										{
-											"key": "handle",
-											"value": ""
-										}
+										"users"
 									]
 								}
 							},

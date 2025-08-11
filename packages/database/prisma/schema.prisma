@@ -41,6 +41,7 @@ model User {
   useImperial  Boolean           @default(false)
   useDarkMode  Boolean           @default(false)
   diet         NutritionalFacts? @relation("UserNutritionalFacts")
+  imageUrl     String?
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   recipes      Recipe[]

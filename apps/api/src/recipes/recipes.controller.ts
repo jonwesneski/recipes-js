@@ -20,7 +20,7 @@ import { parseHelper } from 'src/common/header.decorators';
 import {
   BadRequestRecipeEntity,
   CreateRecipeDto,
-  EditRecipeDto,
+  PatchRecipeDto,
   RecipeEntity,
 } from './contracts';
 import { RecipesService } from './recipes.service';
@@ -82,14 +82,14 @@ export class RecipesController {
   }
 
   @Patch(':id')
-  @ApiBody({ type: EditRecipeDto })
+  @ApiBody({ type: PatchRecipeDto })
   @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
   @UseGuards(JwtGuard)
   async updateRecipe(
     @Param('id') id: string,
     // TODO: can't get this to work in jest
     //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
-    @Body() body: EditRecipeDto,
+    @Body() body: PatchRecipeDto,
     @Req() req: Request,
   ): Promise<RecipeEntity> {
     const token = parseHelper(req.headers); // Using since JwtDecodedHeader is not working in jest
