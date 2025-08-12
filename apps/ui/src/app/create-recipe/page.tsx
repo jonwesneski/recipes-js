@@ -30,7 +30,7 @@ const Page = () => {
       { data: makeCreateDto() },
       {
         onSuccess: (data) => {
-          router.push(`/recipes/${data.user.id}/${data.id}`)
+          router.push(`/recipes/${data.id}`)
         },
         onError: (error) => {
           if (error.response?.data) {
