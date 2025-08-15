@@ -18,7 +18,7 @@ export type PrismaResults<T> = {
 };
 
 @Injectable()
-export class PrismaService1 extends PrismaClient {
+export class PrismaService extends PrismaClient {
   constructor(config: ConfigService) {
     super({
       datasources: {
