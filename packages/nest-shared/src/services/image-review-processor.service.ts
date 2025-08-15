@@ -1,5 +1,6 @@
+// TODO: In the future, this file will just exist in api-image-processor, not in the shared package
 import { Injectable, Logger } from '@nestjs/common';
-import { RecipeRepository } from 'src/repositories';
+import { RecipeRepository } from '../repositories/recipe';
 import { RekognitionService } from './rekognition.service';
 import { S3Service } from './s3.service';
 // import { SqsMessageHandler } from '@ssut/nestjs-sqs';
@@ -16,7 +17,14 @@ export class ImageReviewProcessorService {
   ) {}
 
   public async processImage(base64Image: string) {
-    await this.s3Service.uploadFile('key', Buffer.from(base64Image, 'base64'));
+    const imageBuffer = Buffer.from(base64Image, 'base64');
+    const labels = await this.recognitionService.detectLabels(imageBuffer);
+    labels?.forEach((label) => {
+      this.logger.log(
+        `Detected label: ${label.Name} with confidence ${label.Confidence}`,
+      );
+    });
+    //await this.s3Service.uploadFile('key', imageBuffer);
   }
 
   //   // Specify the queue URL or queue name here as registered in Module

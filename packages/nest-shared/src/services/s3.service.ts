@@ -3,6 +3,7 @@ import { S3 } from 'aws-sdk';
 import { awsConfig, type AwsConfigType } from '../configs/aws.config';
 
 type S3ImageDataType = { s3BucketKeyName: string; s3ImageUrl: string };
+
 @Injectable()
 export class S3Service {
   private readonly logger = new Logger(S3Service.name);

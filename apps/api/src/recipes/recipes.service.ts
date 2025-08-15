@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { createId as cuid } from '@paralleldrive/cuid2';
 import { Prisma } from '@repo/database';
 // import { PrismaService } from 'src/common';
 import { RecipeRepository, RekognitionService } from '@repo/nest-shared';
@@ -134,41 +133,44 @@ export class RecipesService {
     userId: string,
     data: CreateRecipeDto,
   ): Promise<RecipeType> {
-    const recipe = await this.recipeRepository.createRecipe(userId, data);
+    //const recipe = await this.recipeRepository.createRecipe(userId, data);
     const { base64Image, tags, ...remainingData } = data;
-    const newId = cuid();
-    const { s3BucketKeyName, s3ImageUrl } = this.s3Service.makeS3ImageUrl(
-      userId,
-      newId,
+    await this.recognitionService.isValidFooldImage(
+      Buffer.from(base64Image!, 'base64'),
     );
-    const stepsS3Images =
-      remainingData.steps.reduce(
-        (acc, s, i) => {
-          if (s.base64Image) {
-            const { s3BucketKeyName, s3ImageUrl } =
-              this.s3Service.makeS3ImageUrl(userId, newId, i);
-            acc[i] = {
-              base64Image: s.base64Image,
-              s3BucketKeyName,
-              s3ImageUrl,
-            };
-          } else {
-            acc[i] = {};
-          }
+    // const newId = cuid();
+    // const { s3BucketKeyName, s3ImageUrl } = this.s3Service.makeS3ImageUrl(
+    //   userId,
+    //   newId,
+    // );
+    // const stepsS3Images =
+    //   remainingData.steps.reduce(
+    //     (acc, s, i) => {
+    //       if (s.base64Image) {
+    //         const { s3BucketKeyName, s3ImageUrl } =
+    //           this.s3Service.makeS3ImageUrl(userId, newId, i);
+    //         acc[i] = {
+    //           base64Image: s.base64Image,
+    //           s3BucketKeyName,
+    //           s3ImageUrl,
+    //         };
+    //       } else {
+    //         acc[i] = {};
+    //       }
 
-          return acc;
-        },
-        {} as Record<
-          number,
-          {
-            base64Image?: string;
-            s3BucketKeyName?: string;
-            s3ImageUrl?: string;
-          }
-        >,
-      ) || {};
+    //       return acc;
+    //     },
+    //     {} as Record<
+    //       number,
+    //       {
+    //         base64Image?: string;
+    //         s3BucketKeyName?: string;
+    //         s3ImageUrl?: string;
+    //       }
+    //     >,
+    //   ) || {};
 
-    return recipe;
+    return {} as RecipeType; //recipe;
   }
 
   async updateRecipe(
