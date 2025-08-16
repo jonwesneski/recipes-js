@@ -1,10 +1,15 @@
 import { CanActivate, INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import {
+  PrismaService,
+  RecipeInclude,
+  RecipePrismaType,
+  RekognitionService,
+  S3Service,
+} from '@repo/nest-shared';
 import { JwtGuard } from 'src/auth/guards';
-import { configureApp, PrismaService } from 'src/common';
-import { S3Service } from 'src/common/s3.service';
-import { RecipeInclude, RecipePrismaType } from 'src/recipes';
+import { configureApp } from 'src/common';
 import {
   CreateRecipeDto,
   PatchRecipeDto,
@@ -29,6 +34,9 @@ describe('RecipesController (e2e)', () => {
       .fn()
       .mockReturnValue({ s3BucketKeyName: 'string', s3ImageUrl: 'string' }),
   };
+  const mockRekognitionService = {
+    isValidFoodImage: jest.fn().mockResolvedValue(true),
+  };
   let user1: Awaited<ReturnType<PrismaService['user']['findUnique']>>;
   let recipe1: RecipePrismaType;
   let token: string;
@@ -41,6 +49,8 @@ describe('RecipesController (e2e)', () => {
       .useValue(mockJwtGuard)
       .overrideProvider(S3Service)
       .useValue(mockS3Service)
+      .overrideProvider(RekognitionService)
+      .useValue(mockRekognitionService)
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -172,7 +182,7 @@ describe('RecipesController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           name: '',
-          steps: [{ unit: true, amount: 'left', name: 0 }],
+          steps: [{ ingredients: [{ unit: true, amount: 'left', name: 0 }] }],
         })
         .expect(400)
         .expect((res) => {
@@ -188,11 +198,14 @@ describe('RecipesController (e2e)', () => {
               'base64Image should not be empty, base64Image must be a string',
             steps: {
               '0': {
-                amount: 'property amount should not exist',
-                ingredients:
-                  'ingredients should not be empty, ingredients must be an array',
-                name: 'property name should not exist',
-                unit: 'property unit should not exist',
+                ingredients: {
+                  '0': {
+                    amount:
+                      'amount must not be less than 0, amount must be a number conforming to the specified constraints',
+                    name: 'name must be a string',
+                    unit: 'unit must be one of the following values: whole, pinches, cups, fluidOunces, tablespoons, teaspoons, pints, quarts, gallons, pounds, ounces, liters, milliliters, kilograms, grams',
+                  },
+                },
                 instruction: 'instruction must be a string',
                 base64Image: 'base64Image must be a string',
               },
@@ -339,7 +352,7 @@ describe('RecipesController (e2e)', () => {
     });
 
     it.skip('replace with empty steps', async () => {
-      // TODO: lets make empty steps not allowed; maybe throw a 400
+      // TODO: Thinking about making empty steps not allowed; maybe throw a 400
       // should i handle at prisma level or at controller level?
       const response = await createRecipe();
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@repo/database';
-import { PrismaService } from 'src/common/prisma.service';
+import { PrismaService } from '@repo/nest-shared';
 import { PatchUserDto } from './contracts';
 
 type UserPrismaType = Prisma.UserGetPayload<{

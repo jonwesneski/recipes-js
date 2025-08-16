@@ -1,8 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
-import { awsConfig, type AwsConfigType } from './config/aws.config';
+import { awsConfig, type AwsConfigType } from '../configs/aws.config';
 
 type S3ImageDataType = { s3BucketKeyName: string; s3ImageUrl: string };
+
 @Injectable()
 export class S3Service {
   private readonly logger = new Logger(S3Service.name);
@@ -19,10 +20,6 @@ export class S3Service {
       region: _awsConfig.region,
     });
     this._cloudFrontBaseUrl = _awsConfig.cloudFrontBaseUrl;
-  }
-
-  public get cloudFrontBaseUrl() {
-    return this._cloudFrontBaseUrl;
   }
 
   async uploadFile(keyName: string, content: Buffer<ArrayBuffer>) {
@@ -54,7 +51,7 @@ export class S3Service {
     }
     return {
       s3BucketKeyName,
-      s3ImageUrl: `${this.cloudFrontBaseUrl}/${s3BucketKeyName}`,
+      s3ImageUrl: `${this._cloudFrontBaseUrl}/${s3BucketKeyName}`,
     };
   }
 }
