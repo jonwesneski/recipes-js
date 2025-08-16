@@ -187,12 +187,11 @@ export class CreateStepDto
   instruction: string | null;
   @IsArray()
   @ApiProperty({ type: [CreateIngredientDto] })
-  @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => CreateIngredientDto)
   ingredients: CreateIngredientDto[];
-  @IsString()
   @IsNullable()
+  @IsString()
   @ApiProperty({ type: String, nullable: true })
   base64Image: string | null;
 }
@@ -234,6 +233,7 @@ export class CreateRecipeDto
   @ApiProperty({ type: Number, nullable: true })
   cookingTimeInMinutes: number | null;
   @IsArray()
+  @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => CreateStepDto)
   @ApiProperty({ type: [CreateStepDto] })

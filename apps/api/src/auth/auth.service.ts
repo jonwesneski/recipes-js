@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '@repo/nest-shared';
 import { type JwtGoogleType } from '@repo/zod-schemas';
-import { PrismaService } from 'src/common/prisma.service';
 import {
   jwtRefreshConfig,
   type JwtRefreshConfigType,

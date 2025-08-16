@@ -1,20 +1,3 @@
-// module.exports = {
-//   preset: 'ts-jest',
-//   testEnvironment: 'jsdom',
-//   transform: {
-//     '^.+\\.(ts|tsx)$': ['ts-jest', {
-//       tsconfig: 'tsconfig.test.json',
-//     }],
-//   },
-//   transformIgnorePatterns: ['/node_modules/'],
-//   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-//   moduleNameMapper: {
-//     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-//     '^@src/(.*)$': '<rootDir>/src/$1',
-//     '^@repo/codegen/(.*)$': '<rootDir>/../../packages/codegen/dist/$1',
-//   },
-// };
-
 export default {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'jest-fixed-jsdom',

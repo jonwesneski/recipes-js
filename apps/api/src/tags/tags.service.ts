@@ -3,7 +3,7 @@ import {
   type PrismaQueryParams,
   type PrismaResults,
   PrismaService,
-} from 'src/common/prisma.service';
+} from '@repo/nest-shared';
 
 @Injectable()
 export class TagsService {

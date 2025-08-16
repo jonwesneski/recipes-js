@@ -62,6 +62,10 @@ export class PatchStepDto
   @ApiProperty({ type: [PatchIngredientDto] })
   @Type(() => PatchIngredientDto)
   ingredients?: PatchIngredientDto[];
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, nullable: true })
+  base64Image?: string | null;
 }
 
 export class PatchRecipeDto

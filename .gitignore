@@ -19,6 +19,9 @@ next-env.d.ts
 **/dist
 **/generated
 
+# scripts
+**/script*.ts
+
 # misc
 .DS_Store
 

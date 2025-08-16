@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HealthIndicatorService } from '@nestjs/terminus';
-import { PrismaService } from 'src/common/prisma.service';
+import { PrismaService } from '@repo/nest-shared';
 
 @Injectable()
 export class PrismaOrmHealthIndicatorService extends HealthIndicatorService {
