@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
+import { type RecipeMinimalType, type RecipeType } from '@repo/nest-shared';
 import { OmitPrismaFieldsEntity } from 'src/common/utilityTypes';
-import type { RecipeMinimalType, RecipeType } from '../recipes.service';
 
 export class NutritionalFactsEntity
   implements

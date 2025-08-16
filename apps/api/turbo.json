@@ -7,7 +7,7 @@
       "outputs": ["dist/**"]
     },
     "swagger:only": {
-      "dependsOn": ["^@repo/database#build"],
+      "dependsOn": ["^@repo/database#build", "^@repo/nest-shared#build"],
       "outputs": ["swagger.json"]
     }
   }
