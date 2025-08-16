@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/common/prisma.service';
+import { PrismaService } from '@repo/nest-shared';
 import { TagsController } from './tags.controller';
 import { TagsService } from './tags.service';
 

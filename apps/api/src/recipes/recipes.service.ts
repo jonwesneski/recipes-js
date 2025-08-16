@@ -1,116 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@repo/database';
-// import { PrismaService } from 'src/common';
-import { RecipeRepository, RekognitionService } from '@repo/nest-shared';
-import { S3Service } from 'src/common/s3.service';
+import {
+  RecipeCreateType,
+  type RecipeMinimalType,
+  RecipeRepository,
+  type RecipeType,
+  RecipeUpdateType,
+  RekognitionService,
+  S3Service,
+} from '@repo/nest-shared';
 import { CreateRecipeDto, PatchRecipeDto } from './contracts';
 
-type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
-  include: {
-    user: { select: { handle: true } };
-    recipeTags: {
-      include: {
-        tag: {
-          select: { name: true };
-        };
-      };
-    };
-  };
-  omit: {
-    createdAt: true;
-    updatedAt: true;
-    preparationTimeInMinutes: true;
-    cookingTimeInMinutes: true;
-    isPublic: true;
-  };
-}>;
-
-export type RecipePrismaType = Prisma.RecipeGetPayload<{
-  include: {
-    user: { select: { handle: true; id: true } };
-    equipments: {
-      omit: {
-        id: true;
-        createdAt: true;
-        updatedAt: true;
-        recipeId: true;
-      };
-    };
-    steps: {
-      include: {
-        ingredients: {
-          omit: { stepId: true; displayOrder: true };
-        };
-      };
-      omit: { recipeId: true; displayOrder: true };
-    };
-    nutritionalFacts: {
-      omit: {
-        id: true;
-        createdAt: true;
-        updatedAt: true;
-        recipeId: true;
-        userId: true;
-      };
-    };
-    recipeTags: {
-      include: {
-        tag: {
-          select: { name: true };
-        };
-      };
-    };
-  };
-}>;
-
-export const RecipeInclude = {
-  user: { select: { handle: true, id: true } },
-  equipments: {
-    omit: {
-      id: true,
-      createdAt: true,
-      updatedAt: true,
-      recipeId: true,
-    },
-  },
-  steps: {
-    orderBy: { displayOrder: 'asc' },
-    include: {
-      ingredients: {
-        omit: { stepId: true, displayOrder: true },
-      },
-    },
-    omit: { recipeId: true, displayOrder: true },
-  },
-  nutritionalFacts: {
-    omit: {
-      id: true,
-      createdAt: true,
-      updatedAt: true,
-      recipeId: true,
-      userId: true,
-    },
-  },
-  recipeTags: {
-    include: { tag: { select: { name: true } } },
-  },
-} as const;
-
-type RecipeUserType = { id: string; handle: string };
-export type RecipeType = Omit<
-  RecipePrismaType,
-  'recipeTags' | 'userId' | 'equipments'
-> & {
-  tags: string[];
-  equipments: string[];
-  user: RecipeUserType;
+type ImageDto = {
+  imageBuffer: Buffer<ArrayBuffer>;
+  s3BucketKeyName: string;
+  s3ImageUrl: string;
 };
-export type RecipeMinimalType = Omit<
-  RecipeMinimalPrismaType,
-  'recipeTags' | 'userId'
-> & {
-  tags: string[];
-  user: RecipeUserType;
+
+type RecipeStepImageDto = {
+  id: string;
+  image: ImageDto;
+};
+
+type RecipeImagesDto = {
+  userId: string;
+  id: string;
+  image?: ImageDto;
+  steps: RecipeStepImageDto[];
 };
 
 @Injectable()
@@ -133,44 +48,85 @@ export class RecipesService {
     userId: string,
     data: CreateRecipeDto,
   ): Promise<RecipeType> {
-    //const recipe = await this.recipeRepository.createRecipe(userId, data);
-    const { base64Image, tags, ...remainingData } = data;
-    await this.recognitionService.isValidFooldImage(
-      Buffer.from(base64Image!, 'base64'),
+    const recipe = await this.recipeRepository.createRecipe(
+      userId,
+      this.transformToRecipeCreateType(data),
     );
-    // const newId = cuid();
-    // const { s3BucketKeyName, s3ImageUrl } = this.s3Service.makeS3ImageUrl(
-    //   userId,
-    //   newId,
-    // );
-    // const stepsS3Images =
-    //   remainingData.steps.reduce(
-    //     (acc, s, i) => {
-    //       if (s.base64Image) {
-    //         const { s3BucketKeyName, s3ImageUrl } =
-    //           this.s3Service.makeS3ImageUrl(userId, newId, i);
-    //         acc[i] = {
-    //           base64Image: s.base64Image,
-    //           s3BucketKeyName,
-    //           s3ImageUrl,
-    //         };
-    //       } else {
-    //         acc[i] = {};
-    //       }
 
-    //       return acc;
-    //     },
-    //     {} as Record<
-    //       number,
-    //       {
-    //         base64Image?: string;
-    //         s3BucketKeyName?: string;
-    //         s3ImageUrl?: string;
-    //       }
-    //     >,
-    //   ) || {};
+    if (data.base64Image) {
+      const images = this.makeImagesDto(data, recipe);
+      if (images.image?.imageBuffer) {
+        await this.recognitionService.isValidFoodImage(
+          images.image.imageBuffer,
+        );
+        await this.s3Service.uploadFile(
+          images.image.s3BucketKeyName,
+          images.image.imageBuffer,
+        );
+      }
+    }
 
-    return {} as RecipeType; //recipe;
+    return recipe;
+  }
+
+  private transformToRecipeCreateType(data: CreateRecipeDto): RecipeCreateType {
+    const { base64Image, ...remaingData } = data;
+    const { steps, ...recipeData } = remaingData;
+    recipeData['steps'] = steps.map((s) => ({
+      instruction: s.instruction,
+      ingredients: s.ingredients,
+    }));
+    return recipeData as RecipeCreateType;
+  }
+
+  private makeImagesDto(
+    data: CreateRecipeDto | PatchRecipeDto,
+    recipeRecord: RecipeType,
+  ) {
+    // todo: this might exist in image-review processor
+
+    const images: RecipeImagesDto = {
+      userId: recipeRecord.user.id,
+      id: recipeRecord.id,
+      steps: [],
+    };
+    if (data.base64Image) {
+      const { s3BucketKeyName, s3ImageUrl } = this.s3Service.makeS3ImageUrl(
+        recipeRecord.user.id,
+        recipeRecord.id,
+      );
+      images.image = {
+        imageBuffer: Buffer.from(data.base64Image, 'base64'),
+        s3BucketKeyName,
+        s3ImageUrl,
+      };
+    }
+    if (data?.steps && data.steps.length > 0) {
+      images.steps.push(
+        ...data.steps.reduce((acc, s, i) => {
+          if (s.base64Image) {
+            const { s3BucketKeyName, s3ImageUrl } =
+              this.s3Service.makeS3ImageUrl(
+                recipeRecord.user.id,
+                recipeRecord.id,
+                i,
+              );
+            acc.push({
+              id: recipeRecord.steps[i].id,
+              image: {
+                imageBuffer: Buffer.from(s.base64Image, 'base64'),
+                s3BucketKeyName,
+                s3ImageUrl,
+              },
+            });
+          }
+
+          return acc;
+        }, [] as RecipeStepImageDto[]),
+      );
+    }
+
+    return images;
   }
 
   async updateRecipe(
@@ -178,13 +134,38 @@ export class RecipesService {
     id: string,
     data: PatchRecipeDto,
   ): Promise<RecipeType> {
-    const recipe = await this.recipeRepository.updateRecipe(userId, id, data);
-    const { base64Image, tags, ...remainingData } = data;
-    const s3BucketKeyName = `${userId}/${id}`;
-    const imageUrl = base64Image
-      ? `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`
-      : undefined;
+    const recipe = await this.recipeRepository.updateRecipe(
+      userId,
+      id,
+      this.transformToRecipeUpdateType(data),
+    );
+
+    if (data.base64Image) {
+      const images = this.makeImagesDto(data, recipe);
+      if (images.image?.imageBuffer) {
+        await this.recognitionService.isValidFoodImage(
+          images.image.imageBuffer,
+        );
+        await this.s3Service.uploadFile(
+          images.image.s3BucketKeyName,
+          images.image.imageBuffer,
+        );
+      }
+    }
 
     return recipe;
+  }
+
+  private transformToRecipeUpdateType(data: PatchRecipeDto): RecipeUpdateType {
+    const { base64Image, ...remaingData } = data;
+    const { steps, ...recipeData } = remaingData;
+    if (steps) {
+      recipeData['steps'] = steps.map((s) => ({
+        instruction: s.instruction,
+        ingredients: s.ingredients,
+      }));
+    }
+
+    return recipeData as RecipeUpdateType;
   }
 }

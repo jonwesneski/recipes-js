@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { createId as cuid } from '@paralleldrive/cuid2';
-// import { PrismaService } from 'src/common';
 import { PrismaService } from '../services/prisma.service';
 import {
-  RecipeCreateType,
+  type RecipeCreateType,
   RecipeInclude,
-  RecipeUpdateType,
   type RecipeMinimalPrismaType,
   type RecipeMinimalType,
   type RecipePrismaType,
   type RecipeType,
+  type RecipeUpdateType,
   type RecipeUserType,
-} from './recipe.types';
+} from './types';
 
 @Injectable()
 export class RecipeRepository {

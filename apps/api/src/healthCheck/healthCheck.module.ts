@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { PrismaService } from 'src/common';
+import { PrismaService } from '@repo/nest-shared';
 import { HealthCheckController } from './healthCheck.controller';
 import { PrismaOrmHealthIndicatorService } from './prismaOrmHealthIndicator.service';
 

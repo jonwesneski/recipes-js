@@ -3,9 +3,9 @@ import {
   PrismaService,
   RecipeRepository,
   RekognitionService,
+  S3Service,
 } from '@repo/nest-shared';
 import { AwsModule } from 'src/common/aws.module';
-import { S3Service } from 'src/common/s3.service';
 import { RecipesController } from './recipes.controller';
 import { RecipesService } from './recipes.service';
 
