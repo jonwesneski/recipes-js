@@ -5,10 +5,6 @@
     "build": {
       "dependsOn": ["^@repo/database#build", "^@repo/nest-shared#build"],
       "outputs": ["dist/**"]
-    },
-    "swagger:only": {
-      "dependsOn": ["^@repo/database#build"],
-      "outputs": ["swagger.json"]
     }
   }
 }
