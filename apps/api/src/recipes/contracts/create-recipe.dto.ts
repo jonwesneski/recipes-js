@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
+import { IsNullable } from '@src/common/custom.class-validators';
+import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
@@ -13,8 +15,6 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { IsNullable } from 'src/common/custom.class-validators';
-import { OmitPrismaFieldsDto } from 'src/common/utilityTypes';
 
 export class EquipmentDto
   implements OmitPrismaFieldsDto<Prisma.EquipmentCreateInput, 'recipe'>

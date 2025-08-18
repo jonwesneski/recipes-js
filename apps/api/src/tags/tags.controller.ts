@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
-import { BaseQueryDto } from 'src/common';
+import { BaseQueryDto } from '@src/common';
 import { TagNamesEntity } from './contracts/tags.entities';
 import { TagsService } from './tags.service';
 

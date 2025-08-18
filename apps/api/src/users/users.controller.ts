@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
-import { throwIfNotFound } from 'src/common';
+import { throwIfNotFound } from '@src/common';
 import { PatchUserDto } from './contracts';
 import { UserEntity } from './contracts/users.entities';
 import { UsersService } from './users.service';

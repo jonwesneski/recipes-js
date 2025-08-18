@@ -8,13 +8,19 @@
   "coverageReporters": ["text", "json", "html"],
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": "..",
+  "preset": "ts-jest",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
-    "^.+\\.ts$": "ts-jest"
+    "^.+\\.ts$": [
+      "ts-jest",
+      {
+        "tsconfig": "<rootDir>/tsconfig.test.json"
+      }
+    ]
   },
   "moduleNameMapper": {
-    "^src/(.*)$": "<rootDir>/src/$1"
+    "^@src/(.*)$": "<rootDir>/src/$1"
   },
   "globalSetup": "<rootDir>/test/setup.ts",
   "globalTeardown": "<rootDir>/test/teardown.ts",

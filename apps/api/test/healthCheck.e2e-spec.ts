@@ -4,11 +4,10 @@ import {
   HealthIndicatorResult,
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
-import { Test, TestingModule } from '@nestjs/testing';
-import { configureApp } from 'src/common';
+import { configureApp } from '@src/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { AppModule } from '../src/app.module';
+import { createTestingFixtures } from './utils';
 
 const basePath = '/';
 const statusPath = `${basePath}status`;
@@ -18,11 +17,10 @@ describe('HealthCheckController (e2e)', () => {
   let app: INestApplication<App>;
   let memoryHealthIndicator: MemoryHealthIndicator;
   let diskStorageIndicator: DiskHealthIndicator;
+  const { createTestingModule } = createTestingFixtures();
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    const moduleFixture = await createTestingModule();
 
     app = moduleFixture.createNestApplication();
     configureApp(app);

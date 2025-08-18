@@ -8,6 +8,7 @@ import {
   RekognitionService,
   S3Service,
 } from '@repo/nest-shared';
+import { KafkaProducerService } from '@src/common';
 import { CreateRecipeDto, PatchRecipeDto } from './contracts';
 
 type ImageDto = {
@@ -28,12 +29,15 @@ type RecipeImagesDto = {
   steps: RecipeStepImageDto[];
 };
 
+let tryItOut = true;
+
 @Injectable()
 export class RecipesService {
   constructor(
     private readonly recipeRepository: RecipeRepository,
     private readonly recognitionService: RekognitionService,
     private readonly s3Service: S3Service,
+    private readonly kafkaProducerService: KafkaProducerService,
   ) {}
 
   async getRecipes(): Promise<RecipeMinimalType[]> {
@@ -52,8 +56,35 @@ export class RecipesService {
       userId,
       this.transformToRecipeCreateType(data),
     );
+    if (tryItOut) {
+      const stepImages = data.steps.reduce(
+        (acc, step, i) => {
+          if (step.base64Image) {
+            acc.push({
+              id: recipe.steps[i].id,
+              base64Image: step.base64Image,
+            });
+          }
+          return acc;
+        },
+        [] as { id: string; base64Image: string }[],
+      );
 
-    if (data.base64Image) {
+      await Promise.all([
+        data.base64Image
+          ? this.kafkaProducerService.sendMessage('new_recipe_image', {
+              key: recipe.id,
+              value: data.base64Image,
+            })
+          : null,
+        ...stepImages.map((stepImage) =>
+          this.kafkaProducerService.sendMessage('new_recipe_step_image', {
+            key: stepImage.id,
+            value: stepImage.base64Image,
+          }),
+        ),
+      ]);
+    } else {
       const images = this.makeImagesDto(data, recipe);
       if (images.image?.imageBuffer) {
         await this.recognitionService.isValidFoodImage(
@@ -63,6 +94,21 @@ export class RecipesService {
           images.image.s3BucketKeyName,
           images.image.imageBuffer,
         );
+
+        await Promise.all([
+          images.image
+            ? this.recipeRepository.addImageToRecipe(
+                recipe.id,
+                images.image.s3ImageUrl,
+              )
+            : null,
+          ...images.steps.map((step) =>
+            this.recipeRepository.addImageToRecipeStep(
+              step.id,
+              step.image.s3ImageUrl,
+            ),
+          ),
+        ]);
       }
     }
 

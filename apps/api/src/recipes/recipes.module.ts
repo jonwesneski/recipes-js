@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
+  AwsModule,
+  KafkaProducerModule,
   PrismaService,
   RecipeRepository,
   RekognitionService,
   S3Service,
 } from '@repo/nest-shared';
-import { AwsModule } from 'src/common/aws.module';
+import { KafkaProducerService } from '@src/common';
 import { RecipesController } from './recipes.controller';
 import { RecipesService } from './recipes.service';
 
 @Module({
-  imports: [AwsModule],
+  imports: [AwsModule, KafkaProducerModule],
   controllers: [RecipesController],
   providers: [
     RecipesService,
@@ -18,6 +21,19 @@ import { RecipesService } from './recipes.service';
     RekognitionService,
     PrismaService,
     S3Service,
+    {
+      provide: KafkaProducerService,
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        if (configService.get('SWAGGER_ONLY')) {
+          return null;
+        }
+
+        return await KafkaProducerService.createInstance(
+          configService.getOrThrow('kafkaProducerConfig'),
+        );
+      },
+    },
   ],
 })
 export class RecipesModule {}
