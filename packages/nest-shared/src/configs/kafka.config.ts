@@ -12,11 +12,11 @@ export const kafkaProducerConfig = registerAs('kafkaProducerConfig', () => ({
     ssl: true,
     sasl: {
       mechanism: 'plain',
-      username: process.env.KAFKA_KEY!,
-      password: process.env.KAFKA_SECRET!,
+      username: process.env.KAFKA_KEY,
+      password: process.env.KAFKA_SECRET,
     },
     connectionTimeout: 45000,
-    clientId: process.env.KAFKA_CLIENT_ID!,
+    clientId: process.env.KAFKA_CLIENT_ID,
   } as KafkaConfig,
   producer: {
     createPartitioner: Partitioners.DefaultPartitioner,
@@ -31,14 +31,14 @@ export const kafkaConsumerConfig = registerAs('kafkaConsumerConfig', () => ({
     ssl: true,
     sasl: {
       mechanism: 'plain',
-      username: process.env.KAFKA_KEY!,
-      password: process.env.KAFKA_SECRET!,
+      username: process.env.KAFKA_KEY,
+      password: process.env.KAFKA_SECRET,
     },
     connectionTimeout: 45000,
-    clientId: process.env.KAFKA_CLIENT_ID!,
+    clientId: process.env.KAFKA_CLIENT_ID,
   } as KafkaConfig,
   consumer: {
-    groupId: process.env.KAFKA_CONSUMER_GROUP_ID!,
+    groupId: process.env.KAFKA_CONSUMER_GROUP_ID,
   } as ConsumerConfig,
 }));
 

@@ -1,10 +1,9 @@
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@repo/nest-shared';
 import { configureApp } from '@src/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { AppModule } from '../src/app.module';
+import { createTestingFixtures } from './utils';
 
 //const basePath = '/v1/tags';
 const tagNamesPath = `/v1/tag-names`;
@@ -12,11 +11,10 @@ const tagNamesPath = `/v1/tag-names`;
 describe('TagsController (e2e)', () => {
   let app: INestApplication<App>;
   let prismaService: PrismaService;
+  const { createTestingModule } = createTestingFixtures();
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    const moduleFixture = await createTestingModule();
 
     app = moduleFixture.createNestApplication();
     configureApp(app);
