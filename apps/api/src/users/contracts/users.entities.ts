@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@repo/database';
-import { OmitPrismaFieldsEntity } from 'src/common/utilityTypes';
-import { NutritionalFactsEntity } from 'src/recipes';
+import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
+import { NutritionalFactsEntity } from '@src/recipes';
 
 export class UserEntity
   implements

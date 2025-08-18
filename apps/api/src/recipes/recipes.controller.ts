@@ -14,9 +14,9 @@ import {
   ApiOkResponse,
   ApiParam,
 } from '@nestjs/swagger';
-import { JwtGuard } from 'src/auth/guards';
-import { throwIfConflict, throwIfNotFound } from 'src/common';
-import { parseHelper } from 'src/common/header.decorators';
+import { JwtGuard } from '@src/auth/guards';
+import { throwIfConflict, throwIfNotFound } from '@src/common';
+import { parseHelper } from '@src/common/header.decorators';
 import {
   BadRequestRecipeEntity,
   CreateRecipeDto,

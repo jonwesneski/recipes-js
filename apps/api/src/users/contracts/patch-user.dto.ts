@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@repo/database';
+import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { OmitPrismaFieldsDto } from 'src/common/utilityTypes';
 
 export class PatchUserDto
   implements

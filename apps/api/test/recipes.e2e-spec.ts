@@ -8,19 +8,19 @@ import {
   RekognitionService,
   S3Service,
 } from '@repo/nest-shared';
-import { JwtGuard } from 'src/auth/guards';
-import { configureApp } from 'src/common';
+import { AppModule } from '@src/app.module';
+import { JwtGuard } from '@src/auth/guards';
+import { configureApp, KafkaProducerService } from '@src/common';
 import {
   CreateRecipeDto,
   PatchRecipeDto,
   PatchStepDto,
   RecipeEntity,
   StepEntity,
-} from 'src/recipes/contracts';
+} from '@src/recipes/contracts';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { v4 as uuidv4 } from 'uuid';
-import { AppModule } from '../src/app.module';
 
 const basePath = '/v1/recipes';
 
@@ -33,6 +33,10 @@ describe('RecipesController (e2e)', () => {
     makeS3ImageUrl: jest
       .fn()
       .mockReturnValue({ s3BucketKeyName: 'string', s3ImageUrl: 'string' }),
+  };
+  const mockKafkaProducerService = {
+    createInstance: jest.fn(),
+    sendMessage: jest.fn().mockResolvedValue(undefined),
   };
   const mockRekognitionService = {
     isValidFoodImage: jest.fn().mockResolvedValue(true),
@@ -49,6 +53,8 @@ describe('RecipesController (e2e)', () => {
       .useValue(mockJwtGuard)
       .overrideProvider(S3Service)
       .useValue(mockS3Service)
+      .overrideProvider(KafkaProducerService)
+      .useValue(mockKafkaProducerService)
       .overrideProvider(RekognitionService)
       .useValue(mockRekognitionService)
       .compile();

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
+import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
@@ -14,7 +15,6 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { OmitPrismaFieldsDto } from 'src/common/utilityTypes';
 import { NutritionalFactsDto } from './create-recipe.dto';
 
 export class PatchIngredientDto
