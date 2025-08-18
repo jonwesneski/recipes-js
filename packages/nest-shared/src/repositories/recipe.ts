@@ -248,4 +248,21 @@ export class RecipeRepository {
 
     return this.transformRecipe(recipe);
   }
+
+  async addImageToRecipe(id: string, imageUrl: string) {
+    const recipe = await this.prisma.recipe.update({
+      where: { id },
+      data: { imageUrl },
+      include: RecipeInclude,
+    });
+
+    return this.transformRecipe(recipe);
+  }
+
+  async addImageToRecipeStep(id: string, imageUrl: string) {
+    await this.prisma.step.update({
+      where: { id },
+      data: { imageUrl },
+    });
+  }
 }
