@@ -12,8 +12,8 @@ export const kafkaProducerConfig = registerAs('kafkaProducerConfig', () => ({
     ssl: true,
     sasl: {
       mechanism: 'plain',
-      username: process.env.CONFLUENT_KEY!,
-      password: process.env.CONFLUENT_SECRET!,
+      username: process.env.KAFKA_KEY!,
+      password: process.env.KAFKA_SECRET!,
     },
     connectionTimeout: 45000,
     clientId: process.env.KAFKA_CLIENT_ID!,
@@ -31,8 +31,8 @@ export const kafkaConsumerConfig = registerAs('kafkaConsumerConfig', () => ({
     ssl: true,
     sasl: {
       mechanism: 'plain',
-      username: process.env.CONFLUENT_KEY!,
-      password: process.env.CONFLUENT_SECRET!,
+      username: process.env.KAFKA_KEY!,
+      password: process.env.KAFKA_SECRET!,
     },
     connectionTimeout: 45000,
     clientId: process.env.KAFKA_CLIENT_ID!,
