@@ -8,6 +8,7 @@ import {
   RekognitionService,
   S3Service,
 } from '@repo/nest-shared';
+import { KafkaProducerService } from '@src/common';
 import { CreateRecipeDto, PatchRecipeDto } from './contracts';
 
 type ImageDto = {
@@ -34,6 +35,7 @@ export class RecipesService {
     private readonly recipeRepository: RecipeRepository,
     private readonly recognitionService: RekognitionService,
     private readonly s3Service: S3Service,
+    private readonly kafkaProducerService: KafkaProducerService,
   ) {}
 
   async getRecipes(): Promise<RecipeMinimalType[]> {
@@ -53,6 +55,10 @@ export class RecipesService {
       this.transformToRecipeCreateType(data),
     );
 
+    await this.kafkaProducerService.sendMessage('image', {
+      key: 'recipe.created',
+      value: 'no value for now',
+    });
     if (data.base64Image) {
       const images = this.makeImagesDto(data, recipe);
       if (images.image?.imageBuffer) {
