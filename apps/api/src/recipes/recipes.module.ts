@@ -25,6 +25,10 @@ import { RecipesService } from './recipes.service';
       provide: KafkaProducerService,
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
+        if (configService.get('SWAGGER_ONLY')) {
+          return null;
+        }
+
         return await KafkaProducerService.createInstance(
           configService.getOrThrow('kafkaProducerConfig'),
         );
