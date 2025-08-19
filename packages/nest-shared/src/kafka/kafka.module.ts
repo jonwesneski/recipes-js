@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import {
-  kafkaConsumerConfig,
-  kafkaProducerConfig,
-} from '../configs/kafka.config';
+import { kafkaConsumerConfig, kafkaProducerConfig } from './config';
 
 @Module({
   imports: [ConfigModule.forFeature(kafkaProducerConfig)],

@@ -73,14 +73,22 @@ export class RecipesService {
       await Promise.all([
         data.base64Image
           ? this.kafkaProducerService.sendMessage('new_recipe_image', {
-              key: recipe.id,
-              value: data.base64Image,
+              key: recipe.user.id,
+              value: JSON.stringify({
+                recipeId: recipe.id,
+                base64Image: data.base64Image,
+              }),
             })
           : null,
-        ...stepImages.map((stepImage) =>
+        ...stepImages.map((stepImage, i) =>
           this.kafkaProducerService.sendMessage('new_recipe_step_image', {
-            key: stepImage.id,
-            value: stepImage.base64Image,
+            key: recipe.user.id,
+            value: JSON.stringify({
+              recipeId: recipe.id,
+              stepId: stepImage.id,
+              stepIndex: i,
+              base64Image: stepImage.base64Image,
+            }),
           }),
         ),
       ]);

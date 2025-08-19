@@ -12,6 +12,7 @@ export const customInstance = <T>(
   const source = Axios.CancelToken.source();
   const promise = AXIOS_INSTANCE({
     ...config,
+    withCredentials: true, // ensure cookies are sent with requests
     ...options,
     cancelToken: source.token,
   }).then(({ data }) => data);

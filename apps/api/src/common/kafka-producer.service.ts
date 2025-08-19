@@ -1,5 +1,8 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { type KafkaProducerConfigType } from '@repo/nest-shared';
+import {
+  type KafkaProducerConfigType,
+  type RecipeTopics,
+} from '@repo/nest-shared';
 import { Kafka, Message, type Producer } from 'kafkajs';
 
 @Injectable()
@@ -12,7 +15,7 @@ export class KafkaProducerService implements OnModuleDestroy {
     return new KafkaProducerService(producer);
   }
 
-  public async sendMessage(topic: string, message: Message) {
+  public async sendMessage(topic: RecipeTopics, message: Message) {
     return await this._producer.send({
       topic,
       messages: [message],

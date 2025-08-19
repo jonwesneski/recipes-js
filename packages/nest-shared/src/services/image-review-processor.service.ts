@@ -1,10 +1,9 @@
-// TODO: In the future, this file will just exist in api-image-processor, not in the shared package
+// TODO: add this to api app as well. I want to feature flag this thing incase I want to turn kafka off
 import { Injectable, Logger } from '@nestjs/common';
+import { NewRecipeMessageType, NewRecipeStepMessageType } from 'src/kafka';
 import { RecipeRepository } from '../repositories/recipe';
 import { RekognitionService } from './rekognition.service';
 import { S3Service } from './s3.service';
-// import { SqsMessageHandler } from '@ssut/nestjs-sqs';
-// import { SQS } from 'aws-sdk';
 
 @Injectable()
 export class ImageReviewProcessorService {
@@ -12,34 +11,44 @@ export class ImageReviewProcessorService {
 
   constructor(
     private readonly recognitionService: RekognitionService,
-    private readonly recipeReposity: RecipeRepository,
+    private readonly recipeRepository: RecipeRepository,
     private readonly s3Service: S3Service,
   ) {}
 
-  public async processImage(base64Image: string) {
-    const imageBuffer = Buffer.from(base64Image, 'base64');
-    const labels = await this.recognitionService.detectLabels(imageBuffer);
-    labels?.forEach((label) => {
-      this.logger.log(
-        `Detected label: ${label.Name} with confidence ${label.Confidence}`,
+  public async processRecipeImage(
+    userId: string,
+    recipeMessage: NewRecipeMessageType,
+  ) {
+    const imageBuffer = Buffer.from(recipeMessage.base64Image, 'base64');
+    if (await this.recognitionService.isValidFoodImage(imageBuffer)) {
+      const { s3BucketKeyName, s3ImageUrl } = this.s3Service.makeS3ImageUrl(
+        userId,
+        recipeMessage.recipeId,
       );
-    });
-    //await this.s3Service.uploadFile('key', imageBuffer);
+      await this.s3Service.uploadFile(s3BucketKeyName, imageBuffer);
+      await this.recipeRepository.addImageToRecipe(
+        recipeMessage.recipeId,
+        s3ImageUrl,
+      );
+    }
   }
 
-  //   // Specify the queue URL or queue name here as registered in Module
-  //   @SqsMessageHandler('your-queue-name')
-  //   async handleMessage(message: SQS.Message) {
-  //     this.logger.log(`Received message with Body: ${message.Body}`);
-
-  //     // Process your message here (e.g., JSON.parse, business logic)
-  //     // Acknowledge is automatic unless the function throws an error
-
-  //     // Example:
-  //     const payload = JSON.parse(message.Body ?? '{}');
-
-  //     // ... your processing logic ...
-
-  //     this.logger.log(`Processed message id: ${message.MessageId}`);
-  //   }
+  public async processRecipeStepImage(
+    userId: string,
+    recipeStepMessage: NewRecipeStepMessageType,
+  ) {
+    const imageBuffer = Buffer.from(recipeStepMessage.base64Image, 'base64');
+    if (await this.recognitionService.isValidFoodImage(imageBuffer)) {
+      const { s3BucketKeyName, s3ImageUrl } = this.s3Service.makeS3ImageUrl(
+        userId,
+        recipeStepMessage.recipeId,
+        recipeStepMessage.stepIndex,
+      );
+      await this.s3Service.uploadFile(s3BucketKeyName, imageBuffer);
+      await this.recipeRepository.addImageToRecipeStep(
+        recipeStepMessage.stepId,
+        s3ImageUrl,
+      );
+    }
+  }
 }

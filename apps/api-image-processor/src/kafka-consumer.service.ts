@@ -1,12 +1,23 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import {
+  ImageReviewProcessorService,
+  NEW_RECIPE_IMAGE_TOPIC,
+  NEW_RECIPE_STEP_IMAGE_TOPIC,
+  NewRecipeMessageType,
+  NewRecipeStepMessageType,
+  RecipeMessageTypes,
+} from '@repo/nest-shared';
 import { Kafka, type Consumer, type KafkaMessage } from 'kafkajs';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
   private readonly _consumer: Consumer;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private readonly imageReviewService: ImageReviewProcessorService,
+    private configService: ConfigService,
+  ) {
     this._consumer = new Kafka({
       clientId: this.configService.get<string>('KAFKA_CLIENT_ID'),
       brokers: this.configService
@@ -31,20 +42,19 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     await this._consumer.connect();
 
     await this._consumer.subscribe({
-      topic: 'new_recipe_image',
+      topic: NEW_RECIPE_IMAGE_TOPIC,
       fromBeginning: true,
     });
     await this._consumer.subscribe({
-      topic: 'new_recipe_step_image',
+      topic: NEW_RECIPE_STEP_IMAGE_TOPIC,
       fromBeginning: true,
     });
 
     await this._consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
-        // Call the appropriate method based on the topic
-        if (topic === 'new_recipe_image') {
+        if (topic === NEW_RECIPE_IMAGE_TOPIC) {
           await this.consumeNewRecipeImage(message);
-        } else if (topic === 'new_recipe_step_image') {
+        } else if (topic === NEW_RECIPE_STEP_IMAGE_TOPIC) {
           await this.consumeNewRecipeStepImage(message);
         }
       },
@@ -52,10 +62,39 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   }
 
   async consumeNewRecipeImage(message: KafkaMessage) {
-    console.log('Received message:', message.value?.toString());
+    if (!message.key) {
+      throw new Error('Message key is undefined');
+    }
+
+    const data = this.parseMessage<NewRecipeMessageType>(message);
+    await this.imageReviewService.processRecipeImage(
+      message.key!.toString(),
+      data,
+    );
   }
 
   async consumeNewRecipeStepImage(message: KafkaMessage) {
-    console.log('Received message:', message.value?.toString());
+    if (!message.key) {
+      // TODO: figure out what kind of exception I should throw here
+      //  or should I just log and return. Same goes for the throws below
+      throw new Error('Message key is undefined');
+    }
+
+    const data = this.parseMessage<NewRecipeStepMessageType>(message);
+    await this.imageReviewService.processRecipeStepImage(
+      message.key.toString(),
+      data,
+    );
+  }
+
+  private parseMessage<T extends RecipeMessageTypes>(message: KafkaMessage): T {
+    if (!message.value) {
+      throw new Error('Message value is undefined');
+    }
+    try {
+      return JSON.parse(message.value.toString()) as T;
+    } catch (error) {
+      throw new Error(`Failed to parse message: ${error.message}`);
+    }
   }
 }

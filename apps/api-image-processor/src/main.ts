@@ -6,8 +6,10 @@ import { AppModule } from './app.module';
 dotenv.config();
 
 async function bootstrap() {
-  const app =
-    await NestFactory.createMicroservice<MicroserviceOptions>(AppModule);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    { options: { port: process.env.PORT || 3002 } },
+  );
   await app.listen();
 }
 bootstrap();

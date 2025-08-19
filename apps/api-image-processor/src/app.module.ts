@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ImageReviewProcessorModule } from '@repo/nest-shared';
 import { KafkaService } from './kafka-consumer.service';
 
 @Module({
@@ -28,6 +29,7 @@ import { KafkaService } from './kafka-consumer.service';
         },
       },
     ]),
+    ImageReviewProcessorModule,
   ],
   providers: [KafkaService],
 })
