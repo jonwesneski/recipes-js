@@ -5,5 +5,5 @@
     "composite": true,
     "types": ["jest", "node"]
   },
-  "include": ["src", "test"]
+  "include": ["src", "test", "**/*.json"]
 }

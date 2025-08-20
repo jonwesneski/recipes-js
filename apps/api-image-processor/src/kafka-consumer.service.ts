@@ -18,17 +18,25 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     private readonly imageReviewService: ImageReviewProcessorService,
     private configService: ConfigService,
   ) {
+    const brokerString =
+      this.configService.getOrThrow<string>('KAFKA_BROKER_URLS');
+    let security = {};
+    if (!brokerString.includes('localhost')) {
+      security = {
+        sasl: {
+          mechanism: 'plain',
+          username: this.configService.getOrThrow<string>('KAFKA_KEY'),
+          password: this.configService.getOrThrow<string>('KAFKA_SECRET'),
+        },
+        ssl: true,
+      };
+    }
     this._consumer = new Kafka({
       clientId: this.configService.get<string>('KAFKA_CLIENT_ID'),
       brokers: this.configService
         .getOrThrow<string>('KAFKA_BROKER_URLS')
         .split(','),
-      sasl: {
-        mechanism: 'plain',
-        username: this.configService.getOrThrow<string>('KAFKA_KEY'),
-        password: this.configService.getOrThrow<string>('KAFKA_SECRET'),
-      },
-      ssl: true,
+      ...security,
       connectionTimeout: 45000,
     }).consumer({
       groupId: this.configService.getOrThrow<string>('KAFKA_CONSUMER_GROUP_ID'),
