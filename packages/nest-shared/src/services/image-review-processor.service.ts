@@ -1,7 +1,7 @@
 // TODO: add this to api app as well. I want to feature flag this thing incase I want to turn kafka off
 import { Injectable, Logger } from '@nestjs/common';
-import { NewRecipeMessageType, NewRecipeStepMessageType } from 'src/kafka';
-import { RecipeRepository } from '../repositories/recipe';
+import { NewRecipeMessageType, NewRecipeStepMessageType } from '../kafka/types';
+import { RecipeRepository } from '../repositories/recipe.repository';
 import { RekognitionService } from './rekognition.service';
 import { S3Service } from './s3.service';
 

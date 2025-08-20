@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   RecipeCreateType,
   type RecipeMinimalType,
@@ -29,16 +30,18 @@ type RecipeImagesDto = {
   steps: RecipeStepImageDto[];
 };
 
-let tryItOut = true;
-
 @Injectable()
 export class RecipesService {
+  private readonly useKafka: boolean;
   constructor(
+    private readonly configService: ConfigService,
     private readonly recipeRepository: RecipeRepository,
     private readonly recognitionService: RekognitionService,
     private readonly s3Service: S3Service,
     private readonly kafkaProducerService: KafkaProducerService,
-  ) {}
+  ) {
+    this.useKafka = this.configService.get<boolean>('USE_KAFKA', false);
+  }
 
   async getRecipes(): Promise<RecipeMinimalType[]> {
     return await this.recipeRepository.getRecipes();
@@ -56,7 +59,7 @@ export class RecipesService {
       userId,
       this.transformToRecipeCreateType(data),
     );
-    if (tryItOut) {
+    if (this.useKafka) {
       const stepImages = data.steps.reduce(
         (acc, step, i) => {
           if (step.base64Image) {

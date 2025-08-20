@@ -9,7 +9,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { awsConfig, AwsConfigType } from 'src/configs/aws.config';
+import { awsConfig, AwsConfigType } from '../configs/aws.config';
 
 @Injectable()
 export class RekognitionService {
