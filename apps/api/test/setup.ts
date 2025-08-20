@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import * as dotenv from 'dotenv';
 
 import * as path from 'path';
-import { GenericContainer } from 'testcontainers';
+import { GenericContainer, Wait } from 'testcontainers';
 import recipesData from './recipesTestData.json';
 
 async function getPrisma() {
@@ -12,6 +12,15 @@ async function getPrisma() {
 }
 
 export default async function setupDb() {
+  dotenv.config({ path: './.env.test' });
+  // Unable to get testcontainers to work with colima/docker on macOS
+  // process.env.DOCKER_HOST = `unix://${process.env.HOME}/.colima/default/docker.sock`;
+  // process.env.TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE = `${process.env.HOME}.colima/default/docker.sock`;
+  // process.env.TESTCONTAINERS_HOST_OVERRIDE = execSync(
+  //   "colima ls -j | jq -r '.address'",
+  //   { encoding: 'utf-8' },
+  // ).trim();
+
   const postgresContainer = await new GenericContainer('postgres:13')
     .withExposedPorts(5432)
     .withEnvironment({
@@ -19,9 +28,11 @@ export default async function setupDb() {
       POSTGRES_PASSWORD: 'prisma',
       POSTGRES_DB: 'recipes-db',
     })
+    .withWaitStrategy(
+      Wait.forLogMessage('database system is ready to accept connections'),
+    )
     .start();
 
-  dotenv.config({ path: './.env.test' });
   process.env.DATABASE_URL = `postgresql://prisma:prisma@${postgresContainer.getHost()}:${postgresContainer.getMappedPort(5432)}/recipes-db-test?schema=public`;
 
   // Optional: wait a moment for the container to be ready for connections
