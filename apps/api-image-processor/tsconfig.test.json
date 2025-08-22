@@ -3,9 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "composite": true,
-    "types": ["jest", "node"],
-    "resolveJsonModule": true,
-    "esModuleInterop": true
+    "types": ["jest", "node"]
   },
   "include": ["src", "test", "**/*.json"]
 }

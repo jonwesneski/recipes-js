@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { createId as cuid } from '@paralleldrive/cuid2';
 import { PrismaService } from '../services/prisma.service';
 import {
   type RecipeCreateType,
@@ -73,13 +72,11 @@ export class RecipeRepository {
     data: RecipeCreateType,
   ): Promise<RecipeType> {
     const { tags, ...remainingData } = data;
-    const newId = cuid();
 
     const recipe = await this.prisma.$transaction(async () => {
       const recipe = await this.prisma.recipe.create({
         data: {
           ...remainingData,
-          id: newId,
           userId,
           imageUrl: undefined,
           steps: {

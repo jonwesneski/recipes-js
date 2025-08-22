@@ -1,15 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
+  ImageReviewProcessorService,
   RecipeCreateType,
   type RecipeMinimalType,
   RecipeRepository,
   type RecipeType,
   RecipeUpdateType,
-  RekognitionService,
-  S3Service,
 } from '@repo/nest-shared';
 import { KafkaProducerService } from '@src/common';
-import { CreateRecipeDto, PatchRecipeDto } from './contracts';
+import {
+  CreateRecipeDto,
+  CreateStepDto,
+  PatchRecipeDto,
+  PatchStepDto,
+} from './contracts';
 
 type ImageDto = {
   imageBuffer: Buffer<ArrayBuffer>;
@@ -29,16 +34,17 @@ type RecipeImagesDto = {
   steps: RecipeStepImageDto[];
 };
 
-let tryItOut = true;
-
 @Injectable()
 export class RecipesService {
+  private readonly useKafka: boolean;
   constructor(
+    private readonly configService: ConfigService,
     private readonly recipeRepository: RecipeRepository,
-    private readonly recognitionService: RekognitionService,
-    private readonly s3Service: S3Service,
+    private readonly imageReviewProcessorService: ImageReviewProcessorService,
     private readonly kafkaProducerService: KafkaProducerService,
-  ) {}
+  ) {
+    this.useKafka = this.configService.get<boolean>('USE_KAFKA', false);
+  }
 
   async getRecipes(): Promise<RecipeMinimalType[]> {
     return await this.recipeRepository.getRecipes();
@@ -56,61 +62,8 @@ export class RecipesService {
       userId,
       this.transformToRecipeCreateType(data),
     );
-    if (tryItOut) {
-      const stepImages = data.steps.reduce(
-        (acc, step, i) => {
-          if (step.base64Image) {
-            acc.push({
-              id: recipe.steps[i].id,
-              base64Image: step.base64Image,
-            });
-          }
-          return acc;
-        },
-        [] as { id: string; base64Image: string }[],
-      );
 
-      await Promise.all([
-        data.base64Image
-          ? this.kafkaProducerService.sendMessage('new_recipe_image', {
-              key: recipe.id,
-              value: data.base64Image,
-            })
-          : null,
-        ...stepImages.map((stepImage) =>
-          this.kafkaProducerService.sendMessage('new_recipe_step_image', {
-            key: stepImage.id,
-            value: stepImage.base64Image,
-          }),
-        ),
-      ]);
-    } else {
-      const images = this.makeImagesDto(data, recipe);
-      if (images.image?.imageBuffer) {
-        await this.recognitionService.isValidFoodImage(
-          images.image.imageBuffer,
-        );
-        await this.s3Service.uploadFile(
-          images.image.s3BucketKeyName,
-          images.image.imageBuffer,
-        );
-
-        await Promise.all([
-          images.image
-            ? this.recipeRepository.addImageToRecipe(
-                recipe.id,
-                images.image.s3ImageUrl,
-              )
-            : null,
-          ...images.steps.map((step) =>
-            this.recipeRepository.addImageToRecipeStep(
-              step.id,
-              step.image.s3ImageUrl,
-            ),
-          ),
-        ]);
-      }
-    }
+    await this.processImages(data, recipe);
 
     return recipe;
   }
@@ -125,54 +78,59 @@ export class RecipesService {
     return recipeData as RecipeCreateType;
   }
 
-  private makeImagesDto(
+  private async processImages(
     data: CreateRecipeDto | PatchRecipeDto,
-    recipeRecord: RecipeType,
+    recipe: RecipeType,
   ) {
-    // todo: this might exist in image-review processor
-
-    const images: RecipeImagesDto = {
-      userId: recipeRecord.user.id,
-      id: recipeRecord.id,
-      steps: [],
-    };
-    if (data.base64Image) {
-      const { s3BucketKeyName, s3ImageUrl } = this.s3Service.makeS3ImageUrl(
-        recipeRecord.user.id,
-        recipeRecord.id,
-      );
-      images.image = {
-        imageBuffer: Buffer.from(data.base64Image, 'base64'),
-        s3BucketKeyName,
-        s3ImageUrl,
-      };
-    }
-    if (data?.steps && data.steps.length > 0) {
-      images.steps.push(
-        ...data.steps.reduce((acc, s, i) => {
-          if (s.base64Image) {
-            const { s3BucketKeyName, s3ImageUrl } =
-              this.s3Service.makeS3ImageUrl(
-                recipeRecord.user.id,
-                recipeRecord.id,
-                i,
+    if (this.useKafka) {
+      await Promise.all([
+        data.base64Image
+          ? this.kafkaProducerService.sendMessage('new_recipe_image', {
+              key: recipe.user.id,
+              value: JSON.stringify({
+                recipeId: recipe.id,
+                base64Image: data.base64Image,
+              }),
+            })
+          : undefined,
+        ...(data.steps ?? []).map(
+          (step: CreateStepDto | PatchStepDto, i: number) =>
+            this.kafkaProducerService.sendMessage('new_recipe_step_image', {
+              key: recipe.user.id,
+              value: JSON.stringify({
+                recipeId: recipe.id,
+                stepId: recipe.steps[i].id,
+                stepIndex: i,
+                base64Image: step.base64Image,
+              }),
+            }),
+        ),
+      ]);
+    } else {
+      await Promise.all([
+        data.base64Image
+          ? this.imageReviewProcessorService.processRecipeImage(
+              recipe.user.id,
+              { recipeId: recipe.id, base64Image: data.base64Image },
+            )
+          : undefined,
+        ...(data.steps ?? []).map(
+          (step: CreateStepDto | PatchStepDto, i: number) => {
+            if (step.base64Image) {
+              return this.imageReviewProcessorService.processRecipeStepImage(
+                recipe.user.id,
+                {
+                  recipeId: recipe.id,
+                  stepId: recipe.steps[i].id,
+                  stepIndex: i,
+                  base64Image: step.base64Image,
+                },
               );
-            acc.push({
-              id: recipeRecord.steps[i].id,
-              image: {
-                imageBuffer: Buffer.from(s.base64Image, 'base64'),
-                s3BucketKeyName,
-                s3ImageUrl,
-              },
-            });
-          }
-
-          return acc;
-        }, [] as RecipeStepImageDto[]),
-      );
+            }
+          },
+        ),
+      ]);
     }
-
-    return images;
   }
 
   async updateRecipe(
@@ -186,18 +144,7 @@ export class RecipesService {
       this.transformToRecipeUpdateType(data),
     );
 
-    if (data.base64Image) {
-      const images = this.makeImagesDto(data, recipe);
-      if (images.image?.imageBuffer) {
-        await this.recognitionService.isValidFoodImage(
-          images.image.imageBuffer,
-        );
-        await this.s3Service.uploadFile(
-          images.image.s3BucketKeyName,
-          images.image.imageBuffer,
-        );
-      }
-    }
+    await this.processImages(data, recipe);
 
     return recipe;
   }
@@ -207,6 +154,7 @@ export class RecipesService {
     const { steps, ...recipeData } = remaingData;
     if (steps) {
       recipeData['steps'] = steps.map((s) => ({
+        id: s.id,
         instruction: s.instruction,
         ingredients: s.ingredients,
       }));

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   AwsModule,
+  ImageReviewProcessorModule,
   KafkaProducerModule,
-  PrismaService,
-  RecipeRepository,
+  RecipeRepositoryModule,
   RekognitionService,
   S3Service,
 } from '@repo/nest-shared';
@@ -13,13 +13,17 @@ import { RecipesController } from './recipes.controller';
 import { RecipesService } from './recipes.service';
 
 @Module({
-  imports: [AwsModule, KafkaProducerModule],
+  imports: [
+    ConfigModule.forRoot(),
+    AwsModule,
+    KafkaProducerModule,
+    RecipeRepositoryModule,
+    ImageReviewProcessorModule,
+  ],
   controllers: [RecipesController],
   providers: [
     RecipesService,
-    RecipeRepository,
     RekognitionService,
-    PrismaService,
     S3Service,
     {
       provide: KafkaProducerService,

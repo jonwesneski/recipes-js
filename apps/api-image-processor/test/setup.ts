@@ -2,9 +2,46 @@ import { MeasurementUnit } from '@repo/database';
 import { execSync } from 'child_process';
 import * as dotenv from 'dotenv';
 
+import { KafkaContainer } from '@testcontainers/kafka';
 import * as path from 'path';
 import { GenericContainer, Wait } from 'testcontainers';
 import recipesData from './recipesTestData.json';
+
+// async function assertMessageProducedAndConsumed(
+//   container: StartedKafkaContainer,
+//   additionalConfig: Partial<KafkaConfig> = {},
+// ) {
+//   const brokers = [`${container.getHost()}:${container.getMappedPort(9093)}`];
+//   const kafka = new Kafka({
+//     logLevel: logLevel.NOTHING,
+//     brokers: brokers,
+//     ...additionalConfig,
+//   });
+
+//   const producer = kafka.producer();
+//   await producer.connect();
+//   const consumer = kafka.consumer({ groupId: 'test-group' });
+//   await consumer.connect();
+
+//   await producer.send({
+//     topic: 'test-topic',
+//     messages: [{ value: 'test message' }],
+//   });
+//   await consumer.subscribe({ topic: 'test-topic', fromBeginning: true });
+
+//   const consumedMessage = await new Promise((resolve) =>
+//     consumer.run({
+//       eachMessage: async ({ message }) => resolve(message.value?.toString()),
+//     }),
+//   );
+
+//   if (consumedMessage !== 'test message') {
+//     throw new Error('Message consumption failed');
+//   }
+
+//   await consumer.disconnect();
+//   await producer.disconnect();
+// }
 
 async function getPrisma() {
   const { prisma } = await import('@repo/database');
@@ -20,6 +57,13 @@ export default async function setupDb() {
   //   "colima ls -j | jq -r '.address'",
   //   { encoding: 'utf-8' },
   // ).trim();
+
+  const kafkaContainer = await new KafkaContainer(
+    'confluentinc/cp-kafka:7.2.15',
+  )
+    .withExposedPorts(9092)
+    .start();
+  process.env.KAFKA_BROKER_URLS = `${kafkaContainer.getHost()}:${kafkaContainer.getMappedPort(9093)}`;
 
   const postgresContainer = await new GenericContainer('postgres:13')
     .withExposedPorts(5432)
@@ -52,6 +96,7 @@ export default async function setupDb() {
   await seedDb(prisma);
 
   global.postgresContainer = postgresContainer;
+  global.kafkaContainer = kafkaContainer;
 }
 
 async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
