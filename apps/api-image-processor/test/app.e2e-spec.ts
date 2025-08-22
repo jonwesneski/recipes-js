@@ -49,7 +49,7 @@ describe('App', () => {
       uploadFile: jest.fn().mockResolvedValue(undefined),
       makeS3ImageUrl: jest
         .fn()
-        .mockResolvedValue({ s3BucketKeyName: 'fake', s3ImageUrl: 'fakse' }),
+        .mockReturnValue({ s3BucketKeyName: 'fake', s3ImageUrl: 'fake' }),
     } as unknown as jest.Mocked<S3Service>;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -133,12 +133,9 @@ describe('App', () => {
     expect(
       jest.spyOn(imageReviewProcessorService, 'processRecipeStepImage'),
     ).not.toHaveBeenCalled();
-    expect(
-      jest.spyOn(mockRekognitionService, 'isValidFoodImage'),
-    ).toHaveBeenCalled();
-    expect(jest.spyOn(mockS3Service, 'makeS3ImageUrl')).toHaveBeenCalled();
-    expect(jest.spyOn(mockS3Service, 'uploadFile')).toHaveBeenCalled();
-    expect(jest.spyOn(prismaService.recipe, 'update')).toHaveBeenCalled();
+    expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+    expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
+    expect(mockS3Service.uploadFile).toHaveBeenCalled();
     const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
       where: { id: recipe1.id },
     });
