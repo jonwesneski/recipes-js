@@ -21,6 +21,7 @@ const ACCEPTABLE_LABELS = {
 export class RekognitionService {
   private readonly logger = new Logger(RekognitionService.name);
   private _client: RekognitionClient;
+
   constructor(
     @Inject(awsConfig.KEY)
     _awsConfig: AwsConfigType,

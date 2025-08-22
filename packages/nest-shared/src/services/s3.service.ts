@@ -1,5 +1,6 @@
+import { S3 } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { S3 } from 'aws-sdk';
 import { awsConfig, type AwsConfigType } from '../configs/aws.config';
 
 type S3ImageDataType = { s3BucketKeyName: string; s3ImageUrl: string };
@@ -15,8 +16,10 @@ export class S3Service {
     _awsConfig: AwsConfigType,
   ) {
     this.s3 = new S3({
-      accessKeyId: _awsConfig.accessKeyId,
-      secretAccessKey: _awsConfig.secretAccessKey,
+      credentials: {
+        accessKeyId: _awsConfig.accessKeyId,
+        secretAccessKey: _awsConfig.secretAccessKey,
+      },
       region: _awsConfig.region,
     });
     this._cloudFrontBaseUrl = _awsConfig.cloudFrontBaseUrl;
@@ -30,7 +33,10 @@ export class S3Service {
       ContentType: 'image/jpg',
     };
     try {
-      const result = await this.s3.upload(params).promise();
+      const result = await new Upload({
+        client: this.s3,
+        params,
+      }).done();
       this.logger.log(`File uploaded successfully at ${result.Location}`);
     } catch (err) {
       this.logger.error(`Error uploading file: ${JSON.stringify(err)}`);
