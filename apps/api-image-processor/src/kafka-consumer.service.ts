@@ -11,7 +11,7 @@ import {
 import { Kafka, type Consumer, type KafkaMessage } from 'kafkajs';
 
 @Injectable()
-export class KafkaService implements OnModuleInit, OnModuleDestroy {
+export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
   private readonly _consumer: Consumer;
 
   constructor(

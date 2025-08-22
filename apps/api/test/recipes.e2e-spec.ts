@@ -25,7 +25,7 @@ describe('RecipesController (e2e)', () => {
   let prismaService: PrismaService;
 
   const { createTestingModule } = createTestingFixtures();
-  let user1: Awaited<ReturnType<PrismaService['user']['findUnique']>>;
+  let user1: Awaited<ReturnType<PrismaService['user']['findFirstOrThrow']>>;
   let recipe1: RecipePrismaType;
   let token: string;
 

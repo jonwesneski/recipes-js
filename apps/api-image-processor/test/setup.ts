@@ -114,7 +114,6 @@ async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
       data: {
         name: recipe.name,
         description: recipe.description,
-        imageUrl: 'url',
         isPublic: recipe.isPublic,
         steps: {
           create: recipe.steps.map((step, i) => ({
