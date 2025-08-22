@@ -8,7 +8,7 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
-    { options: { port: process.env.PORT || 3002 } },
+    { options: { host: '0.0.0.0', port: process.env.PORT || 3002 } },
   );
   await app.listen();
 }
