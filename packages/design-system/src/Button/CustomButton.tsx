@@ -14,7 +14,7 @@ export const CustomButton = ({
       {...props}
       type={props.type ? props.type : 'button'}
       className={mergeCss(
-        'px-2 py-1 border-2 font-semibold hover:underline',
+        'px-2 py-1 border-2 font-semibold hover:underline cursor-pointer',
         {
           'bg-(--background)': variant === 'default',
           'text-(--text)': variant === 'default',

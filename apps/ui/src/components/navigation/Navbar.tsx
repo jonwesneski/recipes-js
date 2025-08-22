@@ -1,17 +1,36 @@
 'use client'
 
+import AddIcon from '@public/addIcon.svg'
+import SearchIcon from '@public/searchIcon.svg'
 import { useUsersControllerUpdateUserV1 } from '@repo/codegen/users'
 import { useUserStore } from '@src/providers/use-store-provider'
 import Image from 'next/image'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { type JSX, useEffect, useRef, useState } from 'react'
+import { NavLink } from './NavLink'
 
-const routeKeyMap = new Map<RegExp, string>()
-routeKeyMap.set(/^\/recipes$/, 'feed')
-routeKeyMap.set(/^\/recipes\/\w+$/, 'recipe')
-routeKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
-routeKeyMap.set(/^\/create-recipe$/, 'create')
+// I'm not sure if I want feed and search to be the same page.
+// But right now they are
+type RouteKeys = 'feed' | 'recipe' | 'edit' | 'create'
+const regexRouteKeyMap = new Map<RegExp, RouteKeys>()
+regexRouteKeyMap.set(/^\/recipes$/, 'feed')
+regexRouteKeyMap.set(/^\/recipes\/\w+$/, 'recipe')
+regexRouteKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
+regexRouteKeyMap.set(/^\/create-recipe$/, 'create')
+
+const CreateRecipeLink = (
+  <NavLink href="/create-recipe" icon={AddIcon as string} alt="google" />
+)
+const SearchRecipesLink = (
+  <NavLink href="/recipes" icon={SearchIcon as string} alt="google" />
+)
+const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
+  recipe: [CreateRecipeLink, SearchRecipesLink],
+  feed: [CreateRecipeLink],
+  edit: [SearchRecipesLink],
+  create: [SearchRecipesLink],
+  NONE: null,
+}
 
 export const Navbar = () => {
   const { id, imageUrl, useDarkMode } = useUserStore((state) => state)
@@ -26,7 +45,7 @@ export const Navbar = () => {
   const { mutate } = useUsersControllerUpdateUserV1()
 
   const getRouteKey = () => {
-    for (const [regex, value] of routeKeyMap) {
+    for (const [regex, value] of regexRouteKeyMap) {
       if (regex.test(pathname)) {
         return value
       }
@@ -35,14 +54,7 @@ export const Navbar = () => {
   }
 
   const renderNavItems = () => {
-    const key = getRouteKey()
-    switch (key) {
-      case 'feed':
-      case 'recipe':
-        return <Link href="/create-recipe">Add</Link>
-      default:
-        return null
-    }
+    return routeKeyLinksMap[getRouteKey()]
   }
 
   useEffect(() => {

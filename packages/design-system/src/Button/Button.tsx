@@ -1,28 +1,6 @@
-import { mergeCss } from '../utils'
 import { CustomButton, CustomButtonProps } from './CustomButton'
 
 export type ButtonProps = Omit<CustomButtonProps, 'children'> & { text: string }
-export const Button = ({ variant = 'default', ...props }: ButtonProps) => {
-  return (
-    <CustomButton
-      {...props}
-      type={props.type ? props.type : 'button'}
-      className={mergeCss(
-        'px-2 py-1 border-2 font-semibold hover:underline',
-        {
-          'bg-(--background)': variant === 'default',
-          'text-(--text)': variant === 'default',
-          'shadow-[4px_4px_theme(colors.text),4px_4px_0px_1px_theme(colors.background)]':
-            variant === 'default',
-          'bg-(--text)': variant === 'opposite',
-          'text-(--background)': variant === 'opposite',
-          'shadow-[4px_4px_theme(colors.background),4px_4px_0px_1px_theme(colors.text)]':
-            variant === 'opposite',
-        },
-        props.className,
-      )}
-    >
-      {`${props.text}.`}
-    </CustomButton>
-  )
+export const Button = (props: ButtonProps) => {
+  return <CustomButton {...props}>{`${props.text}.`}</CustomButton>
 }

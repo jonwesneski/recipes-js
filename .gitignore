@@ -32,3 +32,6 @@ next-env.d.ts
 **/.env.production.local
 
 npm-debug.log*
+
+# Turborepo
+.turbo

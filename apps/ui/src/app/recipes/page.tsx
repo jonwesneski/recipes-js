@@ -2,6 +2,7 @@
 
 import { useRecipesControllerRecipesListV1 } from '@repo/codegen/recipes'
 import { Button } from '@repo/design-system'
+import Link from 'next/link'
 import { useEffect } from 'react'
 
 const Page = () => {
@@ -22,7 +23,9 @@ const Page = () => {
               <h2 className="text-xl font-bold">{recipe.name}</h2>
               <p className="text-gray-600">{recipe.description}</p>
               <p>{recipe.tags.join(' ')}</p>
-              <Button text={`/recipes/${recipe.id}`} />
+              <Link href={`/recipes/${recipe.id}`}>
+                <Button text={`/recipes/${recipe.id}`} />
+              </Link>
             </div>
           ))
         : null}
