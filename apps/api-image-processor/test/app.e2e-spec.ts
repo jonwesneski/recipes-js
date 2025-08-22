@@ -3,9 +3,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   ImageReviewProcessorService,
   NEW_RECIPE_IMAGE_TOPIC,
+  NEW_RECIPE_STEP_IMAGE_TOPIC,
   PrismaService,
   RecipeInclude,
   RecipePrismaType,
+  RecipeRepository,
   RekognitionService,
   S3Service,
 } from '@repo/nest-shared';
@@ -13,35 +15,23 @@ import { KafkaConsumerService } from '@src/kafka-consumer.service';
 import { Kafka, logLevel, Producer } from 'kafkajs';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
+import { waitFor } from './utils';
 
-const waitFor = async (
-  callback: (resolve: (value: void | PromiseLike<void>) => void) => void,
-  timeout: number = 4000,
-): Promise<void> => {
-  await Promise.race([
-    new Promise((_resolve, _) => {
-      callback(_resolve);
-    }),
-    new Promise((_, reject) =>
-      setTimeout(() => reject('Timeout waiting to resolve'), timeout),
-    ),
-  ]);
-};
-
-// TODO still working on making this test pass
-// I'm not sure how to handle the consumer yet
 describe('App', () => {
   let app: INestApplication<App>;
   let producer: Producer;
+  let recipeRepository: RecipeRepository;
   let prismaService: PrismaService;
   let imageReviewProcessorService: ImageReviewProcessorService;
   let mockRekognitionService: jest.Mocked<RekognitionService>;
   let mockS3Service: jest.Mocked<S3Service>;
+  let spyProcessRecipeImage: jest.SpyInstance;
+  let spyProcessRecipeStepImage: jest.SpyInstance;
 
   let user1: Awaited<ReturnType<PrismaService['user']['findFirstOrThrow']>>;
   let recipe1: RecipePrismaType;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     mockRekognitionService = {
       isValidFoodImage: jest.fn().mockResolvedValue(true),
     } as unknown as jest.Mocked<RekognitionService>;
@@ -66,6 +56,15 @@ describe('App', () => {
       moduleFixture.get<ImageReviewProcessorService>(
         ImageReviewProcessorService,
       );
+    recipeRepository = moduleFixture.get<RecipeRepository>(RecipeRepository);
+    spyProcessRecipeImage = jest.spyOn(
+      imageReviewProcessorService,
+      'processRecipeImage',
+    );
+    spyProcessRecipeStepImage = jest.spyOn(
+      imageReviewProcessorService,
+      'processRecipeStepImage',
+    );
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
     user1 = await prismaService.user.findUniqueOrThrow({
       where: { handle: 'jon' },
@@ -91,54 +90,196 @@ describe('App', () => {
     await producer.connect();
   });
 
-  afterEach(async () => {
+  beforeEach(() => {
+    mockS3Service.makeS3ImageUrl.mockClear();
+    mockS3Service.uploadFile.mockClear();
+    spyProcessRecipeImage.mockClear();
+    spyProcessRecipeStepImage.mockClear();
+  });
+
+  afterAll(async () => {
     await producer.disconnect();
     await app.get(KafkaConsumerService)['_consumer'].disconnect();
     await app.close();
   });
 
-  it('Consume new recipe image topic', async () => {
-    const waitForMessage = waitFor((resolve) => {
-      jest
-        .spyOn(imageReviewProcessorService, 'processRecipeImage')
-        .mockImplementationOnce(async (key, data) => {
+  describe('new recipe image topic', () => {
+    it('Consume valid new recipe image', async () => {
+      const waitForMessage = waitFor((resolve) => {
+        spyProcessRecipeImage.mockImplementationOnce(async (key, data) => {
           expect(key).toBe(user1.id);
           expect(data).toEqual({
             recipeId: recipe1.id,
             base64Image: '1',
           });
-          resolve();
           // Now I am calling the real method
-          return await imageReviewProcessorService.processRecipeImage.apply(
+          await imageReviewProcessorService.processRecipeImage.apply(
             imageReviewProcessorService,
             [key, data],
           );
+          resolve();
         });
+      });
+
+      await producer.send({
+        topic: NEW_RECIPE_IMAGE_TOPIC,
+        messages: [
+          {
+            key: user1.id,
+            value: JSON.stringify({
+              recipeId: recipe1.id,
+              base64Image: '1',
+            }),
+          },
+        ],
+      });
+      await waitForMessage;
+
+      expect(spyProcessRecipeStepImage).not.toHaveBeenCalled();
+      expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+      expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
+      expect(mockS3Service.uploadFile).toHaveBeenCalled();
+      const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
+        where: { id: recipe1.id },
+      });
+      expect(updatedRecipe.imageUrl).toBe('fake');
     });
 
-    await producer.send({
-      topic: NEW_RECIPE_IMAGE_TOPIC,
-      messages: [
-        {
-          key: user1.id,
-          value: JSON.stringify({
+    it("Don't consume invalid recipe image", async () => {
+      mockRekognitionService.isValidFoodImage.mockResolvedValueOnce(false);
+      const waitForMessage = waitFor((resolve) => {
+        jest;
+        spyProcessRecipeImage.mockImplementationOnce(async (key, data) => {
+          expect(key).toBe(user1.id);
+          expect(data).toEqual({
             recipeId: recipe1.id,
             base64Image: '1',
-          }),
-        },
-      ],
+          });
+          // Now I am calling the real method
+          await imageReviewProcessorService.processRecipeImage.apply(
+            imageReviewProcessorService,
+            [key, data],
+          );
+          resolve();
+        });
+      });
+
+      await producer.send({
+        topic: NEW_RECIPE_IMAGE_TOPIC,
+        messages: [
+          {
+            key: user1.id,
+            value: JSON.stringify({
+              recipeId: recipe1.id,
+              base64Image: '1',
+            }),
+          },
+        ],
+      });
+      await waitForMessage;
+
+      expect(spyProcessRecipeStepImage).not.toHaveBeenCalled();
+      expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+      expect(mockS3Service.makeS3ImageUrl).not.toHaveBeenCalled();
+      expect(mockS3Service.uploadFile).not.toHaveBeenCalled();
+      expect(
+        jest.spyOn(recipeRepository, 'addImageToRecipe'),
+      ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('new recipe step image topic', () => {
+    it('Consume valid new recipe step image', async () => {
+      const waitForMessage = waitFor((resolve) => {
+        jest;
+        spyProcessRecipeStepImage.mockImplementationOnce(async (key, data) => {
+          expect(key).toBe(user1.id);
+          expect(data).toEqual({
+            recipeId: recipe1.id,
+            stepId: recipe1.steps[0].id,
+            stepIndex: 0,
+            base64Image: '1',
+          });
+          // Now I am calling the real method
+          await imageReviewProcessorService.processRecipeStepImage.apply(
+            imageReviewProcessorService,
+            [key, data],
+          );
+          resolve();
+        });
+      });
+
+      await producer.send({
+        topic: NEW_RECIPE_STEP_IMAGE_TOPIC,
+        messages: [
+          {
+            key: user1.id,
+            value: JSON.stringify({
+              recipeId: recipe1.id,
+              stepId: recipe1.steps[0].id,
+              stepIndex: 0,
+              base64Image: '1',
+            }),
+          },
+        ],
+      });
+      await waitForMessage;
+
+      expect(spyProcessRecipeImage).not.toHaveBeenCalled();
+      expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+      expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
+      expect(mockS3Service.uploadFile).toHaveBeenCalled();
+      const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
+        where: { id: recipe1.id },
+        include: RecipeInclude,
+      });
+      expect(updatedRecipe.steps[0].imageUrl).toBe('fake');
     });
 
-    await waitForMessage;
-    expect(
-      jest.spyOn(imageReviewProcessorService, 'processRecipeStepImage'),
-    ).not.toHaveBeenCalled();
-    expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
-    expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
-    expect(mockS3Service.uploadFile).toHaveBeenCalled();
-    const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
-      where: { id: recipe1.id },
+    it("Don't consume invalid recipe step image", async () => {
+      mockRekognitionService.isValidFoodImage.mockResolvedValueOnce(false);
+      const waitForMessage = waitFor((resolve) => {
+        jest;
+        spyProcessRecipeStepImage.mockImplementationOnce(async (key, data) => {
+          expect(key).toBe(user1.id);
+          expect(data).toEqual({
+            recipeId: recipe1.id,
+            stepId: recipe1.steps[0].id,
+            stepIndex: 0,
+            base64Image: '1',
+          });
+          // Now I am calling the real method
+          await imageReviewProcessorService.processRecipeStepImage.apply(
+            imageReviewProcessorService,
+            [key, data],
+          );
+          resolve();
+        });
+      });
+
+      await producer.send({
+        topic: NEW_RECIPE_STEP_IMAGE_TOPIC,
+        messages: [
+          {
+            key: user1.id,
+            value: JSON.stringify({
+              recipeId: recipe1.id,
+              stepId: recipe1.steps[0].id,
+              stepIndex: 0,
+              base64Image: '1',
+            }),
+          },
+        ],
+      });
+      await waitForMessage;
+
+      expect(spyProcessRecipeImage).not.toHaveBeenCalled();
+      expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+      expect(mockS3Service.makeS3ImageUrl).not.toHaveBeenCalled();
+      expect(mockS3Service.uploadFile).not.toHaveBeenCalled();
+      expect(
+        jest.spyOn(recipeRepository, 'addImageToRecipeStep'),
+      ).not.toHaveBeenCalled();
     });
-    expect(updatedRecipe.imageUrl).toBe('fake');
   });
 });
