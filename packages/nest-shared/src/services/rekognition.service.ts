@@ -11,6 +11,12 @@ import {
 } from '@nestjs/common';
 import { awsConfig, AwsConfigType } from '../configs/aws.config';
 
+const ACCEPTABLE_LABELS = {
+  Food: true,
+  Fruit: true,
+  Vegetable: true,
+};
+
 @Injectable()
 export class RekognitionService {
   private readonly logger = new Logger(RekognitionService.name);
@@ -44,16 +50,16 @@ export class RekognitionService {
     const nonFoods: string[] = [];
     for (const label of labels) {
       if (label.Name) {
-        if (label.Name === 'Food' || label.Name?.includes('Food')) {
+        if (ACCEPTABLE_LABELS[label.Name] || label.Name?.includes('Food')) {
           return true;
         }
         nonFoods.push(label.Name);
       }
     }
+
     this.logger.warn(
       `Image does not contain food or ingredients, found: ${nonFoods.join(', ')}`,
     );
-
     return false;
   }
 
