@@ -19,7 +19,6 @@ export const NavigationLayout = ({
 
   useEffect(() => {
     if (navRef.current) {
-      console.log(navRef.current.offsetHeight)
       setNavHeight(navRef.current.offsetHeight)
     }
   }, [])
@@ -28,7 +27,7 @@ export const NavigationLayout = ({
     <>
       <nav
         ref={navRef}
-        className={mergeCss('fixed left-0 right-0 z-50', {
+        className={mergeCss('fixed w-screen left-0 right-0 z-50', {
           // 'bottom-0': width < breakpointPxs.md,
           'top-0': width >= breakpointPxs.md,
         })}

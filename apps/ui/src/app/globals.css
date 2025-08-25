@@ -1,6 +1,12 @@
 @import 'tailwindcss';
 @import '@repo/design-system/theme.css';
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
 body {
   margin: 0;
   font-family: 'Courier New';

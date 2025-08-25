@@ -1,20 +1,21 @@
 import '@repo/design-system/styles.css'
 import { NavigationLayout } from '@src/components/navigation'
-import { type Metadata } from 'next'
+import { type Metadata, type Viewport } from 'next'
 import AppProviders from './_providers'
 import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Recipehall',
   description: 'A place to share recipes',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    minimumScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover',
-  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
