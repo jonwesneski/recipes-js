@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, UnderLabel } from '@repo/design-system'
+import { TextButton, UnderLabel } from '@repo/design-system'
 import { useCamera } from '@src/providers/CameraProvider'
 import { isImageSizeUnderLimit } from '@src/utils/imageChecker'
 import { type ChangeEvent, useRef, useState } from 'react'
@@ -75,16 +75,11 @@ export const PhotoInput = (props: PhotoInputProps) => {
     >
       <div className="flex flex-col">
         <div className="self-end flex gap-5 mb-3">
-          <Button
-            variant="opposite"
+          <TextButton
             text="camera"
             onClick={() => void handleOnCameraClick()}
           />
-          <Button
-            variant="opposite"
-            text="upload"
-            onClick={handleOnUploadClick}
-          />
+          <TextButton text="upload" onClick={handleOnUploadClick} />
           <input
             ref={uploadInputRef}
             className="hidden"

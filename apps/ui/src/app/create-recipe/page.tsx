@@ -1,7 +1,7 @@
 'use client'
 
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
-import { Button } from '@repo/design-system'
+import { TextButton } from '@repo/design-system'
 import { RecipeInput } from '@src/components/recipeInput'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
@@ -44,12 +44,7 @@ const Page = () => {
   return (
     <form className="flex flex-col px-3" onSubmit={handleSubmit}>
       <RecipeInput />
-      <Button
-        className="mt-3 mx-auto block"
-        text="submit"
-        variant="opposite"
-        type="submit"
-      />
+      <TextButton className="mt-3 mx-auto block" text="submit" type="submit" />
     </form>
   )
 }

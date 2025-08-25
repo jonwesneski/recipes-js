@@ -1,7 +1,7 @@
 'use client'
 
 import GoogleLogo from '@public/Google__G__logo.svg'
-import { CustomButton } from '@repo/design-system'
+import { Button } from '@repo/design-system'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import Image from 'next/image'
 import { type MouseEvent } from 'react'
@@ -25,7 +25,7 @@ const Page = () => {
           className="mx-auto flex flex-col items-center w-4/5 gap-4"
           id="doodle"
         >
-          <CustomButton
+          <Button
             onClick={handleGoogleOAuth}
             variant="opposite"
             className="flex items-start w-full"
@@ -36,7 +36,7 @@ const Page = () => {
               className="mx-4 grow-0"
             />
             Google.
-          </CustomButton>
+          </Button>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@repo/design-system'
+import { TextButton } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import Image from 'next/image'
 import { useEffect, useState, type RefObject } from 'react'
@@ -97,9 +97,8 @@ export const Steps = (props: IStepsProps) => {
         )
       })}
       <hr />
-      <Button
+      <TextButton
         className="float-right mt-3"
-        variant="opposite"
         text="add step"
         onClick={handleOnAddClick}
       />

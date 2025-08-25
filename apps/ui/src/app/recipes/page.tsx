@@ -1,7 +1,7 @@
 'use client'
 
 import { useRecipesControllerRecipesListV1 } from '@repo/codegen/recipes'
-import { Button } from '@repo/design-system'
+import { TextButton } from '@repo/design-system'
 import Link from 'next/link'
 import { useEffect } from 'react'
 
@@ -24,7 +24,7 @@ const Page = () => {
               <p className="text-gray-600">{recipe.description}</p>
               <p>{recipe.tags.join(' ')}</p>
               <Link href={`/recipes/${recipe.id}`}>
-                <Button text={`/recipes/${recipe.id}`} />
+                <TextButton text={`/recipes/${recipe.id}`} />
               </Link>
             </div>
           ))

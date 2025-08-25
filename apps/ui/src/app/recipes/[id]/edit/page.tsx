@@ -3,7 +3,7 @@
 import type { PatchRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
-import { Button } from '@repo/design-system'
+import { TextButton } from '@repo/design-system'
 import { RecipeInput } from '@src/components/recipeInput'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { CameraProvider } from '@src/providers/CameraProvider'
@@ -53,7 +53,7 @@ const Page = () => {
         <div className="flex justify-center">
           <div className="block mx-5">
             <RecipeInput />
-            <Button
+            <TextButton
               className="mt-3 mx-auto block"
               text="submit"
               variant="opposite"
