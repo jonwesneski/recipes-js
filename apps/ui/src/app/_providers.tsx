@@ -16,9 +16,9 @@ interface AppProvidersProps {
 }
 const AppProviders = (props: AppProvidersProps) => {
   useEffect(() => {
-    // import('@src/mocks/server')
-    //   .then((mod: { server: SetupWorker }) => {
-    //     void mod.server.start()
+    // import('@src/mocks/mswBrowser')
+    //   .then((mod: { worker: SetupWorker }) => {
+    //     void mod.worker.start()
     //   })
     //   .catch((error: unknown) => {
     //     console.error('Failed to start MSW server:', error)

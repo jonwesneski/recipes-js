@@ -8,6 +8,8 @@ export default {
       '<rootDir>/../../packages/codegen/dist-cjs/api/users/users.msw.js',
     '^@repo/codegen/mswRecipes$':
       '<rootDir>/../../packages/codegen/dist-cjs/api/recipes/recipes.msw.js',
+    '^@repo/codegen/mswTags$':
+      '<rootDir>/../../packages/codegen/dist-cjs/api/tags/tags.msw.js',
     // fallback for other imports
     '^@repo/codegen/(.*)$': [
       '<rootDir>/../../packages/codegen/dist-cjs/api/$1/$1',
