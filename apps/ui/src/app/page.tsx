@@ -27,7 +27,6 @@ const Page = () => {
         >
           <Button
             onClick={handleGoogleOAuth}
-            variant="opposite"
             className="flex items-start w-full"
           >
             <Image

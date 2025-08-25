@@ -33,6 +33,7 @@ export default [
       'next/no-html-link-for-pages': 'off',
       'no-console': 'off',
       'prefer-named-capture-group': 'off',
+      'react/button-has-type': 'off',
       'react/hook-use-state': 'off',
       'react/jsx-curly-brace-presence': 'off',
       'react-hooks/exhaustive-deps': 'off', // Getting a version incompatibility issue with this for now

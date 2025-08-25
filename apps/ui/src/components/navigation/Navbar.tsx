@@ -128,6 +128,7 @@ export const Navbar = () => {
                 : 'https://www.gravatar.com/avatar/?d=mp'
             }
             alt="profile image"
+            priority
             width={30}
             height={30}
             className="mx-4 grow-0"
