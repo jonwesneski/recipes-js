@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       new URL('https://lh3.googleusercontent.com/**'),
       new URL('https://www.gravatar.com/avatar/?d=mp'),
+      new URL('https://d2ivn22ne8jqbo.cloudfront.net/**'),
     ],
   },
 };

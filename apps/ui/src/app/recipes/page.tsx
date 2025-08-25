@@ -1,9 +1,8 @@
 'use client'
 
 import { useRecipesControllerRecipesListV1 } from '@repo/codegen/recipes'
-import { TextButton } from '@repo/design-system'
-import Link from 'next/link'
 import { useEffect } from 'react'
+import { RecipeTile } from './_components/RecipeTile'
 
 const Page = () => {
   const { data, isSuccess } = useRecipesControllerRecipesListV1()
@@ -13,20 +12,16 @@ const Page = () => {
   }, [isSuccess])
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
       {isSuccess && Array.isArray(data)
         ? data.map((recipe) => (
-            <div
+            <RecipeTile
               key={recipe.id}
-              className="border p-4 rounded-lg shadow hover:shadow-lg transition-shadow"
-            >
-              <h2 className="text-xl font-bold">{recipe.name}</h2>
-              <p className="text-gray-600">{recipe.description}</p>
-              <p>{recipe.tags.join(' ')}</p>
-              <Link href={`/recipes/${recipe.id}`}>
-                <TextButton text={`/recipes/${recipe.id}`} />
-              </Link>
-            </div>
+              href={`/recipes/${recipe.id}`}
+              imageUrl={recipe.imageUrl ?? undefined}
+              name={recipe.name}
+              starred={false}
+            />
           ))
         : null}
     </div>

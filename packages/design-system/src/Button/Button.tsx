@@ -5,11 +5,15 @@ export type ButtonProps = Omit<
   DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
   'style'
 > & { variant?: 'default' | 'opposite'; children: ReactNode }
-export const Button = ({ variant = 'default', ...props }: ButtonProps) => {
+export const Button = ({
+  type = 'button',
+  variant = 'default',
+  ...props
+}: ButtonProps) => {
   return (
     <button
       {...props}
-      type={props.type ? props.type : 'button'}
+      type={type}
       className={mergeCss(
         'px-2 py-1 border-2 font-semibold hover:underline cursor-pointer',
         {

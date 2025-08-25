@@ -21,7 +21,7 @@ export const TextArea = ({ variant = 'shadowLT', ...props }: TextAreaProps) => {
 
   const handleResize = () => {
     if (
-      props?.ref &&
+      props.ref &&
       'current' in props.ref &&
       props.ref.current &&
       props.ref.current.clientHeight < props.ref.current.scrollHeight

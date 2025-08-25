@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from './CustomButton'
+import { Button, type ButtonProps } from './Button'
 
 export type TextButtonProps = Omit<ButtonProps, 'children'> & {
   text: string
