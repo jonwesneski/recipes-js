@@ -5,6 +5,8 @@ import { AuthenticationProvider } from '@src/providers/authentication-provider'
 import { UserStoreProvider } from '@src/providers/use-store-provider'
 import { type UserStore } from '@src/stores/user-store'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+// import type { SetupWorker } from 'msw/browser'
+import { useEffect } from 'react'
 
 const queryClient = new QueryClient()
 
@@ -13,6 +15,16 @@ interface AppProvidersProps {
   initialState?: Partial<UserStore>
 }
 const AppProviders = (props: AppProvidersProps) => {
+  useEffect(() => {
+    // import('@src/mocks/server')
+    //   .then((mod: { server: SetupWorker }) => {
+    //     void mod.server.start()
+    //   })
+    //   .catch((error: unknown) => {
+    //     console.error('Failed to start MSW server:', error)
+    //   })
+  }, [])
+
   return (
     <AuthenticationProvider>
       <QueryClientProvider client={queryClient}>

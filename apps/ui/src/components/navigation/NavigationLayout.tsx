@@ -3,6 +3,7 @@
 import { mergeCss } from '@repo/design-system'
 import useMediaQuery from '@src/hooks/useMediaQuery'
 import { usePathname } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 import { Navbar } from './Navbar'
 
 export const NavigationLayout = ({
@@ -12,18 +13,36 @@ export const NavigationLayout = ({
 }) => {
   const { width, breakpointPxs } = useMediaQuery()
   const pathname = usePathname()
+
+  const navRef = useRef<HTMLElement>(null)
+  const [navHeight, setNavHeight] = useState(0)
+
+  useEffect(() => {
+    if (navRef.current) {
+      console.log(navRef.current.offsetHeight)
+      setNavHeight(navRef.current.offsetHeight)
+    }
+  }, [])
+
   return pathname !== '/' ? (
     <>
       <nav
+        ref={navRef}
         className={mergeCss('fixed left-0 right-0 z-50', {
-          'bottom-0': width < breakpointPxs.md,
+          // 'bottom-0': width < breakpointPxs.md,
           'top-0': width >= breakpointPxs.md,
         })}
+        style={{
+          bottom:
+            width < breakpointPxs.md && navHeight
+              ? `${navHeight}px`
+              : undefined,
+        }}
       >
         <Navbar />
       </nav>
 
-      <div className="pt-10 pb-20">{children}</div>
+      <main className="pt-10 pb-20">{children}</main>
     </>
   ) : (
     children

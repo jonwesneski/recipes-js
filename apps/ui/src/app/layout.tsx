@@ -5,8 +5,16 @@ import AppProviders from './_providers'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'React App',
-  description: 'Web site created with Next.js.',
+  title: 'Recipehall',
+  description: 'A place to share recipes',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    minimumScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
+  },
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {

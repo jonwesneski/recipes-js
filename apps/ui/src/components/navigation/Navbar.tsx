@@ -19,10 +19,20 @@ regexRouteKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
 regexRouteKeyMap.set(/^\/create-recipe$/, 'create')
 
 const CreateRecipeLink = (
-  <NavLink href="/create-recipe" icon={AddIcon as string} alt="google" />
+  <NavLink
+    key="create"
+    href="/create-recipe"
+    icon={AddIcon as string}
+    alt="create"
+  />
 )
 const SearchRecipesLink = (
-  <NavLink href="/recipes" icon={SearchIcon as string} alt="google" />
+  <NavLink
+    key="search"
+    href="/recipes"
+    icon={SearchIcon as string}
+    alt="search"
+  />
 )
 const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   recipe: [CreateRecipeLink, SearchRecipesLink],
