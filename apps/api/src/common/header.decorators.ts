@@ -5,24 +5,19 @@ import { jwtDecode } from 'jwt-decode';
 
 export const JwtDecodedHeader = createParamDecorator(
   (ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-    let headerValue: string = request.headers['authorization'] ?? '';
-    headerValue = headerValue.replace('Bearer ', '');
-    return jwtDecode<JwtGoogleType>(headerValue);
+    const request = ctx.switchToHttp().getRequest<Request>();
+    return parseHelper(request);
   },
 );
 
-// TODO: not sure how to mock JwtDecodedHeader in jest; so I am doing this for now
-export const parseHelper = (headers: Request['headers']): JwtGoogleType => {
-  let headerValue: string = headers.authorization ?? '';
-  headerValue = headerValue.replace('Bearer ', '');
-  return decodeJwtGoogle(headerValue);
-};
-
-export const decodeJwtGoogle = (token: string): JwtGoogleType => {
-  try {
-    return jwtDecode<JwtGoogleType>(token);
-  } catch {
-    return {} as JwtGoogleType;
+// TODO: not sure how to mock JwtDecodedHeader in jest; so using this for now
+export const parseHelper = (request: Request): JwtGoogleType => {
+  let accessToken: string | undefined = request.cookies['access_token'];
+  if (!accessToken) {
+    // TODO: Remove headers when I am able to get access_token cookie.
+    // or maybe keep for postman
+    let headerValue: string = request.headers.authorization ?? '';
+    accessToken = headerValue.replace('Bearer ', '');
   }
+  return jwtDecode<JwtGoogleType>(accessToken);
 };

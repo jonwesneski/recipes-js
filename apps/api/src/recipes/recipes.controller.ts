@@ -17,7 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtGuard } from '@src/auth/guards';
 import { throwIfConflict, throwIfNotFound } from '@src/common';
-import { decodeJwtGoogle, parseHelper } from '@src/common/header.decorators';
+import { parseHelper } from '@src/common/header.decorators';
 import { type Request } from 'express';
 import {
   BadRequestRecipeEntity,
@@ -61,17 +61,9 @@ export class RecipesController {
     let userId: string | undefined;
     try {
       if (query.byOwner) {
-        // TODO: Remove headers when I am able to access_token cookie.
-        const accessToken = request.cookies['access_token'] as string;
-        const sub = decodeJwtGoogle(accessToken).sub;
-        if (sub) {
-          userId = sub;
-        } else {
-          userId = parseHelper(request.headers).sub; // Using since JwtDecodedHeader is not working in jest
-        }
+        // TODO: Remove when this works in jest: JwtDecodedHeader.
+        userId = parseHelper(request).sub;
       }
-
-      console.log({ userId });
       return await this.recipesService.getRecipe(id, userId);
     } catch (error) {
       throwIfNotFound(error);
@@ -91,7 +83,7 @@ export class RecipesController {
     @Req() req: Request,
   ): Promise<RecipeEntity> {
     try {
-      const token = parseHelper(req.headers); // Using since JwtDecodedHeader is not working in jest
+      const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
       return await this.recipesService.createRecipe(token.sub, body);
     } catch (error) {
       throwIfConflict(error, `Recipe with name "${body.name}" already exists.`);
@@ -110,7 +102,7 @@ export class RecipesController {
     @Body() body: PatchRecipeDto,
     @Req() req: Request,
   ): Promise<RecipeEntity> {
-    const token = parseHelper(req.headers); // Using since JwtDecodedHeader is not working in jest
+    const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
     try {
       return await this.recipesService.updateRecipe(token.sub, id, body);
     } catch (error) {
