@@ -63,7 +63,7 @@ export const Steps = (props: IStepsProps) => {
     <div className={props.className}>
       {steps.map((s, index) => {
         return (
-          <div key={s.keyId} className="mb-5">
+          <div key={s.keyId} data-testid="step-row" className="mb-5">
             <h1 className="font-bold">step {index + 1}.</h1>
             <div ref={s.ref} className="flex flex-col md:flex-row gap-2">
               <IngredientsTextArea

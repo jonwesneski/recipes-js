@@ -3,14 +3,6 @@
 import type { RecipeEntity } from '@repo/codegen/model'
 import { useRecipesControllerRecipeV1 } from '@repo/codegen/recipes'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
-import {
-  createIngredientsItem,
-  createStepItem,
-  IngredientItemType,
-  InstructionsType,
-  type RecipeState,
-} from '@src/stores/recipe-store'
-import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import { use, useEffect, useState } from 'react'
 import {
   NutritionalFacts,
@@ -19,38 +11,13 @@ import {
   RecipeSteps,
 } from './_components'
 
-const transformRecipe = (recipe: RecipeEntity): RecipeState => {
-  const { createdAt: _createdAt, updatedAt: _updatedAt, ...rest } = recipe
-  return {
-    ...rest,
-    imageSrc: recipe.imageUrl,
-    steps: recipe.steps.map((s) => {
-      return createStepItem({
-        ingredients: createIngredientsItem(
-          s.ingredients.map(
-            (i) =>
-              new IngredientItemType({
-                ingredient: new IngredientValidator({
-                  dto: { amount: i.amount, unit: i.unit, name: i.name },
-                }),
-              }),
-          ),
-        ),
-        instructions: new InstructionsType({
-          value: s.instruction ?? undefined,
-        }),
-      })
-    }),
-    isValid: true,
-    errors: {},
-  }
-}
-
 const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const [recipe, setRecipe] = useState<RecipeEntity | null>(null)
   const { id } = use(params)
 
-  const { isSuccess, data } = useRecipesControllerRecipeV1(id)
+  const { isSuccess, data } = useRecipesControllerRecipeV1(id, {
+    request: { params: { byOwner: false } },
+  })
 
   useEffect(() => {
     if (isSuccess) {
@@ -61,7 +28,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <>
       {recipe ? (
-        <RecipeStoreProvider initialState={transformRecipe(recipe)}>
+        <RecipeStoreProvider initialState={recipe}>
           <RecipeLayout
             title={recipe.name}
             subtitle={recipe.description ?? undefined}

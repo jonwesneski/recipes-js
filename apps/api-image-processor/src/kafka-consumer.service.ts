@@ -59,7 +59,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     });
 
     await this._consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
+      eachMessage: async ({ topic, message }) => {
         if (topic === NEW_RECIPE_IMAGE_TOPIC) {
           await this.consumeNewRecipeImage(message);
         } else if (topic === NEW_RECIPE_STEP_IMAGE_TOPIC) {
@@ -76,7 +76,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
 
     const data = this.parseMessage<NewRecipeMessageType>(message);
     await this.imageReviewService.processRecipeImage(
-      message.key!.toString(),
+      message.key.toString(),
       data,
     );
   }
@@ -102,7 +102,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     try {
       return JSON.parse(message.value.toString()) as T;
     } catch (error) {
-      throw new Error(`Failed to parse message: ${error.message}`);
+      throw new Error(`Failed to parse message: ${(error as Error).message}`);
     }
   }
 }

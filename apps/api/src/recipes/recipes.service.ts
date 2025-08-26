@@ -16,24 +16,6 @@ import {
   PatchStepDto,
 } from './contracts';
 
-type ImageDto = {
-  imageBuffer: Buffer<ArrayBuffer>;
-  s3BucketKeyName: string;
-  s3ImageUrl: string;
-};
-
-type RecipeStepImageDto = {
-  id: string;
-  image: ImageDto;
-};
-
-type RecipeImagesDto = {
-  userId: string;
-  id: string;
-  image?: ImageDto;
-  steps: RecipeStepImageDto[];
-};
-
 @Injectable()
 export class RecipesService {
   private readonly useKafka: boolean;
@@ -50,8 +32,8 @@ export class RecipesService {
     return await this.recipeRepository.getRecipes();
   }
 
-  async getRecipe(id: string): Promise<RecipeType> {
-    return await this.recipeRepository.getRecipe(id);
+  async getRecipe(id: string, userId?: string): Promise<RecipeType> {
+    return await this.recipeRepository.getRecipe(id, userId);
   }
 
   async createRecipe(
@@ -69,6 +51,7 @@ export class RecipesService {
   }
 
   private transformToRecipeCreateType(data: CreateRecipeDto): RecipeCreateType {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- do not base64Image here
     const { base64Image, ...remaingData } = data;
     const { steps, ...recipeData } = remaingData;
     recipeData['steps'] = steps.map((s) => ({
@@ -150,6 +133,7 @@ export class RecipesService {
   }
 
   private transformToRecipeUpdateType(data: PatchRecipeDto): RecipeUpdateType {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- do not base64Image here
     const { base64Image, ...remaingData } = data;
     const { steps, ...recipeData } = remaingData;
     if (steps) {

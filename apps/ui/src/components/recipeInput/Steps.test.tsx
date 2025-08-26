@@ -23,6 +23,7 @@ localStorageMock.getItem.mockImplementation(() => 'jwtvalue')
 
 const INGREDIENT_ID = 'ingredient-row'
 const INSTRUCTIONS_ID = 'instructions-text-area'
+const STEP_ID = 'step-row'
 
 const ingredientsString = '2 cups flour\n\n1 ounces sugar\n\n2 grams paste'
 const instructionsString = 'my second step\n\nmy third step\n\nmy fourth step'
@@ -37,7 +38,7 @@ describe('Steps', () => {
       expect(instructions.length).toBe(1)
     })
 
-    it.only('Pasting ingredients: Windows', async () => {
+    it('Pasting ingredients: Windows', async () => {
       const ingredientsStringFromWindows = ingredientsString.replaceAll(
         '\n\n',
         '\r\n\r\n',
@@ -70,8 +71,9 @@ describe('Steps', () => {
       ingredients[0].focus()
       await userEvent.paste(ingredientsString)
 
+      const steps = await findAllByTestId(STEP_ID)
+      expect(steps.length).toBe(3)
       ingredients = await findAllByTestId(INGREDIENT_ID)
-      expect(ingredients.length).toBe(3)
       ingredients.forEach((i, index) => {
         expect(i.textContent).toBe(dataList[index])
       })
@@ -141,8 +143,9 @@ describe('Steps', () => {
       instructions[1].focus()
       await userEvent.paste(instructionsString)
 
+      const steps = await findAllByTestId(STEP_ID)
+      expect(steps.length).toBe(4)
       ingredients = await findAllByTestId(INGREDIENT_ID)
-      expect(ingredients.length).toBe(4)
       ingredients.forEach((i, index) => {
         if (index === 3) {
           expect(i.textContent).toBe('')

@@ -1,4 +1,5 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { GoogleAuthDto, GoogleOauthGuard } from './guards';
@@ -7,7 +8,10 @@ import { GoogleAuthDto, GoogleOauthGuard } from './guards';
   path: 'auth',
 })
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @Get('google/login')
   @UseGuards(GoogleOauthGuard)
@@ -24,12 +28,12 @@ export class AuthController {
         req.user as GoogleAuthDto,
       );
 
-      // Setting cookies when domain are different is not allowed
+      const isDev = this.configService.get('ENV') === 'dev';
       res.cookie('access_token', googleUser.tokens.accessToken, {
         maxAge: 2592000000,
-        sameSite: 'none',
-        secure: true,
-        domain: 'recipes-ui-tau.vercel.app',
+        sameSite: isDev ? 'lax' : 'none',
+        secure: !isDev,
+        domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
