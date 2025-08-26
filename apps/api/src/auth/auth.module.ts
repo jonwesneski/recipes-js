@@ -11,6 +11,7 @@ import { GoogleStrategy, JwtGuard, JwtGuardStrategy } from './guards';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     ConfigModule.forFeature(googleOAuthConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
