@@ -16,7 +16,7 @@ export const parseHelper = (request: Request): JwtGoogleType => {
   if (!accessToken) {
     // TODO: Remove headers when I am able to get access_token cookie.
     // or maybe keep for postman
-    let headerValue: string = request.headers.authorization ?? '';
+    const headerValue: string = request.headers.authorization ?? '';
     accessToken = headerValue.replace('Bearer ', '');
   }
   return jwtDecode<JwtGoogleType>(accessToken);

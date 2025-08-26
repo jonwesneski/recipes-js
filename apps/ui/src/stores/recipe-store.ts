@@ -289,6 +289,7 @@ export const createRecipeStore = (
           ingredients: IngredientValidator[][],
         ) =>
           set((state) => {
+            let stepIndex = -1;
             for (let s = 0; s < state.steps.length; s++) {
               for (
                 let i = 0;
@@ -296,36 +297,53 @@ export const createRecipeStore = (
                 i++
               ) {
                 if (state.steps[s].ingredients.items[i].ref === ref) {
-                  for (let t = 0; t < ingredients[0].length; t++) {
-                    if (t === 0) {
-                      state.steps[s].ingredients.items[i].ingredient =
-                        new IngredientValidator({
-                          stringValue:
-                            state.steps[s].ingredients.items[i].ingredient
-                              .stringValue + ingredients[0][t].stringValue,
-                        });
-                    } else {
-                      state.steps[s].ingredients.items.push(
-                        new IngredientItemType({
-                          ingredient: ingredients[0][t],
-                        }),
-                      );
-                    }
-                  }
-
-                  for (let j = 1; j < ingredients.length; j++) {
-                    state.steps.push(createStepItem());
-                    state.steps[state.steps.length - 1].ingredients.items =
-                      ingredients[j].map(
-                        (ing) => new IngredientItemType({ ingredient: ing }),
-                      );
-                  }
-
-                  return { steps: [...state.steps] };
+                  stepIndex = s;
+                  break;
                 }
               }
             }
-            return { state };
+            const inserts = ingredients.map((i) =>
+              createStepItem({
+                ingredients: createIngredientsItem(
+                  i.map((iv) => new IngredientItemType({ ingredient: iv })),
+                ),
+              }),
+            );
+
+            // Focus on the last
+            if (inserts.length) {
+              const lastIngredientIndex =
+                inserts[inserts.length - 1].ingredients.items.length - 1;
+              const ingredientItem =
+                inserts[inserts.length - 1].ingredients.items[
+                  lastIngredientIndex
+                ];
+              inserts[inserts.length - 1].ingredients.items[
+                lastIngredientIndex
+              ] = new IngredientItemType({
+                ingredient: ingredientItem.ingredient,
+                shouldBeFocused: true,
+              });
+            }
+
+            const current = state.steps.map((s) =>
+              createStepItem({
+                ingredients: s.ingredients,
+                instructions: s.instructions,
+              }),
+            );
+            if (stepIndex !== -1) {
+              for (const insert of inserts) {
+                if (current[stepIndex]) {
+                  current[stepIndex].ingredients = insert.ingredients;
+                } else {
+                  current.push(insert);
+                }
+                stepIndex++;
+              }
+              return { steps: current };
+            }
+            return { steps: [...current, ...inserts] };
           }),
         setInstructions: (
           ref: RefObject<HTMLTextAreaElement | null>,
@@ -355,22 +373,22 @@ export const createRecipeStore = (
                 instructions: new InstructionsType({ value: i }),
               }),
             );
-            const current = state.steps.map((s) =>
-              createStepItem({
-                ingredients: s.ingredients,
-                instructions: s.instructions,
-              }),
-            );
             if (inserts.length) {
               inserts[inserts.length - 1].instructions = new InstructionsType({
                 value: inserts[inserts.length - 1].instructions.value,
                 shouldBeFocused: true,
               });
             }
+
+            const current = state.steps.map((s) =>
+              createStepItem({
+                ingredients: s.ingredients,
+                instructions: s.instructions,
+              }),
+            );
             if (index !== -1) {
               for (const insert of inserts) {
                 if (current[index]) {
-                  current[index].instructions = insert.instructions;
                   current[index].instructions = insert.instructions;
                 } else {
                   current.push(insert);

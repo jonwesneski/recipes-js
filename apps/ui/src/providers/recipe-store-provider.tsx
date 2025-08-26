@@ -22,17 +22,18 @@ import {
 import { useStore } from 'zustand'
 
 const transformRecipe = (recipe?: Partial<RecipeEntity>): RecipeState => {
-  if (recipe === undefined) {
-    return {} as RecipeState
-  }
+  const {
+    createdAt: _createdAt,
+    updatedAt: _updatedAt,
+    ...rest
+  } = recipe ?? ({} as RecipeEntity)
 
-  const { createdAt: _createdAt, updatedAt: _updatedAt, ...rest } = recipe
   return {
     ...defaultInitState,
     ...rest,
-    imageSrc: recipe.imageUrl ?? null,
+    imageSrc: recipe?.imageUrl ?? null,
     steps:
-      recipe.steps?.map((s) => {
+      recipe?.steps?.map((s) => {
         return createStepItem({
           ingredients: createIngredientsItem(
             s.ingredients.map(
@@ -48,7 +49,7 @@ const transformRecipe = (recipe?: Partial<RecipeEntity>): RecipeState => {
             value: s.instruction ?? undefined,
           }),
         })
-      }) ?? [],
+      }) ?? defaultInitState.steps,
   }
 }
 
@@ -65,10 +66,7 @@ export const RecipeStoreProvider = ({
 }: RecipeStoreProviderProps) => {
   const storeRef = useRef<RecipeStoreApi | null>(null)
 
-  storeRef.current ??= createRecipeStore({
-    ...transformRecipe(initialState),
-  })
-  console.log(transformRecipe(initialState))
+  storeRef.current ??= createRecipeStore(transformRecipe(initialState))
 
   return (
     <RecipeStoreContext.Provider value={storeRef.current}>
