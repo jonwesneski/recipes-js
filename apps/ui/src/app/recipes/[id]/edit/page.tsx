@@ -7,7 +7,6 @@ import { TextButton } from '@repo/design-system'
 import { RecipeInput } from '@src/components/recipeInput'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { CameraProvider } from '@src/providers/CameraProvider'
-import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { useEffect, useState } from 'react'
 
 const Page = () => {
@@ -36,11 +35,13 @@ const Page = () => {
   const [_tags, setTags] = useState<string[]>([])
   useEffect(() => {
     // todo add params
-    const fetchTags = async () => {
-      const currentTags = await tagsControllerTagNameListV1()
+    const fetchTags = async (nextCursor?: string) => {
+      const currentTags = await tagsControllerTagNameListV1({
+        params: { cursorId: nextCursor },
+      })
       setTags((tags) => [...tags, ...currentTags.data])
       if (currentTags.pagination.nextCursor !== null) {
-        await fetchTags()
+        await fetchTags(currentTags.pagination.nextCursor)
       }
     }
 
@@ -48,21 +49,19 @@ const Page = () => {
   }, [])
 
   return (
-    <RecipeStoreProvider>
-      <CameraProvider>
-        <div className="flex justify-center">
-          <div className="block mx-5">
-            <RecipeInput />
-            <TextButton
-              className="mt-3 mx-auto block"
-              text="submit"
-              variant="opposite"
-              onClick={() => handleSubmit()}
-            />
-          </div>
+    <CameraProvider>
+      <div className="flex justify-center">
+        <div className="block mx-5">
+          <RecipeInput />
+          <TextButton
+            className="mt-3 mx-auto block"
+            text="submit"
+            variant="opposite"
+            onClick={() => handleSubmit()}
+          />
         </div>
-      </CameraProvider>
-    </RecipeStoreProvider>
+      </div>
+    </CameraProvider>
   )
 }
 export default Page

@@ -12,7 +12,7 @@ export const waitFor = async (
     }),
     new Promise((_, reject) => {
       timeoutId = setTimeout(
-        () => reject('Timeout waiting to resolve'),
+        () => reject(new Error('Timeout waiting to resolve')),
         timeout,
       );
     }),
@@ -37,7 +37,7 @@ export const retryAsync = async <T>(
       const result = await fn();
       assertion(result);
       return; // Success!
-    } catch (err) {
+    } catch (err: unknown) {
       lastError = err;
       if (i < attempts - 1) {
         await new Promise((res) => setTimeout(res, intervalMs));

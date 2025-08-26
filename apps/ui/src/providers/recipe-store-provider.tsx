@@ -1,11 +1,17 @@
 'use client'
 
+import { type RecipeEntity } from '@repo/codegen/model'
 import {
+  IngredientItemType,
+  InstructionsType,
+  type RecipeState,
   type RecipeStore,
+  createIngredientsItem,
   createRecipeStore,
+  createStepItem,
   defaultInitState,
 } from '@src/stores/recipe-store'
-import { type IngredientValidator } from '@src/utils/ingredientsValidator'
+import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import {
   type ReactNode,
   type RefObject,
@@ -15,12 +21,43 @@ import {
 } from 'react'
 import { useStore } from 'zustand'
 
+const transformRecipe = (recipe?: Partial<RecipeEntity>): RecipeState => {
+  if (recipe === undefined) {
+    return {} as RecipeState
+  }
+
+  const { createdAt: _createdAt, updatedAt: _updatedAt, ...rest } = recipe
+  return {
+    ...defaultInitState,
+    ...rest,
+    imageSrc: recipe.imageUrl ?? null,
+    steps:
+      recipe.steps?.map((s) => {
+        return createStepItem({
+          ingredients: createIngredientsItem(
+            s.ingredients.map(
+              (i) =>
+                new IngredientItemType({
+                  ingredient: new IngredientValidator({
+                    dto: { amount: i.amount, unit: i.unit, name: i.name },
+                  }),
+                }),
+            ),
+          ),
+          instructions: new InstructionsType({
+            value: s.instruction ?? undefined,
+          }),
+        })
+      }) ?? [],
+  }
+}
+
 export type RecipeStoreApi = ReturnType<typeof createRecipeStore>
 export const RecipeStoreContext = createContext<RecipeStoreApi | null>(null)
 
 export interface RecipeStoreProviderProps {
   children: ReactNode
-  initialState?: Partial<RecipeStore>
+  initialState?: Partial<RecipeEntity>
 }
 export const RecipeStoreProvider = ({
   children,
@@ -29,9 +66,9 @@ export const RecipeStoreProvider = ({
   const storeRef = useRef<RecipeStoreApi | null>(null)
 
   storeRef.current ??= createRecipeStore({
-    ...defaultInitState,
-    ...initialState,
+    ...transformRecipe(initialState),
   })
+  console.log(transformRecipe(initialState))
 
   return (
     <RecipeStoreContext.Provider value={storeRef.current}>

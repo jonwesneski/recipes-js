@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { JwtGoogleType } from '@repo/zod-schemas';
+import { Request } from 'express';
 import { jwtDecode } from 'jwt-decode';
 
 export const JwtDecodedHeader = createParamDecorator(
@@ -13,7 +14,15 @@ export const JwtDecodedHeader = createParamDecorator(
 
 // TODO: not sure how to mock JwtDecodedHeader in jest; so I am doing this for now
 export const parseHelper = (headers: Request['headers']): JwtGoogleType => {
-  let headerValue: string = headers['authorization'];
+  let headerValue: string = headers.authorization ?? '';
   headerValue = headerValue.replace('Bearer ', '');
-  return jwtDecode<JwtGoogleType>(headerValue);
+  return decodeJwtGoogle(headerValue);
+};
+
+export const decodeJwtGoogle = (token: string): JwtGoogleType => {
+  try {
+    return jwtDecode<JwtGoogleType>(token);
+  } catch {
+    return {} as JwtGoogleType;
+  }
 };

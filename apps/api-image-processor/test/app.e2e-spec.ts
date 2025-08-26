@@ -148,7 +148,6 @@ describe('App', () => {
     it("Don't consume invalid recipe image", async () => {
       mockRekognitionService.isValidFoodImage.mockResolvedValueOnce(false);
       const waitForMessage = waitFor((resolve) => {
-        jest;
         spyProcessRecipeImage.mockImplementationOnce(async (key, data) => {
           expect(key).toBe(user1.id);
           expect(data).toEqual({
@@ -191,7 +190,6 @@ describe('App', () => {
   describe('new recipe step image topic', () => {
     it('Consume valid new recipe step image', async () => {
       const waitForMessage = waitFor((resolve) => {
-        jest;
         spyProcessRecipeStepImage.mockImplementationOnce(async (key, data) => {
           expect(key).toBe(user1.id);
           expect(data).toEqual({
@@ -239,7 +237,6 @@ describe('App', () => {
     it("Don't consume invalid recipe step image", async () => {
       mockRekognitionService.isValidFoodImage.mockResolvedValueOnce(false);
       const waitForMessage = waitFor((resolve) => {
-        jest;
         spyProcessRecipeStepImage.mockImplementationOnce(async (key, data) => {
           expect(key).toBe(user1.id);
           expect(data).toEqual({
