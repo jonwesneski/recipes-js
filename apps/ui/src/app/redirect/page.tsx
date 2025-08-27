@@ -1,28 +1,11 @@
-'use client'
+'use server'
 
-import { useAuthentication } from '@src/providers/authentication-provider'
-import { redirect, useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { cookies } from 'next/headers'
+import ClientRedirect from './_redirect'
 
-const ClientRedirect = () => {
-  const { accessToken, setAccessToken } = useAuthentication()
-  const searchParams = useSearchParams()
-  const queryToken = searchParams.get('token')
+const Page = async () => {
+  const token = (await cookies()).get('access_token')?.value
 
-  useEffect(() => {
-    const fetch = () => {
-      if (typeof window !== 'undefined') {
-        if (accessToken) {
-          redirect('/recipes')
-        } else if (queryToken) {
-          setAccessToken(queryToken)
-        }
-      }
-    }
-
-    fetch()
-  }, [accessToken, setAccessToken])
-
-  return null
+  return <ClientRedirect accessToken={token} />
 }
-export default ClientRedirect
+export default Page
