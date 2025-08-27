@@ -12,7 +12,7 @@ const Layout = async ({
   children: React.ReactNode
   params: Promise<{ id: string }>
 }) => {
-  const token = (await cookies()).get('access_token')?.value
+  const token = (await cookies()).get('access_token')
   if (!token) {
     notFound()
   }
@@ -23,9 +23,8 @@ const Layout = async ({
   try {
     data = await recipesControllerRecipeV1(id, {
       params: { byOwner: true },
-      // TODO: Remove headers. nestjs is not able to access cookie right now
       headers: {
-        Authorization: `Bearer ${token}`,
+        cookie: `${token.name}=${token.value}`,
       },
     })
   } catch (error) {

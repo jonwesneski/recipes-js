@@ -60,7 +60,7 @@ export class RecipesController {
   ): Promise<RecipeEntity> {
     let userId: string | undefined;
     try {
-      if (query.byOwner) {
+      if (query.byOwner || true) {
         // TODO: Remove when this works in jest: JwtDecodedHeader.
         userId = parseHelper(request).sub;
       }

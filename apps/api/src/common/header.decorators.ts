@@ -14,8 +14,7 @@ export const JwtDecodedHeader = createParamDecorator(
 export const parseHelper = (request: Request): JwtGoogleType => {
   let accessToken: string | undefined = request.cookies['access_token'];
   if (!accessToken) {
-    // TODO: Remove headers when I am able to get access_token cookie.
-    // or maybe keep for postman
+    //  Keeping for postman
     const headerValue: string = request.headers.authorization ?? '';
     accessToken = headerValue.replace('Bearer ', '');
   }
