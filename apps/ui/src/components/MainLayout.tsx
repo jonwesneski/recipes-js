@@ -2,16 +2,22 @@
 
 import { mergeCss } from '@repo/design-system'
 import useMediaQuery from '@src/hooks/useMediaQuery'
+import { useUserStore } from '@src/providers/use-store-provider'
 import { usePathname } from 'next/navigation'
-import { Navbar } from './Navbar'
+import { useEffect } from 'react'
+import { Navbar } from './navigation'
 
-export const NavigationLayout = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
+export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { width, breakpointPxs } = useMediaQuery()
   const pathname = usePathname()
+  const useDarkMode = useUserStore((state) => state.useDarkMode)
+
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      'data-theme',
+      useDarkMode ? 'dark' : '',
+    )
+  }, [useDarkMode])
 
   return pathname !== '/' ? (
     <>

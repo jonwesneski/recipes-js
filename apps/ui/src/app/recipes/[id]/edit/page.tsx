@@ -56,7 +56,6 @@ const Page = () => {
           <TextButton
             className="mt-3 mx-auto block"
             text="submit"
-            variant="opposite"
             onClick={() => handleSubmit()}
           />
         </div>

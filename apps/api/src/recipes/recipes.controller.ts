@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -63,6 +64,9 @@ export class RecipesController {
       if (query.byOwner) {
         // TODO: Remove when this works in jest: JwtDecodedHeader.
         userId = parseHelper(request).sub;
+        if (!userId) {
+          throw new NotFoundException();
+        }
       }
       return await this.recipesService.getRecipe(id, userId);
     } catch (error) {

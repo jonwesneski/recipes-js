@@ -1,5 +1,5 @@
 import '@repo/design-system/styles.css'
-import { NavigationLayout } from '@src/components/navigation'
+import { MainLayout } from '@src/components/MainLayout'
 import { type Metadata, type Viewport } from 'next'
 import AppProviders from './_providers'
 import './globals.css'
@@ -30,7 +30,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         >
           <div id="root" className="px-2">
             <AppProviders>
-              <NavigationLayout>{children}</NavigationLayout>
+              <MainLayout>{children}</MainLayout>
             </AppProviders>
           </div>
         </div>

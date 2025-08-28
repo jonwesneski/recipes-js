@@ -1,17 +1,24 @@
 'use client'
 
 import GoogleLogo from '@public/Google__G__logo.svg'
-import { Button } from '@repo/design-system'
+import { IconTextButton, TextButton } from '@repo/design-system'
 import { useAuthentication } from '@src/providers/authentication-provider'
-import Image from 'next/image'
+import { redirect } from 'next/navigation'
 import { type MouseEvent } from 'react'
 
 const Page = () => {
   const { clearAccessToken } = useAuthentication()
+
   const handleGoogleOAuth = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     clearAccessToken()
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/callback`
+  }
+
+  const handleGuest = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    clearAccessToken()
+    redirect('/recipes')
   }
 
   return (
@@ -22,20 +29,22 @@ const Page = () => {
         </div>
 
         <div
-          className="mx-auto flex flex-col items-center w-4/5 gap-4"
+          className="mx-auto flex flex-col items-center w-5/6 gap-4"
           id="doodle"
         >
-          <Button
+          <IconTextButton
+            icon={GoogleLogo as string}
+            text="Google"
+            altText="google"
             onClick={handleGoogleOAuth}
-            className="flex items-start w-full"
-          >
-            <Image
-              src={GoogleLogo as string}
-              alt="google"
-              className="mx-4 grow-0"
-            />
-            Google.
-          </Button>
+            className="w-full"
+          />
+          <TextButton
+            text="Continue as Guest"
+            onClick={handleGuest}
+            variant="opposite"
+            className="w-full"
+          />
         </div>
       </div>
     </div>
