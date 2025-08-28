@@ -3,6 +3,7 @@
 import { usersControllerUserV1 } from '@repo/codegen/users'
 import { jwtGoogleSchema } from '@repo/zod-schemas'
 import {
+  type UserState,
   type UserStore,
   createUserStore,
   defaultInitState,
@@ -19,6 +20,22 @@ import {
 import { useStore } from 'zustand'
 import { useAuthentication } from './authentication-provider'
 
+const getBoolFromLocalStorage = (key: string) => {
+  const value = localStorage.getItem(key)
+  if (value === null) {
+    return undefined
+  }
+  return value === 'true'
+}
+
+const getGuestState = (): Partial<UserState> => {
+  return {
+    useFractions: getBoolFromLocalStorage('useFractions'),
+    useImperial: getBoolFromLocalStorage('useImperial'),
+    useDarkMode: getBoolFromLocalStorage('useDarkMode'),
+  }
+}
+
 export type UserStoreApi = ReturnType<typeof createUserStore>
 export const UserStoreContext = createContext<UserStoreApi | null>(null)
 
@@ -33,7 +50,10 @@ export const UserStoreProvider = ({
 }: UserStoreProviderProps) => {
   const storeRef = useRef<UserStoreApi | null>(null)
 
-  storeRef.current ??= createUserStore({ ...defaultInitState, ...initialState })
+  storeRef.current ??= createUserStore({
+    ...defaultInitState,
+    ...initialState,
+  })
 
   const { accessToken } = useAuthentication()
   const [isInitialized, setIsInitialized] = useState<boolean>(false)
@@ -50,6 +70,8 @@ export const UserStoreProvider = ({
           } catch (error) {
             console.error('Error decoding JWT:', error)
           }
+        } else {
+          storeRef.current.setState(getGuestState())
         }
       }
     }

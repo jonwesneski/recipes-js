@@ -10,7 +10,6 @@ export class PatchUserDto
       | 'Followers'
       | 'Followings'
       | 'recipes'
-      | 'diet'
       | 'favorites'
       | 'handle'
       | 'name'

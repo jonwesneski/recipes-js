@@ -1,11 +1,11 @@
 import Image from 'next/image'
-import type { ButtonHTMLAttributes, DetailedHTMLProps } from 'react'
 import { mergeCss } from '../utils'
+import { ButtonProps } from './Button'
 
-export type IconButtonProps = Omit<
-  DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
-  'style'
-> & { imageUrl: string; altText: string }
+export type IconButtonProps = Omit<ButtonProps, 'children'> & {
+  imageUrl: string
+  altText: string
+}
 export const IconButton = ({
   type = 'button',
   imageUrl,

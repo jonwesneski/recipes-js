@@ -64,7 +64,7 @@ export const RecipeTile = (props: IRecipeProps) => {
         <IconButton
           imageUrl={ShareIcon as string}
           altText="share recipe"
-          onClick={void handleCopyClick()}
+          onClick={() => void handleCopyClick()}
         />
       </div>
     </div>

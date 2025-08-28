@@ -2,11 +2,11 @@
 
 import AddIcon from '@public/addIcon.svg'
 import SearchIcon from '@public/searchIcon.svg'
-import { useUsersControllerUpdateUserV1 } from '@repo/codegen/users'
 import { useUserStore } from '@src/providers/use-store-provider'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { type JSX, useEffect, useRef, useState } from 'react'
+import { NavItem } from './NavItem'
 import { NavLink } from './NavLink'
 
 // I'm not sure if I want feed and search to be the same page.
@@ -42,17 +42,13 @@ const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   NONE: null,
 }
 
-export const Navbar = () => {
-  const { id, imageUrl, useDarkMode } = useUserStore((state) => state)
-  const [isOpen, setIsOpen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(useDarkMode)
-  const [lightDarkString, setLightDarkString] = useState<'Light' | 'Dark'>(
-    useDarkMode ? 'Light' : 'Dark',
+export const NavBar = () => {
+  const { imageUrl, useDarkMode, setUseDarkMode } = useUserStore(
+    (state) => state,
   )
+  const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
-
-  const { mutate } = useUsersControllerUpdateUserV1()
 
   const getRouteKey = () => {
     for (const [regex, value] of regexRouteKeyMap) {
@@ -67,32 +63,9 @@ export const Navbar = () => {
     return routeKeyLinksMap[getRouteKey()]
   }
 
-  useEffect(() => {
-    document.documentElement.setAttribute(
-      'data-theme',
-      isDarkMode ? 'dark' : '',
-    )
-  }, [])
-
-  const handleLightDarkMode = () => {
-    setIsDarkMode((v) => {
-      const newValue = !v
-
-      document.documentElement.setAttribute(
-        'data-theme',
-        newValue ? 'dark' : '',
-      )
-      setLightDarkString(() => (newValue ? 'Light' : 'Dark'))
-      mutate({
-        id,
-        data: {
-          useDarkMode: newValue,
-        },
-      })
-      setIsOpen(false)
-
-      return newValue
-    })
+  const handleLightDarkMode = async () => {
+    await setUseDarkMode(!useDarkMode)
+    setIsOpen(false)
   }
 
   const handleClick = (e: MouseEvent) => {
@@ -139,18 +112,10 @@ export const Navbar = () => {
             ref={menuRef}
             className="absolute flex flex-col-reverse -translate-y-18 md:translate-y-5 md:flex-col border-2"
           >
-            <div
-              onClick={handleLightDarkMode}
-              role={'button'}
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleLightDarkMode()
-                }
-              }}
-            >
-              {lightDarkString} Mode
-            </div>
+            <NavItem
+              onClick={void handleLightDarkMode}
+              text={`${useDarkMode ? 'Light' : 'Dark'} Mode`}
+            />
             <div>Item 2</div>
             <div>Item 3</div>
           </div>
