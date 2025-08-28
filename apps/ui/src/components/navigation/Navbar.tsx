@@ -42,7 +42,7 @@ const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   NONE: null,
 }
 
-export const NavBar = () => {
+export const Navbar = () => {
   const { imageUrl, useDarkMode, setUseDarkMode } = useUserStore(
     (state) => state,
   )
