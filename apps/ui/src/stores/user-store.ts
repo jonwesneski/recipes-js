@@ -33,7 +33,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     setUseFractions: async (useFractions: boolean) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(get().id, { useFractions });
+        await usersControllerUpdateUserV1(id, { useFractions });
       } else {
         localStorage.setItem('useFractions', useFractions.toString());
       }
@@ -42,7 +42,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     setUseImperial: async (useImperial: boolean) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(get().id, { useImperial });
+        await usersControllerUpdateUserV1(id, { useImperial });
       } else {
         localStorage.setItem('useImperial', useImperial.toString());
       }
@@ -51,7 +51,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     setUseDarkMode: async (useDarkMode: boolean) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(get().id, { useDarkMode });
+        await usersControllerUpdateUserV1(id, { useDarkMode });
       } else {
         localStorage.setItem('useDarkMode', useDarkMode.toString());
       }

@@ -4,10 +4,18 @@ import GoogleLogo from '@public/Google__G__logo.svg'
 import { IconTextButton, TextButton } from '@repo/design-system'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { redirect } from 'next/navigation'
-import { type MouseEvent } from 'react'
+import { useEffect, type MouseEvent } from 'react'
+import { deleteCookie } from './deleteAuthCookie.action'
 
 const Page = () => {
   const { clearAccessToken } = useAuthentication()
+
+  useEffect(() => {
+    const run = async () => {
+      await deleteCookie()
+    }
+    run().catch(() => console.log('blah'))
+  }, [])
 
   const handleGoogleOAuth = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
