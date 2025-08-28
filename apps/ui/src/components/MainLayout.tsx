@@ -1,0 +1,38 @@
+'use client'
+
+import { mergeCss } from '@repo/design-system'
+import useMediaQuery from '@src/hooks/useMediaQuery'
+import { useUserStore } from '@src/providers/use-store-provider'
+import { usePathname } from 'next/navigation'
+import { useEffect } from 'react'
+import { NavBar } from './navigation'
+
+export const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  const { width, breakpointPxs } = useMediaQuery()
+  const pathname = usePathname()
+  const useDarkMode = useUserStore((state) => state.useDarkMode)
+
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      'data-theme',
+      useDarkMode ? 'dark' : '',
+    )
+  }, [useDarkMode])
+
+  return pathname !== '/' ? (
+    <>
+      <nav
+        className={mergeCss('fixed w-screen left-0 right-0 z-50', {
+          'bottom-0': width < breakpointPxs.md,
+          'top-0': width >= breakpointPxs.md,
+        })}
+      >
+        <NavBar />
+      </nav>
+
+      <main className="pt-10 pb-40">{children}</main>
+    </>
+  ) : (
+    children
+  )
+}
