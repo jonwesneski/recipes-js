@@ -23,9 +23,10 @@ const Page = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/callback`
   }
 
-  const handleGuest = (event: MouseEvent<HTMLButtonElement>) => {
+  const handleGuest = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     clearAccessToken()
+    await deleteCookie()
     redirect('/recipes')
   }
 
@@ -49,7 +50,7 @@ const Page = () => {
           />
           <TextButton
             text="Continue as Guest"
-            onClick={handleGuest}
+            onClick={(e) => void handleGuest(e)}
             variant="opposite"
             className="w-full"
           />
