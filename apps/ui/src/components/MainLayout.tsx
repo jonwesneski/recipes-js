@@ -5,7 +5,7 @@ import useMediaQuery from '@src/hooks/useMediaQuery'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
-import { NavBar } from './navigation'
+import { NavBar } from './navigation/NavBar'
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { width, breakpointPxs } = useMediaQuery()
