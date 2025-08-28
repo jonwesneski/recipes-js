@@ -50,7 +50,6 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     },
     setUseDarkMode: async (useDarkMode: boolean) => {
       const id = get().id;
-      console.log({ id });
       if (id) {
         await usersControllerUpdateUserV1(get().id, { useDarkMode });
       } else {

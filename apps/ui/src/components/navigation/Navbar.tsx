@@ -113,7 +113,7 @@ export const Navbar = () => {
             className="absolute flex flex-col-reverse -translate-y-18 md:translate-y-5 md:flex-col border-2"
           >
             <NavItem
-              onClick={void handleLightDarkMode}
+              onClick={() => void handleLightDarkMode()}
               text={`${useDarkMode ? 'Light' : 'Dark'} Mode`}
             />
             <div>Item 2</div>
