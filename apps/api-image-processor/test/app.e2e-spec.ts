@@ -33,7 +33,12 @@ describe('App', () => {
 
   beforeAll(async () => {
     mockRekognitionService = {
-      isValidFoodImage: jest.fn().mockResolvedValue(true),
+      detectAllLabels: jest
+        .fn()
+        .mockResolvedValue({
+          labels: [{ Name: 'Food' }],
+          moderationLabels: [],
+        }),
     } as unknown as jest.Mocked<RekognitionService>;
     mockS3Service = {
       uploadFile: jest.fn().mockResolvedValue(undefined),
@@ -136,7 +141,7 @@ describe('App', () => {
       await waitForMessage;
 
       expect(spyProcessRecipeStepImage).not.toHaveBeenCalled();
-      expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+      expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
       expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
       expect(mockS3Service.uploadFile).toHaveBeenCalled();
       const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
@@ -146,7 +151,10 @@ describe('App', () => {
     });
 
     it("Don't consume invalid recipe image", async () => {
-      mockRekognitionService.isValidFoodImage.mockResolvedValueOnce(false);
+      mockRekognitionService.detectAllLabels.mockResolvedValueOnce({
+        labels: [{ Name: 'Cat' }],
+        moderationLabels: [],
+      });
       const waitForMessage = waitFor((resolve) => {
         spyProcessRecipeImage.mockImplementationOnce(async (key, data) => {
           expect(key).toBe(user1.id);
@@ -178,7 +186,7 @@ describe('App', () => {
       await waitForMessage;
 
       expect(spyProcessRecipeStepImage).not.toHaveBeenCalled();
-      expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+      expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
       expect(mockS3Service.makeS3ImageUrl).not.toHaveBeenCalled();
       expect(mockS3Service.uploadFile).not.toHaveBeenCalled();
       expect(
@@ -224,7 +232,7 @@ describe('App', () => {
       await waitForMessage;
 
       expect(spyProcessRecipeImage).not.toHaveBeenCalled();
-      expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+      expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
       expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
       expect(mockS3Service.uploadFile).toHaveBeenCalled();
       const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
@@ -235,7 +243,10 @@ describe('App', () => {
     });
 
     it("Don't consume invalid recipe step image", async () => {
-      mockRekognitionService.isValidFoodImage.mockResolvedValueOnce(false);
+      mockRekognitionService.detectAllLabels.mockResolvedValueOnce({
+        labels: [{ Name: 'Cat' }],
+        moderationLabels: [],
+      });
       const waitForMessage = waitFor((resolve) => {
         spyProcessRecipeStepImage.mockImplementationOnce(async (key, data) => {
           expect(key).toBe(user1.id);
@@ -271,7 +282,7 @@ describe('App', () => {
       await waitForMessage;
 
       expect(spyProcessRecipeImage).not.toHaveBeenCalled();
-      expect(mockRekognitionService.isValidFoodImage).toHaveBeenCalled();
+      expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
       expect(mockS3Service.makeS3ImageUrl).not.toHaveBeenCalled();
       expect(mockS3Service.uploadFile).not.toHaveBeenCalled();
       expect(

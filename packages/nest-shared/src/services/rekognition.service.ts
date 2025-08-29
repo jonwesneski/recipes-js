@@ -11,12 +11,6 @@ import {
 } from '@nestjs/common';
 import { awsConfig, AwsConfigType } from '../configs/aws.config';
 
-const ACCEPTABLE_LABELS = {
-  Food: true,
-  Fruit: true,
-  Vegetable: true,
-};
-
 @Injectable()
 export class RekognitionService {
   private readonly logger = new Logger(RekognitionService.name);
@@ -33,35 +27,6 @@ export class RekognitionService {
         secretAccessKey: _awsConfig.secretAccessKey,
       },
     });
-  }
-
-  async isValidFoodImage(imageBytes: Buffer<ArrayBuffer>): Promise<boolean> {
-    // todo: I may move this method into image-review-processor.service.ts
-    const { labels, moderationLabels } = await this.detectAllLabels(imageBytes);
-    this.logger.log(
-      `Detected labels: ${labels.map((label) => label.Name).join(', ')}`,
-    );
-    if (moderationLabels?.length) {
-      this.logger.warn(
-        `Image contains moderation labels: ${moderationLabels.map((label) => label.Name).join(', ')}`,
-      );
-      return false;
-    }
-
-    const nonFoods: string[] = [];
-    for (const label of labels) {
-      if (label.Name) {
-        if (ACCEPTABLE_LABELS[label.Name] || label.Name?.includes('Food')) {
-          return true;
-        }
-        nonFoods.push(label.Name);
-      }
-    }
-
-    this.logger.warn(
-      `Image does not contain food or ingredients, found: ${nonFoods.join(', ')}`,
-    );
-    return false;
   }
 
   async detectAllLabels(imageBytes: Buffer) {
