@@ -1,10 +1,13 @@
-import { MeasurementUnit } from '@repo/database';
+//import { MeasurementUnit } from '@repo/database';
 import { z } from 'zod/v4';
 
 export const GeneratedNutritionalFactsSchema = z.object({
   servings: z.number().positive().optional(),
   servingAmount: z.number().positive().optional(),
-  servingUnit: z.enum(MeasurementUnit).optional(),
+  servingUnit: z.string().optional(),
+  // TODO: I would like to do this, but I can't build database
+  // into UI apps. Maybe I can think of something later
+  //servingUnit: z.enum(MeasurementUnit).optional(),
   caloriesInKcal: z.number().positive().optional(),
   calciumInMg: z.number().positive().optional(),
   carbohydratesInG: z.number().positive().optional(),
