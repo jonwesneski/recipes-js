@@ -2,6 +2,9 @@ import { MeasurementUnit } from '@repo/database';
 import { z } from 'zod/v4';
 
 export const GeneratedNutritionalFactsSchema = z.object({
+  servings: z.number().positive().optional(),
+  servingAmount: z.number().positive().optional(),
+  servingUnit: z.enum(MeasurementUnit).optional(),
   caloriesInKcal: z.number().positive().optional(),
   calciumInMg: z.number().positive().optional(),
   carbohydratesInG: z.number().positive().optional(),
@@ -15,9 +18,6 @@ export const GeneratedNutritionalFactsSchema = z.object({
   proteinInG: z.number().positive().optional(),
   riboflavinInMg: z.number().positive().optional(),
   saturatedFatInG: z.number().positive().optional(),
-  servingAmount: z.number().positive().optional(),
-  servingUnit: z.enum(MeasurementUnit).optional(),
-  servings: z.number().positive().optional(),
   sodiumInMg: z.number().positive().optional(),
   sugarInG: z.number().positive().optional(),
   thiaminInMg: z.number().positive().optional(),
