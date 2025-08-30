@@ -53,6 +53,7 @@ export class RecipeRepository {
         preparationTimeInMinutes: true,
         cookingTimeInMinutes: true,
       },
+      orderBy: { updatedAt: 'desc' },
     });
     return recipes.map((recipe) => this.transformRecipe(recipe));
   }
