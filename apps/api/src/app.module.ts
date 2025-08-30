@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { AiModule } from './ai/ai.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthCheckModule } from './healthCheck';
 import { RecipesModule } from './recipes';
@@ -24,6 +25,7 @@ import { UsersModule } from './users';
         },
       },
     }),
+    AiModule,
     AuthModule,
     HealthCheckModule,
     RecipesModule,

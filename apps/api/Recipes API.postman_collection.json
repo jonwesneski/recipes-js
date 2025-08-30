@@ -559,6 +559,42 @@
 							}
 						}
 					]
+				},
+				{
+					"name": "ai",
+					"item": [
+						{
+							"name": "AI Controller generate nutritional facts",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"instruction\": \"Preheat oven to 350F and grease a 9x13 inch baking dish\",\n        \"ingredients\": []\n    },\n    {\n        \"instruction\": \"Mix the dry ingredients together in a bowl\",\n        \"ingredients\": [\n            {\n                \"amount\": 1,\n                \"unit\": \"cups\",\n                \"name\": \"All-purpose flour\"\n            },\n            {\n                \"amount\": 1.5,\n                \"unit\": \"teaspoons\",\n                \"name\": \"Baking powder\"\n            },\n            {\n                \"amount\": 0.5,\n                \"unit\": \"teaspoons\",\n                \"name\": \"Salt\"\n            }\n        ]\n    },\n    {\n        \"instruction\": \"Separate egg whites and yolks. Mix yolks with sugar, milk, and vanilla extract. Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool\",\n        \"ingredients\": [\n            {\n                \"amount\": 5,\n                \"unit\": \"whole\",\n                \"name\": \"Eggs\"\n            },\n            {\n                \"amount\": 0.75,\n                \"unit\": \"cups\",\n                \"name\": \"Sugar\"\n            },\n            {\n                \"amount\": 0.33,\n                \"unit\": \"cups\",\n                \"name\": \"Milk\"\n            },\n            {\n                \"amount\": 1,\n                \"unit\": \"teaspoons\",\n                \"name\": \"Vanilla extract\"\n            }\n        ]\n    },\n    {\n        \"instruction\": \"Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool\",\n        \"ingredients\": [\n            {\n                \"amount\": 0.25,\n                \"unit\": \"cups\",\n                \"name\": \"Sugar\"\n            }\n        ]\n    },\n    {\n        \"instruction\": \"Mix 3 milks together, and then poke holes in cake then pour milk mixture into the cake, let it soak up the liquid. then add frosting\",\n        \"ingredients\": [\n            {\n                \"amount\": 0.33,\n                \"unit\": \"cups\",\n                \"name\": \"coconut milk\"\n            },\n            {\n                \"amount\": 12,\n                \"unit\": \"ounces\",\n                \"name\": \"evaporated milk\"\n            },\n            {\n                \"amount\": 14,\n                \"unit\": \"ounces\",\n                \"name\": \"Sweetened condensed milk\"\n            }\n        ]\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/v1/ai/nutritional-facts",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"ai",
+										"nutritional-facts"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
