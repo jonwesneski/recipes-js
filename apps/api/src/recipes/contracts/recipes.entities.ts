@@ -112,6 +112,9 @@ export class RecipeUserEntity {
   id: string;
   @ApiProperty()
   handle: string;
+  @ApiProperty()
+  @ApiProperty({ type: String, nullable: true })
+  imageUrl: string | null;
 }
 
 export class RecipeEntity implements RecipeType {
