@@ -57,16 +57,16 @@
      style="display:none"
      transform="translate(-225.64049,-517.64439)"><text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;opacity:1;fill:#000000;stroke-width:0.799999;paint-order:fill markers stroke"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;opacity:1;fill:currentColor;stroke-width:0.799999;paint-order:fill markers stroke"
        id="text121"><textPath
          xlink:href="#path122"
          startOffset="50%"
          id="textPath124"><tspan
            id="tspan121"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';fill:#000000;stroke-width:0.8"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';fill:currentColor;stroke-width:0.8"
            dy="-1.54">recipe hall.</tspan></textPath></text><path
        id="path122"
-       style="color:#000000;fill:#000000;-inkscape-stroke:none;paint-order:fill markers stroke"
+       style="color:currentColor;fill:currentColor;-inkscape-stroke:none;paint-order:fill markers stroke"
        d="m 230.85723,40.910164 v -0.0016 l -17.87075,-2.111499 0.0661,-0.56844 17.8108,2.104264 17.81028,-2.104264 0.0687,0.56844 -17.87126,2.111499 v 0.0016 l -0.007,-0.001 z" /><circle
        style="display:none;opacity:1;fill:none;fill-opacity:1;stroke:none;stroke-width:1.27408"
        id="path145"
@@ -111,7 +111,7 @@
      id="layer4"
      inkscape:label="Layer 4"
      transform="translate(-225.64049,-517.64439)"><ellipse
-       style="display:none;fill:none;stroke:#000000;stroke-width:0.32964;stroke-linecap:round;stroke-dasharray:none"
+       style="display:none;fill:none;stroke:currentColor;stroke-width:0.32964;stroke-linecap:round;stroke-dasharray:none"
        id="path200"
        cx="184.27156"
        cy="-89.567978"
@@ -126,7 +126,7 @@
          startOffset="50%"
          id="textPath200"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9333px;font-family:'Courier New';-inkscape-font-specification:'Courier New';letter-spacing:5.29167px;fill:#ffffff;stroke:#ffffff;stroke-width:0.524">recipe</textPath></text><ellipse
-       style="display:none;fill:none;stroke:#000000;stroke-width:0.404164;stroke-linecap:round;stroke-dasharray:none"
+       style="display:none;fill:none;stroke:currentColor;stroke-width:0.404164;stroke-linecap:round;stroke-dasharray:none"
        id="ellipse200"
        cx="-199.94937"
        cy="-44.759689"
@@ -142,5 +142,5 @@
          id="textPath201"
          style="letter-spacing:6.61458px;fill:#ffffff;stroke:#ffffff;stroke-width:0.524">hall</textPath></text><path
        id="rect262"
-       style="color:#000000;fill:#000000;-inkscape-stroke:none;paint-order:markers fill stroke"
+       style="color:currentColor;fill:currentColor;-inkscape-stroke:none;paint-order:markers fill stroke"
        d="m 225.64049,517.64437 v 14.02189 h 14.02343 v -14.02189 z m 0.84594,0.84595 h 12.33207 v 12.32999 h -12.33207 z m 8.19124,1.90996 c -1.45632,0 -2.64429,1.18847 -2.64429,2.6448 0,0.55129 0.17033,1.06374 0.46096,1.48828 -0.0194,0.005 -0.0377,0.0133 -0.0506,0.0232 -1.47395,1.12651 -2.72718,2.50982 -3.93774,3.9424 -0.0234,0.0277 -0.0446,0.0802 -0.0444,0.11782 0.001,0.28268 0.13178,0.43644 0.42478,0.42736 0.0376,-10e-4 0.0898,-0.0239 0.1173,-0.0475 1.42021,-1.22285 2.79609,-2.48314 3.94188,-3.93774 0.003,-0.004 0.005,-0.009 0.008,-0.0129 0.46366,0.40025 1.06646,0.64337 1.72445,0.64337 1.45632,0 2.6448,-1.18795 2.6448,-2.64428 0,-1.45633 -1.18848,-2.6448 -2.6448,-2.6448 z m 0,0.66404 c 1.09778,0 1.98075,0.88298 1.98075,1.98076 0,1.09779 -0.88297,1.98024 -1.98075,1.98024 -1.09778,0 -1.98025,-0.88245 -1.98025,-1.98024 0,-1.09778 0.88247,-1.98076 1.98025,-1.98076 z" /></g></svg>

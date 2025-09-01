@@ -75,56 +75,52 @@ export class RecipeRepository {
   ): Promise<RecipeType> {
     const { tags, ...remainingData } = data;
 
-    const recipe = await this.prisma.$transaction(async () => {
-      const recipe = await this.prisma.recipe.create({
-        data: {
-          ...remainingData,
-          userId,
-          imageUrl: undefined,
-          steps: {
-            create: data.steps.map((step, i) => ({
-              displayOrder: i,
-              instruction: step.instruction,
-              ingredients: {
-                createMany: {
-                  data:
-                    step.ingredients.map((ingredient, k) => {
-                      return {
-                        displayOrder: k,
-                        amount: ingredient.amount,
-                        unit: ingredient.unit,
-                        name: ingredient.name,
-                      };
-                    }) || [],
-                },
+    const recipe = await this.prisma.recipe.create({
+      data: {
+        ...remainingData,
+        userId,
+        imageUrl: undefined,
+        steps: {
+          create: data.steps.map((step, i) => ({
+            displayOrder: i,
+            instruction: step.instruction,
+            ingredients: {
+              createMany: {
+                data:
+                  step.ingredients.map((ingredient, k) => {
+                    return {
+                      displayOrder: k,
+                      amount: ingredient.amount,
+                      unit: ingredient.unit,
+                      name: ingredient.name,
+                    };
+                  }) || [],
               },
-              imageUrl: undefined,
-            })),
-          },
-          nutritionalFacts: {
-            create: data.nutritionalFacts || {},
-          },
-          recipeTags: {
-            create: tags.map((tag) => ({
-              tag: {
-                connectOrCreate: {
-                  where: { name: tag },
-                  create: { name: tag },
-                },
-              },
-            })),
-          },
-          equipments: {
-            connectOrCreate: data.equipments.map((equipment) => ({
-              where: { name: equipment },
-              create: { name: equipment },
-            })),
-          },
+            },
+            imageUrl: undefined,
+          })),
         },
-        include: RecipeInclude,
-      });
-
-      return recipe;
+        nutritionalFacts: {
+          create: data.nutritionalFacts || {},
+        },
+        recipeTags: {
+          create: tags.map((tag) => ({
+            tag: {
+              connectOrCreate: {
+                where: { name: tag },
+                create: { name: tag },
+              },
+            },
+          })),
+        },
+        equipments: {
+          connectOrCreate: data.equipments.map((equipment) => ({
+            where: { name: equipment },
+            create: { name: equipment },
+          })),
+        },
+      },
+      include: RecipeInclude,
     });
 
     return this.transformRecipe(recipe);
@@ -137,112 +133,108 @@ export class RecipeRepository {
   ): Promise<RecipeType> {
     const { tags, ...remainingData } = data;
 
-    const recipe = await this.prisma.$transaction(async () => {
-      const recipe = await this.prisma.recipe.update({
-        where: {
-          id,
-          user: { id: userId },
-        },
-        data: {
-          ...remainingData,
-          imageUrl: undefined,
-          steps: {
-            deleteMany: {
-              id: {
-                notIn: remainingData.steps
-                  ?.map((s) => s.id)
-                  .filter((id) => id !== undefined),
-              },
+    const recipe = await this.prisma.recipe.update({
+      where: {
+        id,
+        user: { id: userId },
+      },
+      data: {
+        ...remainingData,
+        imageUrl: undefined,
+        steps: {
+          deleteMany: {
+            id: {
+              notIn: remainingData.steps
+                ?.map((s) => s.id)
+                .filter((id) => id !== undefined),
             },
-            upsert: remainingData.steps
-              ?.filter((s) => s.id)
-              .map((s, i) => {
-                return {
-                  where: { id: s.id },
-                  update: {
-                    displayOrder: i,
-                    ...s,
-                    ingredients: {
-                      deleteMany: {
-                        id: {
-                          notIn: s.ingredients
-                            ? s.ingredients
-                                .map((ing) => ing.id)
-                                .filter((id) => id !== undefined)
-                            : [],
-                        },
-                      },
-                      upsert: s.ingredients
-                        ? s.ingredients
-                            .filter((ing) => ing.id)
-                            .map((ing, k) => {
-                              return {
-                                where: { id: ing.id },
-                                update: { ...ing, displayOrder: k },
-                                create: { ...ing, displayOrder: k },
-                              };
-                            })
-                        : [],
-                    },
-                  },
-                  create: {
-                    displayOrder: i,
-                    ...s,
-                    ingredients: {
-                      createMany: {
-                        data: s.ingredients
+          },
+          upsert: remainingData.steps
+            ?.filter((s) => s.id)
+            .map((s, i) => {
+              return {
+                where: { id: s.id },
+                update: {
+                  displayOrder: i,
+                  ...s,
+                  ingredients: {
+                    deleteMany: {
+                      id: {
+                        notIn: s.ingredients
                           ? s.ingredients
-                              .filter((ing) => !ing.id)
-                              .map((ing, k) => ({
-                                displayOrder: k,
-                                ...ing,
-                              }))
+                              .map((ing) => ing.id)
+                              .filter((id) => id !== undefined)
                           : [],
                       },
                     },
-                  },
-                };
-              }),
-            create: remainingData.steps
-              ?.filter((s) => !s.id)
-              .map((step, i) => ({
-                displayOrder: i,
-                instruction: step.instruction,
-                ingredients: {
-                  createMany: {
-                    data: step.ingredients
-                      ? step.ingredients.map((ingredient, k) => {
-                          return {
-                            displayOrder: k,
-                            amount: ingredient.amount,
-                            unit: ingredient.unit,
-                            name: ingredient.name,
-                          };
-                        })
+                    upsert: s.ingredients
+                      ? s.ingredients
+                          .filter((ing) => ing.id)
+                          .map((ing, k) => {
+                            return {
+                              where: { id: ing.id },
+                              update: { ...ing, displayOrder: k },
+                              create: { ...ing, displayOrder: k },
+                            };
+                          })
                       : [],
                   },
                 },
-              })),
-          },
-          // TODO: handle below
-          equipments: {
-            ...(remainingData.equipments
-              ? {
-                  deleteMany: {
-                    name: {
-                      notIn: remainingData.equipments,
+                create: {
+                  displayOrder: i,
+                  ...s,
+                  ingredients: {
+                    createMany: {
+                      data: s.ingredients
+                        ? s.ingredients
+                            .filter((ing) => !ing.id)
+                            .map((ing, k) => ({
+                              displayOrder: k,
+                              ...ing,
+                            }))
+                        : [],
                     },
                   },
-                }
-              : {}),
-          },
-          nutritionalFacts: {},
-          //recipeTags: {},
+                },
+              };
+            }),
+          create: remainingData.steps
+            ?.filter((s) => !s.id)
+            .map((step, i) => ({
+              displayOrder: i,
+              instruction: step.instruction,
+              ingredients: {
+                createMany: {
+                  data: step.ingredients
+                    ? step.ingredients.map((ingredient, k) => {
+                        return {
+                          displayOrder: k,
+                          amount: ingredient.amount,
+                          unit: ingredient.unit,
+                          name: ingredient.name,
+                        };
+                      })
+                    : [],
+                },
+              },
+            })),
         },
-        include: RecipeInclude,
-      });
-
-      return recipe;
+        // TODO: handle below
+        equipments: {
+          ...(remainingData.equipments
+            ? {
+                deleteMany: {
+                  name: {
+                    notIn: remainingData.equipments,
+                  },
+                },
+              }
+            : {}),
+        },
+        nutritionalFacts: {},
+        //recipeTags: {},
+      },
+      include: RecipeInclude,
     });
 
     return this.transformRecipe(recipe);

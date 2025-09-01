@@ -13,6 +13,11 @@
     ],
     "jsx": "preserve"
   },
-  "include": ["next-env.d.ts", "src", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "src",
+    ".next/types/**/*.ts",
+    "src/types/**/*.d.ts"
+  ],
   "exclude": ["node_modules"]
 }
