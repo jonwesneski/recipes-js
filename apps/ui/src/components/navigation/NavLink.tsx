@@ -1,19 +1,13 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 interface INavLinkProps {
   href: string
-  icon: string
-  alt: string
+  svgIcon: React.FC<React.SVGProps<SVGSVGElement>>
 }
 export const NavLink = (props: INavLinkProps) => {
   return (
     <Link href={props.href}>
-      <Image
-        src={props.icon}
-        alt={props.alt}
-        className="my-1 mx-1 grow-0 w-6"
-      />
+      <props.svgIcon className="my-1 mx-1 grow-0 w-6 fill-text" />
     </Link>
   )
 }

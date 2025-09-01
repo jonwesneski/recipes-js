@@ -56,14 +56,12 @@ export const RecipeTile = (props: IRecipeProps) => {
       </div>
       <div className="flex justify-around items-center">
         <IconButton
-          imageUrl={(isStarred ? StarredIcon : StarIcon) as string}
-          altText="save recipe"
+          svgIcon={isStarred ? StarredIcon : StarIcon}
           onClick={handleStarredClick}
         />
-        <div className="w-[2px] h-[25px] bg-black" />
+        <div className="w-[2px] h-[25px] bg-text" />
         <IconButton
-          imageUrl={ShareIcon as string}
-          altText="share recipe"
+          svgIcon={ShareIcon}
           onClick={() => void handleCopyClick()}
         />
       </div>

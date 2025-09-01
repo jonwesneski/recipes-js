@@ -13,6 +13,11 @@
     ],
     "jsx": "preserve"
   },
-  "include": ["next-env.d.ts", "src", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "src",
+    ".next/types/**/*.ts",
+    "../../packages/design-system/src/Button/IconButton.tsx"
+  ],
   "exclude": ["node_modules"]
 }

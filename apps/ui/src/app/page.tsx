@@ -42,9 +42,8 @@ const Page = () => {
           id="doodle"
         >
           <IconTextButton
-            icon={GoogleLogo as string}
+            svgIcon={GoogleLogo}
             text="Google"
-            altText="google"
             onClick={handleGoogleOAuth}
             className="w-full"
           />

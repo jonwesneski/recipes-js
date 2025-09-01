@@ -1,24 +1,23 @@
-import Image from 'next/image'
 import { mergeCss } from '../utils'
 import { ButtonProps } from './Button'
 
 export type IconButtonProps = Omit<ButtonProps, 'children'> & {
-  imageUrl: string
-  altText: string
+  svgIcon: React.FC<React.SVGProps<SVGSVGElement>>
 }
 export const IconButton = ({
   type = 'button',
-  imageUrl,
-  altText,
+  svgIcon: SvgIcon,
   ...props
 }: IconButtonProps) => {
   return (
-    <button
-      {...props}
-      type={type}
-      className={mergeCss('p-1 cursor-pointer', props.className)}
-    >
-      <Image src={imageUrl} alt={altText} width={24} height={24} />
-    </button>
+    <>
+      <button
+        {...props}
+        type={type}
+        className={mergeCss('p-1 cursor-pointer', props.className)}
+      >
+        <SvgIcon className="w-6 h-6 fill-text" />
+      </button>
+    </>
   )
 }

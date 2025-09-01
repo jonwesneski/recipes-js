@@ -33,6 +33,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/zod-schemas": "workspace:*",
+    "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4.1.10",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
