@@ -11,7 +11,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['./src/mocks/jest.setup.ts'],
+    ignores: ['./src/mocks/jest.setup.ts', './src/types/*'],
   },
   ...compat.extends('@repo/eslint-config/next'),
   {

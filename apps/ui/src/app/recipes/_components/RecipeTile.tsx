@@ -4,6 +4,7 @@ import ShareIcon from '@public/shareIcon.svg'
 import StarIcon from '@public/starIcon.svg'
 import StarredIcon from '@public/starredIcon.svg'
 import { IconButton } from '@repo/design-system'
+import { type Svg } from '@src/types/svg'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -56,12 +57,12 @@ export const RecipeTile = (props: IRecipeProps) => {
       </div>
       <div className="flex justify-around items-center">
         <IconButton
-          svgIcon={isStarred ? StarredIcon : StarIcon}
+          svgIcon={(isStarred ? StarredIcon : StarIcon) as Svg}
           onClick={handleStarredClick}
         />
         <div className="w-[2px] h-[25px] bg-text" />
         <IconButton
-          svgIcon={ShareIcon}
+          svgIcon={ShareIcon as Svg}
           onClick={() => void handleCopyClick()}
         />
       </div>

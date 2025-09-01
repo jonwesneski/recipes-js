@@ -3,6 +3,7 @@
 import AddIcon from '@public/addIcon.svg'
 import SearchIcon from '@public/searchIcon.svg'
 import { useUserStore } from '@src/providers/use-store-provider'
+import { type Svg } from '@src/types/svg'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { type JSX, useEffect, useRef, useState } from 'react'
@@ -19,10 +20,10 @@ regexRouteKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
 regexRouteKeyMap.set(/^\/create-recipe$/, 'create')
 
 const CreateRecipeLink = (
-  <NavLink key="create" href="/create-recipe" svgIcon={AddIcon} />
+  <NavLink key="create" href="/create-recipe" svgIcon={AddIcon as Svg} />
 )
 const SearchRecipesLink = (
-  <NavLink key="search" href="/recipes" svgIcon={SearchIcon} />
+  <NavLink key="search" href="/recipes" svgIcon={SearchIcon as Svg} />
 )
 const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   recipe: [CreateRecipeLink, SearchRecipesLink],
