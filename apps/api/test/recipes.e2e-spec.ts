@@ -46,7 +46,7 @@ describe('RecipesController (e2e)', () => {
           name: 'Tres Leches Cake',
         },
       },
-      include: RecipeInclude,
+      ...RecipeInclude,
     });
 
     const payload = {
