@@ -1,8 +1,8 @@
 'use client'
 
-import ShareIcon from '@public/share.svg'
-import StarIcon from '@public/star.svg'
-import StarredIcon from '@public/starred.svg'
+import ShareIcon from '@public/shareIcon.svg'
+import StarIcon from '@public/starIcon.svg'
+import StarredIcon from '@public/starredIcon.svg'
 import { IconButton } from '@repo/design-system'
 import Image from 'next/image'
 import Link from 'next/link'
