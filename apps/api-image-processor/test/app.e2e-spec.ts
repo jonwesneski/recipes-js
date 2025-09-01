@@ -33,12 +33,10 @@ describe('App', () => {
 
   beforeAll(async () => {
     mockRekognitionService = {
-      detectAllLabels: jest
-        .fn()
-        .mockResolvedValue({
-          labels: [{ Name: 'Food' }],
-          moderationLabels: [],
-        }),
+      detectAllLabels: jest.fn().mockResolvedValue({
+        labels: [{ Name: 'Food' }],
+        moderationLabels: [],
+      }),
     } as unknown as jest.Mocked<RekognitionService>;
     mockS3Service = {
       uploadFile: jest.fn().mockResolvedValue(undefined),
@@ -81,7 +79,7 @@ describe('App', () => {
           name: 'Tres Leches Cake',
         },
       },
-      include: RecipeInclude,
+      ...RecipeInclude,
     });
 
     await app.init();
@@ -237,7 +235,7 @@ describe('App', () => {
       expect(mockS3Service.uploadFile).toHaveBeenCalled();
       const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
         where: { id: recipe1.id },
-        include: RecipeInclude,
+        ...RecipeInclude,
       });
       expect(updatedRecipe.steps[0].imageUrl).toBe('fake');
     });
