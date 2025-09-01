@@ -17,12 +17,12 @@ export class RecipeRepository {
 
   transformRecipe<T extends RecipePrismaType | RecipeMinimalPrismaType>(
     recipe: T,
-  ): Omit<T, 'user' | 'recipeTags' | 'userId'> & {
+  ): Omit<T, 'recipeTags'> & {
     tags: string[];
     equipments?: string[];
     user: RecipeUserType;
   } {
-    const { user, userId, recipeTags, ...rest } = recipe;
+    const { recipeTags, ...rest } = recipe;
 
     let equipments: string[] | undefined = undefined;
     if ((recipe as RecipePrismaType).equipments) {
@@ -30,10 +30,6 @@ export class RecipeRepository {
     }
     return {
       ...rest,
-      user: {
-        id: userId,
-        handle: user.handle,
-      },
       equipments,
       tags: recipeTags.map((rt) => rt.tag.name),
     };
@@ -41,13 +37,15 @@ export class RecipeRepository {
 
   async getRecipes(): Promise<RecipeMinimalType[]> {
     const recipes = await this.prisma.recipe.findMany({
+      where: { isPublic: true },
       include: {
-        user: { select: { handle: true } },
+        user: { select: { handle: true, id: true, imageUrl: true } },
         recipeTags: {
           include: { tag: { select: { name: true } } },
         },
       },
       omit: {
+        userId: true,
         createdAt: true,
         updatedAt: true,
         preparationTimeInMinutes: true,
@@ -64,7 +62,7 @@ export class RecipeRepository {
         id,
         userId,
       },
-      include: RecipeInclude,
+      ...RecipeInclude,
     });
     return this.transformRecipe(recipe);
   }
@@ -120,7 +118,7 @@ export class RecipeRepository {
           })),
         },
       },
-      include: RecipeInclude,
+      ...RecipeInclude,
     });
 
     return this.transformRecipe(recipe);
@@ -234,7 +232,7 @@ export class RecipeRepository {
         nutritionalFacts: {},
         //recipeTags: {},
       },
-      include: RecipeInclude,
+      ...RecipeInclude,
     });
 
     return this.transformRecipe(recipe);
@@ -244,7 +242,7 @@ export class RecipeRepository {
     const recipe = await this.prisma.recipe.update({
       where: { id },
       data: { imageUrl },
-      include: RecipeInclude,
+      ...RecipeInclude,
     });
 
     return this.transformRecipe(recipe);

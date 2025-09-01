@@ -29,10 +29,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     <>
       {recipe ? (
         <RecipeStoreProvider initialState={recipe}>
-          <RecipeLayout
-            title={recipe.name}
-            subtitle={recipe.description ?? undefined}
-          >
+          <RecipeLayout>
             <RecipeIngredientsOverview className="my-5" />
             <RecipeSteps />
             <NutritionalFacts className="my-28" />

@@ -49,13 +49,10 @@ export const IngredientList = (props: IngredientListProps) => {
             {/*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/}
             <a
               href="#"
-              className={'underline decoration-dotted'}
+              className={
+                'inline-block underline decoration-dotted underline-offset-4'
+              }
               onClick={(e) => handleClick(e, ingredient)}
-              style={{
-                color: 'black',
-                display: 'inline-block',
-                textUnderlineOffset: '4px',
-              }}
             >
               {ingredient.unit}
             </a>{' '}

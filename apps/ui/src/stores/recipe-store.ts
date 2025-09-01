@@ -3,6 +3,7 @@ import type {
   BadRequestRecipeEntity,
   CreateRecipeDto,
   NutritionalFactsDto,
+  RecipeEntity,
 } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { createRef, type RefObject } from 'react';
@@ -98,7 +99,7 @@ export type StepItemType = {
   image: string | null;
 };
 
-export type RecipeState = Omit<CreateRecipeDto, 'steps' | 'base64Image'> & {
+export type RecipeState = Omit<RecipeEntity, 'steps' | 'imageUrl'> & {
   id: string;
   imageSrc: string | null;
   steps: StepItemType[];
@@ -167,6 +168,13 @@ export const createIngredientsItem = (
 export const defaultInitState: RecipeState = {
   id: '',
   name: '',
+  createdAt: '',
+  updatedAt: '',
+  user: {
+    id: '',
+    handle: '',
+    imageUrl: '',
+  },
   description: null,
   imageSrc: null,
   preparationTimeInMinutes: null,

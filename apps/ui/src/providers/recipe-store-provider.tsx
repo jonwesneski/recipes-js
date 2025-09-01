@@ -22,15 +22,9 @@ import {
 import { useStore } from 'zustand'
 
 const transformRecipe = (recipe?: Partial<RecipeEntity>): RecipeState => {
-  const {
-    createdAt: _createdAt,
-    updatedAt: _updatedAt,
-    ...rest
-  } = recipe ?? ({} as RecipeEntity)
-
   return {
     ...defaultInitState,
-    ...rest,
+    ...recipe,
     imageSrc: recipe?.imageUrl ?? null,
     steps:
       recipe?.steps?.map((s) => {

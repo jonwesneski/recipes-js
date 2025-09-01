@@ -2,7 +2,7 @@ import { Prisma } from '@repo/database';
 
 export type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
   include: {
-    user: { select: { handle: true } };
+    user: { select: { handle: true; id: true; imageUrl: true } };
     recipeTags: {
       include: {
         tag: {
@@ -12,6 +12,7 @@ export type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
     };
   };
   omit: {
+    userId: true;
     createdAt: true;
     updatedAt: true;
     preparationTimeInMinutes: true;
@@ -22,7 +23,7 @@ export type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
 
 export type RecipePrismaType = Prisma.RecipeGetPayload<{
   include: {
-    user: { select: { handle: true; id: true } };
+    user: { select: { handle: true; id: true; imageUrl: true } };
     equipments: {
       omit: {
         id: true;
@@ -56,39 +57,43 @@ export type RecipePrismaType = Prisma.RecipeGetPayload<{
       };
     };
   };
+  omit: { userId: true };
 }>;
 
 export const RecipeInclude = {
-  user: { select: { handle: true, id: true } },
-  equipments: {
-    omit: {
-      id: true,
-      createdAt: true,
-      updatedAt: true,
-      recipeId: true,
-    },
-  },
-  steps: {
-    orderBy: { displayOrder: 'asc' },
-    include: {
-      ingredients: {
-        omit: { stepId: true, displayOrder: true },
+  include: {
+    user: { select: { handle: true, id: true, imageUrl: true } },
+    equipments: {
+      omit: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        recipeId: true,
       },
     },
-    omit: { recipeId: true, displayOrder: true },
-  },
-  nutritionalFacts: {
-    omit: {
-      id: true,
-      createdAt: true,
-      updatedAt: true,
-      recipeId: true,
-      userId: true,
+    steps: {
+      orderBy: { displayOrder: 'asc' },
+      include: {
+        ingredients: {
+          omit: { stepId: true, displayOrder: true },
+        },
+      },
+      omit: { recipeId: true, displayOrder: true },
+    },
+    nutritionalFacts: {
+      omit: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        recipeId: true,
+        userId: true,
+      },
+    },
+    recipeTags: {
+      include: { tag: { select: { name: true } } },
     },
   },
-  recipeTags: {
-    include: { tag: { select: { name: true } } },
-  },
+  omit: { userId: true },
 } as const;
 
 export type RecipeUserType = { id: string; handle: string };
