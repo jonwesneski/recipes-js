@@ -15,7 +15,7 @@ export const Button = ({
       {...props}
       type={type}
       className={mergeCss(
-        'px-2 py-1 border-2 font-semibold hover:underline cursor-pointer',
+        'px-2 py-1 border-2 font-semibold hover:underline cursor-pointer hover:scale-110',
         {
           'bg-(--text)': variant === 'default',
           'text-(--background)': variant === 'default',

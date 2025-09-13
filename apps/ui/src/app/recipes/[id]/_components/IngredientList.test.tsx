@@ -1,6 +1,6 @@
 import { type IngredientEntity } from '@repo/codegen/model'
 import { renderRecipeComponent } from '@src/mocks/renderComponent'
-import { IngredientList } from './IngredientList'
+import IngredientList from './IngredientList'
 
 describe('IngredientList', () => {
   const sampleIngredients = [

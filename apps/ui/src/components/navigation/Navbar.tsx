@@ -95,7 +95,7 @@ export const Navbar = () => {
             priority
             width={30}
             height={30}
-            className="mx-4 grow-0"
+            className="mx-4 grow-0 cursor-pointer"
           />
         </button>
         {isOpen ? (
