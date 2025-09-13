@@ -22,21 +22,23 @@ export const Toggle = (props: IToggleProps) => {
   return (
     <button
       className={mergeCss(
-        'w-14 h-5 flex items-center rounded-full py-3 px-0.5 mt-1 duration-300 border border-text',
+        'w-11 h-5 flex items-center py-3 px-0.5 mt-1 duration-300 border-2 border-text',
         {
           'bg-background': !isOn,
-          'bg-text': isOn,
+          'bg-text text-background': isOn,
         },
         props.className,
       )}
       onClick={() => void handleOnClick()}
       aria-pressed={isOn}
     >
+      {isOn ? 'on' : null}
       <span
-        className={`bg-background w-5 h-5 rounded-full border border-text shadow-md transform duration-300 ${
-          isOn ? 'translate-x-8' : ''
+        className={`bg-background w-2 h-6 border-2 border-text shadow-md transform transition-transform duration-500 ${
+          isOn ? 'translate-x-2' : ''
         }`}
       ></span>
+      {!isOn ? 'off' : null}
     </button>
   )
 }

@@ -16,7 +16,7 @@ interface IngredientListProps {
   ingredients: IngredientParams[]
   className?: ClassValue
 }
-export const IngredientList = (props: IngredientListProps) => {
+const IngredientList = (props: IngredientListProps) => {
   const useFractions = useUserStore((state) => state.useFractions)
   const { showModal } = useCustomModal()
 
@@ -63,3 +63,4 @@ export const IngredientList = (props: IngredientListProps) => {
     </ul>
   )
 }
+export default IngredientList

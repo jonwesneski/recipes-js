@@ -37,7 +37,7 @@
 
 @layer components {
   * {
-    @apply transition-colors duration-200;
+    @apply transition-colors duration-500;
   }
 
   button {
