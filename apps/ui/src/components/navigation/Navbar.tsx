@@ -87,7 +87,7 @@ export const Navbar = () => {
         >
           <Image
             src={
-              imageUrl.length
+              imageUrl?.length
                 ? imageUrl
                 : 'https://www.gravatar.com/avatar/?d=mp'
             }

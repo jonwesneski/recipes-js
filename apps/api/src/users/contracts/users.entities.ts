@@ -30,6 +30,6 @@ export class UserEntity
   useFractions: boolean;
   @ApiProperty()
   useImperial: boolean;
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
 }
