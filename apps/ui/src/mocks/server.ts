@@ -1,10 +1,4 @@
-import { getRecipesMock } from '@repo/codegen/mswRecipes';
-import { getTagsMock } from '@repo/codegen/mswTags';
-import { getUsersMock } from '@repo/codegen/mswUsers';
 import { setupServer } from 'msw/node';
+import generateMocks from './generateMocks';
 
-export const server = setupServer(
-  ...getUsersMock(),
-  ...getRecipesMock(),
-  ...getTagsMock(),
-);
+export const server = setupServer(...generateMocks);

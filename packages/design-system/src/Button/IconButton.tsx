@@ -1,5 +1,5 @@
 import { mergeCss } from '../utils'
-import { ButtonProps } from './Button'
+import { type ButtonProps } from './Button'
 
 export type IconButtonProps = Omit<ButtonProps, 'children'> & {
   svgIcon: React.FC<React.SVGProps<SVGSVGElement>>
