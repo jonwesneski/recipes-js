@@ -13,15 +13,21 @@ const CenterDiv = ({ children }: { children: React.ReactNode }) => (
 const Loading = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
   const skipApiCall = pathname === '/redirect'
+
   const { isFetching, error, isSuccess } = useHealthCheckControllerStatus({
     query: { enabled: !skipApiCall },
   })
+  let timer: NodeJS.Timeout
 
   const [assumeServerIsProvisioning, setAssumeServerIsProvisioning] =
     useState(false)
-  const timer = setTimeout(() => {
-    setAssumeServerIsProvisioning(true)
-  }, 8000)
+
+  useEffect(() => {
+    timer = setTimeout(() => {
+      setAssumeServerIsProvisioning(true)
+    }, 8000)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     if (error && error.code !== 'ERR_NETWORK') {
@@ -33,11 +39,13 @@ const Loading = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      clearTimeout(timer)
+      if (timer) {
+        clearTimeout(timer)
+      }
       setAssumeServerIsProvisioning(false)
     }
-    return () => clearTimeout(timer)
-  }, [isSuccess, timer])
+    return
+  }, [isSuccess])
 
   if (isFetching) {
     return (
