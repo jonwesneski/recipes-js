@@ -19,6 +19,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     )
   }, [useDarkMode])
 
+  // Don't show navbar on login page
   return pathname !== '/' ? (
     <>
       <nav
@@ -33,6 +34,6 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="pt-10 pb-40">{children}</main>
     </>
   ) : (
-    children
+    <>{children}</>
   )
 }

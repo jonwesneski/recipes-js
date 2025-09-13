@@ -1,19 +1,17 @@
 {
-    "extends": "@repo/typescript-config/base.json",
-    "compilerOptions": {
-        "allowImportingTsExtensions": false,
-        "declaration": true,
-        "declarationDir": "./dist/types",
-        "lib": ["es2022", "DOM", "DOM.Iterable"],        
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "noEmit": false,
-        "noImplicitAny": false,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "skipLibCheck": true
-    },
-    "include": [
-        "src"
-    ]
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": false,
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmit": false,
+    "noImplicitAny": false,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true
+  },
+  "include": ["src"]
 }

@@ -32,7 +32,8 @@ const Page = () => {
   }
 
   return (
-    <div className="flex flex-row min-h-screen justify-center items-center">
+    <div className="flex flex-col min-h-screen justify-center items-center">
+      <h1 className="mb-36">recipehall.</h1>
       <div className="w-60">
         <div className="border-b mb-4">
           <h1 className="font-extrabold">Login with:</h1>

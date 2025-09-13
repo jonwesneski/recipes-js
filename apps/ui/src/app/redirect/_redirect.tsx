@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuthentication } from '@src/providers/authentication-provider'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 interface IRedirectProps {
@@ -9,11 +9,12 @@ interface IRedirectProps {
 }
 const ClientRedirect = (props: IRedirectProps) => {
   const { accessToken, setAccessToken } = useAuthentication()
+  const router = useRouter()
 
   useEffect(() => {
     const fetch = () => {
       if (accessToken) {
-        redirect('/recipes')
+        router.push('/recipes')
       } else if (props.accessToken) {
         setAccessToken(props.accessToken)
       } else {

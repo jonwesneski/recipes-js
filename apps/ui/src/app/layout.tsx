@@ -1,4 +1,5 @@
 import '@repo/design-system/styles.css'
+import Loading from '@src/components/LoadingComponent'
 import { MainLayout } from '@src/components/MainLayout'
 import { type Metadata, type Viewport } from 'next'
 import AppProviders from './_providers'
@@ -30,7 +31,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         >
           <div id="root" className="px-2">
             <AppProviders>
-              <MainLayout>{children}</MainLayout>
+              <Loading>
+                <MainLayout>{children}</MainLayout>
+              </Loading>
             </AppProviders>
           </div>
         </div>
