@@ -17,7 +17,7 @@ const Loading = ({ children }: { children: React.ReactNode }) => {
   const { isFetching, error, isSuccess } = useHealthCheckControllerStatus({
     query: { enabled: !skipApiCall },
   })
-  let timer: NodeJS.Timeout
+  let timer: ReturnType<typeof setTimeout>
 
   const [assumeServerIsProvisioning, setAssumeServerIsProvisioning] =
     useState(false)
@@ -39,12 +39,9 @@ const Loading = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      if (timer) {
-        clearTimeout(timer)
-      }
+      clearTimeout(timer)
       setAssumeServerIsProvisioning(false)
     }
-    return
   }, [isSuccess])
 
   if (isFetching) {
