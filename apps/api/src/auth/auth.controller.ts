@@ -31,13 +31,13 @@ export class AuthController {
       const isDev = this.configService.get('ENV') === 'dev';
       res.cookie('access_token', googleUser.tokens.accessToken, {
         maxAge: 2592000000,
-        sameSite: isDev ? 'lax' : 'none',
-        secure: !isDev,
+        sameSite: 'lax', //isDev ? 'lax' : 'none',
+        secure: false, //!isDev,
         domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
-      res.redirect(`${frontendUrl}recipes`);
+      res.redirect(`${frontendUrl}redirect`);
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });
     }
