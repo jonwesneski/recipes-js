@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars -- its fine zustand */
 import type {
   BadRequestRecipeEntity,
   CreateRecipeDto,
@@ -115,25 +114,28 @@ export type RecipeActions = {
   setImage: (_value: string) => void;
   addStep: () => void;
   insertIngredientsSteps: (
-    ref: RefObject<HTMLTextAreaElement | null>,
+    _ref: RefObject<HTMLTextAreaElement | null>,
     _ingredients: IngredientValidator[][],
   ) => void;
   insertInstructionsSteps: (
-    ref: RefObject<HTMLTextAreaElement | null>,
+    _ref: RefObject<HTMLTextAreaElement | null>,
     _instructions: string[],
   ) => void;
   removeStep: (_stepId: string) => void;
-  addIngredient: (ref: React.RefObject<HTMLTextAreaElement | null>) => void;
-  removeIngredient: (ref: React.RefObject<HTMLTextAreaElement | null>) => void;
+  addIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void;
+  removeIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void;
   updateIngredient: (
-    ref: RefObject<HTMLTextAreaElement | null>,
+    _ref: RefObject<HTMLTextAreaElement | null>,
     _ingredient: IngredientValidator,
   ) => void;
   setInstructions: (
-    ref: RefObject<HTMLTextAreaElement | null>,
+    _ref: RefObject<HTMLTextAreaElement | null>,
     _instructions: string,
   ) => void;
-  setStepImage: (ref: RefObject<HTMLDivElement | null>, _image: string) => void;
+  setStepImage: (
+    _ref: RefObject<HTMLDivElement | null>,
+    _image: string,
+  ) => void;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
@@ -419,7 +421,7 @@ export const createRecipeStore = (
           set(() => ({ nutritionalFacts })),
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
-          // eslint-disable @typescript-eslint/no-unused-vars -- unpacking unused vars
+          /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
           const {
             id,
             createdAt,
@@ -430,7 +432,7 @@ export const createRecipeStore = (
             imageSrc,
             ...recipe
           } = get();
-          // eslint-enable @typescript-eslint/no-unused-vars -- unpacking unused vars
+          /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
 
           return {
             ...recipe,
