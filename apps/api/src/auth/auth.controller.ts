@@ -13,7 +13,7 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
 
-  @Get('google/login')
+  @Get('google')
   @UseGuards(GoogleOauthGuard)
   googleLogin() {
     // Initiates the Google OAuth flow
@@ -21,7 +21,10 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
-  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+  async googleAuthCallback(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     try {
       const frontendUrl = req.headers.referer!;
       const googleUser = await this.authService.validateGoogleUser(
@@ -31,8 +34,8 @@ export class AuthController {
       const isDev = this.configService.get('ENV') === 'dev';
       res.cookie('access_token', googleUser.tokens.accessToken, {
         maxAge: 2592000000,
-        sameSite: 'lax', //isDev ? 'lax' : 'none',
-        secure: false, //!isDev,
+        sameSite: isDev ? 'lax' : 'none',
+        secure: !isDev,
         domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)

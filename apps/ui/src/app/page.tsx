@@ -21,7 +21,7 @@ const Page = () => {
   const handleGoogleOAuth = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     clearAccessToken()
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/callback`
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
   }
 
   const handleGuest = async (event: MouseEvent<HTMLButtonElement>) => {
