@@ -3,6 +3,20 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   // output: 'export', // Outputs a Single-Page Application (SPA)
   // distDir: 'build', // Changes the build output directory to `build`
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        'localhost:3000', // Your Next.js frontend
+        'localhost:3001', // Your NestJS backend
+        '127.0.0.1:3000',
+        '127.0.0.1:3001',
+        'recipes-ui-tau.vercel.app',
+        'recipes-js-api.onrender.com',
+        'https://recipes-ui-tau.vercel.app',
+        'https://recipes-js-api.onrender.com',
+      ],
+    },
+  },
   reactStrictMode: false,
   transpilePackages: ['@repo/design-system'],
   images: {
