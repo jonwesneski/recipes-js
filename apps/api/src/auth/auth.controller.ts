@@ -37,7 +37,7 @@ export class AuthController {
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
-      res.redirect(`${frontendUrl}redirect`);
+      res.redirect(`${frontendUrl}recipes`);
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });
     }
