@@ -5,18 +5,19 @@ import data from './seedData.json';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create a new user
   let user = await prisma.user.findUnique({
     where: {
-      email: 'j@j.com',
+      email: 'r@h.com',
     },
   });
   if (!user) {
     user = await prisma.user.create({
       data: {
-        name: 'jon',
-        handle: 'jon',
-        email: 'j@j.com',
+        name: 'recipe hall',
+        handle: 'recipe hall',
+        email: 'r@h.com',
+        imageUrl:
+          'https://ui-avatars.com/api/?name=recipe+hall&uppercase=false&background=random',
       },
     });
   }
@@ -82,11 +83,10 @@ async function main() {
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
   .catch(async (e) => {
     console.error(e);
-    await prisma.$disconnect();
     process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });
