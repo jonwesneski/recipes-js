@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       new URL('https://lh3.googleusercontent.com/**'),
       new URL('https://www.gravatar.com/avatar/?d=mp'),
       new URL('https://d2ivn22ne8jqbo.cloudfront.net/**'),
+      new URL('http://localhost:4566/**'),
     ],
   },
   webpack(config) {

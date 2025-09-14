@@ -11,11 +11,14 @@ export class S3Service {
 
   private s3: S3;
   private _cloudFrontBaseUrl: string;
+  private _s3BucketName: string;
   constructor(
     @Inject(awsConfig.KEY)
     _awsConfig: AwsConfigType,
   ) {
     this.s3 = new S3({
+      endpoint: _awsConfig.s3EndpointUrl,
+      forcePathStyle: _awsConfig.s3EndpointUrl ? true : undefined,
       credentials: {
         accessKeyId: _awsConfig.accessKeyId,
         secretAccessKey: _awsConfig.secretAccessKey,
@@ -23,11 +26,12 @@ export class S3Service {
       region: _awsConfig.region,
     });
     this._cloudFrontBaseUrl = _awsConfig.cloudFrontBaseUrl;
+    this._s3BucketName = _awsConfig.s3BucketName;
   }
 
   async uploadFile(keyName: string, content: Buffer<ArrayBuffer>) {
     const params = {
-      Bucket: 'jonrecipesbucket',
+      Bucket: this._s3BucketName,
       Key: `${keyName}.jpg`,
       Body: content,
       ContentType: 'image/jpg',
@@ -57,7 +61,7 @@ export class S3Service {
     }
     return {
       s3BucketKeyName,
-      s3ImageUrl: `${this._cloudFrontBaseUrl}/${s3BucketKeyName}`,
+      s3ImageUrl: `${this._cloudFrontBaseUrl}/${s3BucketKeyName}.jpg`,
     };
   }
 }

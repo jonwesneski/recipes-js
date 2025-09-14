@@ -419,8 +419,19 @@ export const createRecipeStore = (
           set(() => ({ nutritionalFacts })),
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unpacking unused vars
-          const { id, isValid, errors, imageSrc, ...recipe } = get();
+          // eslint-disable @typescript-eslint/no-unused-vars -- unpacking unused vars
+          const {
+            id,
+            createdAt,
+            updatedAt,
+            user,
+            isValid,
+            errors,
+            imageSrc,
+            ...recipe
+          } = get();
+          // eslint-enable @typescript-eslint/no-unused-vars -- unpacking unused vars
+
           return {
             ...recipe,
             base64Image: imageSrc?.split(',')[1] ?? null,
