@@ -13,7 +13,7 @@ const Page = () => {
 
   useEffect(() => {
     const run = async () => {
-      await deleteCookie()
+      //await deleteCookie()
     }
     run().catch(() => console.log('blah'))
   }, [])
