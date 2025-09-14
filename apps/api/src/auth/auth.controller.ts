@@ -36,7 +36,7 @@ export class AuthController {
         maxAge: 2592000000,
         sameSite: isDev ? 'lax' : 'none',
         secure: !isDev,
-        domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
+        //domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
