@@ -47,7 +47,7 @@ export class ImageReviewProcessorService {
     this.logger.warn(
       `Image does not contain food or ingredients, found: ${nonFoods.join(', ')}`,
     );
-    return true;
+    return false;
   }
 
   public async processRecipeImage(
