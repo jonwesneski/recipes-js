@@ -32,7 +32,7 @@ export class S3Service {
   async uploadFile(keyName: string, content: Buffer<ArrayBuffer>) {
     const params = {
       Bucket: this._s3BucketName,
-      Key: `${keyName}.jpg`,
+      Key: keyName,
       Body: content,
       ContentType: 'image/jpg',
     };
@@ -55,13 +55,13 @@ export class S3Service {
   ): S3ImageDataType {
     var s3BucketKeyName = `${userId}/${id}`;
     if (stepIndex !== undefined) {
-      s3BucketKeyName += `/step-${stepIndex}`;
+      s3BucketKeyName += `/step-${stepIndex}.jpg`;
     } else {
-      s3BucketKeyName += `/main`;
+      s3BucketKeyName += `/main.jpg`;
     }
     return {
       s3BucketKeyName,
-      s3ImageUrl: `${this._cloudFrontBaseUrl}/${s3BucketKeyName}.jpg`,
+      s3ImageUrl: `${this._cloudFrontBaseUrl}/${s3BucketKeyName}`,
     };
   }
 }

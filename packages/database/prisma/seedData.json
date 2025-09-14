@@ -29,7 +29,8 @@
               "amount": 0.5,
               "unit": "teaspoons"
             }
-          ]
+          ],
+          "imageUrl": "https://d2ivn22ne8jqbo.cloudfront.net/example-step-1.jpg"
         },
         {
           "instruction": "Separate egg whites and yolks. Mix yolks with sugar, milk, and vanilla extract. Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool",
@@ -54,7 +55,8 @@
               "amount": 1,
               "unit": "teaspoons"
             }
-          ]
+          ],
+          "imageUrl": "https://d2ivn22ne8jqbo.cloudfront.net/example-step-2.jpg"
         },
         {
           "instruction": "Mix egg whites until it is a little opaque, then slowly add sugar while still mixing. Pour egg yolk mixture of flour mixture and mix together with spatula, then add egg white mixture (don't over mix). Add to baking dish and Bake 350F for 30min. Let it cool",
@@ -116,7 +118,7 @@
     {
       "name": "BULK",
       "description": "A bulk description for testing purposes",
-      "imageUrl": "https://d2ivn22ne8jqbo.cloudfront.net/example",
+      "imageUrl": "https://d2ivn22ne8jqbo.cloudfront.net/example.jpg",
       "preparationTimeInMinutes": 29,
       "cookingTimeInMinutes": 19,
       "steps": [
@@ -166,7 +168,8 @@
               "amount": 0.25,
               "unit": "cups"
             }
-          ]
+          ],
+          "imageUrl": "https://d2ivn22ne8jqbo.cloudfront.net/example-step-2.jpg"
         }
       ],
       "nutritionalFacts": {
