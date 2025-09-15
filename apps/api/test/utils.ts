@@ -9,9 +9,7 @@ export const createTestingFixtures = () => {
   const mockJwtGuard = { canActivate: jest.fn(() => true) };
   const mockS3Service = {
     uploadFile: jest.fn().mockResolvedValue(undefined),
-    makeS3ImageUrl: jest
-      .fn()
-      .mockReturnValue({ s3BucketKeyName: 'string', s3ImageUrl: 'string' }),
+    cloudFrontBaseUrl: 'https://example.com/',
   };
   const mockKafkaProducerService = {
     createInstance: jest.fn(),
