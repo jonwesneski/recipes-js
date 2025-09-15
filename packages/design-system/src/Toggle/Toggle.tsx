@@ -37,7 +37,7 @@ export const Toggle = (props: IToggleProps) => {
         className={`bg-background w-2 h-6 border-2 border-text shadow-md transform transition-transform duration-500 ${
           isOn ? 'translate-x-2' : ''
         }`}
-      ></span>
+      />
       {!isOn ? 'off' : null}
     </button>
   )

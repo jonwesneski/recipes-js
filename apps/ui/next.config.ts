@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       new URL('https://lh3.googleusercontent.com/**'),
       new URL('https://www.gravatar.com/avatar/?d=mp'),
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+        pathname: '/api/**',
+      },
       new URL('https://d2ivn22ne8jqbo.cloudfront.net/**'),
       new URL('http://localhost:4566/**'),
     ],

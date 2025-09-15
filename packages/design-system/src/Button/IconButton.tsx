@@ -10,17 +10,15 @@ export const IconButton = ({
   ...props
 }: IconButtonProps) => {
   return (
-    <>
-      <button
-        {...props}
-        type={type}
-        className={mergeCss(
-          'p-1 cursor-pointer hover:scale-110',
-          props.className,
-        )}
-      >
-        <SvgIcon className="w-6 h-6 fill-text" />
-      </button>
-    </>
+    <button
+      {...props}
+      type={type}
+      className={mergeCss(
+        'p-1 cursor-pointer hover:scale-110',
+        props.className,
+      )}
+    >
+      <SvgIcon className="w-6 h-6 fill-text" />
+    </button>
   )
 }
