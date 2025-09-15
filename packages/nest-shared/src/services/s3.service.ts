@@ -27,10 +27,6 @@ export class S3Service {
     this._s3BucketName = _awsConfig.s3BucketName;
   }
 
-  public get cloudFrontBaseUrl(): string {
-    return this._cloudFrontBaseUrl;
-  }
-
   async uploadFile(
     keyName: string,
     content: Buffer<ArrayBuffer>,
@@ -48,6 +44,7 @@ export class S3Service {
         params,
       }).done();
       this.logger.log(`File uploaded successfully at ${result.Location}`);
+      return `${this._cloudFrontBaseUrl}/${keyName}`;
     } catch (err) {
       this.logger.error(`Error uploading file: ${JSON.stringify(err)}`);
       throw err;

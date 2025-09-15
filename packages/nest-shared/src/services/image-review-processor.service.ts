@@ -56,11 +56,11 @@ export class ImageReviewProcessorService {
   ) {
     const imageBuffer = Buffer.from(recipeMessage.base64Image, 'base64');
     if (await this.isValidFoodImage(imageBuffer)) {
-      const { s3BucketKeyName, s3ImageUrl } = this.makeS3ImageUrl(
+      const s3BucketKeyName = this.makeBucketKeyName(
         userId,
         recipeMessage.recipeId,
       );
-      await this.s3Service.uploadFile(
+      const s3ImageUrl = await this.s3Service.uploadFile(
         s3BucketKeyName,
         imageBuffer,
         'image/jpg',
@@ -78,12 +78,12 @@ export class ImageReviewProcessorService {
   ) {
     const imageBuffer = Buffer.from(recipeStepMessage.base64Image, 'base64');
     if (await this.isValidFoodImage(imageBuffer)) {
-      const { s3BucketKeyName, s3ImageUrl } = this.makeS3ImageUrl(
+      const s3BucketKeyName = this.makeBucketKeyName(
         userId,
         recipeStepMessage.recipeId,
         recipeStepMessage.stepIndex,
       );
-      await this.s3Service.uploadFile(
+      const s3ImageUrl = await this.s3Service.uploadFile(
         s3BucketKeyName,
         imageBuffer,
         'image/jpg',
@@ -95,16 +95,13 @@ export class ImageReviewProcessorService {
     }
   }
 
-  makeS3ImageUrl(userId: string, id: string, stepIndex?: number) {
+  makeBucketKeyName(userId: string, id: string, stepIndex?: number) {
     var s3BucketKeyName = `${userId}/${id}`;
     if (stepIndex !== undefined) {
       s3BucketKeyName += `/step-${stepIndex}.jpg`;
     } else {
       s3BucketKeyName += `/main.jpg`;
     }
-    return {
-      s3BucketKeyName,
-      s3ImageUrl: `${this.s3Service.cloudFrontBaseUrl}/${s3BucketKeyName}`,
-    };
+    return s3BucketKeyName;
   }
 }
