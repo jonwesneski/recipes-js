@@ -1,3 +1,4 @@
+import { getHealthCheckMock } from '@repo/codegen/mswHealthCheck';
 import {
   getRecipesControllerRecipesListV1MockHandler,
   getRecipesControllerRecipesListV1ResponseMock,
@@ -22,6 +23,7 @@ recipe.steps.forEach((s) => {
 });
 
 export default [
+  ...getHealthCheckMock(),
   getUsersControllerUserV1MockHandler(
     getUsersControllerUserV1ResponseMock({ imageUrl: null }),
   ),

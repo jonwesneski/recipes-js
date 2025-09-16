@@ -43,7 +43,26 @@ const transformRecipe = (recipe?: Partial<RecipeEntity>): RecipeState => {
             value: s.instruction ?? undefined,
           }),
         })
-      }) ?? defaultInitState.steps,
+      }) ??
+      // Need to re-create steps since it is an array and I don't want to update original
+      // Also need to do a .map() instead of a spread here because ZodError doesn't get fully cloned in a spread of structuredClone()
+      defaultInitState.steps.map((s) =>
+        createStepItem({
+          ingredients: createIngredientsItem(
+            s.ingredients.items.map(
+              (i) =>
+                new IngredientItemType({
+                  ingredient: new IngredientValidator({
+                    stringValue: i.ingredient.stringValue,
+                  }),
+                }),
+            ),
+          ),
+          instructions: new InstructionsType({
+            value: s.instructions.value,
+          }),
+        }),
+      ),
   }
 }
 

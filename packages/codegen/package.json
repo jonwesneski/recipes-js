@@ -12,6 +12,10 @@
       "import": "./dist/model/index.js",
       "types": "./dist/types/model/index.d.ts"
     },
+    "./mswHealthCheck": {
+      "import": "./dist/api/health-check/health-check.msw.js",
+      "types": "./dist/types/api/health-check/health-check.msw.d.ts"
+    },
     "./mswRecipes": {
       "import": "./dist/api/recipes/recipes.msw.js",
       "types": "./dist/types/api/recipes/recipes.msw.d.ts"

@@ -1,3 +1,5 @@
+'use client'
+
 import { useModalStore } from './modal-store-provider'
 
 export const ModalRoot = () => {

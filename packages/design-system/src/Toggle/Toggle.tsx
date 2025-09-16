@@ -1,3 +1,5 @@
+'use client'
+
 import { type ClassValue } from 'clsx'
 import { useState } from 'react'
 import { mergeCss } from '../utils'
