@@ -28,13 +28,10 @@ export const ModalCentered = (props: ModalCenteredProps) => {
   return (
     <div
       ref={divRef}
-      className="shadow-lg rounded-3xl border-2 border-solid p-5"
+      className="shadow-2xl border-2 p-5 pointer-events-auto top-1/2 left-1/2"
       style={{
-        backgroundColor: 'white',
-        pointerEvents: 'all',
-        left: '50%',
         position: 'inherit',
-        transform: 'translate(-50%, 50%)',
+        transform: 'translate(-50%, -50%)',
       }}
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- I think I need it
       tabIndex={0}

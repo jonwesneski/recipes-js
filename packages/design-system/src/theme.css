@@ -8,6 +8,7 @@
 
   --color-cream: #fff1dd;
   --color-background: var(--background);
+  --color-background-see-through: var(--background-see-through);
   --color-marged-background: var(--margined-background);
   --color-input-focus-background: var(--input-focus-background);
   --color-border: var(--border);
@@ -18,6 +19,7 @@
 @layer base {
   :root {
     --background: #fff1dd;
+    --background-see-through: rgba(255, 241, 221, 0.75);
     --margined-background: #ffe9c9;
     --input-focus-background: #ffe9c9;
     --border: #000;
@@ -27,6 +29,7 @@
 
   [data-theme='dark'] {
     --background: #000;
+    --background-see-through: rgba(0, 0, 0, 0.75);
     --margined-background: #242424;
     --input-focus-background: #242424;
     --border: #fff1dd;

@@ -18,6 +18,7 @@ recipesList.forEach((r) => {
   r.imageUrl = null;
 });
 const recipe = getRecipesControllerRecipeV1ResponseMock({ imageUrl: null });
+recipe.user.imageUrl = null;
 recipe.steps.forEach((s) => {
   s.imageUrl = null;
 });

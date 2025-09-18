@@ -12,11 +12,13 @@ export function useCustomModal() {
     const modalRoot = document.getElementById('modal-root')
     if (!modalRoot) throw new Error('Root node not found. Cannot render modal.')
     const portal = createPortal(<Component {...props} />, modalRoot)
+    document.body.style.overflow = 'hidden'
     addModal({ id, portal })
     return showModal
   }
 
   const closeModal = () => {
+    document.body.style.overflow = 'unset'
     removeModal()
   }
 

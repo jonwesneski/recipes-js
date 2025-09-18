@@ -29,6 +29,7 @@ const IngredientList = (props: IngredientListProps) => {
           <ModalMeasurementConversions
             unitType={ingredient.unit as VolumeUnit | WeightUnit}
             amount={ingredient.amount}
+            name={ingredient.name}
           />
         ),
         {},

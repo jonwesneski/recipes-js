@@ -13,14 +13,14 @@ const ConversionRows = (props: {
   return (
     <>
       <tr>
-        <th className="text-center text-xs bg-green-800" colSpan={2}>
+        <th className="border-y text-center text-xs" colSpan={2}>
           {props.unitSystem}
         </th>
       </tr>
       {props.conversions.map(([unit, amount]) => (
         <tr key={unit}>
-          <td className="border-t border-gray-100 text-right pr-2">{unit}</td>
-          <td className="border-t border-gray-100">{amount}</td>
+          <td className="text-right pr-2 border-r">{unit}</td>
+          <td className="pl-2">{amount}</td>
         </tr>
       ))}
     </>
@@ -30,6 +30,7 @@ const ConversionRows = (props: {
 interface ModalMeasurementConversionsProps {
   unitType: VolumeUnit | WeightUnit
   amount: number
+  name: string
 }
 export const ModalMeasurementConversions = (
   props: ModalMeasurementConversionsProps,
@@ -43,12 +44,15 @@ export const ModalMeasurementConversions = (
 
   return (
     <ModalCentered>
-      <h2>{conversions.type} Conversions</h2>
-      <table className="w-full table-auto rounded-3xl border-collapse bg-amber-100">
+      <h2 className="text-center">{conversions.type} Conversions for:</h2>
+      <h2 className="text-center">
+        {props.amount} {props.unitType} {props.name}
+      </h2>
+      <table className="w-full table-auto mt-4 border-collapse">
         <thead>
           <tr>
-            <th className="text-right pr-2">Unit</th>
-            <th className="text-left">Amount</th>
+            <th className="text-right pr-2 border-r">Unit</th>
+            <th className="text-left pl-2">Amount</th>
           </tr>
         </thead>
         <tbody>
