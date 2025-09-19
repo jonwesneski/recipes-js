@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma, UiTheme } from '@repo/database';
+import { MeasurementFormat, Prisma, UiTheme } from '@repo/database';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
 import { NutritionalFactsEntity } from '@src/recipes';
 
@@ -28,8 +28,8 @@ export class UserEntity
   uiTheme: UiTheme;
   @ApiProperty()
   useFractions: boolean;
-  @ApiProperty()
-  useImperial: boolean;
+  @ApiProperty({ enum: MeasurementFormat, enumName: 'MeasurementFormat' })
+  measurementFormat: MeasurementFormat;
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
 }

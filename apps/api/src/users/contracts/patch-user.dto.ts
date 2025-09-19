@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma, UiTheme } from '@repo/database';
+import { MeasurementFormat, Prisma, UiTheme } from '@repo/database';
 import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
 import {
   IsBoolean,
@@ -41,7 +41,11 @@ export class PatchUserDto
   @ApiProperty({ type: Boolean, required: false })
   useFractions?: boolean;
   @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false })
-  useImperial?: boolean;
+  @IsEnum(MeasurementFormat)
+  @ApiProperty({
+    enum: MeasurementFormat,
+    enumName: 'MeasurementFormat',
+    required: false,
+  })
+  measurementFormat?: MeasurementFormat;
 }

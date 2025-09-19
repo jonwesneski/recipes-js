@@ -38,19 +38,25 @@ enum UiTheme {
   dark
 }
 
+enum MeasurementFormat {
+  default
+  imperial
+  metric
+}
+
 model User {
-  id           String            @id @default(cuid())
-  name         String
-  email        String            @unique
-  handle       String            @unique
-  useFractions Boolean           @default(false)
-  useImperial  Boolean           @default(false)
-  uiTheme      UiTheme           @default(system)
-  diet         NutritionalFacts? @relation("UserNutritionalFacts")
-  imageUrl     String?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-  recipes      Recipe[]
+  id                String            @id @default(cuid())
+  name              String
+  email             String            @unique
+  handle            String            @unique
+  useFractions      Boolean           @default(false)
+  measurementFormat MeasurementFormat @default(default)
+  uiTheme           UiTheme           @default(system)
+  diet              NutritionalFacts? @relation("UserNutritionalFacts")
+  imageUrl          String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  recipes           Recipe[]
 
   followers  UserFollow[] @relation("UserFollows")
   followings UserFollow[] @relation("UserFollowings")

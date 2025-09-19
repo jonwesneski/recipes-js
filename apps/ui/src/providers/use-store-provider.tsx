@@ -1,6 +1,6 @@
 'use client'
 
-import type { UiTheme } from '@repo/codegen/model'
+import type { MeasurementFormat, UiTheme } from '@repo/codegen/model'
 import { usersControllerUserV1 } from '@repo/codegen/users'
 import { jwtGoogleSchema } from '@repo/zod-schemas'
 import {
@@ -32,7 +32,8 @@ const getBoolFromLocalStorage = (key: string) => {
 const getGuestState = (): Partial<UserState> => {
   return {
     useFractions: getBoolFromLocalStorage('useFractions'),
-    useImperial: getBoolFromLocalStorage('useImperial'),
+    measurementFormat: (localStorage.getItem('measurementFormat') ??
+      'default') as MeasurementFormat,
     uiTheme: (localStorage.getItem('uiTheme') ?? 'system') as UiTheme,
   }
 }

@@ -1,14 +1,18 @@
-import type { UiTheme, UserEntity } from '@repo/codegen/model';
+import type {
+  MeasurementFormat,
+  UiTheme,
+  UserEntity,
+} from '@repo/codegen/model';
 import { usersControllerUpdateUserV1 } from '@repo/codegen/users';
 import { createStore } from 'zustand/vanilla';
 
 export type UserState = Omit<UserEntity, 'createdAt' | 'updatedAt' | 'diet'>;
 
 export type UserActions = {
-  setUseFractions: (_useFractions: boolean) => Promise<void>;
-  setUseImperial: (_useImperial: boolean) => Promise<void>;
-  setUiTheme: (_uiTheme: UiTheme) => Promise<void>;
-  // setDiet: (_diet: UserEntityDiet) => Promise<void>;
+  setUseFractions: (_value: boolean) => Promise<void>;
+  setMeasurementFormat: (_value: MeasurementFormat) => Promise<void>;
+  setUiTheme: (_value: UiTheme) => Promise<void>;
+  // setDiet: (_value: UserEntityDiet) => Promise<void>;
   setUseGuest: () => void;
 };
 
@@ -20,7 +24,7 @@ export const defaultInitState: UserState = {
   name: '',
   handle: '',
   useFractions: false,
-  useImperial: false,
+  measurementFormat: 'default',
   uiTheme: 'system',
   imageUrl: '',
   // diet: null,
@@ -38,14 +42,14 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
       }
       set(() => ({ useFractions }));
     },
-    setUseImperial: async (useImperial: boolean) => {
+    setMeasurementFormat: async (measurementFormat: MeasurementFormat) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(id, { useImperial });
+        await usersControllerUpdateUserV1(id, { measurementFormat });
       } else {
-        localStorage.setItem('useImperial', useImperial.toString());
+        localStorage.setItem('measurementFormat', measurementFormat);
       }
-      set(() => ({ useImperial }));
+      set(() => ({ measurementFormat }));
     },
     setUiTheme: async (uiTheme: UiTheme) => {
       const id = get().id;
