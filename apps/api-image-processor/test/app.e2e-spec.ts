@@ -39,10 +39,7 @@ describe('App', () => {
       }),
     } as unknown as jest.Mocked<RekognitionService>;
     mockS3Service = {
-      uploadFile: jest.fn().mockResolvedValue(undefined),
-      makeS3ImageUrl: jest
-        .fn()
-        .mockReturnValue({ s3BucketKeyName: 'fake', s3ImageUrl: 'fake' }),
+      uploadFile: jest.fn().mockResolvedValue('fake'),
     } as unknown as jest.Mocked<S3Service>;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
