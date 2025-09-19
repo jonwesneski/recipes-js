@@ -2,7 +2,7 @@
 
 import AddIcon from '@public/addIcon.svg'
 import SearchIcon from '@public/searchIcon.svg'
-import type { UiTheme } from '@repo/codegen/model'
+import type { MeasurementFormat, UiTheme } from '@repo/codegen/model'
 import { RadioGroup } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
@@ -36,7 +36,13 @@ const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
 }
 
 export const Navbar = () => {
-  const { imageUrl, uiTheme, setUiTheme } = useUserStore((state) => state)
+  const {
+    imageUrl,
+    uiTheme,
+    setUiTheme,
+    measurementFormat,
+    setMeasurementFormat,
+  } = useUserStore((state) => state)
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
@@ -56,6 +62,11 @@ export const Navbar = () => {
 
   const handleUiThemeChange = async (value: UiTheme) => {
     await setUiTheme(value)
+    setIsOpen(false)
+  }
+
+  const handleMeasurementFormatChange = async (value: MeasurementFormat) => {
+    await setMeasurementFormat(value)
     setIsOpen(false)
   }
 
@@ -101,7 +112,7 @@ export const Navbar = () => {
 
         <div
           ref={menuRef}
-          className={`absolute flex flex-col-reverse z-0 -translate-y-26 md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
+          className={`absolute flex flex-col-reverse z-0 -translate-y-34 md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
           style={{ transformOrigin: 'bottom' }}
         >
           <NavItem>
@@ -116,7 +127,20 @@ export const Navbar = () => {
               ]}
             />
           </NavItem>
-          <div>Item 2</div>
+          <NavItem>
+            <h6 className="text-center">Unit Style</h6>
+            <RadioGroup
+              selectedValue={measurementFormat}
+              onChange={(value) =>
+                void handleMeasurementFormatChange(value as MeasurementFormat)
+              }
+              options={[
+                { label: 'default', value: 'default' },
+                { label: 'imperial', value: 'imperial' },
+                { label: 'metric', value: 'metric' },
+              ]}
+            />
+          </NavItem>
           <div>Item 3</div>
         </div>
       </div>

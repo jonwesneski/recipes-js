@@ -1,10 +1,8 @@
+'use client'
+
+import type { IngredientEntityUnit } from '@repo/codegen/model'
 import { ModalCentered } from '@repo/design-system'
-import {
-  getConversions,
-  roundToDecimal,
-  type VolumeUnit,
-  type WeightUnit,
-} from '@src/utils/measurements'
+import { getConversions, roundToDecimal } from '@src/utils/measurements'
 import { useEffect, useRef } from 'react'
 
 const ConversionRows = (props: {
@@ -29,7 +27,7 @@ const ConversionRows = (props: {
 }
 
 interface ModalMeasurementConversionsProps {
-  unitType: VolumeUnit | WeightUnit
+  unitType: IngredientEntityUnit
   amount: number
   name: string
 }

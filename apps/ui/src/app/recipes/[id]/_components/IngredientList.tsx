@@ -4,6 +4,7 @@ import type { IngredientEntity } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
+  determineAmountUnit,
   numberToFraction,
   roundToDecimal,
   type VolumeUnit,
@@ -19,10 +20,13 @@ interface IngredientListProps {
   className?: ClassValue
 }
 const IngredientList = (props: IngredientListProps) => {
-  const useFractions = useUserStore((state) => state.useFractions)
+  const { useFractions, measurementFormat } = useUserStore((state) => state)
   const { showModal } = useCustomModal()
 
-  const handleClick = (e: React.MouseEvent, ingredient: IngredientParams) => {
+  const handleOnShowConversions = (
+    e: React.MouseEvent,
+    ingredient: IngredientParams,
+  ) => {
     e.preventDefault()
     if (ingredient.unit !== 'whole' && ingredient.unit !== 'pinches') {
       showModal(
@@ -42,14 +46,19 @@ const IngredientList = (props: IngredientListProps) => {
   return (
     <ul className={mergeCss('list-disc', props.className)}>
       {props.ingredients.map((ingredient) => {
+        const { amount, unit } = determineAmountUnit(
+          ingredient.amount,
+          ingredient.unit,
+          measurementFormat,
+        )
         return (
           <li key={ingredient.id} className="text-left">
             <span>
               {useFractions
                 ? numberToFraction(
-                    roundToDecimal(ingredient.amount * props.scaleFactor, 2),
+                    roundToDecimal(amount * props.scaleFactor, 2),
                   )
-                : roundToDecimal(ingredient.amount * props.scaleFactor, 2)}
+                : roundToDecimal(amount * props.scaleFactor, 2)}
             </span>{' '}
             {/*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/}
             <a
@@ -57,9 +66,9 @@ const IngredientList = (props: IngredientListProps) => {
               className={
                 'inline-block underline decoration-dotted underline-offset-4'
               }
-              onClick={(e) => handleClick(e, ingredient)}
+              onClick={(e) => handleOnShowConversions(e, ingredient)}
             >
-              {ingredient.unit}
+              {unit}
             </a>{' '}
             {ingredient.name}
           </li>

@@ -1,4 +1,4 @@
-import { IngredientEntityUnit } from '@repo/codegen/model';
+import { IngredientEntityUnit, MeasurementFormat } from '@repo/codegen/model';
 import { z } from 'zod/v4';
 
 export const measurementUnits = Object.keys(IngredientEntityUnit);
@@ -94,6 +94,11 @@ const WEIGHT_CONVERSIONS = {
   ...METRIC_WEIGHT_CONVERSIONS,
 };
 
+const METRIC_MEASUREMENTS = {
+  ...METRIC_VOLUME_CONVERSIONS,
+  ...METRIC_WEIGHT_CONVERSIONS,
+};
+
 type ImperialVolumeUnit = keyof typeof IMPERIAL_VOLUME_CONVERSIONS;
 type MetricVolumeUnit = keyof typeof METRIC_VOLUME_CONVERSIONS;
 export type VolumeUnit = ImperialVolumeUnit | MetricVolumeUnit;
@@ -109,10 +114,15 @@ export const isWeight = (unit: string) => {
   return weightUnitSchema.safeParse(unit).success;
 };
 
-export const getConversions = (
-  amount: number,
-  from: VolumeUnit | WeightUnit,
-) => {
+const metricUnitSchema = z.union(
+  Object.keys(METRIC_MEASUREMENTS).map((l) => z.literal(l)),
+);
+
+export const isMetric = (unit: string) => {
+  return metricUnitSchema.safeParse(unit).success;
+};
+
+export const getConversions = (amount: number, from: IngredientEntityUnit) => {
   if (isWeight(from)) {
     return {
       type: 'Weight',
@@ -251,4 +261,46 @@ export const numberToFraction = (
 export const roundToDecimal = (num: number, decimalPlaces: number): number => {
   const factor = Math.pow(10, decimalPlaces);
   return Math.round(num * factor) / factor;
+};
+
+export const determineAmountUnit = (
+  amount: number,
+  unit: IngredientEntityUnit,
+  convertTo: MeasurementFormat,
+) => {
+  const _isMetric = isMetric(unit);
+  if (convertTo === MeasurementFormat.imperial && _isMetric) {
+    // Get the amount that is closest to 1 in imperial units
+    const imperialConversions = getConversions(amount, unit).values.imperial;
+    let closestUnit = 'cups' as keyof typeof imperialConversions;
+    let closestAmount = Infinity;
+    for (const [key, value] of Object.entries(imperialConversions)) {
+      const absValue = Math.abs(value - 1);
+      if (absValue < closestAmount) {
+        closestAmount = absValue;
+        closestUnit = key as keyof typeof imperialConversions;
+      }
+    }
+    return {
+      amount: imperialConversions[closestUnit],
+      unit: closestUnit,
+    };
+  } else if (convertTo === MeasurementFormat.metric && !_isMetric) {
+    // Get the amount that is closest to 1 in metric units
+    const metricConversions = getConversions(amount, unit).values.metric;
+    let closestUnit = 'grams' as keyof typeof metricConversions;
+    let closestAmount = Infinity;
+    for (const [key, value] of Object.entries(metricConversions)) {
+      const absValue = Math.abs(value - 1);
+      if (absValue < closestAmount) {
+        closestAmount = absValue;
+        closestUnit = key as keyof typeof metricConversions;
+      }
+    }
+    return {
+      amount: metricConversions[closestUnit],
+      unit: closestUnit,
+    };
+  }
+  return { amount, unit };
 };

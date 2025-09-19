@@ -1,8 +1,14 @@
 'use client'
+
+import type { MeasurementFormat } from '@repo/codegen/model'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type StepItemType } from '@src/stores/recipe-store'
-import { numberToFraction, roundToDecimal } from '@src/utils/measurements'
+import {
+  determineAmountUnit,
+  numberToFraction,
+  roundToDecimal,
+} from '@src/utils/measurements'
 import type { DetailedHTMLProps, HTMLAttributes } from 'react'
 
 type UniqueIngredientsType = Record<
@@ -15,19 +21,24 @@ type UniqueIngredientsType = Record<
 
 const createUniqueIngredient = (
   steps: StepItemType[],
+  measurementFormat: MeasurementFormat,
 ): UniqueIngredientsType => {
   const uniqueIngredients: UniqueIngredientsType = {}
   steps.forEach((step) => {
     step.ingredients.items.forEach((i) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- not true
       if (!uniqueIngredients[i.ingredient.dto.name]) {
-        uniqueIngredients[i.ingredient.dto.name] = {
-          amount: i.ingredient.dto.amount,
-          unit: i.ingredient.dto.unit,
-        }
+        uniqueIngredients[i.ingredient.dto.name] = determineAmountUnit(
+          i.ingredient.dto.amount,
+          i.ingredient.dto.unit,
+          measurementFormat,
+        )
       } else {
-        uniqueIngredients[i.ingredient.dto.name].amount +=
-          i.ingredient.dto.amount
+        uniqueIngredients[i.ingredient.dto.name].amount += determineAmountUnit(
+          i.ingredient.dto.amount,
+          i.ingredient.dto.unit,
+          measurementFormat,
+        ).amount
       }
     })
   })
@@ -42,8 +53,8 @@ export const RecipeIngredientsOverview = (
   props: RecipeIngredientsOverviewProps,
 ) => {
   const { steps, scaleFactor } = useRecipeStore((state) => state)
-  const uniqueIngredients = createUniqueIngredient(steps)
-  const useFractions = useUserStore((state) => state.useFractions)
+  const { useFractions, measurementFormat } = useUserStore((state) => state)
+  const uniqueIngredients = createUniqueIngredient(steps, measurementFormat)
 
   return (
     <div {...props}>
