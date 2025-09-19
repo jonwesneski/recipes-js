@@ -282,7 +282,7 @@ export const determineAmountUnit = (
       }
     }
     return {
-      amount: roundToDecimal(imperialConversions[closestUnit], 2),
+      amount: imperialConversions[closestUnit],
       unit: closestUnit,
     };
   } else if (convertTo === MeasurementFormat.metric && !_isMetric) {
@@ -298,7 +298,7 @@ export const determineAmountUnit = (
       }
     }
     return {
-      amount: roundToDecimal(metricConversions[closestUnit], 2),
+      amount: metricConversions[closestUnit],
       unit: closestUnit,
     };
   }
