@@ -18,7 +18,7 @@ export function useCustomModal() {
   }
 
   const closeModal = () => {
-    document.body.style.overflow = 'unset'
+    document.body.style.overflow = 'auto'
     removeModal()
   }
 

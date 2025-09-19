@@ -1,43 +1,44 @@
 'use client'
 
 import { mergeCss, type ClassValue } from '@repo/design-system'
-import { useState } from 'react'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { type FactorType } from '@src/stores/recipe-store'
 
-const factors = ['1/2', '1', '1 1/2', '2', '4'] as const
-type FactorType = (typeof factors)[number]
+// JS doesn't guarantee order of object keys, so we using a tuple instead of a Map
+const factorsTuple: [string, FactorType][] = [
+  ['1/2', 0.5],
+  ['1', 1],
+  ['1 1/2', 1.5],
+  ['2', 2],
+  ['4', 4],
+] as const
 
 interface IScaleFactorSelection {
   className?: ClassValue
-  onClick: (_factor: FactorType) => void
 }
 const ScaleFactorSelection = (props: IScaleFactorSelection) => {
-  const [selectedFactor, setSelectedFactor] = useState<FactorType>('1')
-
-  const handleFactorClick = (portion: FactorType) => {
-    setSelectedFactor(portion)
-    props.onClick(portion)
-  }
+  const { scaleFactor, setScaleFactor } = useRecipeStore((state) => state)
 
   return (
     <div className="border-2">
       <h1 className="text-center font-bold">Scale Factor</h1>
       <div className="flex divide-x divide-text">
-        {factors.map((p) => {
+        {factorsTuple.map((f) => {
           return (
             <button
-              key={p}
+              key={f[0]}
               type="button"
               className={mergeCss(
                 'p-2',
                 {
-                  'bg-text text-background': p === selectedFactor,
+                  'bg-text text-background': f[1] === scaleFactor,
                   'hover:bg-(--text) hover:text-(--background) cursor-pointer':
-                    p !== selectedFactor,
+                    f[1] !== scaleFactor,
                 },
                 props.className,
               )}
-              onClick={() => handleFactorClick(p)}
-            >{`${p}x`}</button>
+              onClick={() => setScaleFactor(f[1])}
+            >{`${f[0]}x`}</button>
           )
         })}
       </div>

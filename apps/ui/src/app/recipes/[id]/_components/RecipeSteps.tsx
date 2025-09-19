@@ -10,7 +10,7 @@ interface IRecipeSteps {
   className?: ClassValue
 }
 export const RecipeSteps = (props: IRecipeSteps) => {
-  const steps = useRecipeStore((state) => state.steps)
+  const { steps, scaleFactor } = useRecipeStore((state) => state)
   const { isWakeLockSupported, isWakeLockOn, toggleWakeLock } = useWakeLock()
 
   return (
@@ -22,7 +22,7 @@ export const RecipeSteps = (props: IRecipeSteps) => {
             <span className="mt-1 ml-2">Keep screen awake</span>
           </div>
         ) : null}
-        <ScaleFactorSelection onClick={() => undefined} />
+        <ScaleFactorSelection />
       </div>
       {steps.map((s, index) => {
         return (
@@ -30,7 +30,7 @@ export const RecipeSteps = (props: IRecipeSteps) => {
             <h1 className="font-bold">step {index + 1}:</h1>
             <div
               ref={s.ref}
-              className="flex flex-col md:flex-row gap-2 ml-2 mt-2"
+              className="flex flex-col md:flex-row gap-8 ml-2 mt-2"
             >
               <IngredientList
                 className="ml-4"
@@ -38,6 +38,7 @@ export const RecipeSteps = (props: IRecipeSteps) => {
                   id: i.keyId,
                   ...i.ingredient.dto,
                 }))}
+                scaleFactor={scaleFactor}
               />
               <p>{s.instructions.value}</p>
             </div>

@@ -2,7 +2,7 @@
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type StepItemType } from '@src/stores/recipe-store'
-import { numberToFraction } from '@src/utils/measurements'
+import { numberToFraction, roundToDecimal } from '@src/utils/measurements'
 import type { DetailedHTMLProps, HTMLAttributes } from 'react'
 
 type UniqueIngredientsType = Record<
@@ -41,7 +41,7 @@ export type RecipeIngredientsOverviewProps = Omit<
 export const RecipeIngredientsOverview = (
   props: RecipeIngredientsOverviewProps,
 ) => {
-  const steps = useRecipeStore((state) => state.steps)
+  const { steps, scaleFactor } = useRecipeStore((state) => state)
   const uniqueIngredients = createUniqueIngredient(steps)
   const useFractions = useUserStore((state) => state.useFractions)
 
@@ -51,7 +51,19 @@ export const RecipeIngredientsOverview = (
       <ul className="ml-2">
         {Object.keys(uniqueIngredients).map((name) => (
           <li key={name} style={{ listStyleType: 'none' }}>
-            {`${useFractions ? numberToFraction(uniqueIngredients[name].amount) : uniqueIngredients[name].amount} ${uniqueIngredients[name].unit} ${name}`}
+            {`${
+              useFractions
+                ? numberToFraction(
+                    roundToDecimal(
+                      uniqueIngredients[name].amount * scaleFactor,
+                      2,
+                    ),
+                  )
+                : roundToDecimal(
+                    uniqueIngredients[name].amount * scaleFactor,
+                    2,
+                  )
+            } ${uniqueIngredients[name].unit} ${name}`}
           </li>
         ))}
       </ul>

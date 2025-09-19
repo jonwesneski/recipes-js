@@ -1,6 +1,7 @@
 import { ModalCentered } from '@repo/design-system'
 import {
   getConversions,
+  roundToDecimal,
   type VolumeUnit,
   type WeightUnit,
 } from '@src/utils/measurements'
@@ -20,7 +21,7 @@ const ConversionRows = (props: {
       {props.conversions.map(([unit, amount]) => (
         <tr key={unit}>
           <td className="text-right pr-2 border-r">{unit}</td>
-          <td className="pl-2">{amount}</td>
+          <td className="pl-2">{roundToDecimal(amount, 2)}</td>
         </tr>
       ))}
     </>

@@ -5,6 +5,7 @@ import type {
   RecipeEntity,
 } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
+import { roundToDecimal } from '@src/utils/measurements';
 import { createRef, type RefObject } from 'react';
 import { createStore } from 'zustand/vanilla';
 import { applyMiddleware } from './middleware';
@@ -98,12 +99,15 @@ export type StepItemType = {
   image: string | null;
 };
 
+export type FactorType = 0.5 | 1 | 1.5 | 2 | 4;
+
 export type RecipeState = Omit<RecipeEntity, 'steps' | 'imageUrl'> & {
   id: string;
   imageSrc: string | null;
   steps: StepItemType[];
   isValid: boolean;
   errors: BadRequestRecipeEntity;
+  scaleFactor: FactorType;
 };
 
 export type RecipeActions = {
@@ -117,6 +121,8 @@ export type RecipeActions = {
     _ref: RefObject<HTMLTextAreaElement | null>,
     _ingredients: IngredientValidator[][],
   ) => void;
+  scaleIngredient: (_amount: number) => number;
+  setScaleFactor: (_value: FactorType) => void;
   insertInstructionsSteps: (
     _ref: RefObject<HTMLTextAreaElement | null>,
     _instructions: string[],
@@ -188,6 +194,7 @@ export const defaultInitState: RecipeState = {
   tags: [],
   isValid: false,
   errors: {},
+  scaleFactor: 1,
 };
 
 export const createRecipeStore = (
@@ -355,6 +362,14 @@ export const createRecipeStore = (
             }
             return { steps: [...current, ...inserts] };
           }),
+        setScaleFactor(scaleFactor: FactorType) {
+          set(() => ({ scaleFactor }));
+        },
+        // Getting an infinite loop here with zustand if I try to use scaleFactor from get()
+        // So I am not using at the moment
+        scaleIngredient: (amount: number) => {
+          return roundToDecimal(amount * get().scaleFactor, 2);
+        },
         setInstructions: (
           ref: RefObject<HTMLTextAreaElement | null>,
           instructions: string,

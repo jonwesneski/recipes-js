@@ -5,6 +5,7 @@ import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
   numberToFraction,
+  roundToDecimal,
   type VolumeUnit,
   type WeightUnit,
 } from '@src/utils/measurements'
@@ -14,6 +15,7 @@ type IngredientParams = Omit<IngredientEntity, 'createdAt' | 'updatedAt'>
 
 interface IngredientListProps {
   ingredients: IngredientParams[]
+  scaleFactor: number
   className?: ClassValue
 }
 const IngredientList = (props: IngredientListProps) => {
@@ -28,7 +30,7 @@ const IngredientList = (props: IngredientListProps) => {
         () => (
           <ModalMeasurementConversions
             unitType={ingredient.unit as VolumeUnit | WeightUnit}
-            amount={ingredient.amount}
+            amount={roundToDecimal(ingredient.amount * props.scaleFactor, 2)}
             name={ingredient.name}
           />
         ),
@@ -44,8 +46,10 @@ const IngredientList = (props: IngredientListProps) => {
           <li key={ingredient.id} className="text-left">
             <span>
               {useFractions
-                ? numberToFraction(ingredient.amount)
-                : ingredient.amount}
+                ? numberToFraction(
+                    roundToDecimal(ingredient.amount * props.scaleFactor, 2),
+                  )
+                : roundToDecimal(ingredient.amount * props.scaleFactor, 2)}
             </span>{' '}
             {/*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/}
             <a

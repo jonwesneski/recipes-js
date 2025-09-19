@@ -3,6 +3,7 @@
 import type { NutritionalFactsDto } from '@repo/codegen/model'
 import { type ClassValue, mergeCss } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { roundToDecimal } from '@src/utils/measurements'
 import { camelCaseToSpaces } from '@src/utils/stringHelpers'
 
 type _CompileTimeType = Omit<
@@ -44,7 +45,7 @@ interface INutritionalFactsProps {
   className?: ClassValue
 }
 export const NutritionalFacts = (props: INutritionalFactsProps) => {
-  const nutritionalFacts = useRecipeStore((state) => state.nutritionalFacts)
+  const { nutritionalFacts, scaleFactor } = useRecipeStore((state) => state)
 
   return (
     <div className={mergeCss(undefined, props.className)}>
@@ -59,7 +60,7 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
                 <td className="text-right pl-3">{name}</td>
                 <td className="text-left px-4">
                   {nutritionalFacts?.[key as keyof typeof nutritionalFacts]
-                    ? `${nutritionalFacts[key as keyof typeof nutritionalFacts]} ${_unit}`
+                    ? `${roundToDecimal((nutritionalFacts[key as keyof typeof nutritionalFacts] as number) * scaleFactor, 2)} ${_unit}`
                     : `? ${_unit}`}
                 </td>
               </tr>

@@ -126,7 +126,7 @@ export const getConversions = (
   };
 };
 
-export function getVolumeConversions(amount: number, from: VolumeUnit) {
+export const getVolumeConversions = (amount: number, from: VolumeUnit) => {
   const imperial = {} as Record<ImperialVolumeUnit, number>;
   const metric = {} as Record<MetricVolumeUnit, number>;
 
@@ -148,20 +148,20 @@ export function getVolumeConversions(amount: number, from: VolumeUnit) {
     imperial,
     metric,
   };
-}
+};
 
-function convertVolume(
+const convertVolume = (
   amount: number,
   from: VolumeUnit,
   to: VolumeUnit,
-): number {
+): number => {
   // Convert from source unit to cups (base unit)
   const baseUnit = amount / VOLUME_CONVERSIONS[from];
   // Convert from cups to target unit
   return baseUnit * VOLUME_CONVERSIONS[to];
-}
+};
 
-export function getWeightConversions(amount: number, from: WeightUnit) {
+export const getWeightConversions = (amount: number, from: WeightUnit) => {
   const imperial = {} as Record<ImperialWeightUnit, number>;
   const metric = {} as Record<MetricWeightUnit, number>;
 
@@ -183,20 +183,23 @@ export function getWeightConversions(amount: number, from: WeightUnit) {
     imperial,
     metric,
   };
-}
+};
 
-export function convertWeight(
+export const convertWeight = (
   amount: number,
   from: WeightUnit,
   to: WeightUnit,
-): number {
+): number => {
   // Convert from source unit to (base unit)
   const baseUnit = amount / WEIGHT_CONVERSIONS[from];
   // Convert from unit to target unit
   return baseUnit * WEIGHT_CONVERSIONS[to];
-}
+};
 
-export function numberToFraction(value: number, maxDenominator = 10): string {
+export const numberToFraction = (
+  value: number,
+  maxDenominator = 10,
+): string => {
   if (!Number.isFinite(value)) {
     return value.toString();
   }
@@ -243,4 +246,9 @@ export function numberToFraction(value: number, maxDenominator = 10): string {
     result = `${sign * numerator}/${denominator}`;
   }
   return result.trim();
-}
+};
+
+export const roundToDecimal = (num: number, decimalPlaces: number): number => {
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.round(num * factor) / factor;
+};
