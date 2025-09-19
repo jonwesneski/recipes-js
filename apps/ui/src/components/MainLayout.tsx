@@ -10,14 +10,15 @@ import { Navbar } from './navigation'
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { width, breakpointPxs } = useMediaQuery()
   const pathname = usePathname()
-  const useDarkMode = useUserStore((state) => state.useDarkMode)
+  const uiTheme = useUserStore((state) => state.uiTheme)
 
   useEffect(() => {
-    document.documentElement.setAttribute(
-      'data-theme',
-      useDarkMode ? 'dark' : '',
-    )
-  }, [useDarkMode])
+    const isDark =
+      uiTheme === 'dark' ||
+      (uiTheme === 'system' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : '')
+  }, [uiTheme])
 
   // Don't show navbar on login page
   return pathname !== '/' ? (

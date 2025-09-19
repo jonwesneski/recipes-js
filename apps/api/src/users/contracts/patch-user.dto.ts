@@ -1,7 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma } from '@repo/database';
+import { Prisma, UiTheme } from '@repo/database';
 import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class PatchUserDto
   implements
@@ -27,15 +33,15 @@ export class PatchUserDto
   @ApiProperty({ type: String, required: false })
   handle?: string;
   @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false, nullable: true })
-  useDarkMode?: boolean;
+  @IsEnum(UiTheme)
+  @ApiProperty({ enum: UiTheme, enumName: 'UiTheme', required: false })
+  uiTheme?: UiTheme;
   @IsOptional()
   @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false, nullable: true })
+  @ApiProperty({ type: Boolean, required: false })
   useFractions?: boolean;
   @IsOptional()
   @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false, nullable: true })
+  @ApiProperty({ type: Boolean, required: false })
   useImperial?: boolean;
 }

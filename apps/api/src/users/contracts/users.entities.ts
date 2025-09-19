@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma } from '@repo/database';
+import { Prisma, UiTheme } from '@repo/database';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
 import { NutritionalFactsEntity } from '@src/recipes';
 
@@ -24,8 +24,8 @@ export class UserEntity
   updatedAt: Date;
   @ApiProperty({ type: NutritionalFactsEntity, nullable: true })
   diet: NutritionalFactsEntity | null;
-  @ApiProperty()
-  useDarkMode: boolean;
+  @ApiProperty({ enum: UiTheme, enumName: 'UiTheme' })
+  uiTheme: UiTheme;
   @ApiProperty()
   useFractions: boolean;
   @ApiProperty()

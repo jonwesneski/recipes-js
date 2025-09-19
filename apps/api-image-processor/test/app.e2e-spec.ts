@@ -94,7 +94,6 @@ describe('App', () => {
   });
 
   beforeEach(() => {
-    mockS3Service.makeS3ImageUrl.mockClear();
     mockS3Service.uploadFile.mockClear();
     spyProcessRecipeImage.mockClear();
     spyProcessRecipeStepImage.mockClear();
@@ -140,7 +139,6 @@ describe('App', () => {
 
       expect(spyProcessRecipeStepImage).not.toHaveBeenCalled();
       expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
-      expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
       expect(mockS3Service.uploadFile).toHaveBeenCalled();
       const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
         where: { id: recipe1.id },
@@ -185,7 +183,6 @@ describe('App', () => {
 
       expect(spyProcessRecipeStepImage).not.toHaveBeenCalled();
       expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
-      expect(mockS3Service.makeS3ImageUrl).not.toHaveBeenCalled();
       expect(mockS3Service.uploadFile).not.toHaveBeenCalled();
       expect(
         jest.spyOn(recipeRepository, 'addImageToRecipe'),
@@ -231,7 +228,6 @@ describe('App', () => {
 
       expect(spyProcessRecipeImage).not.toHaveBeenCalled();
       expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
-      expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
       expect(mockS3Service.uploadFile).toHaveBeenCalled();
       const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
         where: { id: recipe1.id },
@@ -281,7 +277,6 @@ describe('App', () => {
 
       expect(spyProcessRecipeImage).not.toHaveBeenCalled();
       expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
-      expect(mockS3Service.makeS3ImageUrl).not.toHaveBeenCalled();
       expect(mockS3Service.uploadFile).not.toHaveBeenCalled();
       expect(
         jest.spyOn(recipeRepository, 'addImageToRecipeStep'),

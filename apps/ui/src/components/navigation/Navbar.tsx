@@ -2,6 +2,8 @@
 
 import AddIcon from '@public/addIcon.svg'
 import SearchIcon from '@public/searchIcon.svg'
+import type { UiTheme } from '@repo/codegen/model'
+import { RadioGroup } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
 import Image from 'next/image'
@@ -34,9 +36,7 @@ const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
 }
 
 export const Navbar = () => {
-  const { imageUrl, useDarkMode, setUseDarkMode } = useUserStore(
-    (state) => state,
-  )
+  const { imageUrl, uiTheme, setUiTheme } = useUserStore((state) => state)
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
@@ -54,8 +54,8 @@ export const Navbar = () => {
     return routeKeyLinksMap[getRouteKey()]
   }
 
-  const handleLightDarkMode = async () => {
-    await setUseDarkMode(!useDarkMode)
+  const handleUiThemeChange = async (value: UiTheme) => {
+    await setUiTheme(value)
     setIsOpen(false)
   }
 
@@ -72,7 +72,7 @@ export const Navbar = () => {
   }, [isOpen])
 
   return (
-    <div className="flex justify-between relative border-2">
+    <div className="flex justify-between relative border-2 z-1">
       <div className="flex-1" />
       <div className="flex-2 mx-auto flex justify-center gap-3">
         {renderNavItems()}
@@ -98,19 +98,27 @@ export const Navbar = () => {
             className="mx-4 grow-0 cursor-pointer"
           />
         </button>
-        {isOpen ? (
-          <div
-            ref={menuRef}
-            className="absolute flex flex-col-reverse -translate-y-18 md:translate-y-5 md:flex-col border-2"
-          >
-            <NavItem
-              onClick={() => void handleLightDarkMode()}
-              text={`${useDarkMode ? 'Light' : 'Dark'} Mode`}
+
+        <div
+          ref={menuRef}
+          className={`absolute flex flex-col-reverse z-0 -translate-y-26 md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
+          style={{ transformOrigin: 'bottom' }}
+        >
+          <NavItem>
+            <h6 className="text-center">Theme</h6>
+            <RadioGroup
+              selectedValue={uiTheme}
+              onChange={(value) => void handleUiThemeChange(value as UiTheme)}
+              options={[
+                { label: 'light', value: 'light' },
+                { label: 'dark', value: 'dark' },
+                { label: 'system', value: 'system' },
+              ]}
             />
-            <div>Item 2</div>
-            <div>Item 3</div>
-          </div>
-        ) : null}
+          </NavItem>
+          <div>Item 2</div>
+          <div>Item 3</div>
+        </div>
       </div>
     </div>
   )
