@@ -32,6 +32,12 @@ enum MeasurementUnit {
   grams
 }
 
+enum UiTheme {
+  system
+  light
+  dark
+}
+
 model User {
   id           String            @id @default(cuid())
   name         String
@@ -39,7 +45,7 @@ model User {
   handle       String            @unique
   useFractions Boolean           @default(false)
   useImperial  Boolean           @default(false)
-  useDarkMode  Boolean           @default(false)
+  uiTheme      UiTheme           @default(system)
   diet         NutritionalFacts? @relation("UserNutritionalFacts")
   imageUrl     String?
   createdAt    DateTime          @default(now())

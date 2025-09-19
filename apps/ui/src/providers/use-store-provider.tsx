@@ -1,5 +1,6 @@
 'use client'
 
+import type { UiTheme } from '@repo/codegen/model'
 import { usersControllerUserV1 } from '@repo/codegen/users'
 import { jwtGoogleSchema } from '@repo/zod-schemas'
 import {
@@ -32,7 +33,7 @@ const getGuestState = (): Partial<UserState> => {
   return {
     useFractions: getBoolFromLocalStorage('useFractions'),
     useImperial: getBoolFromLocalStorage('useImperial'),
-    useDarkMode: getBoolFromLocalStorage('useDarkMode'),
+    uiTheme: (localStorage.getItem('uiTheme') ?? 'system') as UiTheme,
   }
 }
 

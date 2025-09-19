@@ -8,7 +8,7 @@ import { KafkaProducerService } from '@src/common';
 export const createTestingFixtures = () => {
   const mockJwtGuard = { canActivate: jest.fn(() => true) };
   const mockS3Service = {
-    uploadFile: jest.fn().mockResolvedValue(undefined),
+    uploadFile: jest.fn().mockResolvedValue('fake'),
     cloudFrontBaseUrl: 'https://example.com/',
   };
   const mockKafkaProducerService = {

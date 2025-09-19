@@ -1,4 +1,4 @@
-import type { UserEntity } from '@repo/codegen/model';
+import type { UiTheme, UserEntity } from '@repo/codegen/model';
 import { usersControllerUpdateUserV1 } from '@repo/codegen/users';
 import { createStore } from 'zustand/vanilla';
 
@@ -7,7 +7,7 @@ export type UserState = Omit<UserEntity, 'createdAt' | 'updatedAt' | 'diet'>;
 export type UserActions = {
   setUseFractions: (_useFractions: boolean) => Promise<void>;
   setUseImperial: (_useImperial: boolean) => Promise<void>;
-  setUseDarkMode: (_useDarkMode: boolean) => Promise<void>;
+  setUiTheme: (_uiTheme: UiTheme) => Promise<void>;
   // setDiet: (_diet: UserEntityDiet) => Promise<void>;
   setUseGuest: () => void;
 };
@@ -21,7 +21,7 @@ export const defaultInitState: UserState = {
   handle: '',
   useFractions: false,
   useImperial: false,
-  useDarkMode: false,
+  uiTheme: 'system',
   imageUrl: '',
   // diet: null,
 };
@@ -29,7 +29,6 @@ export const defaultInitState: UserState = {
 export const createUserStore = (initState: UserState = defaultInitState) => {
   return createStore<UserStore>()((set, get) => ({
     ...initState,
-
     setUseFractions: async (useFractions: boolean) => {
       const id = get().id;
       if (id) {
@@ -48,14 +47,14 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
       }
       set(() => ({ useImperial }));
     },
-    setUseDarkMode: async (useDarkMode: boolean) => {
+    setUiTheme: async (uiTheme: UiTheme) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(id, { useDarkMode });
+        await usersControllerUpdateUserV1(id, { uiTheme });
       } else {
-        localStorage.setItem('useDarkMode', useDarkMode.toString());
+        localStorage.setItem('uiTheme', uiTheme);
       }
-      set(() => ({ useDarkMode }));
+      set(() => ({ uiTheme }));
     },
     // setDiet: async (diet: UserEntityDiet) => {
     //   await usersControllerUpdateUserV1(get().id, {});

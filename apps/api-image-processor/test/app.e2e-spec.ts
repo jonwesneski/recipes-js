@@ -39,10 +39,7 @@ describe('App', () => {
       }),
     } as unknown as jest.Mocked<RekognitionService>;
     mockS3Service = {
-      uploadFile: jest.fn().mockResolvedValue(undefined),
-      makeS3ImageUrl: jest
-        .fn()
-        .mockReturnValue({ s3BucketKeyName: 'fake', s3ImageUrl: 'fake' }),
+      uploadFile: jest.fn().mockResolvedValue('fake'),
     } as unknown as jest.Mocked<S3Service>;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -94,7 +91,6 @@ describe('App', () => {
   });
 
   beforeEach(() => {
-    mockS3Service.makeS3ImageUrl.mockClear();
     mockS3Service.uploadFile.mockClear();
     spyProcessRecipeImage.mockClear();
     spyProcessRecipeStepImage.mockClear();
@@ -140,7 +136,6 @@ describe('App', () => {
 
       expect(spyProcessRecipeStepImage).not.toHaveBeenCalled();
       expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
-      expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
       expect(mockS3Service.uploadFile).toHaveBeenCalled();
       const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
         where: { id: recipe1.id },
@@ -185,7 +180,6 @@ describe('App', () => {
 
       expect(spyProcessRecipeStepImage).not.toHaveBeenCalled();
       expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
-      expect(mockS3Service.makeS3ImageUrl).not.toHaveBeenCalled();
       expect(mockS3Service.uploadFile).not.toHaveBeenCalled();
       expect(
         jest.spyOn(recipeRepository, 'addImageToRecipe'),
@@ -231,7 +225,6 @@ describe('App', () => {
 
       expect(spyProcessRecipeImage).not.toHaveBeenCalled();
       expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
-      expect(mockS3Service.makeS3ImageUrl).toHaveBeenCalled();
       expect(mockS3Service.uploadFile).toHaveBeenCalled();
       const updatedRecipe = await prismaService.recipe.findFirstOrThrow({
         where: { id: recipe1.id },
@@ -281,7 +274,6 @@ describe('App', () => {
 
       expect(spyProcessRecipeImage).not.toHaveBeenCalled();
       expect(mockRekognitionService.detectAllLabels).toHaveBeenCalled();
-      expect(mockS3Service.makeS3ImageUrl).not.toHaveBeenCalled();
       expect(mockS3Service.uploadFile).not.toHaveBeenCalled();
       expect(
         jest.spyOn(recipeRepository, 'addImageToRecipeStep'),
