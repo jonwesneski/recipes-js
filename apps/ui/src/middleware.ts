@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   // a cookie, maybe it was a valid case, but trying cookies() for now
   //const token = request.cookies.get('access_token')?.value;
   const token = (await cookies()).get('access_token')?.value;
-  if (!token) {
+  if (!token && process.env.NEXT_PUBLIC_ENABLE_MSW !== 'true') {
     // Redirect to login page
     return NextResponse.redirect(new URL('/', request.url));
   }

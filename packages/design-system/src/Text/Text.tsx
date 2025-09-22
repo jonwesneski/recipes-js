@@ -16,7 +16,7 @@ export const Text = ({ variant, ...props }: TextProps) => {
       {...props}
       type="text"
       className={mergeCss(
-        'pl-2 border-0 border-b focus:outline-none',
+        'px-2 py-2 border focus:border-2 hover:scale-110 focus:outline-none',
         props.className,
       )}
       placeholder={placeHolder}
