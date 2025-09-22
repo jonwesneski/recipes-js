@@ -1,10 +1,12 @@
 'use client'
 
+import ClockIcon from '@public/clockIcon.svg'
 import ShareIcon from '@public/shareIcon.svg'
 import StarIcon from '@public/starIcon.svg'
 import StarredIcon from '@public/starredIcon.svg'
 import { IconButton } from '@repo/design-system'
 import { type Svg } from '@src/types/svg'
+import { timeInHourAndMinutes } from '@src/utils/timeHelper'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -14,6 +16,8 @@ interface IRecipeProps {
   imageUrl?: string
   name: string
   starred: boolean
+  preparationTimeInMinutes: number | null
+  cookingTimeInMinutes: number | null
 }
 export const RecipeTile = (props: IRecipeProps) => {
   const [isStarred, setIsStarred] = useState(props.starred)
@@ -55,6 +59,21 @@ export const RecipeTile = (props: IRecipeProps) => {
           {props.name}
         </Link>
       </div>
+
+      <div className="h-6">
+        {props.preparationTimeInMinutes && props.cookingTimeInMinutes ? (
+          <>
+            <ClockIcon className="w-6 h-6 inline mr-1 fill-text" />
+            <p className="inline">
+              {timeInHourAndMinutes(
+                props.preparationTimeInMinutes,
+                props.cookingTimeInMinutes,
+              )}
+            </p>
+          </>
+        ) : null}
+      </div>
+
       <div className="flex justify-around items-center">
         <IconButton
           svgIcon={(isStarred ? StarredIcon : StarIcon) as Svg}

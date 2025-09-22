@@ -21,6 +21,8 @@ const Page = () => {
               imageUrl={recipe.imageUrl ?? undefined}
               name={recipe.name}
               starred={false}
+              preparationTimeInMinutes={recipe.preparationTimeInMinutes}
+              cookingTimeInMinutes={recipe.cookingTimeInMinutes}
             />
           ))
         : null}

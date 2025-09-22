@@ -48,8 +48,6 @@ export class RecipeRepository {
         userId: true,
         createdAt: true,
         updatedAt: true,
-        preparationTimeInMinutes: true,
-        cookingTimeInMinutes: true,
       },
       orderBy: { updatedAt: 'desc' },
     });

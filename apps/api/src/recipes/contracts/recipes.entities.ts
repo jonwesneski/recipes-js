@@ -128,9 +128,9 @@ export class RecipeEntity implements RecipeType {
   name: string;
   @ApiProperty({ type: String, nullable: true })
   description: string | null;
-  @ApiProperty({ type: Number, nullable: true })
+  @ApiProperty({ type: 'integer', nullable: true })
   preparationTimeInMinutes: number | null;
-  @ApiProperty({ type: Number, nullable: true })
+  @ApiProperty({ type: 'integer', nullable: true })
   cookingTimeInMinutes: number | null;
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
@@ -257,6 +257,10 @@ export class RecipeMinimalEntity implements RecipeMinimalType {
   name: string;
   @ApiProperty({ type: String, nullable: true })
   description: string | null;
+  @ApiProperty({ type: 'integer', nullable: true })
+  preparationTimeInMinutes: number | null;
+  @ApiProperty({ type: 'integer', nullable: true })
+  cookingTimeInMinutes: number | null;
   @ApiProperty()
   imageUrl: string;
   @ApiProperty({ type: [String] })
