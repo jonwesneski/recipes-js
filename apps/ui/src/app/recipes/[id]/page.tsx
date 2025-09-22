@@ -6,6 +6,7 @@ import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { use, useEffect, useState } from 'react'
 import {
   NutritionalFacts,
+  RecipeDurations,
   RecipeIngredientsOverview,
   RecipeLayout,
   RecipeSteps,
@@ -31,6 +32,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
         <RecipeStoreProvider initialState={recipe}>
           <RecipeLayout>
             <RecipeIngredientsOverview className="my-5" />
+            <RecipeDurations />
             <RecipeSteps />
             <NutritionalFacts className="my-28" />
           </RecipeLayout>

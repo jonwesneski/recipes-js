@@ -1,11 +1,11 @@
-export const timeInHourAndMinutes = (
-  preparationTimeInMinutes: number | null,
-  cookingTimeInMinutes: number | null,
-) => {
-  if (preparationTimeInMinutes === null || cookingTimeInMinutes === null) {
+export const timeInHourAndMinutes = (...timesInMinutes: (number | null)[]) => {
+  if (timesInMinutes.some((time) => time === null)) {
     return null;
   }
-  const totalMinutes = preparationTimeInMinutes + cookingTimeInMinutes;
+  const totalMinutes = (timesInMinutes as number[]).reduce(
+    (sum, current) => sum + current,
+    0,
+  );
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   if (hours > 0 && minutes > 0) {

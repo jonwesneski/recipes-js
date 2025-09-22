@@ -445,6 +445,7 @@ export const createRecipeStore = (
             isValid,
             errors,
             imageSrc,
+            scaleFactor,
             ...recipe
           } = get();
           /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */

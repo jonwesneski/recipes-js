@@ -13,6 +13,11 @@
       "sizes": "any"
     },
     {
+      "src": "clockIcon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
       "src": "Google__G__logo.svg",
       "type": "image/svg+xml",
       "sizes": "any"
