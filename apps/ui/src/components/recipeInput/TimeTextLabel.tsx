@@ -64,7 +64,7 @@ export const TimeTextLabel = (_props: TimeTextLabelProps) => {
         type="text"
         inputMode="numeric"
         pattern="[0-9]{2}:[0-9]{2}"
-        className="border-0 border-b focus:outline-none focus:border-gray-400 w-13"
+        className="border-b focus:outline-none focus:border-gray-400 w-13"
         placeholder={placeholder}
         onInput={handleOnInput}
         value={time}

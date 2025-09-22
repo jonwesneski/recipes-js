@@ -35,6 +35,7 @@ export const TextLabel = (props: TextLabelProps) => {
         value={props.value}
       />
       <Label
+        htmlFor={props.name}
         text={props.placeholderLabel}
         className={mergeCss(
           'absolute left-3 top-2 transition-all cursor-text text-text/35',
