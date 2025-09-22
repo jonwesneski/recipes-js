@@ -84,3 +84,16 @@
     color: var(--color-muted);
   }
 }
+
+/* This all of the sudden stopped working so defining in css: 'shadow-[4px_4px_theme(colors.background),4px_4px_0px_1px_theme(colors.text)]' */
+.custom-shadow-default {
+  box-shadow:
+    4px 4px 0px var(--background),
+    4px 4px 0px 1px var(--text);
+}
+
+.custom-shadow-opposite {
+  box-shadow:
+    4px 4px 0px var(--text),
+    4px 4px 0px 1px var(--background);
+}

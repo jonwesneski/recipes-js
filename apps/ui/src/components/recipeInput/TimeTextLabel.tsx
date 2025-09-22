@@ -1,4 +1,4 @@
-import { Label } from '@repo/design-system'
+import { TextLabel } from '@repo/design-system'
 import {
   useRef,
   useState,
@@ -12,7 +12,6 @@ export type TimeTextLabelProps = Omit<
 > & { label: string; onChange: (_value: string) => void }
 export const TimeTextLabel = (_props: TimeTextLabelProps) => {
   const { onChange, ...props } = _props
-  const placeholder = '00:00'
   const [time, setTime] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -56,25 +55,22 @@ export const TimeTextLabel = (_props: TimeTextLabelProps) => {
   }
 
   return (
-    <div className="flex gap-2">
-      <input
-        {...props}
-        ref={inputRef}
-        id={props.name}
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]{2}:[0-9]{2}"
-        className="border-0 border-b focus:outline-none focus:border-gray-400 w-13"
-        placeholder={placeholder}
-        onInput={handleOnInput}
-        value={time}
-        dir="rtl"
-        style={{ flexShrink: 5, flexBasis: '15px' }}
-        data-testid="time-input"
-      />
-      <Label className="font-bold" text={props.label} htmlFor={props.id} />
-
-      <div className="flex grow-20 w-20" />
-    </div>
+    <TextLabel
+      {...props}
+      ref={inputRef}
+      name={props.label}
+      inputMode="numeric"
+      pattern="[0-9]{2}:[0-9]{2}"
+      className="w-28"
+      label={props.label}
+      placeholder={'00:00'}
+      isRequired={false}
+      onInput={handleOnInput}
+      value={time}
+      dir="rtl"
+      variant="none"
+      style={{ flexShrink: 5, flexBasis: '15px' }}
+      data-testid="time-input"
+    />
   )
 }

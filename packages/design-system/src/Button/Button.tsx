@@ -19,12 +19,10 @@ export const Button = ({
         {
           'bg-(--text)': variant === 'default',
           'text-(--background)': variant === 'default',
-          'shadow-[4px_4px_theme(colors.background),4px_4px_0px_1px_theme(colors.text)]':
-            variant === 'default',
+          'custom-shadow-default': variant === 'default',
           'bg-(--background)': variant === 'opposite',
           'text-(--text)': variant === 'opposite',
-          'shadow-[4px_4px_theme(colors.text),4px_4px_0px_1px_theme(colors.background)]':
-            variant === 'opposite',
+          'custom-shadow-opposite': variant === 'opposite',
         },
         props.className,
       )}

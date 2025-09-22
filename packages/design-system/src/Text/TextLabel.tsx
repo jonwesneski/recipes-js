@@ -1,34 +1,69 @@
-import { UnderLabel } from '../Label'
+'use client'
+
+import { useRef, useState } from 'react'
+import { Label } from '../Label'
+import { mergeCss } from '../utils'
 import { Text, type TextProps } from './Text'
 
-interface TextLabelProps {
+export type TextLabelProps = TextProps & {
   name: string
-  placeholder: string
   label: string
   isRequired: boolean
-  ref?: React.Ref<HTMLInputElement>
-  variant?: TextProps['variant']
   error?: string
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
-export const TextLabel = (props: TextLabelProps) => {
+export const TextLabel = ({
+  name,
+  label,
+  isRequired,
+  error,
+  ...props
+}: TextLabelProps) => {
+  const localRef = useRef<HTMLInputElement>(null)
+  const ref = props.ref ?? localRef
+  const [isFocused, setIsFocused] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+
   return (
-    <UnderLabel
-      text={props.label}
-      isRequired={props.isRequired}
-      error={props.error}
-      htmlFor={props.name}
-    >
+    <div className="relative">
+      {isRequired ? (
+        <span className="absolute -left-3 text-red-900">*</span>
+      ) : null}
       <Text
-        ref={props.ref}
-        id={props.name}
-        name={props.name}
-        data-error-for={props.name}
-        placeholder={props.placeholder}
-        variant={props.variant}
-        className="border-b-0"
+        {...props}
+        ref={ref}
+        id={name}
+        name={name}
+        placeholder={isFocused && !props.value ? props.placeholder : undefined}
+        data-error-for={name}
         onChange={props.onChange}
+        onInput={props.onInput}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        className={mergeCss(
+          {
+            'scale-110': isHovered,
+            'border-red-900': error,
+          },
+          props.className,
+        )}
       />
-    </UnderLabel>
+      <Label
+        htmlFor={name}
+        text={label}
+        className={mergeCss(
+          'absolute left-3 top-2 transition-all cursor-text text-text/35',
+          {
+            'text-xs top-0': isFocused || props.value,
+          },
+        )}
+        onClick={() => {
+          setIsFocused(true)
+          ref.current?.focus()
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      />
+      <Label htmlFor={name} text={error ?? ''} className="text-red-900 block" />
+    </div>
   )
 }

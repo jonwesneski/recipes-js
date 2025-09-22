@@ -12,7 +12,9 @@ export const RecipeInput = () => {
   const divRef = useRef<HTMLDivElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
   const {
+    name,
     setName,
+    description,
     setDescription,
     setCookingTimeInMinutes,
     setPreparationTimeInMinutes,
@@ -77,8 +79,8 @@ export const RecipeInput = () => {
       <TextLabel
         ref={nameRef}
         name="name"
+        value={name}
         error={errors.name}
-        placeholder="Recipe name"
         label="recipe name"
         isRequired
         onChange={handleOnNameChange}
@@ -86,13 +88,13 @@ export const RecipeInput = () => {
 
       <TextLabel
         name="description"
-        placeholder="Short description"
-        label="description"
+        value={description ?? ''}
+        label="short description"
         isRequired={false}
         onChange={handleOnDescriptionChange}
       />
 
-      <div className="flex">
+      <div className="flex gap-7">
         <TimeTextLabel
           name="prep-time"
           label="prep time"

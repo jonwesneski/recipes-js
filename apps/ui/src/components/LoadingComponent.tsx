@@ -2,7 +2,7 @@
 
 import { useHealthCheckControllerStatus } from '@repo/codegen/healthCheck'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const CenterDiv = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col items-center justify-center w-full h-screen">
@@ -15,18 +15,26 @@ const Loading = ({ children }: { children: React.ReactNode }) => {
   const skipApiCall = pathname === '/redirect'
 
   const { isFetching, error, isSuccess } = useHealthCheckControllerStatus({
-    query: { enabled: !skipApiCall },
+    query: {
+      enabled: !skipApiCall,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+    },
   })
-  let timer: ReturnType<typeof setTimeout>
+
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [assumeServerIsProvisioning, setAssumeServerIsProvisioning] =
     useState(false)
 
   useEffect(() => {
-    timer = setTimeout(() => {
+    timerRef.current = setTimeout(() => {
       setAssumeServerIsProvisioning(true)
     }, 8000)
-    return () => clearTimeout(timer)
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
   }, [])
 
   useEffect(() => {
@@ -39,7 +47,7 @@ const Loading = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      clearTimeout(timer)
+      if (timerRef.current) clearTimeout(timerRef.current)
       setAssumeServerIsProvisioning(false)
     }
   }, [isSuccess])
