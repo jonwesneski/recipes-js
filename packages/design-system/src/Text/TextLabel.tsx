@@ -5,17 +5,19 @@ import { Label } from '../Label'
 import { mergeCss } from '../utils'
 import { Text, type TextProps } from './Text'
 
-interface TextLabelProps {
+export type TextLabelProps = TextProps & {
   name: string
-  placeholderLabel: string
-  value?: string
+  label: string
   isRequired: boolean
-  ref?: React.RefObject<HTMLInputElement | null>
-  variant?: TextProps['variant']
   error?: string
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
-export const TextLabel = (props: TextLabelProps) => {
+export const TextLabel = ({
+  name,
+  label,
+  isRequired,
+  error,
+  ...props
+}: TextLabelProps) => {
   const localRef = useRef<HTMLInputElement>(null)
   const ref = props.ref ?? localRef
   const [isFocused, setIsFocused] = useState(false)
@@ -23,30 +25,36 @@ export const TextLabel = (props: TextLabelProps) => {
 
   return (
     <div className="relative">
-      {props.isRequired ? (
+      {isRequired ? (
         <span className="absolute -left-3 text-red-900">*</span>
       ) : null}
       <Text
+        {...props}
         ref={ref}
-        id={props.name}
-        name={props.name}
-        data-error-for={props.name}
-        variant={props.variant}
+        id={name}
+        name={name}
+        placeholder={isFocused && !props.value ? props.placeholder : undefined}
+        data-error-for={name}
         onChange={props.onChange}
+        onInput={props.onInput}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className={mergeCss({
-          'scale-110': isHovered,
-          'border-red-900': props.error,
-        })}
-        value={props.value}
+        className={mergeCss(
+          {
+            'scale-110': isHovered,
+            'border-red-900': error,
+          },
+          props.className,
+        )}
       />
       <Label
-        htmlFor={props.name}
-        text={props.placeholderLabel}
+        htmlFor={name}
+        text={label}
         className={mergeCss(
           'absolute left-3 top-2 transition-all cursor-text text-text/35',
-          { 'text-xs top-0': isFocused || props.value },
+          {
+            'text-xs top-0': isFocused || props.value,
+          },
         )}
         onClick={() => {
           setIsFocused(true)
@@ -55,17 +63,7 @@ export const TextLabel = (props: TextLabelProps) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       />
-      <Label
-        htmlFor={props.name}
-        text={props.error ?? ''}
-        className="text-red-900 block"
-        onClick={() => {
-          setIsFocused(true)
-          ref.current?.focus()
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      />
+      <Label htmlFor={name} text={error ?? ''} className="text-red-900 block" />
     </div>
   )
 }

@@ -23,7 +23,7 @@ describe('IngredientList', () => {
   ] as IngredientEntity[]
   it('Lists created', async () => {
     const { findByText } = renderRecipeComponent(
-      <IngredientList ingredients={sampleIngredients} />,
+      <IngredientList scaleFactor={1} ingredients={sampleIngredients} />,
     )
     await findByText(sampleIngredients[0].name)
     await findByText(sampleIngredients[1].name)

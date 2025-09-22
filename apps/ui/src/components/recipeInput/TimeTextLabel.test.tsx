@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { act, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { TimeTextLabel } from './TimeTextLabel'
 
@@ -14,7 +14,18 @@ describe('TimeTextLabel', () => {
       <TimeTextLabel label="some time" onChange={onChangeMock} />,
     )
     const input = await findByTestId('time-input')
-    expect(input.getAttribute('placeholder')).toBe('00:00')
+
+    act(() => {
+      input.focus()
+      input.click()
+    })
+
+    await waitFor(
+      () => {
+        expect(input.getAttribute('placeholder')).toBe('00:00')
+      },
+      { timeout: 3000 },
+    )
     expect(input).toHaveValue('')
   })
 

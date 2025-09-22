@@ -3,8 +3,11 @@ import { mergeCss } from '../utils'
 
 export type TextProps = Omit<
   DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-  'style' | 'type'
-> & { variant?: 'ellipses' | 'none' }
+  'type'
+> & {
+  variant?: 'ellipses' | 'none'
+  ref?: React.RefObject<HTMLInputElement | null>
+}
 export const Text = ({ variant, ...props }: TextProps) => {
   const placeHolder =
     (variant === undefined || variant === 'ellipses') && props.placeholder

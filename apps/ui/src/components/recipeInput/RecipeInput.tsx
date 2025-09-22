@@ -81,7 +81,7 @@ export const RecipeInput = () => {
         name="name"
         value={name}
         error={errors.name}
-        placeholderLabel="recipe name"
+        label="recipe name"
         isRequired
         onChange={handleOnNameChange}
       />
@@ -89,12 +89,12 @@ export const RecipeInput = () => {
       <TextLabel
         name="description"
         value={description ?? ''}
-        placeholderLabel="short description"
+        label="short description"
         isRequired={false}
         onChange={handleOnDescriptionChange}
       />
 
-      <div className="flex">
+      <div className="flex gap-7">
         <TimeTextLabel
           name="prep-time"
           label="prep time"
