@@ -41,7 +41,7 @@ export const TextLabel = ({
         onBlur={() => setIsFocused(false)}
         className={mergeCss(
           {
-            'scale-110': isHovered,
+            'scale-110': isHovered || isFocused,
             'border-red-900': error,
           },
           props.className,
@@ -53,7 +53,7 @@ export const TextLabel = ({
         className={mergeCss(
           'absolute left-3 top-2 transition-all cursor-text text-text/35',
           {
-            'text-xs top-0': isFocused || props.value,
+            'text-xs top-0 text-text': isFocused || props.value,
           },
         )}
         onClick={() => {
