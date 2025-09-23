@@ -15,7 +15,7 @@ type UniqueIngredientsType = Record<
   string,
   {
     amount: number
-    unit: string
+    unit: string | null
   }
 >
 

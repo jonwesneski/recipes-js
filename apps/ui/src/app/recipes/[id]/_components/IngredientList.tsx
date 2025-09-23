@@ -28,7 +28,7 @@ const IngredientList = (props: IngredientListProps) => {
     ingredient: IngredientParams,
   ) => {
     e.preventDefault()
-    if (ingredient.unit !== 'whole' && ingredient.unit !== 'pinches') {
+    if (ingredient.unit !== null) {
       showModal(
         ModalMeasurementConversions.name,
         () => (
@@ -60,16 +60,18 @@ const IngredientList = (props: IngredientListProps) => {
                   )
                 : roundToDecimal(amount * props.scaleFactor, 2)}
             </span>{' '}
-            {/*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/}
-            <a
-              href="#"
-              className={
-                'inline-block underline decoration-dotted underline-offset-4'
-              }
-              onClick={(e) => handleOnShowConversions(e, ingredient)}
-            >
-              {unit}
-            </a>{' '}
+            {unit ? (
+              /*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/
+              <a
+                href="#"
+                className={
+                  'inline-block underline decoration-dotted underline-offset-4'
+                }
+                onClick={(e) => handleOnShowConversions(e, ingredient)}
+              >
+                {unit}
+              </a>
+            ) : null}
             {ingredient.name}
           </li>
         )

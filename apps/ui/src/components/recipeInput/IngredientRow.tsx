@@ -1,7 +1,7 @@
 'use client'
 
-import type { IngredientEntityUnit } from '@repo/codegen/model'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
+import { type AllMeasurements } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { useEffect, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
@@ -161,7 +161,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     setIsPopupVisible(true)
   }
 
-  function handleMeasurementClick(value: IngredientEntityUnit): void {
+  function handleMeasurementClick(value: AllMeasurements): void {
     const text = props.ref.current?.textContent
     if (!text) {
       return

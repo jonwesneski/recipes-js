@@ -1,13 +1,15 @@
 'use client'
 
-import { type IngredientEntityUnit } from '@repo/codegen/model'
-import { measurementUnitsAbbreviated } from '@src/utils/measurements'
+import {
+  type AllMeasurements,
+  measurementUnitsAbbreviated,
+} from '@src/utils/measurements'
 import { useEffect, useRef } from 'react'
 
 interface IngredientsMeasurementPopUpProps {
   top: number
   left: number
-  onClick: (_value: IngredientEntityUnit) => void
+  onClick: (_value: AllMeasurements) => void
   onBlur: () => void
 }
 export const IngredientsMeasurementPopUp = (
@@ -48,14 +50,14 @@ export const IngredientsMeasurementPopUp = (
               className="border px-1 bg-text text-background hover:underline"
               role="button"
               tabIndex={0}
-              onClick={() => props.onClick(m as IngredientEntityUnit)}
+              onClick={() => props.onClick(m as AllMeasurements)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
-                  props.onClick(m as IngredientEntityUnit)
+                  props.onClick(m as AllMeasurements)
                 }
               }}
             >
-              {measurementUnitsAbbreviated[m as IngredientEntityUnit]}
+              {measurementUnitsAbbreviated[m as AllMeasurements]}
             </div>
           )
         })}
