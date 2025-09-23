@@ -4,6 +4,9 @@
   - The values [whole,pinches] on the enum `MeasurementUnit` will be removed. If these variants are still used in the database, this will fail.
 
 */
+-- AlterTable
+ALTER TABLE "public"."ingredients" ALTER COLUMN "unit" DROP NOT NULL;
+
 UPDATE "public"."nutritional_facts" SET "servingUnit" = NULL WHERE "servingUnit" = 'whole';
 UPDATE "public"."nutritional_facts" SET "servingUnit" = NULL WHERE "servingUnit" = 'pinches';
 
@@ -20,5 +23,4 @@ ALTER TYPE "public"."MeasurementUnit_new" RENAME TO "MeasurementUnit";
 DROP TYPE "public"."MeasurementUnit_old";
 COMMIT;
 
--- AlterTable
-ALTER TABLE "public"."ingredients" ALTER COLUMN "unit" DROP NOT NULL;
+
