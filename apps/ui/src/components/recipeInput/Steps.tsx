@@ -61,6 +61,7 @@ export const Steps = (props: IStepsProps) => {
 
   return (
     <div className={props.className}>
+      <h1 className="text-3xl font-bold mb-10">Steps</h1>
       {steps.map((s, index) => {
         return (
           <div key={s.keyId} data-testid="step-row" className="mb-5">

@@ -75,11 +75,11 @@ export const RecipeInput = () => {
   }
 
   return (
-    <div ref={divRef} className="flex flex-col gap-10 px-6 pt-10">
+    <div ref={divRef} className="flex flex-col gap-10 pt-10">
       <TextLabel
         className="w-5/6 md:max-w-3xl"
         ref={nameRef}
-        name="name"
+        name="recipe-name"
         value={name}
         error={errors.name}
         label="recipe name"
