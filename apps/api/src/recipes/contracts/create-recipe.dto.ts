@@ -166,8 +166,9 @@ export class CreateIngredientDto
   @ApiProperty({ type: Number })
   amount: number;
   @IsEnum(MeasurementUnit)
+  @IsNullable()
   @ApiProperty({ enum: MeasurementUnit, nullable: true })
-  unit: MeasurementUnit;
+  unit: MeasurementUnit | null;
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ type: String })

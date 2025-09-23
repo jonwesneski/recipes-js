@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
+import { IsNullable } from '@src/common/custom.class-validators';
 import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
 import { Type } from 'class-transformer';
 import {
@@ -30,8 +31,9 @@ export class PatchIngredientDto
   @ApiProperty({ type: Number })
   amount: number;
   @IsEnum(MeasurementUnit)
+  @IsNullable()
   @ApiProperty({ enum: MeasurementUnit, nullable: true })
-  unit: MeasurementUnit;
+  unit: MeasurementUnit | null;
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ type: String })
