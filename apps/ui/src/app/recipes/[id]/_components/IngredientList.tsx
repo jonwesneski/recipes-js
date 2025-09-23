@@ -4,11 +4,10 @@ import type { IngredientEntity } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
+  type AllMeasurements,
   determineAmountUnit,
   numberToFraction,
   roundToDecimal,
-  type VolumeUnit,
-  type WeightUnit,
 } from '@src/utils/measurements'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
 
@@ -28,12 +27,13 @@ const IngredientList = (props: IngredientListProps) => {
     ingredient: IngredientParams,
   ) => {
     e.preventDefault()
-    if (ingredient.unit !== 'whole' && ingredient.unit !== 'pinches') {
+    if (ingredient.unit !== null) {
       showModal(
         ModalMeasurementConversions.name,
         () => (
           <ModalMeasurementConversions
-            unitType={ingredient.unit as VolumeUnit | WeightUnit}
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it is not null
+            unitType={ingredient.unit! as AllMeasurements}
             amount={roundToDecimal(ingredient.amount * props.scaleFactor, 2)}
             name={ingredient.name}
           />
@@ -60,16 +60,18 @@ const IngredientList = (props: IngredientListProps) => {
                   )
                 : roundToDecimal(amount * props.scaleFactor, 2)}
             </span>{' '}
-            {/*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/}
-            <a
-              href="#"
-              className={
-                'inline-block underline decoration-dotted underline-offset-4'
-              }
-              onClick={(e) => handleOnShowConversions(e, ingredient)}
-            >
-              {unit}
-            </a>{' '}
+            {unit ? (
+              /*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/
+              <a
+                href="#"
+                className={
+                  'inline-block underline decoration-dotted underline-offset-4'
+                }
+                onClick={(e) => handleOnShowConversions(e, ingredient)}
+              >
+                {unit}
+              </a>
+            ) : null}
             {ingredient.name}
           </li>
         )

@@ -37,7 +37,7 @@
           {
             "name": "Eggs",
             "amount": 5,
-            "unit": "whole"
+            "unit": null
           },
           {
             "name": "Sugar",

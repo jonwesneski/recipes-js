@@ -3,7 +3,8 @@ import {
   ingredientRowArraySchema,
   ingredientsListSchema,
 } from '@src/zod-schemas';
-import { type ZodError } from 'zod/v4';
+import { type ZodError, z } from 'zod/v4';
+import { type $ZodFlattenedError } from 'zod/v4/core';
 
 export class IngredientsValidator {
   public stringValue: string;
@@ -30,7 +31,7 @@ export class IngredientsValidator {
 
 export class IngredientValidator {
   public stringValue: string;
-  public error?: ZodError<CreateIngredientDto>;
+  public error?: $ZodFlattenedError<CreateIngredientDto>;
   public dto: CreateIngredientDto;
   constructor(params: { stringValue?: string; dto?: CreateIngredientDto }) {
     if (typeof params.stringValue === 'string') {
@@ -38,7 +39,7 @@ export class IngredientValidator {
       const result = ingredientRowArraySchema.safeParse(
         params.stringValue.trim().split(' '),
       );
-      this.error = result.error;
+      this.error = result.error ? z.flattenError(result.error) : undefined;
       this.dto = result.data ?? ({} as CreateIngredientDto);
     } else if (params.dto) {
       this.dto = params.dto;

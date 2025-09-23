@@ -1,28 +1,24 @@
 import { IngredientEntityUnit, MeasurementFormat } from '@repo/codegen/model';
 import { z } from 'zod/v4';
 
+export type AllMeasurements = NonNullable<IngredientEntityUnit>;
 export const measurementUnits = Object.keys(IngredientEntityUnit);
-export const measurementUnitsAbbreviated: Record<IngredientEntityUnit, string> =
-  {
-    whole: 'whole',
-    pinches: 'pinch',
-    cups: 'cups',
-    tablespoons: 'tbs',
-    teaspoons: 'tsp',
-    ounces: 'oz',
-    pounds: 'lbs',
-    fluidOunces: 'fl oz',
-    pints: 'pt',
-    quarts: 'qt',
-    gallons: 'gal',
-    grams: 'g',
-    kilograms: 'kg',
-    milliliters: 'ml',
-    liters: 'L',
-  };
-export const measurementUnitsSingular: Record<IngredientEntityUnit, string> = {
-  whole: 'whole',
-  pinches: 'pinch',
+export const measurementUnitsAbbreviated: Record<AllMeasurements, string> = {
+  cups: 'cups',
+  tablespoons: 'tbs',
+  teaspoons: 'tsp',
+  ounces: 'oz',
+  pounds: 'lbs',
+  fluidOunces: 'fl oz',
+  pints: 'pt',
+  quarts: 'qt',
+  gallons: 'gal',
+  grams: 'g',
+  kilograms: 'kg',
+  milliliters: 'ml',
+  liters: 'L',
+};
+export const measurementUnitsSingular: Record<AllMeasurements, string> = {
   cups: 'cup',
   tablespoons: 'tablespoon',
   teaspoons: 'teaspoon',
@@ -122,7 +118,7 @@ export const isMetric = (unit: string) => {
   return metricUnitSchema.safeParse(unit).success;
 };
 
-export const getConversions = (amount: number, from: IngredientEntityUnit) => {
+export const getConversions = (amount: number, from: AllMeasurements) => {
   if (isWeight(from)) {
     return {
       type: 'Weight',
@@ -268,6 +264,10 @@ export const determineAmountUnit = (
   unit: IngredientEntityUnit,
   convertTo: MeasurementFormat,
 ) => {
+  if (!unit) {
+    return { amount, unit };
+  }
+
   const _isMetric = isMetric(unit);
   if (convertTo === MeasurementFormat.imperial && _isMetric) {
     // Get the amount that is closest to 1 in imperial units

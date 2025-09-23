@@ -17,6 +17,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params)
 
   const { isSuccess, data } = useRecipesControllerRecipeV1(id, {
+    query: { refetchOnWindowFocus: false },
     request: { params: { byOwner: false } },
   })
 

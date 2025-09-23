@@ -181,7 +181,7 @@ describe('RecipesController (e2e)', () => {
                     amount:
                       'amount must not be less than 0, amount must be a number conforming to the specified constraints',
                     name: 'name must be a string',
-                    unit: 'unit must be one of the following values: whole, pinches, cups, fluidOunces, tablespoons, teaspoons, pints, quarts, gallons, pounds, ounces, liters, milliliters, kilograms, grams',
+                    unit: 'unit must be one of the following values: cups, fluidOunces, tablespoons, teaspoons, pints, quarts, gallons, pounds, ounces, liters, milliliters, kilograms, grams',
                   },
                 },
                 instruction: 'instruction must be a string',

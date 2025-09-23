@@ -1,7 +1,7 @@
 'use client'
 
-import type { IngredientEntityUnit } from '@repo/codegen/model'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
+import { type AllMeasurements } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { useEffect, useState } from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
@@ -139,9 +139,12 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     if (props.ref.current) {
       const rect = props.ref.current.getBoundingClientRect()
       const position = getCaretPosition(props.ref.current)
-      // has unit error and is caret in measurement-unit column
+      // Amount is okay and has unit error and caret is in measurement-unit column
+      const fieldErrors = ingredientValidator.error?.fieldErrors
       if (
-        ingredientValidator.error?.issues[0].message.includes('unit') &&
+        fieldErrors &&
+        fieldErrors.amount === undefined &&
+        fieldErrors.unit?.[0] &&
         position.column === 1
       ) {
         _handleMeasurementPopUp(position, rect)
@@ -161,7 +164,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     setIsPopupVisible(true)
   }
 
-  function handleMeasurementClick(value: IngredientEntityUnit): void {
+  function handleMeasurementClick(value: AllMeasurements): void {
     const text = props.ref.current?.textContent
     if (!text) {
       return
