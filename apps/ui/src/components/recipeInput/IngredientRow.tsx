@@ -139,9 +139,12 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     if (props.ref.current) {
       const rect = props.ref.current.getBoundingClientRect()
       const position = getCaretPosition(props.ref.current)
-      // has unit error and is caret in measurement-unit column
+      // Amount is okay and has unit error and caret is in measurement-unit column
+      const fieldErrors = ingredientValidator.error?.fieldErrors
       if (
-        ingredientValidator.error?.issues[0].message.includes('unit') &&
+        fieldErrors &&
+        fieldErrors.amount === undefined &&
+        fieldErrors.unit?.[0] &&
         position.column === 1
       ) {
         _handleMeasurementPopUp(position, rect)

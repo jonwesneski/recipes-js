@@ -109,7 +109,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       ref={textAreaRef}
       data-testid="ingredients-text-area"
       className={mergeCss(
-        'focus-within:bg-input-focus-background min-h-32 shadow-[-4px_-4px] border p-2',
+        'focus-within:bg-input-focus-background min-h-32 shadow-[-4px_-4px] border p-2 cursor-text',
         props.className,
       )}
       role="textbox"
@@ -123,7 +123,10 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
           ref={item.ref}
           placeholder={placeholderSplit[i]}
           value={item.ingredient.stringValue}
-          error={item.ingredient.error?.issues[0].message}
+          error={
+            item.ingredient.error?.fieldErrors.amount?.[0] ??
+            item.ingredient.error?.fieldErrors.name?.[0]
+          }
           focusOnMount={item.shouldBeFocused}
           onChange={handleChange}
           onPaste={handleOnPaste}

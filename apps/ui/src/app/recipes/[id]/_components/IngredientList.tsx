@@ -4,11 +4,10 @@ import type { IngredientEntity } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
+  type AllMeasurements,
   determineAmountUnit,
   numberToFraction,
   roundToDecimal,
-  type VolumeUnit,
-  type WeightUnit,
 } from '@src/utils/measurements'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
 
@@ -33,7 +32,8 @@ const IngredientList = (props: IngredientListProps) => {
         ModalMeasurementConversions.name,
         () => (
           <ModalMeasurementConversions
-            unitType={ingredient.unit as VolumeUnit | WeightUnit}
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it is not null
+            unitType={ingredient.unit! as AllMeasurements}
             amount={roundToDecimal(ingredient.amount * props.scaleFactor, 2)}
             name={ingredient.name}
           />

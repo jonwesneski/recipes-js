@@ -30,11 +30,10 @@ export const ingredientRowArraySchema = z
       possibleNumber > 10000
     ) {
       context.issues.push({
-        code: 'invalid_value',
-        values: [possibleFraction, possibleNumber],
+        code: 'custom',
         message: `amount should be whole, decimal, or fraction`,
-        expected: 'number',
-        input: [possibleFraction, possibleNumber].join(' '),
+        input: possibleFraction,
+        path: ['amount'],
       });
     } else {
       amount = possibleNumber.toString();
@@ -47,10 +46,10 @@ export const ingredientRowArraySchema = z
     }
     if (!measurementUnits.includes(unit)) {
       context.issues.push({
-        code: 'invalid_type',
+        code: 'custom',
         message: `unit should be a valid measurement; not: '${unit}'`,
-        expected: 'string',
         input: unit,
+        path: ['unit'],
       });
     }
 
@@ -61,10 +60,10 @@ export const ingredientRowArraySchema = z
     const ingredient = context.value.slice(unitIndex + 1).join(' ');
     if (!upToFiveWordsRegex.test(ingredient)) {
       context.issues.push({
-        code: 'invalid_type',
+        code: 'custom',
         message: `ingredient should be words only; not: '${ingredient}'`,
-        expected: 'string',
-        input: ingredient,
+        input: 'ingredient',
+        path: ['ingredient'],
       });
     }
 
@@ -72,16 +71,13 @@ export const ingredientRowArraySchema = z
       context.value = [amount, unit, ingredient];
     }
   })
-  .transform((arg, ctx) => {
-    if (ctx.issues.length === 0) {
-      const ingredient: CreateIngredientDto = {
-        amount: Number(arg[0]),
-        unit: arg[1] as IngredientEntityUnit,
-        name: arg[2],
-      };
-      return ingredient;
-    }
-    return {} as CreateIngredientDto;
+  .transform((arg) => {
+    const ingredient: CreateIngredientDto = {
+      amount: Number(arg[0]),
+      unit: arg[1] as IngredientEntityUnit,
+      name: arg[2],
+    };
+    return ingredient;
   });
 
 export const ingredientsListSchema = z.array(ingredientRowArraySchema);
