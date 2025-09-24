@@ -28,22 +28,20 @@ export const Steps = (props: IStepsProps) => {
     stepRef: RefObject<HTMLDivElement | null>,
     image: string,
   ) => {
-    try {
-      setStepImage(stepRef, image)
-    } catch (error) {
-      console.log(error)
-    }
+    setStepImage(stepRef, image)
   }
 
   const handleOnUploadClick = (
     stepRef: RefObject<HTMLDivElement | null>,
     image: string,
   ) => {
-    try {
-      setStepImage(stepRef, image)
-    } catch (error) {
-      console.log(error)
-    }
+    setStepImage(stepRef, image)
+  }
+
+  const handleOnRemoveImageClick = (
+    stepRef: RefObject<HTMLDivElement | null>,
+  ) => {
+    setStepImage(stepRef, null)
   }
 
   const handleOnAddClick = () => {
@@ -78,10 +76,13 @@ export const Steps = (props: IStepsProps) => {
             </div>
             <div className="w-8/10 mx-auto mt-3">
               <PhotoInput
+                id={`step-photo-${index}`}
+                base64Src={s.image}
                 label="step photo"
                 isRequired={false}
                 onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
                 onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
+                onRemoveClick={() => handleOnRemoveImageClick(s.ref)}
               />
               {s.image ? (
                 <Image

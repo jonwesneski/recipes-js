@@ -140,7 +140,7 @@ export type RecipeActions = {
   ) => void;
   setStepImage: (
     _ref: RefObject<HTMLDivElement | null>,
-    _image: string,
+    _image: string | null,
   ) => void;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
@@ -424,7 +424,10 @@ export const createRecipeStore = (
             }
             return { steps: [...current, ...inserts] };
           }),
-        setStepImage: (ref: RefObject<HTMLDivElement | null>, image: string) =>
+        setStepImage: (
+          ref: RefObject<HTMLDivElement | null>,
+          image: string | null,
+        ) =>
           set((state) => {
             const index = state.steps.findIndex((s) => s.ref === ref);
             if (index !== -1) {
