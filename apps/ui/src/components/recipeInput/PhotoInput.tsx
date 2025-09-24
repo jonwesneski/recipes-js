@@ -17,7 +17,6 @@ interface PhotoInputProps {
 }
 export const PhotoInput = (props: PhotoInputProps) => {
   const uploadInputRef = useRef<HTMLInputElement>(null)
-  const [isFocused, setIsFocused] = useState(false)
   const [errorText, setErrorText] = useState<string | undefined>()
   const { takePhoto } = useCamera()
 
@@ -73,31 +72,13 @@ export const PhotoInput = (props: PhotoInputProps) => {
   }
 
   return (
-    // <UnderLabel
-    //   text={props.label}
-    //   isRequired={props.isRequired}
-    //   error={errorText}
-    // >
-    // <div className="flex flex-col">
-    //   <div className="self-end flex gap-5 mb-3">
-    //     <TextButton
-    //       text="camera"
-    //       onClick={() => void handleOnCameraClick()}
-    //     />
-    //     <TextButton text="upload" onClick={handleOnUploadClick} />
-    //     <input
-    //       ref={uploadInputRef}
-    //       className="hidden"
-    //       type="file"
-    //       accept="image/jpeg" //, image/png"
-    //       onChange={(event) => void handleOnFileUpload(event)}
-    //     />
-    //   </div>
-    //   </div>
-    // </UnderLabel>
-    <div className="relative w-9/10 h-96 border mx-auto">
-      <div className="flex flex-col justify-end h-full">
-        {props.base64Src ? (
+    <div
+      className={mergeCss('relative w-full h-96 border-2 mx-auto', {
+        'border-red-900': errorText,
+      })}
+    >
+      {props.base64Src ? (
+        <div className="flex flex-col justify-end h-full">
           <Image
             src={props.base64Src}
             className="w-full h-[85%] mx-auto object-contain"
@@ -105,8 +86,12 @@ export const PhotoInput = (props: PhotoInputProps) => {
             height={0}
             alt="main photo of recipe"
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
+      {errorText ? (
+        <p className="absolute left-2 top-12 text-red-900">{errorText}</p>
+      ) : null}
+
       <Label
         htmlFor={props.id}
         text={props.label}
@@ -117,9 +102,17 @@ export const PhotoInput = (props: PhotoInputProps) => {
           },
         )}
       />
-      <div className="absolute right-2 top-4 flex self-end gap-2">
-        <TextButton text="camera" onClick={() => void handleOnCameraClick()} />
-        <TextButton text="upload" onClick={handleOnUploadClick} />
+      <div className="absolute right-2 top-1 flex self-end gap-2">
+        <TextButton
+          className="px-0.5"
+          text="camera"
+          onClick={() => void handleOnCameraClick()}
+        />
+        <TextButton
+          className="px-0.5"
+          text="upload"
+          onClick={handleOnUploadClick}
+        />
         <input
           ref={uploadInputRef}
           className="hidden"
@@ -130,7 +123,7 @@ export const PhotoInput = (props: PhotoInputProps) => {
       </div>
       {props.base64Src ? (
         <TextButton
-          className="absolute right-2 top-14"
+          className="absolute right-2 top-12"
           text="X"
           variant="opposite"
           onClick={() => props.onRemoveClick()}

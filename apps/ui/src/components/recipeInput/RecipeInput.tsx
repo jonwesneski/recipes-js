@@ -122,9 +122,9 @@ export const RecipeInput = () => {
         onRemoveClick={handleOnRemoveClick}
       />
 
-      <hr className="h-1 bg-text border-none" />
+      <hr className="border-t border-dotted mt-8" />
       <Steps className="mb-10" />
-      <hr className="h-1 bg-text border-none" />
+      <hr className="border-t border-dotted" />
     </div>
   )
 }
