@@ -41,7 +41,7 @@ export const TextLabel = ({
         onBlur={() => setIsFocused(false)}
         className={mergeCss(
           {
-            'scale-110': isHovered || isFocused,
+            'transform origin-left scale-x-105 scale-y-110': isHovered,
             'border-red-900': error,
           },
           props.className,

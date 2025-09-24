@@ -2,7 +2,6 @@
 
 import { TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
@@ -74,6 +73,10 @@ export const RecipeInput = () => {
     setImage(image)
   }
 
+  const handleOnRemoveClick = () => {
+    setImage(null)
+  }
+
   return (
     <div ref={divRef} className="flex flex-col gap-10 pt-10">
       <TextLabel
@@ -110,24 +113,18 @@ export const RecipeInput = () => {
       </div>
 
       <PhotoInput
+        id="recipe-photo"
         label="recipe photo"
+        base64Src={base64Image}
         isRequired={false}
         onCameraClick={handleOnCameraClick}
         onUploadClick={handleOnUploadClick}
+        onRemoveClick={handleOnRemoveClick}
       />
 
-      {base64Image ? (
-        <Image
-          src={base64Image}
-          className="w-9/10 h-auto mx-auto"
-          width={0}
-          height={0}
-          alt="taken"
-        />
-      ) : null}
-      <hr className="h-1 bg-text border-none" />
+      <hr className="border-t border-dotted mt-8" />
       <Steps className="mb-10" />
-      <hr className="h-1 bg-text border-none" />
+      <hr className="border-t border-dotted" />
     </div>
   )
 }

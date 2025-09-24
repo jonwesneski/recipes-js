@@ -1,15 +1,19 @@
 'use client'
 
-import { TextButton, UnderLabel } from '@repo/design-system'
+import { Label, mergeCss, TextButton } from '@repo/design-system'
 import { useCamera } from '@src/providers/CameraProvider'
 import { isImageSizeUnderLimit } from '@src/utils/imageChecker'
+import Image from 'next/image'
 import { type ChangeEvent, useRef, useState } from 'react'
 
 interface PhotoInputProps {
+  id: string
   label: string
   isRequired: boolean
+  base64Src: string | null
   onCameraClick: (_value: string) => void
   onUploadClick: (_value: string) => void
+  onRemoveClick: () => void
 }
 export const PhotoInput = (props: PhotoInputProps) => {
   const uploadInputRef = useRef<HTMLInputElement>(null)
@@ -68,27 +72,63 @@ export const PhotoInput = (props: PhotoInputProps) => {
   }
 
   return (
-    <UnderLabel
-      text={props.label}
-      isRequired={props.isRequired}
-      error={errorText}
+    <div
+      className={mergeCss('relative w-full h-96 border-2 mx-auto', {
+        'border-red-900': errorText,
+      })}
     >
-      <div className="flex flex-col">
-        <div className="self-end flex gap-5 mb-3">
-          <TextButton
-            text="camera"
-            onClick={() => void handleOnCameraClick()}
-          />
-          <TextButton text="upload" onClick={handleOnUploadClick} />
-          <input
-            ref={uploadInputRef}
-            className="hidden"
-            type="file"
-            accept="image/jpeg" //, image/png"
-            onChange={(event) => void handleOnFileUpload(event)}
+      {props.base64Src ? (
+        <div className="flex flex-col justify-end h-full">
+          <Image
+            src={props.base64Src}
+            className="w-full h-[85%] mx-auto object-contain"
+            width={0}
+            height={0}
+            alt="main photo of recipe"
           />
         </div>
+      ) : null}
+      {errorText ? (
+        <p className="absolute left-2 top-12 text-red-900">{errorText}</p>
+      ) : null}
+
+      <Label
+        htmlFor={props.id}
+        text={props.label}
+        className={mergeCss(
+          'absolute left-3 top-2 transition-all cursor-text text-text/35',
+          {
+            'text-xs top-0 text-text': props.base64Src,
+          },
+        )}
+      />
+      <div className="absolute right-2 top-1 flex self-end gap-2">
+        <TextButton
+          className="px-0.5"
+          text="camera"
+          onClick={() => void handleOnCameraClick()}
+        />
+        <TextButton
+          className="px-0.5"
+          text="upload"
+          onClick={handleOnUploadClick}
+        />
+        <input
+          ref={uploadInputRef}
+          className="hidden"
+          type="file"
+          accept="image/jpeg" //, image/png"
+          onChange={(event) => void handleOnFileUpload(event)}
+        />
       </div>
-    </UnderLabel>
+      {props.base64Src ? (
+        <TextButton
+          className="absolute right-2 top-12"
+          text="X"
+          variant="opposite"
+          onClick={() => props.onRemoveClick()}
+        />
+      ) : null}
+    </div>
   )
 }

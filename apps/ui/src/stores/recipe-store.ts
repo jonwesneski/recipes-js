@@ -115,7 +115,7 @@ export type RecipeActions = {
   setDescription: (_value: string) => void;
   setPreparationTimeInMinutes: (_value: number) => void;
   setCookingTimeInMinutes: (_value: number) => void;
-  setImage: (_value: string) => void;
+  setImage: (_value: string | null) => void;
   addStep: () => void;
   insertIngredientsSteps: (
     _ref: RefObject<HTMLTextAreaElement | null>,
@@ -140,7 +140,7 @@ export type RecipeActions = {
   ) => void;
   setStepImage: (
     _ref: RefObject<HTMLDivElement | null>,
-    _image: string,
+    _image: string | null,
   ) => void;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
@@ -221,7 +221,7 @@ export const createRecipeStore = (
           set(() => ({ preparationTimeInMinutes })),
         setCookingTimeInMinutes: (cookingTimeInMinutes: number) =>
           set(() => ({ cookingTimeInMinutes })),
-        setImage: (imageSrc: string) => set(() => ({ imageSrc })),
+        setImage: (imageSrc: string | null) => set(() => ({ imageSrc })),
         setSteps: (steps: StepItemType[]) => set(() => ({ steps })),
         addStep: () => {
           set((state) => ({ steps: [...state.steps, createStepItem()] }));
@@ -424,7 +424,10 @@ export const createRecipeStore = (
             }
             return { steps: [...current, ...inserts] };
           }),
-        setStepImage: (ref: RefObject<HTMLDivElement | null>, image: string) =>
+        setStepImage: (
+          ref: RefObject<HTMLDivElement | null>,
+          image: string | null,
+        ) =>
           set((state) => {
             const index = state.steps.findIndex((s) => s.ref === ref);
             if (index !== -1) {
