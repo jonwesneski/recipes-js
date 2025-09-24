@@ -115,7 +115,7 @@ export type RecipeActions = {
   setDescription: (_value: string) => void;
   setPreparationTimeInMinutes: (_value: number) => void;
   setCookingTimeInMinutes: (_value: number) => void;
-  setImage: (_value: string) => void;
+  setImage: (_value: string | null) => void;
   addStep: () => void;
   insertIngredientsSteps: (
     _ref: RefObject<HTMLTextAreaElement | null>,
@@ -221,7 +221,7 @@ export const createRecipeStore = (
           set(() => ({ preparationTimeInMinutes })),
         setCookingTimeInMinutes: (cookingTimeInMinutes: number) =>
           set(() => ({ cookingTimeInMinutes })),
-        setImage: (imageSrc: string) => set(() => ({ imageSrc })),
+        setImage: (imageSrc: string | null) => set(() => ({ imageSrc })),
         setSteps: (steps: StepItemType[]) => set(() => ({ steps })),
         addStep: () => {
           set((state) => ({ steps: [...state.steps, createStepItem()] }));
