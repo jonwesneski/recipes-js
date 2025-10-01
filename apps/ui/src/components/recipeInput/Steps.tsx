@@ -2,7 +2,6 @@
 
 import { TextButton } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import Image from 'next/image'
 import { useEffect, useState, type RefObject } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
@@ -74,7 +73,7 @@ export const Steps = (props: IStepsProps) => {
                 onResize={(height: number) => handleOnResize(s.ref, height)}
               />
             </div>
-            <div className="w-8/10 mx-auto mt-3">
+            <div className="mx-auto mt-3">
               <PhotoInput
                 id={`step-photo-${index}`}
                 base64Src={s.image}
@@ -84,15 +83,6 @@ export const Steps = (props: IStepsProps) => {
                 onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
                 onRemoveClick={() => handleOnRemoveImageClick(s.ref)}
               />
-              {s.image ? (
-                <Image
-                  src={s.image}
-                  className="w-9/10 h-auto mx-auto"
-                  width={0}
-                  height={0}
-                  alt="taken"
-                />
-              ) : null}
             </div>
             {index < steps.length - 1 && <hr className="mt-5" />}
           </div>
