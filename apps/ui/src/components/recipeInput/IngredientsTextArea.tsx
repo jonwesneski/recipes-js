@@ -3,31 +3,30 @@
 import { mergeCss, type ClassValue } from '@repo/design-system'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import { useRef, type RefObject } from 'react'
+import { useRef } from 'react'
 import { IngredientRow, type IngredientRowHandle } from './IngredientRow'
 
 const placeholder = `0.5 cups fresh basil
 1 1/4 cups peanuts
-3 whole eggs
-1 pinch salt`
+3 eggs
+1 ounce salt`
 const placeholderSplit = placeholder.split('\n')
 
 interface IngredientsTextAreaProps {
-  ref?: RefObject<HTMLDivElement | null>
+  keyId: string
   className?: ClassValue
   onResize: (_height: number) => void
 }
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
-  let textAreaRef = useRef<HTMLDivElement>(null)
+  const textAreaRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<Map<string, IngredientRowHandle>>(new Map())
-  textAreaRef = props.ref ?? textAreaRef
   const {
     ingredients,
     addIngredient,
     removeIngredient,
     updateIngredient,
     insertIngredientsSteps,
-  } = useRecipeStepIngredientsStore(textAreaRef)
+  } = useRecipeStepIngredientsStore(props.keyId)
 
   const handleChange = (keyId: string, ingredient: IngredientValidator) => {
     updateIngredient(keyId, ingredient)
@@ -82,14 +81,13 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleFocus = () => {
-    for (const item of ingredients?.items ?? []) {
-      if (document.activeElement === item.ref.current) {
+    for (const item of itemRefs.current.values()) {
+      if (document.activeElement === item.getElement()) {
         return
       }
     }
-    if (ingredients?.items.length) {
-      ingredients.items[ingredients.items.length - 1].ref.current?.focus()
-    }
+    const lastItem = [...itemRefs.current.values()].at(-1)
+    lastItem?.focus()
   }
 
   /* When some pastes in recipes that are already separated by linebreaks

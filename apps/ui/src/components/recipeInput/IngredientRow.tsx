@@ -15,6 +15,7 @@ import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 type PositionType = { row: number; column: number }
 
 export interface IngredientRowHandle {
+  getElement: () => HTMLTextAreaElement | null
   getValue: () => string | undefined
   getSelectionStart: () => number | undefined
   focus: () => void
@@ -72,6 +73,7 @@ export const IngredientRow = forwardRef<
   }, [])
 
   useImperativeHandle(ref, () => ({
+    getElement: () => textareaRef.current,
     getValue: () => textareaRef.current?.value,
     getSelectionStart: () => textareaRef.current?.selectionStart,
     focus: () => textareaRef.current?.focus(),

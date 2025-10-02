@@ -2,7 +2,7 @@
 
 import { TextButton } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import { useEffect, useState, type RefObject } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
@@ -12,35 +12,26 @@ interface IStepsProps {
 }
 export const Steps = (props: IStepsProps) => {
   const { steps, addStep, setStepImage } = useRecipeStore((state) => state)
+  const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const [isNewStep, setIsNewStep] = useState<boolean>(false)
 
-  const handleOnResize = (
-    stepRef: RefObject<HTMLDivElement | null>,
-    height: number,
-  ) => {
-    if (stepRef.current) {
-      stepRef.current.style.height = `${height}px`
+  const handleOnResize = (keyId: string, height: number) => {
+    const stepElement = itemRefs.current.get(keyId)
+    if (stepElement) {
+      stepElement.style.height = `${height}px`
     }
   }
 
-  const handleOnCameraClick = (
-    stepRef: RefObject<HTMLDivElement | null>,
-    image: string,
-  ) => {
-    setStepImage(stepRef, image)
+  const handleOnCameraClick = (keyId: string, image: string) => {
+    setStepImage(keyId, image)
   }
 
-  const handleOnUploadClick = (
-    stepRef: RefObject<HTMLDivElement | null>,
-    image: string,
-  ) => {
-    setStepImage(stepRef, image)
+  const handleOnUploadClick = (keyId: string, image: string) => {
+    setStepImage(keyId, image)
   }
 
-  const handleOnRemoveImageClick = (
-    stepRef: RefObject<HTMLDivElement | null>,
-  ) => {
-    setStepImage(stepRef, null)
+  const handleOnRemoveImageClick = (keyId: string) => {
+    setStepImage(keyId, null)
   }
 
   const handleOnAddClick = () => {
@@ -49,12 +40,12 @@ export const Steps = (props: IStepsProps) => {
   }
 
   useEffect(() => {
-    const newStepRef = steps[steps.length - 1].ref.current
+    const newStepRef = [...itemRefs.current.values()].at(-1)
     if (isNewStep && newStepRef) {
       setIsNewStep(false)
       newStepRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }, [isNewStep, steps.length])
+  }, [isNewStep, itemRefs])
 
   return (
     <div className={props.className}>
@@ -63,14 +54,23 @@ export const Steps = (props: IStepsProps) => {
         return (
           <div key={s.keyId} data-testid="step-row" className="mb-5">
             <h1 className="font-bold">step {index + 1}.</h1>
-            <div ref={s.ref} className="flex flex-col md:flex-row gap-2">
+            <div
+              ref={(element) => {
+                if (element) {
+                  itemRefs.current.set(s.keyId, element)
+                } else {
+                  itemRefs.current.delete(s.keyId)
+                }
+              }}
+              className="flex flex-col md:flex-row gap-2"
+            >
               <IngredientsTextArea
-                ref={s.ingredients.ref}
-                onResize={(height: number) => handleOnResize(s.ref, height)}
+                keyId={s.ingredients.keyId}
+                onResize={(height: number) => handleOnResize(s.keyId, height)}
               />
               <InstructionsTextArea
-                ref={s.instructions.ref}
-                onResize={(height: number) => handleOnResize(s.ref, height)}
+                keyId={s.instructions.keyId}
+                onResize={(height: number) => handleOnResize(s.keyId, height)}
               />
             </div>
             <div className="mx-auto mt-3">
@@ -79,9 +79,9 @@ export const Steps = (props: IStepsProps) => {
                 base64Src={s.image}
                 label="step photo"
                 isRequired={false}
-                onCameraClick={(image) => handleOnCameraClick(s.ref, image)}
-                onUploadClick={(image) => handleOnUploadClick(s.ref, image)}
-                onRemoveClick={() => handleOnRemoveImageClick(s.ref)}
+                onCameraClick={(image) => handleOnCameraClick(s.keyId, image)}
+                onUploadClick={(image) => handleOnUploadClick(s.keyId, image)}
+                onRemoveClick={() => handleOnRemoveImageClick(s.keyId)}
               />
             </div>
             {index < steps.length - 1 && <hr className="mt-5" />}

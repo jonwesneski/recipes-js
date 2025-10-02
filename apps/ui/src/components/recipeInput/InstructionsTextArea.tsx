@@ -2,20 +2,19 @@
 
 import { type ClassValue, mergeCss, TextArea } from '@repo/design-system'
 import { useRecipeStepInstructionsStore } from '@src/providers/recipe-store-provider'
-import { type RefObject, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 const placeholder = `The instructions for this step`
 
 interface InstructionsTextAreaProps {
-  ref?: RefObject<HTMLTextAreaElement | null>
+  keyId: string
   className?: ClassValue
   onResize: (_height: number) => void
 }
 export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
-  let textAreaRef = useRef<HTMLTextAreaElement>(null)
-  textAreaRef = props.ref ?? textAreaRef
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const { instructions, setInstructions, insertInstructionsSteps } =
-    useRecipeStepInstructionsStore(textAreaRef)
+    useRecipeStepInstructionsStore(props.keyId)
 
   useEffect(() => {
     if (textAreaRef.current && instructions?.shouldBeFocused) {
@@ -28,7 +27,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
   }, [])
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInstructions(event.target.value)
+    setInstructions(props.keyId, event.target.value)
   }
 
   /* When some pastes in recipes that are already separated by '\r\n\r\n'
@@ -40,7 +39,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
     const data = stringData.includes('\r')
       ? stringData.split('\r\n\r\n')
       : stringData.split('\n\n')
-    insertInstructionsSteps(data)
+    insertInstructionsSteps(props.keyId, data)
   }
 
   const handleOnResize = (height: number) => {
