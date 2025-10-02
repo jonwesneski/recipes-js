@@ -118,7 +118,7 @@ export type RecipeActions = {
   setImage: (_value: string | null) => void;
   addStep: () => void;
   insertIngredientsSteps: (
-    _ref: RefObject<HTMLTextAreaElement | null>,
+    _keyId: string,
     _ingredients: IngredientValidator[][],
   ) => void;
   scaleIngredient: (_amount: number) => number;
@@ -128,12 +128,9 @@ export type RecipeActions = {
     _instructions: string[],
   ) => void;
   removeStep: (_stepId: string) => void;
-  addIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void;
-  removeIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void;
-  updateIngredient: (
-    _ref: RefObject<HTMLTextAreaElement | null>,
-    _ingredient: IngredientValidator,
-  ) => void;
+  addIngredient: (_keyId: string) => void;
+  removeIngredient: (_keyId: string) => void;
+  updateIngredient: (_keyId: string, _ingredient: IngredientValidator) => void;
   setInstructions: (
     _ref: RefObject<HTMLTextAreaElement | null>,
     _instructions: string,
@@ -235,7 +232,7 @@ export const createRecipeStore = (
             return {};
           });
         },
-        addIngredient: (ref: React.RefObject<HTMLTextAreaElement | null>) => {
+        addIngredient: (keyId: string) => {
           set((state) => {
             for (let s = 0; s < state.steps.length; s++) {
               for (
@@ -243,7 +240,7 @@ export const createRecipeStore = (
                 i < state.steps[s].ingredients.items.length;
                 i++
               ) {
-                if (state.steps[s].ingredients.items[i].ref === ref) {
+                if (state.steps[s].ingredients.items[i].keyId === keyId) {
                   state.steps[s].ingredients.items = [
                     ...state.steps[s].ingredients.items.slice(0, i + 1),
                     new IngredientItemType({ shouldBeFocused: true }),
@@ -256,9 +253,7 @@ export const createRecipeStore = (
             return { state };
           });
         },
-        removeIngredient: (
-          ref: React.RefObject<HTMLTextAreaElement | null>,
-        ) => {
+        removeIngredient: (keyId: string) => {
           set((state) => {
             for (let s = 0; s < state.steps.length; s++) {
               for (
@@ -266,7 +261,7 @@ export const createRecipeStore = (
                 i < state.steps[s].ingredients.items.length;
                 i++
               ) {
-                if (state.steps[s].ingredients.items[i].ref === ref) {
+                if (state.steps[s].ingredients.items[i].keyId === keyId) {
                   if (state.steps[s].ingredients.items.length <= 1) {
                     return { state };
                   }
@@ -282,10 +277,7 @@ export const createRecipeStore = (
             return { state };
           });
         },
-        updateIngredient: (
-          ref: RefObject<HTMLTextAreaElement | null>,
-          ingredient: IngredientValidator,
-        ) =>
+        updateIngredient: (keyId: string, ingredient: IngredientValidator) =>
           set((state) => {
             for (let s = 0; s < state.steps.length; s++) {
               for (
@@ -293,7 +285,7 @@ export const createRecipeStore = (
                 i < state.steps[s].ingredients.items.length;
                 i++
               ) {
-                if (state.steps[s].ingredients.items[i].ref === ref) {
+                if (state.steps[s].ingredients.items[i].keyId === keyId) {
                   state.steps[s].ingredients.items[i].ingredient = ingredient;
                   return { steps: [...state.steps] };
                 }
@@ -302,7 +294,7 @@ export const createRecipeStore = (
             return { state };
           }),
         insertIngredientsSteps: (
-          ref: RefObject<HTMLTextAreaElement | null>,
+          keyId: string,
           ingredients: IngredientValidator[][],
         ) =>
           set((state) => {
@@ -313,7 +305,7 @@ export const createRecipeStore = (
                 i < state.steps[s].ingredients.items.length;
                 i++
               ) {
-                if (state.steps[s].ingredients.items[i].ref === ref) {
+                if (state.steps[s].ingredients.items[i].keyId === keyId) {
                   stepIndex = s;
                   break;
                 }

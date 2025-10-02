@@ -117,17 +117,13 @@ export const useRecipeStepIngredientsStore = (
     // setIngredients: (ingredients: IngredientsValidator) =>
     //   _stepIngredients(ref, ingredients),
     insertIngredientsSteps: (
-      _ref: RefObject<HTMLTextAreaElement | null>,
+      _keyId: string,
       ingredients: IngredientValidator[][],
-    ) => _insertIngredientsSteps(_ref, ingredients),
-    addIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
-      _addIngredient(_ref),
-    removeIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
-      _removeIngredient(_ref),
-    updateIngredient: (
-      _ref: React.RefObject<HTMLTextAreaElement | null>,
-      ingredient: IngredientValidator,
-    ) => _updateIngredient(_ref, ingredient),
+    ) => _insertIngredientsSteps(_keyId, ingredients),
+    addIngredient: (_keyId: string) => _addIngredient(_keyId),
+    removeIngredient: (_keyId: string) => _removeIngredient(_keyId),
+    updateIngredient: (_keyId: string, ingredient: IngredientValidator) =>
+      _updateIngredient(_keyId, ingredient),
   }
 }
 
