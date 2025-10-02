@@ -28,10 +28,7 @@ export const RecipeSteps = (props: IRecipeSteps) => {
         return (
           <div key={s.keyId} className="mb-5">
             <h1 className="font-bold">step {index + 1}:</h1>
-            <div
-              ref={s.ref}
-              className="flex flex-col md:flex-row gap-8 ml-2 mt-2"
-            >
+            <div className="flex flex-col md:flex-row gap-8 ml-2 mt-2">
               <IngredientList
                 className="ml-4"
                 ingredients={s.ingredients.items.map((i) => ({

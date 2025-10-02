@@ -115,6 +115,7 @@ export const PhotoInput = (props: PhotoInputProps) => {
         />
         <input
           ref={uploadInputRef}
+          id={props.id}
           className="hidden"
           type="file"
           accept="image/jpeg" //, image/png"

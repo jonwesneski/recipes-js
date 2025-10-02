@@ -3,40 +3,56 @@
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import { type AllMeasurements } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
-import React, { useEffect, useState } from 'react'
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 type PositionType = { row: number; column: number }
 
+export interface IngredientRowHandle {
+  getElement: () => HTMLTextAreaElement | null
+  getValue: () => string | undefined
+  getSelectionStart: () => number | undefined
+  focus: () => void
+  setSelectionRange: (
+    _start: number | null,
+    _end: number | null,
+    _direction?: 'none' | 'forward' | 'backward',
+  ) => void
+}
+
 interface IngriedientRowProps {
-  ref: React.RefObject<HTMLTextAreaElement | null>
+  keyId: string
   placeholder?: string
   value: string
   error?: string
   focusOnMount: boolean
-  onChange: (
-    _ref: React.RefObject<HTMLTextAreaElement | null>,
-    _value: IngredientValidator,
-  ) => void
-  onPaste: (
-    _ref: React.RefObject<HTMLTextAreaElement | null>,
-    _value: string,
-  ) => void
-  onEnterPressed: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
-  onArrowUp: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
-  onArrowDown: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
-  onRemove: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void
+  onChange: (_keyId: string, _value: IngredientValidator) => void
+  onPaste: (_keyId: string, _value: string) => void
+  onEnterPressed: (_keyId: string) => void
+  onArrowUp: (_keyId: string) => void
+  onArrowDown: (_keyId: string) => void
+  onRemove: (_keyId: string) => void
 }
-export const IngredientRow = (props: IngriedientRowProps) => {
+export const IngredientRow = forwardRef<
+  IngredientRowHandle,
+  IngriedientRowProps
+>((props, ref) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const [isPopupVisible, setIsPopupVisible] = useState(false)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
-    if (props.focusOnMount && props.ref.current) {
-      props.ref.current.selectionStart = props.ref.current.value.length
-      props.ref.current.selectionEnd = props.ref.current.value.length
-      props.ref.current.focus()
+    if (props.focusOnMount && textareaRef.current) {
+      textareaRef.current.selectionStart = textareaRef.current.value.length
+      textareaRef.current.selectionEnd = textareaRef.current.value.length
+      textareaRef.current.focus()
     }
   }, [])
 
@@ -55,6 +71,15 @@ export const IngredientRow = (props: IngriedientRowProps) => {
       mediaQuery.removeEventListener('change', handleMediaQueryChange)
     }
   }, [])
+
+  useImperativeHandle(ref, () => ({
+    getElement: () => textareaRef.current,
+    getValue: () => textareaRef.current?.value,
+    getSelectionStart: () => textareaRef.current?.selectionStart,
+    focus: () => textareaRef.current?.focus(),
+    setSelectionRange: (start, end, direction) =>
+      textareaRef.current?.setSelectionRange(start, end, direction),
+  }))
 
   const getCaretPosition = (element: HTMLTextAreaElement) => {
     const position: { row: number; column: number } = {
@@ -82,20 +107,20 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     switch (event.key) {
       case 'Enter':
         event.preventDefault()
-        props.onEnterPressed(props.ref)
+        props.onEnterPressed(props.keyId)
         break
       case 'Backspace':
         if (event.currentTarget.value === '') {
-          props.onRemove(props.ref)
+          props.onRemove(props.keyId)
         }
         break
       case 'ArrowUp':
         event.preventDefault()
-        props.onArrowUp(props.ref)
+        props.onArrowUp(props.keyId)
         break
       case 'ArrowDown':
         event.preventDefault()
-        props.onArrowDown(props.ref)
+        props.onArrowDown(props.keyId)
         break
       default:
         break
@@ -121,14 +146,14 @@ export const IngredientRow = (props: IngriedientRowProps) => {
     switch (inputType) {
       case 'insertText':
         _handleShowPopUp(ingredientValidator)
-        props.onChange(props.ref, ingredientValidator)
+        props.onChange(props.keyId, ingredientValidator)
         break
       case 'insertFromPaste':
-        props.onPaste(props.ref, event.currentTarget.value)
+        props.onPaste(props.keyId, event.currentTarget.value)
         break
       case 'deleteContentBackward':
         _handleShowPopUp(ingredientValidator)
-        props.onChange(props.ref, ingredientValidator)
+        props.onChange(props.keyId, ingredientValidator)
         break
       default:
         console.log(`Unsupported input type: ${inputType}`)
@@ -136,9 +161,9 @@ export const IngredientRow = (props: IngriedientRowProps) => {
   }
 
   const _handleShowPopUp = (ingredientValidator: IngredientValidator) => {
-    if (props.ref.current) {
-      const rect = props.ref.current.getBoundingClientRect()
-      const position = getCaretPosition(props.ref.current)
+    if (textareaRef.current) {
+      const rect = textareaRef.current.getBoundingClientRect()
+      const position = getCaretPosition(textareaRef.current)
       // Amount is okay and has unit error and caret is in measurement-unit column
       const fieldErrors = ingredientValidator.error?.fieldErrors
       if (
@@ -165,7 +190,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
   }
 
   function handleMeasurementClick(value: AllMeasurements): void {
-    const text = props.ref.current?.textContent
+    const text = textareaRef.current?.textContent
     if (!text) {
       return
     }
@@ -177,7 +202,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
       items[1] = value
     }
     props.onChange(
-      props.ref,
+      props.keyId,
       new IngredientValidator({ stringValue: items.join(' ') }),
     )
     setIsPopupVisible(false)
@@ -192,7 +217,7 @@ export const IngredientRow = (props: IngriedientRowProps) => {
       <textarea
         data-testid="ingredient-row"
         rows={1}
-        ref={props.ref}
+        ref={textareaRef}
         className="block focus:outline-none bg-transparent resize-none"
         name="ingredient-row"
         placeholder={props.placeholder}
@@ -216,4 +241,5 @@ export const IngredientRow = (props: IngriedientRowProps) => {
       ) : null}
     </>
   )
-}
+})
+IngredientRow.displayName = 'IngredientRow'

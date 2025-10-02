@@ -6,26 +6,21 @@ import type {
 } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { roundToDecimal } from '@src/utils/measurements';
-import { createRef, type RefObject } from 'react';
 import { createStore } from 'zustand/vanilla';
 import { applyMiddleware } from './middleware';
 
-export class ItemTypeBase<T> {
+export class ItemTypeBase {
   keyId: string;
-  ref: RefObject<T | null>;
   private _shouldBeFocused: boolean;
 
   constructor({
     keyId = crypto.randomUUID(),
-    ref = createRef<T>(),
     shouldBeFocused = false,
   }: {
     keyId?: string;
-    ref?: RefObject<T | null>;
     shouldBeFocused?: boolean;
   } = {}) {
     this.keyId = keyId;
-    this.ref = ref;
     this._shouldBeFocused = shouldBeFocused;
   }
 
@@ -45,55 +40,49 @@ export class ItemTypeBase<T> {
   }
 }
 
-export class IngredientItemType extends ItemTypeBase<HTMLTextAreaElement> {
+export class IngredientItemType extends ItemTypeBase {
   ingredient: IngredientValidator;
 
   constructor({
     keyId = crypto.randomUUID(),
-    ref = createRef<HTMLTextAreaElement>(),
     shouldBeFocused = false,
     ingredient = new IngredientValidator({
       stringValue: '',
     }),
   }: {
     keyId?: string;
-    ref?: RefObject<HTMLTextAreaElement | null>;
     shouldBeFocused?: boolean;
     ingredient?: IngredientValidator;
   } = {}) {
-    super({ keyId, ref, shouldBeFocused });
+    super({ keyId, shouldBeFocused });
     this.ingredient = ingredient;
   }
 }
 
-export class InstructionsType extends ItemTypeBase<HTMLTextAreaElement> {
+export class InstructionsType extends ItemTypeBase {
   value: string;
 
   constructor({
     keyId = crypto.randomUUID(),
-    ref = createRef<HTMLTextAreaElement>(),
     shouldBeFocused = false,
     value = '',
   }: {
     keyId?: string;
-    ref?: RefObject<HTMLTextAreaElement | null>;
     shouldBeFocused?: boolean;
     value?: string;
   } = {}) {
-    super({ keyId, ref, shouldBeFocused });
+    super({ keyId, shouldBeFocused });
     this.value = value;
   }
 }
 
 export type IngredientItemsType = {
   keyId: string;
-  ref: RefObject<HTMLDivElement | null>;
   items: IngredientItemType[];
 };
 
 export type StepItemType = {
   keyId: string;
-  ref: RefObject<HTMLDivElement | null>;
   ingredients: IngredientItemsType;
   instructions: InstructionsType;
   image: string | null;
@@ -118,30 +107,18 @@ export type RecipeActions = {
   setImage: (_value: string | null) => void;
   addStep: () => void;
   insertIngredientsSteps: (
-    _ref: RefObject<HTMLTextAreaElement | null>,
+    _keyId: string,
     _ingredients: IngredientValidator[][],
   ) => void;
   scaleIngredient: (_amount: number) => number;
   setScaleFactor: (_value: FactorType) => void;
-  insertInstructionsSteps: (
-    _ref: RefObject<HTMLTextAreaElement | null>,
-    _instructions: string[],
-  ) => void;
+  insertInstructionsSteps: (_keyId: string, _instructions: string[]) => void;
   removeStep: (_stepId: string) => void;
-  addIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void;
-  removeIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) => void;
-  updateIngredient: (
-    _ref: RefObject<HTMLTextAreaElement | null>,
-    _ingredient: IngredientValidator,
-  ) => void;
-  setInstructions: (
-    _ref: RefObject<HTMLTextAreaElement | null>,
-    _instructions: string,
-  ) => void;
-  setStepImage: (
-    _ref: RefObject<HTMLDivElement | null>,
-    _image: string | null,
-  ) => void;
+  addIngredient: (_keyId: string) => void;
+  removeIngredient: (_keyId: string) => void;
+  updateIngredient: (_keyId: string, _ingredient: IngredientValidator) => void;
+  setInstructions: (_keyId: string, _instructions: string) => void;
+  setStepImage: (_keyId: string, _image: string | null) => void;
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
@@ -156,7 +133,6 @@ export const createStepItem = (params?: {
 }): StepItemType => {
   return {
     keyId: crypto.randomUUID(),
-    ref: createRef<HTMLDivElement>(),
     ingredients: params?.ingredients ?? createIngredientsItem(),
     instructions: params?.instructions ?? new InstructionsType(),
     image: null,
@@ -168,7 +144,6 @@ export const createIngredientsItem = (
 ): IngredientItemsType => {
   return {
     keyId: crypto.randomUUID(),
-    ref: createRef<HTMLInputElement>(),
     items: items ?? [new IngredientItemType()],
   };
 };
@@ -235,7 +210,7 @@ export const createRecipeStore = (
             return {};
           });
         },
-        addIngredient: (ref: React.RefObject<HTMLTextAreaElement | null>) => {
+        addIngredient: (keyId: string) => {
           set((state) => {
             for (let s = 0; s < state.steps.length; s++) {
               for (
@@ -243,7 +218,7 @@ export const createRecipeStore = (
                 i < state.steps[s].ingredients.items.length;
                 i++
               ) {
-                if (state.steps[s].ingredients.items[i].ref === ref) {
+                if (state.steps[s].ingredients.items[i].keyId === keyId) {
                   state.steps[s].ingredients.items = [
                     ...state.steps[s].ingredients.items.slice(0, i + 1),
                     new IngredientItemType({ shouldBeFocused: true }),
@@ -256,9 +231,7 @@ export const createRecipeStore = (
             return { state };
           });
         },
-        removeIngredient: (
-          ref: React.RefObject<HTMLTextAreaElement | null>,
-        ) => {
+        removeIngredient: (keyId: string) => {
           set((state) => {
             for (let s = 0; s < state.steps.length; s++) {
               for (
@@ -266,7 +239,7 @@ export const createRecipeStore = (
                 i < state.steps[s].ingredients.items.length;
                 i++
               ) {
-                if (state.steps[s].ingredients.items[i].ref === ref) {
+                if (state.steps[s].ingredients.items[i].keyId === keyId) {
                   if (state.steps[s].ingredients.items.length <= 1) {
                     return { state };
                   }
@@ -282,10 +255,7 @@ export const createRecipeStore = (
             return { state };
           });
         },
-        updateIngredient: (
-          ref: RefObject<HTMLTextAreaElement | null>,
-          ingredient: IngredientValidator,
-        ) =>
+        updateIngredient: (keyId: string, ingredient: IngredientValidator) =>
           set((state) => {
             for (let s = 0; s < state.steps.length; s++) {
               for (
@@ -293,7 +263,7 @@ export const createRecipeStore = (
                 i < state.steps[s].ingredients.items.length;
                 i++
               ) {
-                if (state.steps[s].ingredients.items[i].ref === ref) {
+                if (state.steps[s].ingredients.items[i].keyId === keyId) {
                   state.steps[s].ingredients.items[i].ingredient = ingredient;
                   return { steps: [...state.steps] };
                 }
@@ -302,7 +272,7 @@ export const createRecipeStore = (
             return { state };
           }),
         insertIngredientsSteps: (
-          ref: RefObject<HTMLTextAreaElement | null>,
+          keyId: string,
           ingredients: IngredientValidator[][],
         ) =>
           set((state) => {
@@ -313,7 +283,7 @@ export const createRecipeStore = (
                 i < state.steps[s].ingredients.items.length;
                 i++
               ) {
-                if (state.steps[s].ingredients.items[i].ref === ref) {
+                if (state.steps[s].ingredients.items[i].keyId === keyId) {
                   stepIndex = s;
                   break;
                 }
@@ -370,13 +340,10 @@ export const createRecipeStore = (
         scaleIngredient: (amount: number) => {
           return roundToDecimal(amount * get().scaleFactor, 2);
         },
-        setInstructions: (
-          ref: RefObject<HTMLTextAreaElement | null>,
-          instructions: string,
-        ) =>
+        setInstructions: (keyId: string, instructions: string) =>
           set((state) => {
             const index = state.steps.findIndex(
-              (s) => s.instructions.ref === ref,
+              (s) => s.instructions.keyId === keyId,
             );
             if (index !== -1) {
               state.steps[index].instructions = new InstructionsType({
@@ -385,13 +352,10 @@ export const createRecipeStore = (
             }
             return { steps: [...state.steps] };
           }),
-        insertInstructionsSteps: (
-          ref: RefObject<HTMLTextAreaElement | null>,
-          instructions: string[],
-        ) =>
+        insertInstructionsSteps: (keyId: string, instructions: string[]) =>
           set((state) => {
             let index = state.steps.findIndex(
-              (s) => s.instructions.ref === ref,
+              (s) => s.instructions.keyId === keyId,
             );
             const inserts = instructions.map((i) =>
               createStepItem({
@@ -424,12 +388,9 @@ export const createRecipeStore = (
             }
             return { steps: [...current, ...inserts] };
           }),
-        setStepImage: (
-          ref: RefObject<HTMLDivElement | null>,
-          image: string | null,
-        ) =>
+        setStepImage: (keyId: string, image: string | null) =>
           set((state) => {
-            const index = state.steps.findIndex((s) => s.ref === ref);
+            const index = state.steps.findIndex((s) => s.keyId === keyId);
             if (index !== -1) {
               state.steps[index].image = image;
             }

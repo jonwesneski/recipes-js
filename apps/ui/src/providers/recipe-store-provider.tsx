@@ -12,13 +12,7 @@ import {
   defaultInitState,
 } from '@src/stores/recipe-store'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import {
-  type ReactNode,
-  type RefObject,
-  createContext,
-  useContext,
-  useRef,
-} from 'react'
+import { type ReactNode, createContext, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
 
 const transformRecipe = (recipe?: Partial<RecipeEntity>): RecipeState => {
@@ -98,53 +92,32 @@ export const useRecipeStore = <T,>(selector: (_store: RecipeStore) => T): T => {
   return useStore(store, selector)
 }
 
-export const useRecipeStepIngredientsStore = (
-  ref: RefObject<HTMLDivElement | null>,
-) => {
+export const useRecipeStepIngredientsStore = (keyId: string) => {
   const {
     steps,
-    // setIngredients: _stepIngredients,
-    insertIngredientsSteps: _insertIngredientsSteps,
-    addIngredient: _addIngredient,
-    removeIngredient: _removeIngredient,
-    updateIngredient: _updateIngredient,
+    insertIngredientsSteps,
+    addIngredient,
+    removeIngredient,
+    updateIngredient,
   } = useRecipeStore((state) => state)
-  const step = steps.find((s) => s.ingredients.ref === ref)
+  const step = steps.find((s) => s.ingredients.keyId === keyId)
   return {
     ingredients: step?.ingredients,
-    // ingredientsRef: step?.ingredients.ref,
-    // shouldBeFocused: step?.shouldIngredientsBeFocused,
-    // setIngredients: (ingredients: IngredientsValidator) =>
-    //   _stepIngredients(ref, ingredients),
-    insertIngredientsSteps: (
-      _ref: RefObject<HTMLTextAreaElement | null>,
-      ingredients: IngredientValidator[][],
-    ) => _insertIngredientsSteps(_ref, ingredients),
-    addIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
-      _addIngredient(_ref),
-    removeIngredient: (_ref: React.RefObject<HTMLTextAreaElement | null>) =>
-      _removeIngredient(_ref),
-    updateIngredient: (
-      _ref: React.RefObject<HTMLTextAreaElement | null>,
-      ingredient: IngredientValidator,
-    ) => _updateIngredient(_ref, ingredient),
+    insertIngredientsSteps,
+    addIngredient,
+    removeIngredient,
+    updateIngredient,
   }
 }
 
-export const useRecipeStepInstructionsStore = (
-  ref: RefObject<HTMLTextAreaElement | null>,
-) => {
-  const {
-    steps,
-    setInstructions: _stepInstructions,
-    insertInstructionsSteps: _insertInstructionsSteps,
-  } = useRecipeStore((state) => state)
-  const step = steps.find((s) => s.instructions.ref === ref)
+export const useRecipeStepInstructionsStore = (keyId: string) => {
+  const { steps, setInstructions, insertInstructionsSteps } = useRecipeStore(
+    (state) => state,
+  )
+  const step = steps.find((s) => s.instructions.keyId === keyId)
   return {
     instructions: step?.instructions,
-    setInstructions: (instructions: string) =>
-      _stepInstructions(ref, instructions),
-    insertInstructionsSteps: (instructions: string[]) =>
-      _insertInstructionsSteps(ref, instructions),
+    setInstructions,
+    insertInstructionsSteps,
   }
 }
