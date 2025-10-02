@@ -51,9 +51,10 @@ export const Steps = (props: IStepsProps) => {
     <div className={props.className}>
       <h1 className="text-3xl font-bold mb-10">Steps</h1>
       {steps.map((s, index) => {
+        const stepNumber = index + 1
         return (
           <div key={s.keyId} data-testid="step-row" className="mb-5">
-            <h1 className="font-bold">step {index + 1}.</h1>
+            <h1 className="font-bold">step {stepNumber}.</h1>
             <div
               ref={(element) => {
                 if (element) {
@@ -66,10 +67,12 @@ export const Steps = (props: IStepsProps) => {
             >
               <IngredientsTextArea
                 keyId={s.ingredients.keyId}
+                stepNumber={stepNumber}
                 onResize={(height: number) => handleOnResize(s.keyId, height)}
               />
               <InstructionsTextArea
                 keyId={s.instructions.keyId}
+                stepNumber={stepNumber}
                 onResize={(height: number) => handleOnResize(s.keyId, height)}
               />
             </div>

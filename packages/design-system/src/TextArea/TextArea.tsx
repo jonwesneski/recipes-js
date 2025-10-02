@@ -1,17 +1,18 @@
 import type { DetailedHTMLProps, TextareaHTMLAttributes } from 'react'
 import { mergeCss } from '../utils'
 
-type TextAreaProps = Omit<
+export type TextAreaProps = Omit<
   DetailedHTMLProps<
     TextareaHTMLAttributes<HTMLTextAreaElement>,
     HTMLTextAreaElement
   >,
   'style'
 > & {
-  variant?: 'shadowLT' | 'shadowRB'
+  ref?: React.RefObject<HTMLTextAreaElement | null>
+  variant?: 'default' | 'shadowLT' | 'shadowRB'
   onResize?: (_height: number) => void
 }
-export const TextArea = ({ variant = 'shadowLT', ...props }: TextAreaProps) => {
+export const TextArea = ({ variant = 'default', ...props }: TextAreaProps) => {
   const placeHolder = props.placeholder ? `${props.placeholder}...` : undefined
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -22,7 +23,6 @@ export const TextArea = ({ variant = 'shadowLT', ...props }: TextAreaProps) => {
   const handleResize = () => {
     if (
       props.ref &&
-      'current' in props.ref &&
       props.ref.current &&
       props.ref.current.clientHeight < props.ref.current.scrollHeight
     ) {
@@ -39,6 +39,7 @@ export const TextArea = ({ variant = 'shadowLT', ...props }: TextAreaProps) => {
         {
           'shadow-[-4px_-4px]': variant === 'shadowLT',
           'shadow-[4px_4px]': variant === 'shadowRB',
+          'border-2': variant === 'default',
         },
         props.className,
       )}
