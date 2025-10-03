@@ -31,3 +31,15 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+.step-container {
+  display: flex;
+  flex-direction: column; /* default: stacked */
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .step-container {
+    flex-direction: row;
+  }
+}

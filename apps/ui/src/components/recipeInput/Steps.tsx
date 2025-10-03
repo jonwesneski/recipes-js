@@ -63,14 +63,16 @@ export const Steps = (props: IStepsProps) => {
                   itemRefs.current.delete(s.keyId)
                 }
               }}
-              className="flex flex-col md:flex-row gap-2"
+              className="step-container"
             >
               <IngredientsTextArea
+                className="flex-1"
                 keyId={s.ingredients.keyId}
                 stepNumber={stepNumber}
                 onResize={(height: number) => handleOnResize(s.keyId, height)}
               />
               <InstructionsTextArea
+                className="flex-1"
                 keyId={s.instructions.keyId}
                 stepNumber={stepNumber}
                 onResize={(height: number) => handleOnResize(s.keyId, height)}

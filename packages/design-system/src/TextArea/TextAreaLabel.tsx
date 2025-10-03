@@ -24,7 +24,7 @@ export const TextAreaLabel = ({
   const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <div className="relative">
+    <div className="relative flex-1">
       {isRequired ? (
         <span className="absolute -left-3 text-red-900">*</span>
       ) : null}
@@ -53,7 +53,7 @@ export const TextAreaLabel = ({
         className={mergeCss(
           'absolute left-3 top-2 transition-all cursor-text text-text/35',
           {
-            'text-xs -top-1.5 text-text': isFocused || props.value,
+            'text-xs top-0 text-text': isFocused || props.value,
           },
         )}
         onClick={() => {

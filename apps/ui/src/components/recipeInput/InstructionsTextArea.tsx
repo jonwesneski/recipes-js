@@ -52,7 +52,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
   return (
     <TextAreaLabel
       ref={textAreaRef}
-      className={mergeCss('min-h-32 min-w-80', props.className)}
+      className={mergeCss('h-full min-h-32 w-full', props.className)}
       name="instructions"
       id={`step ${props.stepNumber} instructions`}
       label="instructions"
