@@ -32,6 +32,7 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+/* Unable to get tailwindcss-v4 to honor md change, so doing traditional css instead */
 .step-container {
   display: flex;
   flex-direction: column; /* default: stacked */
