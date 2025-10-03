@@ -14,6 +14,7 @@ const placeholderSplit = placeholder.split('\n')
 
 interface IngredientsTextAreaProps {
   keyId: string
+  stepNumber: number
   className?: ClassValue
   onResize: (_height: number) => void
 }
@@ -110,7 +111,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       ref={textAreaRef}
       data-testid="ingredients-text-area"
       className={mergeCss(
-        'focus-within:bg-input-focus-background min-h-32 shadow-[-4px_-4px] border p-2 cursor-text',
+        'relative focus-within:bg-input-focus-background min-h-32 w-full border-2 pl-2 pr-2 pb-2 pt-4 cursor-text',
         props.className,
       )}
       role="textbox"
@@ -122,6 +123,8 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         <IngredientRow
           key={item.keyId}
           keyId={item.keyId}
+          htmlFor={`step ${props.stepNumber} ingredients`}
+          label={i === 0 ? 'ingredients' : undefined}
           ref={(element) => {
             if (element) {
               itemRefs.current.set(item.keyId, element)

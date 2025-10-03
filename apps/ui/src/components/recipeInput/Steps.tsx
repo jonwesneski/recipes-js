@@ -51,9 +51,10 @@ export const Steps = (props: IStepsProps) => {
     <div className={props.className}>
       <h1 className="text-3xl font-bold mb-10">Steps</h1>
       {steps.map((s, index) => {
+        const stepNumber = index + 1
         return (
           <div key={s.keyId} data-testid="step-row" className="mb-5">
-            <h1 className="font-bold">step {index + 1}.</h1>
+            <h1 className="font-bold">step {stepNumber}.</h1>
             <div
               ref={(element) => {
                 if (element) {
@@ -62,18 +63,22 @@ export const Steps = (props: IStepsProps) => {
                   itemRefs.current.delete(s.keyId)
                 }
               }}
-              className="flex flex-col md:flex-row gap-2"
+              className="step-container"
             >
               <IngredientsTextArea
+                className="flex-1"
                 keyId={s.ingredients.keyId}
+                stepNumber={stepNumber}
                 onResize={(height: number) => handleOnResize(s.keyId, height)}
               />
               <InstructionsTextArea
+                className="flex-1"
                 keyId={s.instructions.keyId}
+                stepNumber={stepNumber}
                 onResize={(height: number) => handleOnResize(s.keyId, height)}
               />
             </div>
-            <div className="mx-auto mt-3">
+            <div className="mx-auto">
               <PhotoInput
                 id={`step-photo-${index}`}
                 base64Src={s.image}

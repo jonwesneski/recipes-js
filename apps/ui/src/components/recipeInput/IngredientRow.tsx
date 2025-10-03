@@ -1,5 +1,6 @@
 'use client'
 
+import { Label, mergeCss } from '@repo/design-system'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import { type AllMeasurements } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
@@ -28,6 +29,8 @@ export interface IngredientRowHandle {
 
 interface IngriedientRowProps {
   keyId: string
+  label?: string
+  htmlFor?: string
   placeholder?: string
   value: string
   error?: string
@@ -47,6 +50,7 @@ export const IngredientRow = forwardRef<
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const [isPopupVisible, setIsPopupVisible] = useState(false)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
+  const [isFocused, setIsFocused] = useState(false)
 
   useEffect(() => {
     if (props.focusOnMount && textareaRef.current) {
@@ -218,10 +222,13 @@ export const IngredientRow = forwardRef<
         data-testid="ingredient-row"
         rows={1}
         ref={textareaRef}
+        id={props.htmlFor}
         className="block focus:outline-none bg-transparent resize-none"
         name="ingredient-row"
-        placeholder={props.placeholder}
+        placeholder={isFocused && !props.value ? props.placeholder : undefined}
         value={props.value}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         onInput={handleInput}
         onPaste={handleOnPaste}
         onKeyDown={handleKeyDown}
@@ -237,6 +244,22 @@ export const IngredientRow = forwardRef<
           left={popupPosition.x}
           onClick={handleMeasurementClick}
           onBlur={handleHideMeasurement}
+        />
+      ) : null}
+      {props.label ? (
+        <Label
+          htmlFor={props.htmlFor}
+          text={props.label}
+          className={mergeCss(
+            'absolute left-3 top-2 transition-all cursor-text font-bold text-text/35',
+            {
+              'text-xs top-0 text-text': isFocused || props.value,
+            },
+          )}
+          onClick={() => {
+            setIsFocused(true)
+            textareaRef.current?.focus()
+          }}
         />
       ) : null}
     </>

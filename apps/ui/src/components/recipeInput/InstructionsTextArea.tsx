@@ -1,6 +1,6 @@
 'use client'
 
-import { type ClassValue, mergeCss, TextArea } from '@repo/design-system'
+import { type ClassValue, mergeCss, TextAreaLabel } from '@repo/design-system'
 import { useRecipeStepInstructionsStore } from '@src/providers/recipe-store-provider'
 import { useEffect, useRef } from 'react'
 
@@ -8,6 +8,7 @@ const placeholder = `The instructions for this step`
 
 interface InstructionsTextAreaProps {
   keyId: string
+  stepNumber: number
   className?: ClassValue
   onResize: (_height: number) => void
 }
@@ -49,11 +50,14 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
   }
 
   return (
-    <TextArea
+    <TextAreaLabel
       ref={textAreaRef}
-      className={mergeCss('min-h-32 min-w-80', props.className)}
-      variant="shadowRB"
+      className={mergeCss('h-full min-h-32 w-full', props.className)}
+      divClassName="flex-1"
       name="instructions"
+      id={`step ${props.stepNumber} instructions`}
+      label="instructions"
+      isRequired={false}
       value={instructions?.value}
       placeholder={placeholder}
       onChange={handleInputChange}
