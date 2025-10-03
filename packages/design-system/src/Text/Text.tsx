@@ -7,9 +7,9 @@ import {
 } from 'react'
 import { mergeCss } from '../utils'
 
-export type TextProps = Omit<
-  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-  'style'
+export type TextProps = DetailedHTMLProps<
+  InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
 > & {
   variant?: 'ellipses' | 'none'
   ref?: React.RefObject<HTMLInputElement | null>
