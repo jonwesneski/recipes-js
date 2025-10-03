@@ -1,45 +1,12 @@
 'use client'
 
-import type { NutritionalFactsDto } from '@repo/codegen/model'
 import { type ClassValue, mergeCss } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { roundToDecimal } from '@src/utils/measurements'
-import { camelCaseToSpaces } from '@src/utils/stringHelpers'
-
-type _CompileTimeType = Omit<
-  NutritionalFactsDto,
-  'servings' | 'servingAmount' | 'servingUnit'
->
-const nutritionalFactsConst: _CompileTimeType = {
-  proteinInG: null,
-  totalFatInG: null,
-  carbohydratesInG: null,
-  fiberInG: null,
-  sugarInG: null,
-  sodiumInMg: null,
-  cholesterolInMg: null,
-  saturatedFatInG: null,
-  transFatInG: null,
-  potassiumInMg: null,
-  vitaminAInIU: null,
-  vitaminCInMg: null,
-  calciumInMg: null,
-  ironInMg: null,
-  vitaminDInIU: null,
-  vitaminB6InMg: null,
-  vitaminB12InMg: null,
-  magnesiumInMg: null,
-  folateInMcg: null,
-  thiaminInMg: null,
-  riboflavinInMg: null,
-  niacinInMg: null,
-  caloriesInKcal: null,
-}
-
-const getNameAndUnit = (nutritionalFactName: string) => {
-  const [name, unit] = nutritionalFactName.split('In')
-  return [camelCaseToSpaces(name), unit]
-}
+import {
+  getNameAndUnit,
+  nutritionalFactsConst,
+} from '@src/utils/nutritionalFacts'
 
 interface INutritionalFactsProps {
   className?: ClassValue
