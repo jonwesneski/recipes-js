@@ -1,7 +1,7 @@
 'use client'
 
 import { useAiControllerNutritionalFactsV1 } from '@repo/codegen/ai'
-import { NutritionalFactsEntity } from '@repo/codegen/model'
+import { type NutritionalFactsEntity } from '@repo/codegen/model'
 import { mergeCss, TextButton, TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import {
@@ -9,8 +9,7 @@ import {
   nutritionalFactsConst,
 } from '@src/utils/nutritionalFacts'
 
-interface NutritionalFactsProps {}
-export const NutritionalFacts = (props: NutritionalFactsProps) => {
+export const NutritionalFacts = () => {
   const {
     nutritionalFacts,
     setNutritionalFacts,
