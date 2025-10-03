@@ -1,5 +1,6 @@
 'use client'
 
+import { type ClassValue } from 'clsx'
 import { useRef, useState } from 'react'
 import { Label } from '../Label'
 import { mergeCss } from '../utils'
@@ -9,12 +10,14 @@ export type TextAreaLabelProps = TextAreaProps & {
   name: string
   label: string
   isRequired: boolean
+  divClassName?: ClassValue
   error?: string
 }
 export const TextAreaLabel = ({
   name,
   label,
   isRequired,
+  divClassName,
   error,
   ...props
 }: TextAreaLabelProps) => {
@@ -24,7 +27,7 @@ export const TextAreaLabel = ({
   const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <div className="relative flex-1">
+    <div className={mergeCss('relative', divClassName)}>
       {isRequired ? (
         <span className="absolute -left-3 text-red-900">*</span>
       ) : null}

@@ -78,7 +78,7 @@ export const Steps = (props: IStepsProps) => {
                 onResize={(height: number) => handleOnResize(s.keyId, height)}
               />
             </div>
-            <div className="mx-auto mt-3">
+            <div className="mx-auto">
               <PhotoInput
                 id={`step-photo-${index}`}
                 base64Src={s.image}
