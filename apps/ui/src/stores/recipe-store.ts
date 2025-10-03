@@ -1,6 +1,7 @@
 import type {
   BadRequestRecipeEntity,
   CreateRecipeDto,
+  GenerateNutritionalFactsDto,
   NutritionalFactsDto,
   RecipeEntity,
 } from '@repo/codegen/model';
@@ -122,6 +123,7 @@ export type RecipeActions = {
   setNutritionalFacts: (_value: NutritionalFactsDto) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
+  makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
   setErrors: (_data: BadRequestRecipeEntity) => void;
 };
 
@@ -425,6 +427,15 @@ export const createRecipeStore = (
               };
             }),
           };
+        },
+        makeGenerateNutritionalFactsDto: () => {
+          const steps = get().steps;
+          return steps.map((s) => {
+            return {
+              ingredients: s.ingredients.items.map((i) => i.ingredient.dto),
+              instruction: s.instructions.value,
+            };
+          });
         },
         setErrors: (errors: BadRequestRecipeEntity) => {
           set(() => ({ errors }));

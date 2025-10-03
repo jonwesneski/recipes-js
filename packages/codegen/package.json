@@ -4,6 +4,10 @@
   "type": "module",
   "private": true,
   "exports": {
+    "./ai": {
+      "import": "./dist/api/ai/ai.js",
+      "types": "./dist/types/api/ai/ai.d.ts"
+    },
     "./healthCheck": {
       "import": "./dist/api/health-check/health-check.js",
       "types": "./dist/types/api/health-check/health-check.d.ts"
@@ -11,6 +15,10 @@
     "./model": {
       "import": "./dist/model/index.js",
       "types": "./dist/types/model/index.d.ts"
+    },
+    "./mswAi": {
+      "import": "./dist/api/ai/ai.msw.js",
+      "types": "./dist/types/api/ai/ai.msw.d.ts"
     },
     "./mswHealthCheck": {
       "import": "./dist/api/health-check/health-check.msw.js",
