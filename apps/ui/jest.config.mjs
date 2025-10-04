@@ -4,6 +4,8 @@ export default {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/src/$1',
+    '^@repo/codegen/mswAi$':
+      '<rootDir>/../../packages/codegen/dist-cjs/api/ai/ai.msw.js',
     '^@repo/codegen/mswHealthCheck$':
       '<rootDir>/../../packages/codegen/dist-cjs/api/health-check/health-check.msw.js',
     '^@repo/codegen/mswRecipes$':
