@@ -1,11 +1,11 @@
-import { NutritionalFactsDto } from '@repo/codegen/model';
+import { type NutritionalFactsDto } from '@repo/codegen/model';
 import { camelCaseToSpaces } from './stringHelpers';
 
 type _CompileTimeType = Omit<
   NutritionalFactsDto,
   'servings' | 'servingAmount' | 'servingUnit'
 >;
-export const nutritionalFactsConst: _CompileTimeType = {
+export const nutritionalFactsWithoutServingsConst: _CompileTimeType = {
   proteinInG: null,
   totalFatInG: null,
   carbohydratesInG: null,
@@ -31,7 +31,19 @@ export const nutritionalFactsConst: _CompileTimeType = {
   caloriesInKcal: null,
 } as const;
 
+export const nutritionalFactsConst: NutritionalFactsDto = {
+  servings: null,
+  servingAmount: null,
+  servingUnit: null,
+  ...nutritionalFactsWithoutServingsConst,
+};
+
 export const getNameAndUnit = (nutritionalFactName: string) => {
   const [name, unit] = nutritionalFactName.split('In');
-  return [camelCaseToSpaces(name), unit];
+  let normalizedName = camelCaseToSpaces(name);
+  // Keep the casing for vitmain A, B, C etc.
+  if (!normalizedName.includes('vitamin ')) {
+    normalizedName = normalizedName.toLowerCase();
+  }
+  return [normalizedName, unit];
 };

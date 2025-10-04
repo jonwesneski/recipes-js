@@ -2,11 +2,12 @@ import type {
   BadRequestRecipeEntity,
   CreateRecipeDto,
   GenerateNutritionalFactsDto,
-  NutritionalFactsDto,
+  NutritionalFactsEntity,
   RecipeEntity,
 } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { roundToDecimal } from '@src/utils/measurements';
+import { nutritionalFactsConst } from '@src/utils/nutritionalFacts';
 import { createStore } from 'zustand/vanilla';
 import { applyMiddleware } from './middleware';
 
@@ -92,7 +93,6 @@ export type StepItemType = {
 export type FactorType = 0.5 | 1 | 1.5 | 2 | 4;
 
 export type RecipeState = Omit<RecipeEntity, 'steps' | 'imageUrl'> & {
-  id: string;
   imageSrc: string | null;
   steps: StepItemType[];
   isValid: boolean;
@@ -120,7 +120,8 @@ export type RecipeActions = {
   updateIngredient: (_keyId: string, _ingredient: IngredientValidator) => void;
   setInstructions: (_keyId: string, _instructions: string) => void;
   setStepImage: (_keyId: string, _image: string | null) => void;
-  setNutritionalFacts: (_value: NutritionalFactsDto) => void;
+  setNutritionalFacts: (_value: NutritionalFactsEntity) => void;
+  setPartialNutritionalFacts: (_value: Partial<NutritionalFactsEntity>) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
   makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
@@ -398,8 +399,20 @@ export const createRecipeStore = (
             }
             return { steps: [...state.steps] };
           }),
-        setNutritionalFacts: (nutritionalFacts: NutritionalFactsDto) =>
+        setNutritionalFacts: (nutritionalFacts: NutritionalFactsEntity) =>
           set(() => ({ nutritionalFacts })),
+        setPartialNutritionalFacts: (
+          partial: Partial<NutritionalFactsEntity>,
+        ) =>
+          set((state) => {
+            const merged = {
+              ...nutritionalFactsConst,
+              ...(state.nutritionalFacts ?? {}),
+              ...partial,
+            } as NutritionalFactsEntity;
+
+            return { nutritionalFacts: merged };
+          }),
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
           /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */

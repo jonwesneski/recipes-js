@@ -5,7 +5,7 @@ import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { roundToDecimal } from '@src/utils/measurements'
 import {
   getNameAndUnit,
-  nutritionalFactsConst,
+  nutritionalFactsWithoutServingsConst,
 } from '@src/utils/nutritionalFacts'
 
 interface INutritionalFactsProps {
@@ -19,7 +19,7 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
       <h3 className="font-bold text-center">Nutritional Facts:</h3>
       <table className="border border-collapse m-auto">
         <tbody>
-          {Object.keys(nutritionalFactsConst).map((key) => {
+          {Object.keys(nutritionalFactsWithoutServingsConst).map((key) => {
             const [name, unit] = getNameAndUnit(key)
             const _unit = unit === 'IU' ? unit : unit.toLowerCase()
             return (
