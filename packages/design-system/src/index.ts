@@ -2,6 +2,7 @@ export * from './Button';
 export * from './Label';
 export * from './Modal';
 export * from './RadioGroup';
+export * from './Select';
 export * from './Text';
 export * from './TextArea';
 export * from './Toggle';

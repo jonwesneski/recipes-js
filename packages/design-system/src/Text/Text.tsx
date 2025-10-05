@@ -7,14 +7,18 @@ import {
 } from 'react'
 import { mergeCss } from '../utils'
 
-export type TextProps = Omit<
-  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-  'type'
+export type TextProps = DetailedHTMLProps<
+  InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
 > & {
   variant?: 'ellipses' | 'none'
   ref?: React.RefObject<HTMLInputElement | null>
 }
-export const Text = ({ variant = 'ellipses', ...props }: TextProps) => {
+export const Text = ({
+  variant = 'ellipses',
+  type = 'text',
+  ...props
+}: TextProps) => {
   const placeHolder =
     variant === 'ellipses' && props.placeholder
       ? `${props.placeholder}...`
@@ -24,7 +28,7 @@ export const Text = ({ variant = 'ellipses', ...props }: TextProps) => {
   return (
     <input
       {...props}
-      type="text"
+      type={type}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={mergeCss(

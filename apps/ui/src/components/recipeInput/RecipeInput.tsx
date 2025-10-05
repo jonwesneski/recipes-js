@@ -3,6 +3,7 @@
 import { TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useEffect, useRef } from 'react'
+import { NutritionalFacts } from './NutritionalFacts'
 import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
@@ -124,6 +125,8 @@ export const RecipeInput = () => {
 
       <hr className="border-t border-dotted mt-8" />
       <Steps className="mb-10" />
+      <hr className="border-t border-dotted" />
+      <NutritionalFacts />
       <hr className="border-t border-dotted" />
     </div>
   )

@@ -33,6 +33,21 @@ export const measurementUnitsSingular: Record<AllMeasurements, string> = {
   milliliters: 'millilter',
   liters: 'liter',
 };
+export const measurementUnitsPlural: Record<AllMeasurements, string> = {
+  cups: 'cups',
+  tablespoons: 'tablespoons',
+  teaspoons: 'teaspoons',
+  ounces: 'ounces',
+  pounds: 'pounds',
+  fluidOunces: 'fluid ounces',
+  pints: 'pints',
+  quarts: 'quarts',
+  gallons: 'gallons',
+  grams: 'grams',
+  kilograms: 'kilograms',
+  milliliters: 'millilters',
+  liters: 'liters',
+};
 
 const IMPERIAL_VOLUME_CONVERSIONS: Record<
   Extract<

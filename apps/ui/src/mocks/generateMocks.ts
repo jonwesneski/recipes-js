@@ -1,3 +1,4 @@
+import { getAiMock } from '@repo/codegen/mswAi';
 import { getHealthCheckMock } from '@repo/codegen/mswHealthCheck';
 import {
   getRecipesControllerRecipesListV1MockHandler,
@@ -33,4 +34,5 @@ export default [
   getRecipesControllerRecipeV1MockHandler(recipe),
   ...getRecipesMock(),
   ...getTagsMock(),
+  ...getAiMock(),
 ];
