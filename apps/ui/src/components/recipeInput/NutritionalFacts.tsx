@@ -2,11 +2,20 @@
 
 import { useAiControllerNutritionalFactsV1 } from '@repo/codegen/ai'
 import {
-  NutritionalFactsEntityServingUnit,
   type NutritionalFactsEntity,
+  type NutritionalFactsEntityServingUnit,
 } from '@repo/codegen/model'
-import { mergeCss, TextButton, TextLabel } from '@repo/design-system'
+import {
+  mergeCss,
+  SelectLabel,
+  TextButton,
+  TextLabel,
+} from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import {
+  measurementUnitsAbbreviated,
+  measurementUnitsPlural,
+} from '@src/utils/measurements'
 import {
   getNameAndUnit,
   nutritionalFactsWithoutServingsConst,
@@ -43,11 +52,17 @@ export const NutritionalFacts = () => {
   }
 
   function handleOnServingUnitChange(
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLSelectElement>,
   ): void {
-    setPartialNutritionalFacts({
-      servingUnit: event.target.value as NutritionalFactsEntityServingUnit,
-    })
+    if (event.target.value) {
+      setPartialNutritionalFacts({
+        servingUnit: event.target.value as NutritionalFactsEntityServingUnit,
+      })
+    } else {
+      setPartialNutritionalFacts({
+        servingUnit: null,
+      })
+    }
   }
 
   return (
@@ -58,17 +73,23 @@ export const NutritionalFacts = () => {
         text="auto generate facts"
         onClick={handleOnAutoGenerate}
       />
-      <TextLabel
-        name={'servingUnit'}
-        isRequired={false}
-        label={'serving unit'}
+      <SelectLabel
+        label="serving unit"
+        id="serving-unit"
+        defaultValue=""
+        options={Object.keys(measurementUnitsPlural).map((u) => {
+          return {
+            label:
+              measurementUnitsPlural[u as keyof typeof measurementUnitsPlural],
+            value: u,
+          }
+        })}
         onChange={handleOnServingUnitChange}
-        value={nutritionalFacts?.servingUnit?.toString() ?? ''}
       />
       <TextLabel
         name="servingAmount"
         isRequired={false}
-        label={`serving size ${nutritionalFacts?.servingUnit ? `(${nutritionalFacts?.servingUnit})` : ''}`}
+        label={`serving size ${nutritionalFacts?.servingUnit ? `(${measurementUnitsAbbreviated[nutritionalFacts.servingUnit]})` : ''}`}
         type="number"
         dir="rtl"
         onChange={(e) => handleOnChange('servingAmount', e)}
