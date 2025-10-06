@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 import { NutritionalFacts } from './NutritionalFacts'
 import { PhotoInput } from './PhotoInput'
 import { Steps } from './Steps'
+import { Tags } from './Tags'
 import { TimeTextLabel } from './TimeTextLabel'
 
 export const RecipeInput = () => {
@@ -80,54 +81,58 @@ export const RecipeInput = () => {
 
   return (
     <div ref={divRef} className="flex flex-col gap-10 pt-10">
-      <TextLabel
-        className="w-5/6 md:max-w-3xl"
-        ref={nameRef}
-        name="recipe-name"
-        value={name}
-        error={errors.name}
-        label="recipe name"
-        isRequired
-        onChange={handleOnNameChange}
-      />
-
-      <TextLabel
-        className="w-5/6 md:max-w-3xl"
-        name="description"
-        value={description ?? ''}
-        label="short description"
-        isRequired={false}
-        onChange={handleOnDescriptionChange}
-      />
-
-      <div className="flex gap-7">
-        <TimeTextLabel
-          name="prep-time"
-          label="prep time"
-          onChange={handleOnPrepChange}
+      <section>
+        <TextLabel
+          className="w-5/6 md:max-w-3xl"
+          ref={nameRef}
+          name="recipe-name"
+          value={name}
+          error={errors.name}
+          label="recipe name"
+          isRequired
+          onChange={handleOnNameChange}
         />
-        <TimeTextLabel
-          name="cook-time"
-          label="cook time"
-          onChange={handleOnCookChange}
+
+        <TextLabel
+          className="w-5/6 md:max-w-3xl"
+          name="description"
+          value={description ?? ''}
+          label="short description"
+          isRequired={false}
+          onChange={handleOnDescriptionChange}
         />
-      </div>
 
-      <PhotoInput
-        id="recipe-photo"
-        label="recipe photo"
-        base64Src={base64Image}
-        isRequired={false}
-        onCameraClick={handleOnCameraClick}
-        onUploadClick={handleOnUploadClick}
-        onRemoveClick={handleOnRemoveClick}
-      />
+        <div className="flex gap-7">
+          <TimeTextLabel
+            name="prep-time"
+            label="prep time"
+            onChange={handleOnPrepChange}
+          />
+          <TimeTextLabel
+            name="cook-time"
+            label="cook time"
+            onChange={handleOnCookChange}
+          />
+        </div>
 
-      <hr className="border-t border-dotted mt-8" />
-      <Steps className="mb-10" />
-      <hr className="border-t border-dotted" />
+        <PhotoInput
+          id="recipe-photo"
+          label="recipe photo"
+          base64Src={base64Image}
+          isRequired={false}
+          onCameraClick={handleOnCameraClick}
+          onUploadClick={handleOnUploadClick}
+          onRemoveClick={handleOnRemoveClick}
+        />
+      </section>
+
+      <hr className="border-t border-dotted mt-10" />
+      <Steps />
+      <hr className="border-t border-dotted mt-10" />
       <NutritionalFacts />
-      <hr className="border-t border-dotted" />
+      <hr className="border-t border-dotted mt-10" />
+      <Tags />
+      <hr className="border-t border-dotted my-10" />
     </div>
   )
 }
