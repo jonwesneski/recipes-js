@@ -2,8 +2,7 @@
   "name": "@repo/database",
   "version": "0.0.0",
   "scripts": {
-    "build": "tsc && cpx \"generated/**/*\" dist/generated",
-    "postinstall": "prisma generate",
+    "build": "prisma generate && tsc && cpx \"generated/**/*\" dist/generated",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio"
