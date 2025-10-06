@@ -30,7 +30,7 @@ export class AiController {
     description: 'The generated tags',
     type: [String],
   })
-  // @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard)
   async tags(@Body() body: GenerateTagsDto) {
     return await this.aiService.tags(body);
   }
