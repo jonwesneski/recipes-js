@@ -3,9 +3,12 @@ import { MeasurementUnit } from '@repo/database';
 import {
   type GeneratedNutiritionalFactsType,
   GeneratedNutritionalFactsSchema,
+  GeneratedTagsSchema,
 } from '@repo/zod-schemas';
 import { NutritionalFactsDto } from '@src/recipes';
+import { GenerateBaseDto } from './contracts/generate-base.dto';
 import { GenerateNutritionalFactsDto } from './contracts/generate-nutritional-facts.dto';
+import { GenerateTagsDto } from './contracts/generate-tags.dto';
 
 // '@google/genai' is an ESM. I tried changing my project to ESM
 // I got the src to build and run, but I couldn't get jest to compile
@@ -105,6 +108,14 @@ const nutritionalFactsDeclaration /*: FunctionDeclaration*/ = {
   },
 };
 
+const tagsDeclaration /*: FunctionDeclaration*/ = {
+  name: 'tags',
+  parametersJsonSchema: {
+    type: 'array',
+    items: { type: 'string' },
+  },
+};
+
 @Injectable()
 export class AiService {
   private readonly logger = new Logger(AiService.name);
@@ -118,19 +129,23 @@ export class AiService {
     return new AiService(await createGoogleGenAI(apiKey));
   }
 
-  nutritionalPrompt(steps: GenerateNutritionalFactsDto[]) {
+  basePrompt(steps: GenerateBaseDto[]) {
     const promptArray: string[] = [];
-    for (const step of steps) {
+    for (let i = 0; i < steps.length; i++) {
+      const step = steps[i];
+      const stepCount = i + 1;
       const ingredients: string[] = [];
       for (const ingredient of step.ingredients) {
         ingredients.push(
-          `- ${ingredient.amount} ${ingredient.unit} ${ingredient.name}`,
+          `- ${ingredient.amount}${ingredient.unit ? ` ${ingredient.unit} ` : ' '}${ingredient.name}`,
         );
       }
-      promptArray.push(`${ingredients.join('\n')}
+      promptArray.push(`Step ${stepCount} Ingredients:
+${ingredients.length ? ingredients.join('\n') : '- None'}
 
-${step.instruction}      
-        `);
+Step ${stepCount} Instructions:
+${step.instruction ? step.instruction : '- None'}
+`);
     }
     return promptArray.join('\n');
   }
@@ -138,20 +153,10 @@ ${step.instruction}
   async nutritionalFacts(
     steps: GenerateNutritionalFactsDto[],
   ): Promise<GeneratedNutiritionalFactsType> {
-    // const models = await this.ai.models.list();
-    // console.log(models, 'mmm');
     const response = await this.ai.models.generateContent({
-      //model: 'gemini-1.5-pro',
       model: 'gemini-2.0-flash-lite',
-      contents: `Give me nutritional facts for:\n${this.nutritionalPrompt(steps)}`,
+      contents: this.nutritionalPrompt(steps),
       config: {
-        // toolConfig: {
-        //   functionCallingConfig: {
-        //     mode: 'ANY' as never, //FunctionCallingConfigMode.ANY,
-        //     allowedFunctionNames: ['nutritionalFacts'],
-        //   },
-        // },
-        // tools: [{ functionDeclarations: [nutritionalFactsDeclaration] }],
         responseMimeType: 'application/json',
         responseSchema: nutritionalFactsDeclaration.parametersJsonSchema,
       },
@@ -165,5 +170,48 @@ ${step.instruction}
       this.logger.error('JSON parsing or validation error:', error);
       throw error;
     }
+  }
+
+  nutritionalPrompt(steps: GenerateNutritionalFactsDto[]) {
+    return `Give me nutritional facts for:\n${this.basePrompt(steps)}`;
+  }
+
+  async tags(body: GenerateTagsDto): Promise<string[]> {
+    const response = await this.ai.models.generateContent({
+      model: 'gemini-2.0-flash-lite',
+      contents: this.tagsPrompt(body),
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: tagsDeclaration.parametersJsonSchema,
+      },
+    });
+
+    try {
+      return GeneratedTagsSchema.parse(JSON.parse(response.text ?? '[]'));
+    } catch (error) {
+      this.logger.error('JSON parsing or validation error:', error);
+      throw error;
+    }
+  }
+
+  tagsPrompt(body: GenerateTagsDto) {
+    return `Give me recipe tags for:
+- recipe: ${body.name}
+${body.description ? `- description: ${body.description}` : ``}
+
+${this.basePrompt(body.steps)}
+
+Tag Requirements:
+- Make all the tags lowercase
+- Total Tags: Aim for around 10 tags.
+- Cuisine Tag: Include at least 1 tag representing the cuisine.
+- Meal Tag: Include only 1 tag if it has a meal type (e.g., breakfast, lunch, dinner, dessert).
+- Protein Tag: Include only 1 tag if it has a main protien (e.g., beef, chicken, tofu, lentils).
+- Shareable Tag: Include only 1 tag if it has a shareable type (e.g., appetizer, snack, dim sum, mezes).
+- Diet Tag: Include at least 1 tag that indicates dietary considerations (e.g., vegan, gluten-free).
+- Seasonal Tag: Include only 1 tag if the recipe is seasonal (e.g., summer, winter).
+- Festive/Holiday Tag: Include only 1 tag if the recipe is associated with a specific holiday or festival.
+- Categories: Tags must belong into a category: Cuisine, Meal, Protein, Shareable, Diet, Seasonal, or Festive/Holiday
+- Exclusions: Avoid using tags don't fit into the above requirements or that are overly general or redundant, such as "party," "sweet," "celebration," "dairy," and "baked."`;
   }
 }
