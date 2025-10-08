@@ -1,18 +1,18 @@
 'use client'
 
 import { useAiControllerTagsV1 } from '@repo/codegen/ai'
-import { MultiSelect, TextButton } from '@repo/design-system'
+import { MultiSelect, type OptionType, TextButton } from '@repo/design-system'
 import useTags from '@src/hooks/useTags'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useState } from 'react'
 import type { GroupBase, MultiValue, OptionsOrGroups } from 'react-select'
 
-type OptionType = { value: string; label: string }
-
 export const Tags = () => {
   const { tags: fetchedTags, fetchTags } = useTags()
   const [options, setOptions] = useState<OptionType[]>([])
-  const { setTags, makeGenerateTagsDto } = useRecipeStore((state) => state)
+  const { tags, setTags, makeGenerateTagsDto } = useRecipeStore(
+    (state) => state,
+  )
   const { mutate } = useAiControllerTagsV1({
     mutation: { retry: false },
   })
@@ -27,6 +27,10 @@ export const Tags = () => {
       {
         onSuccess: (data) => {
           setTags(data)
+          setOptions((value) => [
+            ...data.map((d) => ({ value: d, label: d })),
+            ...value,
+          ])
         },
       },
     )
@@ -51,6 +55,7 @@ export const Tags = () => {
       />
       <MultiSelect
         options={options}
+        value={tags.map((t) => ({ label: t, value: t }))}
         onChange={handleChange}
         onLoadOptions={handleLoadOptions}
       />
