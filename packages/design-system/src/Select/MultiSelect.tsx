@@ -22,13 +22,12 @@ export const MultiSelect = (props: IMultiSelectProps) => {
   return (
     <Select
       isMulti
-      options={props.options}
       onChange={props.onChange}
-      placeholder="Select or type a new option..."
       isClearable
       isSearchable
       cacheOptions
-      defaultOptions
+      placeholder=""
+      defaultOptions={props.options}
       loadOptions={debouncedHandleLoadOptions}
       unstyled
       classNames={{
