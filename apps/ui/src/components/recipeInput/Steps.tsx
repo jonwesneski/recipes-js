@@ -48,7 +48,7 @@ export const Steps = (props: IStepsProps) => {
   }, [isNewStep, itemRefs])
 
   return (
-    <div className={props.className}>
+    <section className={props.className}>
       <h1 className="text-3xl font-bold mb-10">Steps</h1>
       {steps.map((s, index) => {
         const stepNumber = index + 1
@@ -99,6 +99,6 @@ export const Steps = (props: IStepsProps) => {
         text="add step"
         onClick={handleOnAddClick}
       />
-    </div>
+    </section>
   )
 }

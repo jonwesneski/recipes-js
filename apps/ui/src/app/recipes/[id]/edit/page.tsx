@@ -2,12 +2,10 @@
 
 import type { PatchRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
-import { tagsControllerTagNameListV1 } from '@repo/codegen/tags'
 import { TextButton } from '@repo/design-system'
 import { RecipeInput } from '@src/components/recipeInput'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { CameraProvider } from '@src/providers/CameraProvider'
-import { useEffect, useState } from 'react'
 
 const Page = () => {
   const { accessToken } = useAuthentication()
@@ -31,22 +29,6 @@ const Page = () => {
 
     window.history.replaceState(null, '', '/recipes')
   }
-
-  const [_tags, setTags] = useState<string[]>([])
-  useEffect(() => {
-    // todo add params
-    const fetchTags = async (nextCursor?: string) => {
-      const currentTags = await tagsControllerTagNameListV1({
-        params: { cursorId: nextCursor },
-      })
-      setTags((tags) => [...tags, ...currentTags.data])
-      if (currentTags.pagination.nextCursor !== null) {
-        await fetchTags(currentTags.pagination.nextCursor)
-      }
-    }
-
-    fetchTags().catch((e: unknown) => console.log(e))
-  }, [])
 
   return (
     <CameraProvider>

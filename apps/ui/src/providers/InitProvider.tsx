@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react'
 
 const queryClient = new QueryClient()
 
+const MSW_IGNORES = ['?_rsc=', '_next/']
+
 interface IInitProviderProps {
   children: React.ReactNode
 }
@@ -17,7 +19,15 @@ const InitProvider = (props: IInitProviderProps) => {
       import('@src/mocks/mswBrowser')
         .then((mod: { worker: SetupWorker }) => {
           mod.worker
-            .start()
+            .start({
+              onUnhandledRequest(request, print) {
+                if (MSW_IGNORES.some((i) => request.url.includes(i))) {
+                  return
+                }
+
+                print.warning()
+              },
+            })
             .then(() => {
               setIsInitialized(true)
             })

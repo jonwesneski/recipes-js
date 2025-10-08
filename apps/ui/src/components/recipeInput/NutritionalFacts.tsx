@@ -5,12 +5,7 @@ import {
   type NutritionalFactsEntity,
   type NutritionalFactsEntityServingUnit,
 } from '@repo/codegen/model'
-import {
-  mergeCss,
-  SelectLabel,
-  TextButton,
-  TextLabel,
-} from '@repo/design-system'
+import { SelectLabel, TextButton, TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import {
   measurementUnitsAbbreviated,
@@ -66,7 +61,7 @@ export const NutritionalFacts = () => {
   }
 
   return (
-    <div className={mergeCss('', {})}>
+    <section>
       <h1 className="text-3xl font-bold mb-10">Nutritional Facts</h1>
       <TextButton
         className="mb-5"
@@ -125,6 +120,6 @@ export const NutritionalFacts = () => {
           </Fragment>
         )
       })}
-    </div>
+    </section>
   )
 }
