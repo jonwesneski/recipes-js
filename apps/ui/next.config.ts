@@ -10,9 +10,9 @@ const nextConfig: NextConfig = {
         'localhost:3001', // Your NestJS backend
         '127.0.0.1:3000',
         '127.0.0.1:3001',
-        'recipes-ui-tau.vercel.app',
+        'recipehall-tau.vercel.app',
         'recipes-js-api.onrender.com',
-        'https://recipes-ui-tau.vercel.app',
+        'https://recipehall-tau.vercel.app',
         'https://recipes-js-api.onrender.com',
       ],
     },

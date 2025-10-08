@@ -30,7 +30,7 @@ const buildValidationErrorResponse = (
 
 export function configureApp(app: INestApplication<any>) {
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://recipes-ui-tau.vercel.app'],
+    origin: ['http://localhost:3000', 'https://recipehall-tau.vercel.app'],
     credentials: true,
   });
   app.enableVersioning({
