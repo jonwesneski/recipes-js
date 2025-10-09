@@ -75,7 +75,14 @@ describe('RecipesController (e2e)', () => {
       steps: [
         {
           instruction: 'Step 1',
-          ingredients: [{ name: 'Ingredient 1', amount: 100, unit: 'grams' }],
+          ingredients: [
+            {
+              name: 'Ingredient 1',
+              amount: 100,
+              isFraction: false,
+              unit: 'grams',
+            },
+          ],
           base64Image: null,
         },
       ],
@@ -160,7 +167,13 @@ describe('RecipesController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           name: '',
-          steps: [{ ingredients: [{ unit: true, amount: 'left', name: 0 }] }],
+          steps: [
+            {
+              ingredients: [
+                { unit: true, isFraction: 'YES', amount: 'left', name: 0 },
+              ],
+            },
+          ],
         })
         .expect(400)
         .expect((res) => {
@@ -180,6 +193,7 @@ describe('RecipesController (e2e)', () => {
                   '0': {
                     amount:
                       'amount must not be less than 0, amount must be a number conforming to the specified constraints',
+                    isFraction: 'isFraction must be a boolean value',
                     name: 'name must be a string',
                     unit: 'unit must be one of the following values: cups, fluidOunces, tablespoons, teaspoons, pints, quarts, gallons, pounds, ounces, liters, milliliters, kilograms, grams',
                   },
@@ -221,6 +235,7 @@ describe('RecipesController (e2e)', () => {
               id: i.id,
               name: i.name,
               amount: i.amount,
+              isFraction: false,
               unit: i.unit,
             };
           }),
@@ -292,6 +307,7 @@ describe('RecipesController (e2e)', () => {
               {
                 name: 'New Ingredient',
                 amount: 50,
+                isFraction: false,
                 unit: 'grams',
               },
             ],

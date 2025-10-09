@@ -17,16 +17,19 @@
           {
             "name": "All-purpose flour",
             "amount": 1,
+            "isFraction": false,
             "unit": "cups"
           },
           {
             "name": "Baking powder",
             "amount": 1.5,
+            "isFraction": false,
             "unit": "teaspoons"
           },
           {
             "name": "Salt",
             "amount": 0.5,
+            "isFraction": false,
             "unit": "teaspoons"
           }
         ]
@@ -37,21 +40,25 @@
           {
             "name": "Eggs",
             "amount": 5,
+            "isFraction": false,
             "unit": null
           },
           {
             "name": "Sugar",
             "amount": 0.75,
+            "isFraction": false,
             "unit": "cups"
           },
           {
             "name": "Milk",
             "amount": 0.33,
+            "isFraction": false,
             "unit": "cups"
           },
           {
             "name": "Vanilla extract",
             "amount": 1,
+            "isFraction": false,
             "unit": "teaspoons"
           }
         ]
@@ -62,6 +69,7 @@
           {
             "name": "Sugar",
             "amount": 0.25,
+            "isFraction": false,
             "unit": "cups"
           }
         ]
@@ -72,16 +80,19 @@
           {
             "name": "coconut milk",
             "amount": 0.33,
+            "isFraction": false,
             "unit": "cups"
           },
           {
             "name": "evaporated milk",
             "amount": 12,
+            "isFraction": false,
             "unit": "ounces"
           },
           {
             "name": "Sweetened condensed milk",
             "amount": 14,
+            "isFraction": false,
             "unit": "ounces"
           }
         ]

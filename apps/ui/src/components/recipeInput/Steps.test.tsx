@@ -1,4 +1,5 @@
 import { renderRecipeComponent } from '@src/mocks/renderComponent'
+import { act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Steps } from './Steps'
 
@@ -47,7 +48,9 @@ describe('Steps', () => {
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENT_ID)
 
-      ingredients[0].focus()
+      act(() => {
+        ingredients[0].focus()
+      })
       await userEvent.paste(ingredientsStringFromWindows)
 
       ingredients = await findAllByTestId(INGREDIENT_ID)
@@ -68,7 +71,9 @@ describe('Steps', () => {
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENT_ID)
 
-      ingredients[0].focus()
+      act(() => {
+        ingredients[0].focus()
+      })
       await userEvent.paste(ingredientsString)
 
       const steps = await findAllByTestId(STEP_ID)
@@ -94,7 +99,9 @@ describe('Steps', () => {
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let instructions = await findAllByTestId(INSTRUCTIONS_ID)
 
-      instructions[0].focus()
+      act(() => {
+        instructions[0].focus()
+      })
       await userEvent.paste(instructionStringFromWindows)
 
       instructions = await findAllByTestId(INSTRUCTIONS_ID)
@@ -115,7 +122,9 @@ describe('Steps', () => {
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let instructions = await findAllByTestId(INSTRUCTIONS_ID)
 
-      instructions[0].focus()
+      act(() => {
+        instructions[0].focus()
+      })
       await userEvent.paste(instructionsString)
 
       instructions = await findAllByTestId(INSTRUCTIONS_ID)
@@ -137,10 +146,14 @@ describe('Steps', () => {
       const { findAllByTestId } = renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENT_ID)
 
-      ingredients[0].focus()
+      act(() => {
+        ingredients[0].focus()
+      })
       await userEvent.paste(ingredientsString)
       let instructions = await findAllByTestId(INSTRUCTIONS_ID)
-      instructions[1].focus()
+      act(() => {
+        instructions[1].focus()
+      })
       await userEvent.paste(instructionsString)
 
       const steps = await findAllByTestId(STEP_ID)

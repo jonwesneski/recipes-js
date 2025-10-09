@@ -165,10 +165,10 @@ export class CreateIngredientDto
   @Min(0)
   @ApiProperty({ type: Number })
   amount: number;
-  @IsEnum(MeasurementUnit)
   @IsBoolean()
   @ApiProperty()
   isFraction: boolean;
+  @IsEnum(MeasurementUnit)
   @IsNullable()
   @ApiProperty({ enum: MeasurementUnit, nullable: true })
   unit: MeasurementUnit | null;
