@@ -53,7 +53,7 @@ export const RecipeIngredientsOverview = (
   props: RecipeIngredientsOverviewProps,
 ) => {
   const { steps, scaleFactor } = useRecipeStore((state) => state)
-  const { useFractions, measurementFormat } = useUserStore((state) => state)
+  const { numberFormat, measurementFormat } = useUserStore((state) => state)
   const uniqueIngredients = createUniqueIngredient(steps, measurementFormat)
 
   return (
@@ -63,7 +63,7 @@ export const RecipeIngredientsOverview = (
         {Object.keys(uniqueIngredients).map((name) => (
           <li key={name} style={{ listStyleType: 'none' }}>
             {`${
-              useFractions
+              numberFormat === 'fraction'
                 ? numberToFraction(
                     roundToDecimal(
                       uniqueIngredients[name].amount * scaleFactor,

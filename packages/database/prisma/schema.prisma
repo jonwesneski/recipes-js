@@ -36,6 +36,12 @@ enum UiTheme {
   dark
 }
 
+enum NumberFormat {
+  default
+  decimal
+  fraction
+}
+
 enum MeasurementFormat {
   default
   imperial
@@ -47,7 +53,7 @@ model User {
   name              String
   email             String            @unique
   handle            String            @unique
-  useFractions      Boolean           @default(false)
+  numberFormat      NumberFormat      @default(default)
   measurementFormat MeasurementFormat @default(default)
   uiTheme           UiTheme           @default(system)
   diet              NutritionalFacts? @relation("UserNutritionalFacts")
@@ -162,6 +168,7 @@ model Equipment {
 model Ingredient {
   id           String           @id @default(cuid())
   displayOrder Int
+  isFraction   Boolean          @default(false)
   amount       Float
   unit         MeasurementUnit?
   name         String

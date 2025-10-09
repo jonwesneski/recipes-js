@@ -19,7 +19,7 @@ interface IngredientListProps {
   className?: ClassValue
 }
 const IngredientList = (props: IngredientListProps) => {
-  const { useFractions, measurementFormat } = useUserStore((state) => state)
+  const { numberFormat, measurementFormat } = useUserStore((state) => state)
   const { showModal } = useCustomModal()
 
   const handleOnShowConversions = (
@@ -54,7 +54,7 @@ const IngredientList = (props: IngredientListProps) => {
         return (
           <li key={ingredient.id} className="text-left">
             <span>
-              {useFractions
+              {numberFormat === 'fraction'
                 ? numberToFraction(
                     roundToDecimal(amount * props.scaleFactor, 2),
                   )

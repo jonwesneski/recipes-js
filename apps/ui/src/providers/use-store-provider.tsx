@@ -1,6 +1,10 @@
 'use client'
 
-import type { MeasurementFormat, UiTheme } from '@repo/codegen/model'
+import type {
+  MeasurementFormat,
+  NumberFormat,
+  UiTheme,
+} from '@repo/codegen/model'
 import { usersControllerUserV1 } from '@repo/codegen/users'
 import { jwtGoogleSchema } from '@repo/zod-schemas'
 import {
@@ -21,17 +25,10 @@ import {
 import { useStore } from 'zustand'
 import { useAuthentication } from './authentication-provider'
 
-const getBoolFromLocalStorage = (key: string) => {
-  const value = localStorage.getItem(key)
-  if (value === null) {
-    return undefined
-  }
-  return value === 'true'
-}
-
 const getGuestState = (): Partial<UserState> => {
   return {
-    useFractions: getBoolFromLocalStorage('useFractions'),
+    numberFormat: (localStorage.getItem('numberFormat') ??
+      'default') as NumberFormat,
     measurementFormat: (localStorage.getItem('measurementFormat') ??
       'default') as MeasurementFormat,
     uiTheme: (localStorage.getItem('uiTheme') ?? 'system') as UiTheme,

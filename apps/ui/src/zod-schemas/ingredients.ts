@@ -70,11 +70,13 @@ export const ingredientRowArraySchema = z
   })
   .transform((arg) => {
     let amount = Number(arg[0]);
-    if (isNaN(amount)) {
+    const isFraction = isNaN(amount);
+    if (isFraction) {
       amount = fractionToNumber(arg[0]);
     }
     const ingredient: CreateIngredientDto = {
       amount,
+      isFraction,
       unit: arg[1] ? (arg[1] as IngredientEntityUnit) : null,
       name: arg[2],
     };

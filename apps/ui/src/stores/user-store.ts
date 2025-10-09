@@ -1,5 +1,6 @@
 import type {
   MeasurementFormat,
+  NumberFormat,
   UiTheme,
   UserEntity,
 } from '@repo/codegen/model';
@@ -9,7 +10,7 @@ import { createStore } from 'zustand/vanilla';
 export type UserState = Omit<UserEntity, 'createdAt' | 'updatedAt' | 'diet'>;
 
 export type UserActions = {
-  setUseFractions: (_value: boolean) => Promise<void>;
+  setNumberFormat: (_value: NumberFormat) => Promise<void>;
   setMeasurementFormat: (_value: MeasurementFormat) => Promise<void>;
   setUiTheme: (_value: UiTheme) => Promise<void>;
   // setDiet: (_value: UserEntityDiet) => Promise<void>;
@@ -23,7 +24,7 @@ export const defaultInitState: UserState = {
   email: '',
   name: '',
   handle: '',
-  useFractions: false,
+  numberFormat: 'default',
   measurementFormat: 'default',
   uiTheme: 'system',
   imageUrl: '',
@@ -33,14 +34,14 @@ export const defaultInitState: UserState = {
 export const createUserStore = (initState: UserState = defaultInitState) => {
   return createStore<UserStore>()((set, get) => ({
     ...initState,
-    setUseFractions: async (useFractions: boolean) => {
+    setNumberFormat: async (numberFormat: NumberFormat) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(id, { useFractions });
+        await usersControllerUpdateUserV1(id, { numberFormat });
       } else {
-        localStorage.setItem('useFractions', useFractions.toString());
+        localStorage.setItem('useFractions', numberFormat.toString());
       }
-      set(() => ({ useFractions }));
+      set(() => ({ numberFormat }));
     },
     setMeasurementFormat: async (measurementFormat: MeasurementFormat) => {
       const id = get().id;
