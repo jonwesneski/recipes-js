@@ -83,7 +83,7 @@ export const Navbar = () => {
   }, [isOpen])
 
   return (
-    <div className="flex justify-between relative border-2 z-1">
+    <div className="flex justify-between relative border-2">
       <div className="flex-1" />
       <div className="flex-2 mx-auto flex justify-center gap-3">
         {renderNavItems()}
@@ -112,7 +112,7 @@ export const Navbar = () => {
 
         <div
           ref={menuRef}
-          className={`absolute flex flex-col-reverse z-0 -translate-y-34 md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
+          className={`absolute flex flex-col-reverse -z-1 -translate-y-34 md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
           style={{ transformOrigin: 'bottom' }}
         >
           <NavItem>
@@ -128,7 +128,7 @@ export const Navbar = () => {
             />
           </NavItem>
           <NavItem>
-            <h6 className="text-center">Unit Style</h6>
+            <h6 className="text-center">Unit Format</h6>
             <RadioGroup
               selectedValue={measurementFormat}
               onChange={(value) =>

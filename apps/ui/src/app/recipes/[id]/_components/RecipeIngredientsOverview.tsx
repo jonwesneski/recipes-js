@@ -74,7 +74,7 @@ export const RecipeIngredientsOverview = (
                     uniqueIngredients[name].amount * scaleFactor,
                     2,
                   )
-            } ${uniqueIngredients[name].unit} ${name}`}
+            }${uniqueIngredients[name].unit ? ` ${uniqueIngredients[name].unit} ` : ' '}${name}`}
           </li>
         ))}
       </ul>

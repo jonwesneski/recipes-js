@@ -269,6 +269,25 @@ export const numberToFraction = (
   return result.trim();
 };
 
+export const fractionToNumber = (fractionString: string): number => {
+  const parts = fractionString.split(' ');
+  let whole = 0;
+  let fractionIndex = 0;
+  if (parts.length === 2) {
+    whole = Number(parts[0]);
+    fractionIndex = 1;
+  }
+  const fractionParts = parts[fractionIndex].split('/');
+  if (fractionParts.length === 2 && !isNaN(whole)) {
+    const numerator = Number(fractionParts[0]);
+    const denominator = Number(fractionParts[1]);
+    if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+      return whole + numerator / denominator;
+    }
+  }
+  return NaN;
+};
+
 export const roundToDecimal = (num: number, decimalPlaces: number): number => {
   const factor = Math.pow(10, decimalPlaces);
   return Math.round(num * factor) / factor;

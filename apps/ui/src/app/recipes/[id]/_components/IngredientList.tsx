@@ -65,7 +65,7 @@ const IngredientList = (props: IngredientListProps) => {
               <a
                 href="#"
                 className={
-                  'inline-block underline decoration-dotted underline-offset-4'
+                  'inline-block mr-2 underline decoration-dotted underline-offset-4'
                 }
                 onClick={(e) => handleOnShowConversions(e, ingredient)}
               >
