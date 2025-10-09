@@ -25,11 +25,15 @@ export class PatchIngredientDto
   @IsOptional()
   @IsString()
   @IsNotEmpty()
+  @ApiProperty({ type: String })
   id?: string;
   @IsNumber()
   @Min(0)
   @ApiProperty({ type: Number })
   amount: number;
+  @IsBoolean()
+  @ApiProperty()
+  isFraction: boolean;
   @IsEnum(MeasurementUnit)
   @IsNullable()
   @ApiProperty({ enum: MeasurementUnit, nullable: true })

@@ -5,8 +5,8 @@ import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
   type AllMeasurements,
+  determineAmountFormat,
   determineAmountUnit,
-  numberToFraction,
   roundToDecimal,
 } from '@src/utils/measurements'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
@@ -19,7 +19,7 @@ interface IngredientListProps {
   className?: ClassValue
 }
 const IngredientList = (props: IngredientListProps) => {
-  const { useFractions, measurementFormat } = useUserStore((state) => state)
+  const { numberFormat, measurementFormat } = useUserStore((state) => state)
   const { showModal } = useCustomModal()
 
   const handleOnShowConversions = (
@@ -54,18 +54,19 @@ const IngredientList = (props: IngredientListProps) => {
         return (
           <li key={ingredient.id} className="text-left">
             <span>
-              {useFractions
-                ? numberToFraction(
-                    roundToDecimal(amount * props.scaleFactor, 2),
-                  )
-                : roundToDecimal(amount * props.scaleFactor, 2)}
+              {determineAmountFormat(
+                amount,
+                props.scaleFactor,
+                ingredient.isFraction,
+                numberFormat,
+              )}
             </span>{' '}
             {unit ? (
               /*eslint-disable-next-line jsx-a11y/anchor-is-valid -- for now*/
               <a
                 href="#"
                 className={
-                  'inline-block underline decoration-dotted underline-offset-4'
+                  'inline-block mr-2 underline decoration-dotted underline-offset-4'
                 }
                 onClick={(e) => handleOnShowConversions(e, ingredient)}
               >

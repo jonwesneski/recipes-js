@@ -1,4 +1,8 @@
-import { IngredientEntityUnit, MeasurementFormat } from '@repo/codegen/model';
+import {
+  IngredientEntityUnit,
+  MeasurementFormat,
+  type NumberFormat,
+} from '@repo/codegen/model';
 import { z } from 'zod/v4';
 
 export type AllMeasurements = NonNullable<IngredientEntityUnit>;
@@ -267,6 +271,38 @@ export const numberToFraction = (
     result = `${sign * numerator}/${denominator}`;
   }
   return result.trim();
+};
+
+export const fractionToNumber = (fractionString: string): number => {
+  const parts = fractionString.split(' ');
+  let whole = 0;
+  let fractionIndex = 0;
+  if (parts.length === 2) {
+    whole = Number(parts[0]);
+    fractionIndex = 1;
+  }
+  const fractionParts = parts[fractionIndex].split('/');
+  if (fractionParts.length === 2 && !isNaN(whole)) {
+    const numerator = Number(fractionParts[0]);
+    const denominator = Number(fractionParts[1]);
+    if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+      return whole + numerator / denominator;
+    }
+  }
+  return NaN;
+};
+
+export const determineAmountFormat = (
+  amount: number,
+  scaleFactor: number,
+  isFraction: boolean,
+  numberFormatPreference: NumberFormat,
+) => {
+  const roundedNumber = roundToDecimal(amount * scaleFactor, 2);
+  return numberFormatPreference === 'fraction' ||
+    (isFraction && numberFormatPreference === 'default')
+    ? numberToFraction(roundedNumber)
+    : roundedNumber.toString();
 };
 
 export const roundToDecimal = (num: number, decimalPlaces: number): number => {

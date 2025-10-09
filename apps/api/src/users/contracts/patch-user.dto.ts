@@ -1,13 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MeasurementFormat, Prisma, UiTheme } from '@repo/database';
-import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
 import {
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+  MeasurementFormat,
+  NumberFormat,
+  Prisma,
+  UiTheme,
+} from '@repo/database';
+import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PatchUserDto
   implements
@@ -37,9 +36,13 @@ export class PatchUserDto
   @ApiProperty({ enum: UiTheme, enumName: 'UiTheme', required: false })
   uiTheme?: UiTheme;
   @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false })
-  useFractions?: boolean;
+  @IsEnum(NumberFormat)
+  @ApiProperty({
+    enum: NumberFormat,
+    enumName: 'NumberFormat',
+    required: false,
+  })
+  numberFormat?: NumberFormat;
   @IsOptional()
   @IsEnum(MeasurementFormat)
   @ApiProperty({

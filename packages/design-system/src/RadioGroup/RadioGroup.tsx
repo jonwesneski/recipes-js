@@ -1,6 +1,7 @@
 'use client'
 
 import { type ClassValue } from 'clsx'
+import { Fragment } from 'react/jsx-runtime'
 import { mergeCss } from '../utils'
 
 interface IRadioGroupProps {
@@ -15,25 +16,28 @@ export const RadioGroup = (props: IRadioGroupProps) => {
   }
 
   return (
-    <div className="flex divide-x divide-text">
-      {props.options.map((option) => {
+    <div className="flex justify-around">
+      {props.options.map((option, index) => {
         return (
-          <button
-            key={option.value}
-            type="button"
-            className={mergeCss(
-              'p-1',
-              {
-                'bg-text text-background': option.value === props.selectedValue,
-                'hover:bg-(--text) hover:text-(--background) cursor-pointer':
-                  option.value !== props.selectedValue,
-              },
-              props.className,
-            )}
-            onClick={() => handleOnChange(option.value)}
-          >
-            {option.label}
-          </button>
+          <Fragment key={option.value}>
+            {index > 0 ? <div className="w-px bg-text h-6 mx-2" /> : null}
+            <button
+              type="button"
+              className={mergeCss(
+                'p-1',
+                {
+                  'bg-text text-background':
+                    option.value === props.selectedValue,
+                  'hover:bg-(--text) hover:text-(--background) cursor-pointer':
+                    option.value !== props.selectedValue,
+                },
+                props.className,
+              )}
+              onClick={() => handleOnChange(option.value)}
+            >
+              {option.label}
+            </button>
+          </Fragment>
         )
       })}
     </div>

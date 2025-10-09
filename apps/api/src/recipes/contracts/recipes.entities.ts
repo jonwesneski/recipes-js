@@ -76,6 +76,8 @@ export class IngredientEntity
   updatedAt: Date;
   @ApiProperty({ type: Number })
   amount: number;
+  @ApiProperty()
+  isFraction: boolean;
   @ApiProperty({ enum: MeasurementUnit, nullable: true })
   unit: MeasurementUnit | null;
   @ApiProperty()

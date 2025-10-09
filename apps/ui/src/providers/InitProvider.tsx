@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 const queryClient = new QueryClient()
 
-const MSW_IGNORES = ['?_rsc=', '_next/']
+const MSW_IGNORES = ['?_rsc=', '_next/', '__nextjs']
 
 interface IInitProviderProps {
   children: React.ReactNode
