@@ -5,9 +5,8 @@ import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type StepItemType } from '@src/stores/recipe-store'
 import {
+  determineAmountFormat,
   determineAmountUnit,
-  numberToFraction,
-  roundToDecimal,
 } from '@src/utils/measurements'
 import type { DetailedHTMLProps, HTMLAttributes } from 'react'
 
@@ -15,6 +14,7 @@ type UniqueIngredientsType = Record<
   string,
   {
     amount: number
+    isFraction: boolean
     unit: string | null
   }
 >
@@ -28,11 +28,14 @@ const createUniqueIngredient = (
     step.ingredients.items.forEach((i) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- not true
       if (!uniqueIngredients[i.ingredient.dto.name]) {
-        uniqueIngredients[i.ingredient.dto.name] = determineAmountUnit(
-          i.ingredient.dto.amount,
-          i.ingredient.dto.unit,
-          measurementFormat,
-        )
+        uniqueIngredients[i.ingredient.dto.name] = {
+          ...determineAmountUnit(
+            i.ingredient.dto.amount,
+            i.ingredient.dto.unit,
+            measurementFormat,
+          ),
+          isFraction: i.ingredient.dto.isFraction,
+        }
       } else {
         uniqueIngredients[i.ingredient.dto.name].amount += determineAmountUnit(
           i.ingredient.dto.amount,
@@ -62,19 +65,12 @@ export const RecipeIngredientsOverview = (
       <ul className="ml-2">
         {Object.keys(uniqueIngredients).map((name) => (
           <li key={name} style={{ listStyleType: 'none' }}>
-            {`${
-              numberFormat === 'fraction'
-                ? numberToFraction(
-                    roundToDecimal(
-                      uniqueIngredients[name].amount * scaleFactor,
-                      2,
-                    ),
-                  )
-                : roundToDecimal(
-                    uniqueIngredients[name].amount * scaleFactor,
-                    2,
-                  )
-            }${uniqueIngredients[name].unit ? ` ${uniqueIngredients[name].unit} ` : ' '}${name}`}
+            {`${determineAmountFormat(
+              uniqueIngredients[name].amount,
+              scaleFactor,
+              uniqueIngredients[name].isFraction,
+              numberFormat,
+            )}${uniqueIngredients[name].unit ? ` ${uniqueIngredients[name].unit} ` : ' '}${name}`}
           </li>
         ))}
       </ul>

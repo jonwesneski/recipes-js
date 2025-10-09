@@ -1,4 +1,8 @@
-import { IngredientEntityUnit, MeasurementFormat } from '@repo/codegen/model';
+import {
+  IngredientEntityUnit,
+  MeasurementFormat,
+  type NumberFormat,
+} from '@repo/codegen/model';
 import { z } from 'zod/v4';
 
 export type AllMeasurements = NonNullable<IngredientEntityUnit>;
@@ -286,6 +290,19 @@ export const fractionToNumber = (fractionString: string): number => {
     }
   }
   return NaN;
+};
+
+export const determineAmountFormat = (
+  amount: number,
+  scaleFactor: number,
+  isFraction: boolean,
+  numberFormatPreference: NumberFormat,
+) => {
+  const roundedNumber = roundToDecimal(amount * scaleFactor, 2);
+  return numberFormatPreference === 'fraction' ||
+    (isFraction && numberFormatPreference === 'default')
+    ? numberToFraction(roundedNumber)
+    : roundedNumber.toString();
 };
 
 export const roundToDecimal = (num: number, decimalPlaces: number): number => {

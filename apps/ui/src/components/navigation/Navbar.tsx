@@ -2,7 +2,11 @@
 
 import AddIcon from '@public/addIcon.svg'
 import SearchIcon from '@public/searchIcon.svg'
-import type { MeasurementFormat, UiTheme } from '@repo/codegen/model'
+import type {
+  MeasurementFormat,
+  NumberFormat,
+  UiTheme,
+} from '@repo/codegen/model'
 import { RadioGroup } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
@@ -42,6 +46,8 @@ export const Navbar = () => {
     setUiTheme,
     measurementFormat,
     setMeasurementFormat,
+    numberFormat,
+    setNumberFormat,
   } = useUserStore((state) => state)
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -67,6 +73,11 @@ export const Navbar = () => {
 
   const handleMeasurementFormatChange = async (value: MeasurementFormat) => {
     await setMeasurementFormat(value)
+    setIsOpen(false)
+  }
+
+  const handleNumberFormatChange = async (value: NumberFormat) => {
+    await setNumberFormat(value)
     setIsOpen(false)
   }
 
@@ -112,7 +123,7 @@ export const Navbar = () => {
 
         <div
           ref={menuRef}
-          className={`absolute flex flex-col-reverse -z-1 -translate-y-34 md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
+          className={`absolute flex flex-col-reverse -z-1 -translate-y-[10.5rem] md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
           style={{ transformOrigin: 'bottom' }}
         >
           <NavItem>
@@ -141,7 +152,20 @@ export const Navbar = () => {
               ]}
             />
           </NavItem>
-          <div>Item 3</div>
+          <NavItem>
+            <h6 className="text-center">Number Format</h6>
+            <RadioGroup
+              selectedValue={numberFormat}
+              onChange={(value) =>
+                void handleNumberFormatChange(value as NumberFormat)
+              }
+              options={[
+                { label: 'default', value: 'default' },
+                { label: 'decimal', value: 'decimal' },
+                { label: 'fraction', value: 'fraction' },
+              ]}
+            />
+          </NavItem>
         </div>
       </div>
     </div>
