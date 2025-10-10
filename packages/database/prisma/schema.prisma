@@ -62,8 +62,12 @@ model User {
   updatedAt         DateTime          @updatedAt
   recipes           Recipe[]
 
-  followers  UserFollow[] @relation("UserFollows")
-  followings UserFollow[] @relation("UserFollowings")
+  /**
+   * followers/UserFollowings: where followingId equals this user's id (users who follow this user)
+   * followings/UserFollows: where userId equals this user's id (users this user follows)
+   */
+  followers  UserFollow[] @relation("UserFollowings")
+  followings UserFollow[] @relation("UserFollows")
 
   @@map("users")
 }

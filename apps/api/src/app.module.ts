@@ -4,6 +4,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { AiModule } from './ai/ai.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthCheckModule } from './healthCheck';
+import { NotificationsModule } from './notifications/notifications.module';
 import { RecipesModule } from './recipes';
 import { TagsModule } from './tags';
 import { UsersModule } from './users';
@@ -28,6 +29,7 @@ import { UsersModule } from './users';
     AiModule,
     AuthModule,
     HealthCheckModule,
+    NotificationsModule,
     RecipesModule,
     TagsModule,
     UsersModule,
