@@ -9,6 +9,7 @@ import {
   RecipeUpdateType,
 } from '@repo/nest-shared';
 import { KafkaProducerService } from '@src/common';
+import { NotificationsService } from '@src/notifications/notifications.service';
 import {
   CreateRecipeDto,
   CreateStepDto,
@@ -24,6 +25,7 @@ export class RecipesService {
     private readonly recipeRepository: RecipeRepository,
     private readonly imageReviewProcessorService: ImageReviewProcessorService,
     private readonly kafkaProducerService: KafkaProducerService,
+    private readonly notificationsService: NotificationsService,
   ) {
     this.useKafka = this.configService.get<boolean>('USE_KAFKA', false);
   }
@@ -46,6 +48,7 @@ export class RecipesService {
     );
 
     await this.processImages(data, recipe);
+    void this.notificationsService.recipeAdded(userId, recipe);
 
     return recipe;
   }

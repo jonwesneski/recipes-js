@@ -27,4 +27,28 @@ export class UsersService {
       include: { diet: true },
     });
   }
+
+  async getFollowers(id: string) {
+    // todo: update after adding allow email notification field/column
+    return await this.prisma.user.findFirstOrThrow({
+      where: { id },
+      include: {
+        followers: {
+          omit: { id: true, createdAt: true, updatedAt: true, userId: true },
+        },
+      },
+      omit: {
+        createdAt: true,
+        email: true,
+        handle: true,
+        id: true,
+        imageUrl: true,
+        measurementFormat: true,
+        name: true,
+        numberFormat: true,
+        uiTheme: true,
+        updatedAt: true,
+      },
+    });
+  }
 }
