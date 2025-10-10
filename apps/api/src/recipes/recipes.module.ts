@@ -9,6 +9,9 @@ import {
   S3Service,
 } from '@repo/nest-shared';
 import { KafkaProducerService } from '@src/common';
+import { NotificationsModule } from '@src/notifications/notifications.module';
+import { NotificationsService } from '@src/notifications/notifications.service';
+import { UsersService } from '@src/users';
 import { RecipesController } from './recipes.controller';
 import { RecipesService } from './recipes.service';
 
@@ -16,15 +19,18 @@ import { RecipesService } from './recipes.service';
   imports: [
     ConfigModule.forRoot(),
     AwsModule,
-    KafkaProducerModule,
-    RecipeRepositoryModule,
     ImageReviewProcessorModule,
+    KafkaProducerModule,
+    NotificationsModule,
+    RecipeRepositoryModule,
   ],
   controllers: [RecipesController],
   providers: [
+    NotificationsService,
     RecipesService,
     RekognitionService,
     S3Service,
+    UsersService,
     {
       provide: KafkaProducerService,
       inject: [ConfigService],

@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -9,7 +10,24 @@ import {
 import { NotificationRecipeAddedSchemaType } from '@repo/zod-schemas';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: (origin, callback) => {
+      const configService = new ConfigService();
+      const allowedOriginsString = configService.get<string>('CORS_ORIGINS');
+      const allowedOrigins = allowedOriginsString
+        ? allowedOriginsString.split(',')
+        : [];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  },
+})
 export class NotificationsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
@@ -27,7 +45,7 @@ export class NotificationsGateway
   @SubscribeMessage('register')
   handleRegister(client: Socket, userId: string) {
     this.connectedClients[userId] = client;
-    this.logger.debug(`User registered: ${userId}`);
+    this.logger.log(`User registered: ${userId}`);
   }
 
   handleDisconnect(client: any) {
@@ -41,15 +59,20 @@ export class NotificationsGateway
   }
 
   recipeAdded(
-    userId: string,
+    followerIds: string[],
     message: NotificationRecipeAddedSchemaType,
-  ): boolean {
-    const client = this.connectedClients[userId];
-    if (client) {
-      client.emit('recipeAdded', message);
-      this.logger.log(`emitted recipeAdded: ${message.id}`);
-      return true;
+  ): string[] {
+    const idsNotEmitted: string[] = [];
+    for (const id of followerIds) {
+      const client = this.connectedClients[id];
+      if (client) {
+        client.emit('recipeAdded', message);
+        this.logger.log(`emitted recipeAdded: ${message.id}`);
+      } else {
+        idsNotEmitted.push(id);
+      }
     }
-    return false;
+
+    return idsNotEmitted;
   }
 }

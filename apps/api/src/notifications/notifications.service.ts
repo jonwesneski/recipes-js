@@ -14,10 +14,13 @@ export class NotificationsService {
     userId: string,
     message: NotificationRecipeAddedSchemaType,
   ) {
-    await this.usersService.getFollowers(userId);
-    const emitted = this.notificationsGateway.recipeAdded(userId, message);
-    if (!emitted) {
-      // todo email
+    const { followers } = await this.usersService.getFollowers(userId);
+    const idsNotEmitted = this.notificationsGateway.recipeAdded(
+      followers.map((f) => f.followingId),
+      message,
+    );
+    if (idsNotEmitted.length) {
+      // todo: email
     }
   }
 }

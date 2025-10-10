@@ -20,6 +20,7 @@ import { UsersModule } from './users';
       pinoHttp: {
         transport: {
           target: 'pino-pretty',
+          level: 'debug',
           options: {
             singleLine: true,
           },

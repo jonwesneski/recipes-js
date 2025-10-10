@@ -48,7 +48,7 @@ export class RecipesService {
     );
 
     await this.processImages(data, recipe);
-    this.notificationsService.recipeAdded(userId, recipe);
+    void this.notificationsService.recipeAdded(userId, recipe);
 
     return recipe;
   }

@@ -14,7 +14,6 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getUser(id: string): Promise<UserPrismaType> {
-    this.prisma.userFollow.findMany({ where: {} });
     return await this.prisma.user.findFirstOrThrow({
       where: { id },
       include: { diet: true },
@@ -30,6 +29,7 @@ export class UsersService {
   }
 
   async getFollowers(id: string) {
+    // todo: update after adding allow email notification field/column
     return await this.prisma.user.findFirstOrThrow({
       where: { id },
       include: {
@@ -40,9 +40,11 @@ export class UsersService {
       omit: {
         createdAt: true,
         email: true,
+        handle: true,
         id: true,
         imageUrl: true,
         measurementFormat: true,
+        name: true,
         numberFormat: true,
         uiTheme: true,
         updatedAt: true,
