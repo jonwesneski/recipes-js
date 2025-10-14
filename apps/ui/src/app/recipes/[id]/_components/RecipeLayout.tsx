@@ -39,7 +39,7 @@ export const RecipeLayout = (props: IRecipeLayoutProps) => {
         </div>
         <p className="my-12 text-center">{description}</p>
       </div>
-      <main className="m-auto max-w-[800px]">{props.children}</main>
+      <div className="m-auto max-w-[800px]">{props.children}</div>
     </>
   )
 }

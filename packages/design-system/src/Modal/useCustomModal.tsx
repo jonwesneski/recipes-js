@@ -14,7 +14,6 @@ export function useCustomModal() {
     const portal = createPortal(<Component {...props} />, modalRoot)
     document.body.style.overflow = 'hidden'
     addModal({ id, portal })
-    return showModal
   }
 
   const closeModal = () => {
