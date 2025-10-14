@@ -3,6 +3,7 @@
 import { useCustomModal } from '@repo/design-system'
 import { NotificationRecipeAddedSchema } from '@repo/zod-schemas'
 import Toast, { type ToastType } from '@src/components/ToastComponent'
+import { useRouter } from 'next/navigation'
 import { createContext, useContext, useEffect, type ReactNode } from 'react'
 import { io, type Socket } from 'socket.io-client'
 import { useUserStore } from './use-store-provider'
@@ -22,6 +23,7 @@ export const NotificationProvider = ({
 }: NotificationProviderProps) => {
   const userId = useUserStore((state) => state.id)
   const { showModal, closeModal } = useCustomModal()
+  const router = useRouter()
   // eslint-disable-next-line no-undef-init -- it can be uninitialized
   let socket: Socket | undefined = undefined
   let toastTimer: ReturnType<typeof setTimeout>
@@ -31,6 +33,7 @@ export const NotificationProvider = ({
     title: string,
     message: string,
     type: ToastType = 'info',
+    navigationUrl?: string,
   ) => {
     toastTimer = setTimeout(closeModal, TOAST_DURATION_MS)
     showModal(toastId, Toast, {
@@ -38,6 +41,7 @@ export const NotificationProvider = ({
       message,
       type,
       onClose: closeModal,
+      onClick: navigationUrl ? () => router.push(navigationUrl) : undefined,
       animationDuration: TOAST_DURATION_MS,
     })
   }
@@ -54,6 +58,8 @@ export const NotificationProvider = ({
             `NewRecipe-${result.id}`,
             `New Recipe from ${result.user.handle}`,
             result.name,
+            'info',
+            `/recipes/${result.id}`,
           )
         } catch (e) {
           console.error(e)
