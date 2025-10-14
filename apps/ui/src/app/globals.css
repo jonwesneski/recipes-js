@@ -44,3 +44,69 @@ input[type='number'] {
     flex-direction: row;
   }
 }
+
+/* Toast Progress-Bar/Border Animation */
+@keyframes shrink-left-to-right {
+  from {
+    width: 100%;
+    left: 0;
+  }
+  to {
+    width: 0%;
+    left: 100%;
+  }
+}
+
+.animate-top-shrink {
+  animation: shrink-left-to-right calc(var(--duration) / 4) forwards;
+  animation-delay: 0ms;
+}
+
+@keyframes shrink-top-to-bottom {
+  from {
+    height: 100%;
+    top: 0;
+  }
+  to {
+    height: 0%;
+    top: 100%;
+  }
+}
+.animate-right-shrink {
+  animation: shrink-top-to-bottom calc(var(--duration) / 4) linear forwards;
+  animation-delay: calc(var(--duration) / 4);
+  animation-fill-mode: both;
+}
+
+@keyframes shrink-right-to-left {
+  from {
+    width: 100%;
+    right: 0;
+  }
+  to {
+    width: 0%;
+    right: 100%;
+  }
+}
+.animate-bottom-shrink {
+  animation: shrink-right-to-left calc(var(--duration) / 4) linear forwards;
+  animation-delay: calc(var(--duration) / 2);
+  animation-fill-mode: both;
+}
+
+@keyframes shrink-bottom-to-top {
+  from {
+    height: 100%;
+    bottom: 0%;
+  }
+  to {
+    height: 0%;
+    bottom: 100%;
+  }
+}
+.animate-left-shrink {
+  animation: shrink-bottom-to-top calc(var(--duration) / 4) linear forwards;
+  animation-delay: calc(3 * var(--duration) / 4);
+  animation-fill-mode: both;
+}
+/* END - Toast Progress-Bar/Border Animation */
