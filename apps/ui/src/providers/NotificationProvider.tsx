@@ -8,8 +8,15 @@ import { createContext, useContext, useEffect, type ReactNode } from 'react'
 import { io, type Socket } from 'socket.io-client'
 import { useUserStore } from './use-store-provider'
 
+export type ToastParams = {
+  toastId: string
+  title: string
+  message: string
+  type?: ToastType
+  navigationUrl?: string
+}
 export type NotificationType = {
-  showToast: (_toastId: string, _title: string, _message: string) => void
+  showToast: (_params: ToastParams) => void
 }
 export const NotificationContext = createContext<NotificationType | null>(null)
 
@@ -26,23 +33,21 @@ export const NotificationProvider = ({
   const router = useRouter()
   // eslint-disable-next-line no-undef-init -- it can be uninitialized
   let socket: Socket | undefined = undefined
-  let toastTimer: ReturnType<typeof setTimeout>
 
-  const showToast = (
-    toastId: string,
-    title: string,
-    message: string,
-    type: ToastType = 'info',
-    navigationUrl?: string,
-  ) => {
-    toastTimer = setTimeout(closeModal, TOAST_DURATION_MS)
+  const showToast = ({
+    toastId,
+    title,
+    message,
+    type = 'info',
+    navigationUrl,
+  }: ToastParams) => {
     showModal(toastId, Toast, {
       title,
       message,
       type,
       onClose: closeModal,
       onClick: navigationUrl ? () => router.push(navigationUrl) : undefined,
-      animationDuration: TOAST_DURATION_MS,
+      duration: TOAST_DURATION_MS,
     })
   }
 
@@ -51,16 +56,15 @@ export const NotificationProvider = ({
       socket = io(process.env.NEXT_PUBLIC_API_URL)
       socket.emit('register', userId)
 
-      socket.on('recipeAdded', (_data) => {
+      socket.on('recipeAdded', (data) => {
         try {
-          const result = NotificationRecipeAddedSchema.parse(_data)
-          showToast(
-            `NewRecipe-${result.id}`,
-            `New Recipe from ${result.user.handle}`,
-            result.name,
-            'info',
-            `/recipes/${result.id}`,
-          )
+          const result = NotificationRecipeAddedSchema.parse(data)
+          showToast({
+            toastId: `NewRecipe-${result.id}`,
+            title: `New Recipe from ${result.user.handle}`,
+            message: result.name,
+            navigationUrl: `/recipes/${result.id}`,
+          })
         } catch (e) {
           console.error(e)
         }
@@ -68,7 +72,6 @@ export const NotificationProvider = ({
     }
 
     return () => {
-      clearTimeout(toastTimer)
       socket?.off('recipeAdded')
       socket?.disconnect()
     }

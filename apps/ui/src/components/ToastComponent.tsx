@@ -1,5 +1,8 @@
 'use client'
 
+import { mergeCss } from '@repo/design-system'
+import { useEffect, useState } from 'react'
+
 export type ToastType = 'success' | 'error' | 'info'
 interface IToastProps {
   title: string
@@ -7,12 +10,27 @@ interface IToastProps {
   type: ToastType
   onClose: () => void
   onClick?: () => void
-  animationDuration: number
+  duration: number
 }
 const Toast = (props: IToastProps) => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+
+    const closeTimer = setTimeout(() => {
+      props.onClose()
+    }, props.duration)
+
+    return () => clearTimeout(closeTimer)
+  }, [props])
+
   return (
     <div
-      className="absolute top-5/6 md:top-1/6 mx-auto w-[85vw] bg-background border-2 border-text"
+      className={mergeCss(
+        'absolute top-5/6 md:top-1/6 mx-auto w-[85vw] bg-background border-2 border-text',
+        { 'toast-enter': isVisible },
+      )}
       style={{
         position: 'inherit',
         transform: 'translate(-50%, -50%)',
@@ -26,7 +44,7 @@ const Toast = (props: IToastProps) => {
           onClick={props.onClose}
           style={
             {
-              '--duration': `${props.animationDuration}ms`,
+              '--duration': `${props.duration}ms`,
             } as React.CSSProperties
           }
         >

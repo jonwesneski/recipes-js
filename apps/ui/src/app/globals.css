@@ -45,7 +45,23 @@ input[type='number'] {
   }
 }
 
-/* Toast Progress-Bar/Border Animation */
+/* Toast Animations */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%);
+    opacity: 1;
+  }
+}
+
+.toast-enter {
+  animation: slideInFromRight 0.5s ease forwards;
+}
+
+/* Progress-Bar/Border Animation */
 @keyframes shrink-left-to-right {
   from {
     width: 100%;
@@ -109,4 +125,5 @@ input[type='number'] {
   animation-delay: calc(3 * var(--duration) / 4);
   animation-fill-mode: both;
 }
-/* END - Toast Progress-Bar/Border Animation */
+/* END - Progress-Bar/Border Animation */
+/* END - Toast Animations */
