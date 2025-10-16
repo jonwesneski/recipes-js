@@ -81,6 +81,7 @@ model UserFollow {
   followingId String
   following   User     @relation("UserFollowings", fields: [followingId], references: [id])
 
+  @@unique([userId, followingId])
   @@map("user_follows")
 }
 
