@@ -125,7 +125,7 @@ describe('UsersController (e2e)', () => {
 
     it('valid', async () => {
       const response = await request(app.getHttpServer())
-        .patch(followPath())
+        .put(followPath())
         .send({ follow: true })
         .set('Authorization', `Bearer ${token2}`);
 
@@ -134,7 +134,7 @@ describe('UsersController (e2e)', () => {
 
     it('conflict', async () => {
       const response = await request(app.getHttpServer())
-        .patch(followPath())
+        .put(followPath())
         .send({ follow: true })
         .set('Authorization', `Bearer ${token2}`);
 
@@ -143,7 +143,7 @@ describe('UsersController (e2e)', () => {
 
     it('bad request', async () => {
       const response = await request(app.getHttpServer())
-        .patch(followPath())
+        .put(followPath())
         .send({ follow: 1 })
         .set('Authorization', `Bearer ${token2}`);
 
@@ -153,7 +153,7 @@ describe('UsersController (e2e)', () => {
 
     it('unfollow valid', async () => {
       const response = await request(app.getHttpServer())
-        .patch(followPath())
+        .put(followPath())
         .send({ follow: false })
         .set('Authorization', `Bearer ${token2}`);
 

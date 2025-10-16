@@ -5,7 +5,7 @@ import type {
   NumberFormat,
   UiTheme,
 } from '@repo/codegen/model'
-import { usersControllerUserV1 } from '@repo/codegen/users'
+import { usersControllerUserAccountV1 } from '@repo/codegen/users'
 import { jwtGoogleSchema } from '@repo/zod-schemas'
 import {
   type UserState,
@@ -64,7 +64,7 @@ export const UserStoreProvider = ({
         if (accessToken) {
           try {
             const decodedToken = jwtGoogleSchema.parse(jwtDecode(accessToken))
-            const user = await usersControllerUserV1(decodedToken.sub)
+            const user = await usersControllerUserAccountV1(decodedToken.sub)
             storeRef.current.setState(user)
           } catch (error) {
             console.error('Error decoding JWT:', error)

@@ -5,6 +5,7 @@ import {
   HttpCode,
   Param,
   Patch,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -95,7 +96,7 @@ export class UsersController {
     return await this.usersService.getFollowers(id);
   }
 
-  @Patch(':id/follow')
+  @Put(':id/follow')
   @HttpCode(204)
   @ApiNoContentResponse({ description: '(un)follow a user' })
   @ApiParam({
