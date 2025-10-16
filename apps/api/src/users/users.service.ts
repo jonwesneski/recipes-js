@@ -80,7 +80,7 @@ export class UsersService {
     });
   }
 
-  async getFollowers(id: string) {
+  async getFollowerIds(id: string) {
     // todo: update after adding allow email notification field/column
     return await this.prisma.user.findFirstOrThrow({
       where: { id },
@@ -104,13 +104,23 @@ export class UsersService {
     });
   }
 
+  async getFollowers(id: string) {
+    const followers = await this.prisma.userFollow.findMany({
+      where: { userId: id },
+      select: {
+        following: { select: { id: true, handle: true, imageUrl: true } },
+      },
+    });
+    return followers.map((f) => f.following);
+  }
+
   async followUser(id: string, requestedUser: string, isFollowing: boolean) {
     if (isFollowing) {
-      return await this.prisma.userFollow.create({
+      await this.prisma.userFollow.create({
         data: { userId: requestedUser, followingId: id },
       });
     } else {
-      return await this.prisma.userFollow.delete({
+      await this.prisma.userFollow.delete({
         where: {
           userId_followingId: { userId: requestedUser, followingId: id },
         },

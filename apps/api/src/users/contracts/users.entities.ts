@@ -54,3 +54,12 @@ export class UserAccountResponse
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
 }
+
+export class UserFollowersResponse {
+  @ApiProperty({ type: String })
+  id: string;
+  @ApiProperty({ type: String })
+  handle: string;
+  @ApiProperty({ type: String, nullable: true })
+  imageUrl: string | null;
+}
