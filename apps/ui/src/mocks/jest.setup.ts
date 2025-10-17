@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { TextDecoder, TextEncoder } from 'util';
 //need to set these before importing './server'
-global.TextEncoder = TextEncoder;
+global.TextEncoder = TextEncoder as never;
 global.TextDecoder = TextDecoder as never;
 
 import { server } from './server';

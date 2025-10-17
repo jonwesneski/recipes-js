@@ -3,7 +3,21 @@ import { Prisma } from '@repo/database';
 import { PrismaService } from '@repo/nest-shared';
 import { PatchUserDto } from './contracts';
 
-type UserPrismaType = Prisma.UserGetPayload<{
+export type UserPrismaType = Prisma.UserGetPayload<{
+  select: {
+    handle: true;
+    imageUrl: true;
+    _count: { select: { followers: true; followings: true; recipes: true } };
+  };
+}>;
+export type UserType = Omit<UserPrismaType, '_count'> & {
+  followers: number;
+  followings: number;
+  recipes: number;
+  amIFollowing?: boolean;
+};
+
+export type UserAccountPrismaType = Prisma.UserGetPayload<{
   include: {
     diet: true;
   };
@@ -13,14 +27,52 @@ type UserPrismaType = Prisma.UserGetPayload<{
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUser(id: string): Promise<UserPrismaType> {
+  async getUser(id: string, requestedUser?: string): Promise<UserType> {
+    const user = await this.prisma.user.findFirstOrThrow({
+      where: { id },
+      select: {
+        createdAt: true,
+        handle: true,
+        imageUrl: true,
+        _count: {
+          select: {
+            followers: true,
+            followings: true,
+            recipes: { where: { isPublic: true } },
+          },
+        },
+        followers:
+          requestedUser && id !== requestedUser
+            ? { where: { userId: requestedUser }, select: { id: true } }
+            : undefined,
+      },
+    });
+    let amIFollowing =
+      id === requestedUser
+        ? undefined
+        : user.followers && user.followers.length > 0;
+
+    const { followers, ...rest } = user;
+    return {
+      ...rest,
+      followers: user._count.followers,
+      followings: user._count.followings,
+      recipes: user._count.recipes,
+      amIFollowing,
+    };
+  }
+
+  async getUserAccount(id: string): Promise<UserAccountPrismaType> {
     return await this.prisma.user.findFirstOrThrow({
       where: { id },
       include: { diet: true },
     });
   }
 
-  async updateUser(id: string, user: PatchUserDto): Promise<UserPrismaType> {
+  async updateUserAccount(
+    id: string,
+    user: PatchUserDto,
+  ): Promise<UserAccountPrismaType> {
     return await this.prisma.user.update({
       where: { id },
       data: user,
@@ -28,7 +80,7 @@ export class UsersService {
     });
   }
 
-  async getFollowers(id: string) {
+  async getFollowerIds(id: string) {
     // todo: update after adding allow email notification field/column
     return await this.prisma.user.findFirstOrThrow({
       where: { id },
@@ -50,5 +102,29 @@ export class UsersService {
         updatedAt: true,
       },
     });
+  }
+
+  async getFollowers(id: string) {
+    const followers = await this.prisma.userFollow.findMany({
+      where: { userId: id },
+      select: {
+        following: { select: { id: true, handle: true, imageUrl: true } },
+      },
+    });
+    return followers.map((f) => f.following);
+  }
+
+  async followUser(id: string, requestedUser: string, isFollowing: boolean) {
+    if (isFollowing) {
+      await this.prisma.userFollow.create({
+        data: { userId: requestedUser, followingId: id },
+      });
+    } else {
+      await this.prisma.userFollow.delete({
+        where: {
+          userId_followingId: { userId: requestedUser, followingId: id },
+        },
+      });
+    }
   }
 }

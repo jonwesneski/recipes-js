@@ -6,7 +6,7 @@ export const jwtConfig = registerAs(
   (): JwtModuleOptions => ({
     secret: process.env.JWT_SECRET,
     signOptions: {
-      expiresIn: process.env.JWT_EXPIRE_IN || '3d',
+      expiresIn: parseInt(process.env.REFRESH_JWT_EXPIRE_IN || '259200', 10),
     },
   }),
 );

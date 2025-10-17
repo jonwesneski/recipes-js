@@ -55,12 +55,19 @@ export default async function setupDb() {
 }
 
 async function seedDb(prisma: Awaited<ReturnType<typeof getPrisma>>) {
-  // Create a new user
+  // Create users
   const user = await prisma.user.create({
     data: {
       name: 'jon',
       handle: 'jon',
       email: 'j@j.com',
+    },
+  });
+  await prisma.user.create({
+    data: {
+      name: 'jon2',
+      handle: 'jon2',
+      email: 'j2@j2.com',
     },
   });
 

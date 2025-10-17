@@ -9,6 +9,10 @@ import {
 } from '@repo/codegen/mswRecipes';
 import { getTagsMock } from '@repo/codegen/mswTags';
 import {
+  getUsersControllerFollowersV1MockHandler,
+  getUsersControllerFollowersV1ResponseMock,
+  getUsersControllerUserAccountV1MockHandler,
+  getUsersControllerUserAccountV1ResponseMock,
   getUsersControllerUserV1MockHandler,
   getUsersControllerUserV1ResponseMock,
   getUsersMock,
@@ -23,12 +27,20 @@ recipe.user.imageUrl = null;
 recipe.steps.forEach((s) => {
   s.imageUrl = null;
 });
+const followersList = getUsersControllerFollowersV1ResponseMock();
+followersList.forEach((f) => {
+  f.imageUrl = null;
+});
 
 export default [
   ...getHealthCheckMock(),
   getUsersControllerUserV1MockHandler(
     getUsersControllerUserV1ResponseMock({ imageUrl: null }),
   ),
+  getUsersControllerUserAccountV1MockHandler(
+    getUsersControllerUserAccountV1ResponseMock({ imageUrl: null }),
+  ),
+  getUsersControllerFollowersV1MockHandler(followersList),
   ...getUsersMock(),
   getRecipesControllerRecipesListV1MockHandler(recipesList),
   getRecipesControllerRecipeV1MockHandler(recipe),
