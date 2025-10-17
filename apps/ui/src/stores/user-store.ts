@@ -42,7 +42,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
       if (id) {
         await usersControllerUpdateUserV1(id, { numberFormat });
       } else {
-        localStorage.setItem('numberFormat', numberFormat.toString());
+        localStorage.setItem('numberFormat', numberFormat);
       }
       set(() => ({ numberFormat }));
     },

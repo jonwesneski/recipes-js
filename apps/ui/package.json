@@ -17,7 +17,7 @@
     "@repo/design-system": "workspace:*",
     "@tanstack/react-query": "^5.80.7",
     "jwt-decode": "^4.0.0",
-    "next": "^15.3.3",
+    "next": "^15.5.5",
     "react": "^19.1.0",
     "react-camera-pro": "^1.4.0",
     "react-dom": "^19.1.0",
@@ -31,6 +31,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.29.0",
+    "@faker-js/faker": "^9.9.0",
     "@next/eslint-plugin-next": "^15.3.3",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
