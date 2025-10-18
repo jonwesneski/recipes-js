@@ -22,10 +22,15 @@ export default {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   transform: {
-    '^.+\\.(ts|tsx)$': [
+    '^.+\\.(ts|tsx|js|mjs)$': [
       'ts-jest',
       { useESM: true, tsconfig: 'tsconfig.test.json' },
     ],
   },
+  // By default Jest ignores node_modules from transformation. msw (and some
+  // of its dependencies like until-async) ship ESM files that use `export`
+  // and must be transformed. The pnpm layout nests packages, so allow any
+  // path that contains the package name to be transformed.
+  transformIgnorePatterns: ['node_modules/(?!.*(?:msw|until-async))'],
   setupFilesAfterEnv: ['<rootDir>/src/mocks/jest.setup.ts'],
 };

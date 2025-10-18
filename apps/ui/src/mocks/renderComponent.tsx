@@ -4,14 +4,28 @@ import * as CameraContext from '@src/providers/CameraProvider'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { type UserStore } from '@src/stores/user-store'
 import { render } from '@testing-library/react'
+import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 export const renderComponent = (
   ui: React.ReactNode,
   initialState?: { user: Partial<UserStore> },
 ) => {
-  return render(
-    <AppProviders initialState={initialState?.user}>{ui}</AppProviders>,
-  )
+  const routerMock = {
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn().mockResolvedValue(undefined),
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+  }
+  return {
+    ...render(
+      <AppRouterContext.Provider value={routerMock}>
+        <AppProviders initialState={initialState?.user}>{ui}</AppProviders>
+      </AppRouterContext.Provider>,
+    ),
+    routerMock,
+  }
 }
 
 export const renderRecipeComponent = (
