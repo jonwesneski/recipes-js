@@ -556,6 +556,93 @@
 									"response": []
 								},
 								{
+									"name": "User Account",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/v1/users/:id/account",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"v1",
+												"users",
+												":id",
+												"account"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": ""
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Users Followers",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/v1/users/:id/followers",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"v1",
+												"users",
+												":id",
+												"followers"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": ""
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Follow User",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"follow\": true\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{host}}/v1/users/:id/follow",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"v1",
+												"users",
+												":id",
+												"follow"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": ""
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
 									"name": "Update User",
 									"request": {
 										"method": "PATCH",

@@ -38,7 +38,7 @@ export const CameraProvider = ({ children }: CameraProviderProps) => {
   return (
     <CameraContext.Provider value={{ takePhoto }}>
       {children}
-      {Boolean(showCamera) && <RecipeCamera onImage={handleOnImage} />}
+      {showCamera ? <RecipeCamera onImage={handleOnImage} /> : null}
     </CameraContext.Provider>
   )
 }

@@ -14,7 +14,7 @@ export class NotificationsService {
     userId: string,
     message: NotificationRecipeAddedSchemaType,
   ) {
-    const { followers } = await this.usersService.getFollowers(userId);
+    const { followers } = await this.usersService.getFollowerIds(userId);
     const idsNotEmitted = this.notificationsGateway.recipeAdded(
       followers.map((f) => f.followingId),
       message,

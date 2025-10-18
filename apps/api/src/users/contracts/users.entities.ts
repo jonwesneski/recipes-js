@@ -7,8 +7,24 @@ import {
 } from '@repo/database';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
 import { NutritionalFactsEntity } from '@src/recipes';
+import { type UserType } from '../users.service';
 
-export class UserEntity
+export class UserPublicResponse implements UserType {
+  @ApiProperty({ type: String })
+  handle: string;
+  @ApiProperty({ type: String, nullable: true })
+  imageUrl: string | null;
+  @ApiProperty({ type: Number })
+  followers: number;
+  @ApiProperty({ type: Number })
+  followings: number;
+  @ApiProperty({ type: Number })
+  recipes: number;
+  @ApiProperty({ type: Boolean, required: false })
+  amIFollowing?: boolean;
+}
+
+export class UserAccountResponse
   implements
     OmitPrismaFieldsEntity<
       Prisma.UserCreateInput,
@@ -35,6 +51,15 @@ export class UserEntity
   numberFormat: NumberFormat;
   @ApiProperty({ enum: MeasurementFormat, enumName: 'MeasurementFormat' })
   measurementFormat: MeasurementFormat;
+  @ApiProperty({ type: String, nullable: true })
+  imageUrl: string | null;
+}
+
+export class UserFollowersResponse {
+  @ApiProperty({ type: String })
+  id: string;
+  @ApiProperty({ type: String })
+  handle: string;
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
 }

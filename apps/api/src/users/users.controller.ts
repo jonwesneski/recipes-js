@@ -1,8 +1,26 @@
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
-import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
-import { throwIfNotFound } from '@src/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiNoContentResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import { JwtGuard } from '@src/auth/guards';
+import { throwIfConflict, throwIfNotFound } from '@src/common';
+import { parseHelper } from '@src/common/header.decorators';
+import { type Request } from 'express';
 import { PatchUserDto } from './contracts';
-import { UserEntity } from './contracts/users.entities';
+import { PatchFollowUserDto } from './contracts/follow-user.dto';
+import {
+  UserAccountResponse,
+  UserFollowersResponse,
+  UserPublicResponse,
+} from './contracts/users.entities';
 import { UsersService } from './users.service';
 
 @Controller({
@@ -14,29 +32,91 @@ export class UsersController {
 
   @Get(':id')
   @ApiOkResponse({
-    description: "user's info",
-    type: UserEntity,
+    description: "user's public info",
+    type: UserPublicResponse,
   })
   @ApiParam({ name: 'id', type: String, description: 'id of user' })
-  async user(@Param('id') id: string): Promise<UserEntity> {
+  async user(
+    @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<UserPublicResponse> {
     try {
-      return await this.usersService.getUser(id);
+      let requestedUser: string | undefined;
+      try {
+        requestedUser = parseHelper(req).sub;
+      } catch {
+        // ignore
+      }
+      return await this.usersService.getUser(id, requestedUser);
     } catch (error) {
       throwIfNotFound(error);
       throw error;
     }
   }
 
-  @Patch(':id')
+  @Get(':id/account')
   @ApiOkResponse({
-    description: "user's info",
-    type: UserEntity,
+    description: "user's account info",
+    type: UserAccountResponse,
   })
   @ApiParam({ name: 'id', type: String, description: 'id of user' })
+  @UseGuards(JwtGuard)
+  async userAccount(@Param('id') id: string): Promise<UserAccountResponse> {
+    try {
+      return await this.usersService.getUserAccount(id);
+    } catch (error) {
+      throwIfNotFound(error);
+      throw error;
+    }
+  }
+
+  @Patch(':id/account')
+  @ApiOkResponse({
+    description: "user's info",
+    type: UserAccountResponse,
+  })
+  @ApiParam({ name: 'id', type: String, description: 'id of user' })
+  @UseGuards(JwtGuard)
   async updateUser(
     @Param('id') id: string,
     @Body() body: PatchUserDto,
-  ): Promise<UserEntity> {
-    return await this.usersService.updateUser(id, body);
+  ): Promise<UserAccountResponse> {
+    return await this.usersService.updateUserAccount(id, body);
+  }
+
+  @Get(':id/followers')
+  @ApiOkResponse({
+    description: "user's followers",
+    type: UserFollowersResponse,
+    isArray: true,
+  })
+  @ApiParam({ name: 'id', type: String, description: "id of user's followers" })
+  @UseGuards(JwtGuard)
+  async followers(@Param('id') id: string): Promise<UserFollowersResponse[]> {
+    return await this.usersService.getFollowers(id);
+  }
+
+  @Put(':id/follow')
+  @HttpCode(204)
+  @ApiNoContentResponse({ description: '(un)follow a user' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'id of user to (un)follow',
+  })
+  @UseGuards(JwtGuard)
+  async followUser(
+    @Param('id') id: string,
+    @Body() body: PatchFollowUserDto,
+    @Req() req: Request,
+  ) {
+    const token = parseHelper(req);
+    try {
+      return await this.usersService.followUser(id, token.sub, body.follow);
+    } catch (error) {
+      throwIfConflict(error);
+      throwIfNotFound(error);
+      throw error;
+    }
   }
 }

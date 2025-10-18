@@ -2,12 +2,15 @@ import type {
   MeasurementFormat,
   NumberFormat,
   UiTheme,
-  UserEntity,
+  UserAccountResponse,
 } from '@repo/codegen/model';
 import { usersControllerUpdateUserV1 } from '@repo/codegen/users';
 import { createStore } from 'zustand/vanilla';
 
-export type UserState = Omit<UserEntity, 'createdAt' | 'updatedAt' | 'diet'>;
+export type UserState = Omit<
+  UserAccountResponse,
+  'createdAt' | 'updatedAt' | 'diet'
+>;
 
 export type UserActions = {
   setNumberFormat: (_value: NumberFormat) => Promise<void>;
@@ -39,7 +42,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
       if (id) {
         await usersControllerUpdateUserV1(id, { numberFormat });
       } else {
-        localStorage.setItem('numberFormat', numberFormat.toString());
+        localStorage.setItem('numberFormat', numberFormat);
       }
       set(() => ({ numberFormat }));
     },
