@@ -4,7 +4,7 @@ import type {
   RecipeListResponse,
   UserPublicResponse,
 } from '@repo/codegen/model'
-import RecipeList from '@src/components/RecipeList'
+import { RecipeList } from '@src/components'
 import Image from 'next/image'
 
 interface IUserPublicProps {
