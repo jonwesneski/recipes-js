@@ -6,7 +6,7 @@ import { RecipeTile } from './RecipeTile'
 interface IRecipesListProps {
   recipes: RecipeListResponse
 }
-export const RecipeList = ({ recipes }: IRecipesListProps) => {
+const Page = ({ recipes }: IRecipesListProps) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
       {recipes.data.map((recipe) => (
@@ -23,3 +23,4 @@ export const RecipeList = ({ recipes }: IRecipesListProps) => {
     </div>
   )
 }
+export default Page
