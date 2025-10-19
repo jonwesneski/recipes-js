@@ -14,7 +14,7 @@ interface IUserPublicProps {
 const UserPublic = ({ user, recipes }: IUserPublicProps) => {
   return (
     <>
-      <div className="flex justify-center gap-7 mt-5 border-b-2">
+      <div className="fixed top-10 left-1/2 -translate-x-1/2 z-10 w-full flex justify-center gap-7 mt-5 border-b-2">
         <div>
           <Image
             className="inline-block mr-2"
