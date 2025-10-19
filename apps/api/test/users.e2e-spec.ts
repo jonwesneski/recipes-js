@@ -120,7 +120,7 @@ describe('UsersController (e2e)', () => {
     });
   });
 
-  describe(`PATCH ${basePath}/:id/follow`, () => {
+  describe(`PUT ${basePath}/:id/follow`, () => {
     const followPath = () => `${basePath}/${user1.id}/follow`;
 
     it('valid', async () => {
@@ -132,13 +132,13 @@ describe('UsersController (e2e)', () => {
       expect(response.status).toBe(204);
     });
 
-    it('conflict', async () => {
+    it('already exists is valid', async () => {
       const response = await request(app.getHttpServer())
         .put(followPath())
         .send({ follow: true })
         .set('Authorization', `Bearer ${token2}`);
 
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(204);
     });
 
     it('bad request', async () => {
@@ -160,13 +160,13 @@ describe('UsersController (e2e)', () => {
       expect(response.status).toBe(204);
     });
 
-    it('unfollow again invalid', async () => {
+    it('unfollow again valid', async () => {
       const response = await request(app.getHttpServer())
         .patch(followPath())
         .send({ follow: false })
         .set('Authorization', `Bearer ${token2}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(204);
     });
   });
 });
