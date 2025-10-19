@@ -1,5 +1,3 @@
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import nextTypescript from "eslint-config-next/typescript";
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import path from 'node:path';
@@ -11,38 +9,42 @@ const compat = new FlatCompat({
   recommendedConfig: js.configs.recommended,
 });
 
-export default [...nextCoreWebVitals, ...nextTypescript, {
-  ignores: ['./src/mocks/jest.setup.ts', './src/types/*'],
-}, ...compat.extends("@repo/eslint-config/next"), {
-  languageOptions: {
-    //globals: globals.browser, // or node, etc.
-    //parser: tseslint.parser,
-    parserOptions: {
-      //root: true,
-      project: './tsconfig.json', // Point to your tsconfig.json
-      ecmaVersion: 'latest',
-      sourceType: 'module',
+export default [
+  {
+    ignores: ['./src/mocks/jest.setup.ts', './src/types/*'],
+  },
+  ...compat.extends('@repo/eslint-config/next'),
+  {
+    languageOptions: {
+      //globals: globals.browser, // or node, etc.
+      //parser: tseslint.parser,
+      parserOptions: {
+        //root: true,
+        project: './tsconfig.json', // Point to your tsconfig.json
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        jest: 'readonly',
+      },
     },
-    globals: {
-      describe: 'readonly',
-      it: 'readonly',
-      expect: 'readonly',
-      beforeEach: 'readonly',
-      afterEach: 'readonly',
-      jest: 'readonly',
+    rules: {
+      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/prefer-for-of': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      'import/order': 'off', // prettier orders how it feels like, and sometimes certain imports need to happen first
+      'no-console': 'off',
+      'prefer-named-capture-group': 'off',
+      'react/hook-use-state': 'off',
+      'react/jsx-curly-brace-presence': 'off',
+      'react-hooks/exhaustive-deps': 'off', // Getting a version incompatibility issue with this for now
     },
   },
-  rules: {
-    '@typescript-eslint/consistent-type-definitions': 'off',
-    '@typescript-eslint/naming-convention': 'off',
-    '@typescript-eslint/no-confusing-void-expression': 'off',
-    '@typescript-eslint/prefer-for-of': 'off',
-    '@typescript-eslint/restrict-template-expressions': 'off',
-    'import/order': 'off', // prettier orders how it feels like, and sometimes certain imports need to happen first
-    'no-console': 'off',
-    'prefer-named-capture-group': 'off',
-    'react/hook-use-state': 'off',
-    'react/jsx-curly-brace-presence': 'off',
-    'react-hooks/exhaustive-deps': 'off', // Getting a version incompatibility issue with this for now
-  },
-}];
+];

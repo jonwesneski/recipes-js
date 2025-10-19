@@ -48,9 +48,7 @@ const UserPublic = ({ user, recipes }: IUserPublicProps) => {
         </div>
       </div>
       <section className="mt-10 px-5">
-        {recipes.data.map((recipe) => (
-          <RecipeList recipes={recipes} />
-        ))}
+        <RecipeList recipes={recipes} />
       </section>
     </>
   )
