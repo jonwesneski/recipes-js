@@ -111,6 +111,6 @@ export class UsersController {
     @Req() req: Request,
   ) {
     const token = parseHelper(req);
-    return await this.usersService.followUser(id, token.sub, body.follow);
+    await this.usersService.followUser(id, token.sub, body.follow);
   }
 }

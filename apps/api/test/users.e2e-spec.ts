@@ -162,7 +162,7 @@ describe('UsersController (e2e)', () => {
 
     it('unfollow again valid', async () => {
       const response = await request(app.getHttpServer())
-        .patch(followPath())
+        .put(followPath())
         .send({ follow: false })
         .set('Authorization', `Bearer ${token2}`);
 
