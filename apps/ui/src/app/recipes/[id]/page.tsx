@@ -1,6 +1,6 @@
 'use client'
 
-import type { RecipeEntity } from '@repo/codegen/model'
+import type { RecipeResponse } from '@repo/codegen/model'
 import { useRecipesControllerRecipeV1 } from '@repo/codegen/recipes'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { use, useEffect, useState } from 'react'
@@ -13,7 +13,7 @@ import {
 } from './_components'
 
 const Page = ({ params }: { params: Promise<{ id: string }> }) => {
-  const [recipe, setRecipe] = useState<RecipeEntity | null>(null)
+  const [recipe, setRecipe] = useState<RecipeResponse | null>(null)
   const { id } = use(params)
 
   const { isSuccess, data } = useRecipesControllerRecipeV1(id, {

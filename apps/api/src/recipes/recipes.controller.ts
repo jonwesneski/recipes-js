@@ -25,8 +25,10 @@ import {
   CreateRecipeDto,
   PatchRecipeDto,
   QueryParamsDto,
-  RecipeEntity,
+  RecipeListResponse,
+  RecipeResponse,
 } from './contracts';
+import { GetRecipesDto } from './contracts/get-recipes.dto';
 import { RecipesService } from './recipes.service';
 
 @Controller({
@@ -39,17 +41,16 @@ export class RecipesController {
   @Get()
   @ApiOkResponse({
     description: 'The recipe records',
-    type: RecipeEntity,
-    isArray: true,
+    type: RecipeListResponse,
   })
-  async recipesList() {
-    return this.recipesService.getRecipes();
+  async recipesList(@Query() query: GetRecipesDto) {
+    return this.recipesService.getRecipes(query);
   }
 
   @Get(':id')
   @ApiOkResponse({
     description: 'The recipe record',
-    type: RecipeEntity,
+    type: RecipeResponse,
   })
   @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
   async recipe(
@@ -58,7 +59,7 @@ export class RecipesController {
     @Param('id') id: string,
     @Req() request: Request,
     @Query() query: QueryParamsDto,
-  ): Promise<RecipeEntity> {
+  ): Promise<RecipeResponse> {
     let userId: string | undefined;
     try {
       if (query.byOwner) {
@@ -77,7 +78,7 @@ export class RecipesController {
 
   @Post()
   @ApiBody({ type: CreateRecipeDto })
-  @ApiOkResponse({ type: RecipeEntity })
+  @ApiOkResponse({ type: RecipeResponse })
   @ApiBadRequestResponse({ type: BadRequestRecipeEntity })
   @UseGuards(JwtGuard)
   async createRecipe(
@@ -85,7 +86,7 @@ export class RecipesController {
     //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Body() body: CreateRecipeDto,
     @Req() req: Request,
-  ): Promise<RecipeEntity> {
+  ): Promise<RecipeResponse> {
     try {
       const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
       return await this.recipesService.createRecipe(token.sub, body);
@@ -105,7 +106,7 @@ export class RecipesController {
     //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Body() body: PatchRecipeDto,
     @Req() req: Request,
-  ): Promise<RecipeEntity> {
+  ): Promise<RecipeResponse> {
     const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
     try {
       return await this.recipesService.updateRecipe(token.sub, id, body);

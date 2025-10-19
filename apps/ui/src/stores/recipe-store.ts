@@ -4,7 +4,7 @@ import type {
   GenerateNutritionalFactsDto,
   GenerateTagsDto,
   NutritionalFactsEntity,
-  RecipeEntity,
+  RecipeResponse,
 } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { roundToDecimal } from '@src/utils/measurements';
@@ -93,7 +93,7 @@ export type StepItemType = {
 
 export type FactorType = 0.5 | 1 | 1.5 | 2 | 4;
 
-export type RecipeState = Omit<RecipeEntity, 'steps' | 'imageUrl'> & {
+export type RecipeState = Omit<RecipeResponse, 'steps' | 'imageUrl'> & {
   imageSrc: string | null;
   steps: StepItemType[];
   isValid: boolean;

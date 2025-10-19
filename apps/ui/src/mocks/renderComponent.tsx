@@ -1,4 +1,4 @@
-import { type RecipeEntity } from '@repo/codegen/model'
+import { type RecipeResponse } from '@repo/codegen/model'
 import AppProviders from '@src/app/_providers'
 import * as CameraContext from '@src/providers/CameraProvider'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
@@ -30,7 +30,7 @@ export const renderComponent = (
 
 export const renderRecipeComponent = (
   ui: React.ReactNode,
-  initialState?: { recipe: Partial<RecipeEntity>; user: Partial<UserStore> },
+  initialState?: { recipe: Partial<RecipeResponse>; user: Partial<UserStore> },
 ) => {
   const useCameraMock = { takePhoto: jest.fn().mockResolvedValue('123') }
   jest.spyOn(CameraContext, 'useCamera').mockImplementation(() => useCameraMock)

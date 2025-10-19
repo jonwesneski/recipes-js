@@ -10,7 +10,7 @@ import {
   CreateRecipeDto,
   PatchRecipeDto,
   PatchStepDto,
-  RecipeEntity,
+  RecipeResponse,
   StepEntity,
 } from '@src/recipes/contracts';
 import request from 'supertest';
@@ -112,7 +112,7 @@ describe('RecipesController (e2e)', () => {
         .get(`${basePath}/${recipe1!.id}`)
         .expect(200)
         .expect((res) => {
-          const emptyRecipe = new RecipeEntity();
+          const emptyRecipe = new RecipeResponse();
           for (const field in emptyRecipe) {
             expect(res.body[field]).toBeDefined();
           }
@@ -212,7 +212,7 @@ describe('RecipesController (e2e)', () => {
   });
 
   describe(`PATCH ${basePath}/[id]`, () => {
-    const createRecipe = async (): Promise<RecipeEntity> => {
+    const createRecipe = async (): Promise<RecipeResponse> => {
       const sampleRecipe = makeCreateDto({ name: uuidv4() });
 
       const response = await request(app.getHttpServer())
@@ -220,7 +220,7 @@ describe('RecipesController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(sampleRecipe)
         .expect(201);
-      return response.body as RecipeEntity;
+      return response.body as RecipeResponse;
     };
 
     const stepEntityToDto = (

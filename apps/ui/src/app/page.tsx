@@ -51,7 +51,7 @@ const Page = () => {
           />
           <TextButton
             text="Continue as Guest"
-            onClick={(e) => void handleGuest(e)}
+            onClick={(e: MouseEvent<HTMLButtonElement>) => void handleGuest(e)}
             variant="opposite"
             className="w-full"
           />

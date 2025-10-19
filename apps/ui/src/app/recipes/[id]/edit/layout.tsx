@@ -1,4 +1,4 @@
-import { type RecipeEntity } from '@repo/codegen/model'
+import { type RecipeResponse } from '@repo/codegen/model'
 import { recipesControllerRecipeV1 } from '@repo/codegen/recipes'
 import '@repo/design-system/styles.css'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
@@ -19,7 +19,7 @@ const Layout = async ({
 
   const id = (await params).id
 
-  let data: RecipeEntity
+  let data: RecipeResponse
   try {
     data = await recipesControllerRecipeV1(id, {
       params: { byOwner: true },

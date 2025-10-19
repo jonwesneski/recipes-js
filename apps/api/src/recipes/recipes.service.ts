@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import {
   ImageReviewProcessorService,
   RecipeCreateType,
-  type RecipeMinimalType,
   RecipeRepository,
   type RecipeType,
   RecipeUpdateType,
@@ -15,7 +14,9 @@ import {
   CreateStepDto,
   PatchRecipeDto,
   PatchStepDto,
+  RecipeListResponse,
 } from './contracts';
+import { GetRecipesDto } from './contracts/get-recipes.dto';
 
 @Injectable()
 export class RecipesService {
@@ -30,8 +31,8 @@ export class RecipesService {
     this.useKafka = this.configService.get<boolean>('USE_KAFKA', false);
   }
 
-  async getRecipes(): Promise<RecipeMinimalType[]> {
-    return await this.recipeRepository.getRecipes();
+  async getRecipes(params: GetRecipesDto): Promise<RecipeListResponse> {
+    return await this.recipeRepository.getRecipes(params);
   }
 
   async getRecipe(id: string, userId?: string): Promise<RecipeType> {
