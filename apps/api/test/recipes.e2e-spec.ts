@@ -101,7 +101,7 @@ describe('RecipesController (e2e)', () => {
         .get(basePath)
         .expect(200)
         .expect((res) => {
-          expect(res.body.length).toBeGreaterThan(0);
+          expect(res.body.data.length).toBeGreaterThan(0);
         });
     });
   });
