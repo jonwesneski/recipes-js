@@ -4,7 +4,7 @@ import type {
   RecipeListResponse,
   UserPublicResponse,
 } from '@repo/codegen/model'
-import RecipeList from '@src/components/RecipeList'
+import { RecipeList } from '@src/components'
 import Image from 'next/image'
 
 interface IUserPublicProps {
@@ -14,7 +14,7 @@ interface IUserPublicProps {
 const UserPublic = ({ user, recipes }: IUserPublicProps) => {
   return (
     <>
-      <div className="flex justify-center gap-7 mt-5 border-b-2">
+      <div className="fixed top-10 left-1/2 -translate-x-1/2 z-10 w-full flex justify-center gap-7 border-b-2">
         <div>
           <Image
             className="inline-block mr-2"
@@ -47,10 +47,8 @@ const UserPublic = ({ user, recipes }: IUserPublicProps) => {
           </div>
         </div>
       </div>
-      <section className="mt-10 px-5">
-        {recipes.data.map((recipe) => (
-          <RecipeList recipes={recipes} />
-        ))}
+      <section className="mt-20 px-5">
+        <RecipeList recipes={recipes} />
       </section>
     </>
   )
