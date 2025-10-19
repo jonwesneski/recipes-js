@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../services/prisma.service';
+import {
+  PrismaQueryParams,
+  PrismaResults,
+  PrismaService,
+} from '../services/prisma.service';
 import {
   type RecipeCreateType,
   RecipeInclude,
@@ -10,6 +14,10 @@ import {
   type RecipeUpdateType,
   type RecipeUserType,
 } from './types';
+
+export type GetRecipesQueryParams = PrismaQueryParams & {
+  userId?: string;
+};
 
 @Injectable()
 export class RecipeRepository {
@@ -35,9 +43,13 @@ export class RecipeRepository {
     };
   }
 
-  async getRecipes(): Promise<RecipeMinimalType[]> {
+  async getRecipes(
+    params: GetRecipesQueryParams,
+  ): Promise<PrismaResults<RecipeMinimalType[]>> {
     const recipes = await this.prisma.recipe.findMany({
-      where: { isPublic: true },
+      where: { isPublic: true, userId: params.userId },
+      cursor: params.cursorId ? { id: params.cursorId } : undefined,
+      skip: params.cursorId ? 1 : undefined,
       include: {
         user: { select: { handle: true, id: true, imageUrl: true } },
         recipeTags: {
@@ -51,7 +63,17 @@ export class RecipeRepository {
       },
       orderBy: { updatedAt: 'desc' },
     });
-    return recipes.map((recipe) => this.transformRecipe(recipe));
+    return {
+      data: recipes.map((recipe) => this.transformRecipe(recipe)),
+      pagination: {
+        totalRecords: await this.prisma.recipe.count({
+          where: { isPublic: true, userId: params.userId },
+        }),
+        currentCursor:
+          recipes.length > 0 ? recipes[0].id : params.cursorId || null,
+        nextCursor: recipes.length > 0 ? recipes[recipes.length - 1].id : null,
+      },
+    };
   }
 
   async getRecipe(id: string, userId?: string): Promise<RecipeType> {

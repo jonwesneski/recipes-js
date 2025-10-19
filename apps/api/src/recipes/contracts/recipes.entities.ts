@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MeasurementUnit, Prisma } from '@repo/database';
 import { type RecipeMinimalType, type RecipeType } from '@repo/nest-shared';
+import { PaginationResponse } from '@src/common/common.responses';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
 
 export class NutritionalFactsEntity
@@ -119,7 +120,7 @@ export class RecipeUserEntity {
   imageUrl: string | null;
 }
 
-export class RecipeEntity implements RecipeType {
+export class RecipeResponse implements RecipeType {
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -252,7 +253,7 @@ export class BadRequestRecipeEntity {
   isPublic: string;
 }
 
-export class RecipeMinimalEntity implements RecipeMinimalType {
+export class RecipeMinimalResponse implements RecipeMinimalType {
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -263,10 +264,17 @@ export class RecipeMinimalEntity implements RecipeMinimalType {
   preparationTimeInMinutes: number | null;
   @ApiProperty({ type: 'integer', nullable: true })
   cookingTimeInMinutes: number | null;
-  @ApiProperty()
-  imageUrl: string;
+  @ApiProperty({ type: String, nullable: true })
+  imageUrl: string | null;
   @ApiProperty({ type: [String] })
   tags: string[];
   @ApiProperty({ type: RecipeUserEntity })
   user: RecipeUserEntity;
+}
+
+export class RecipeListResponse {
+  @ApiProperty({ type: [RecipeMinimalResponse] })
+  data: RecipeMinimalResponse[];
+  @ApiProperty({ type: PaginationResponse })
+  pagination: PaginationResponse;
 }

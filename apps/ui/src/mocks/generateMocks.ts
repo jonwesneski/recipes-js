@@ -19,7 +19,7 @@ import {
 } from '@repo/codegen/mswUsers';
 
 const recipesList = getRecipesControllerRecipesListV1ResponseMock();
-recipesList.forEach((r) => {
+recipesList.data.forEach((r) => {
   r.imageUrl = null;
 });
 const recipe = getRecipesControllerRecipeV1ResponseMock({ imageUrl: null });

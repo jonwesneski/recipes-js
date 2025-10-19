@@ -1,7 +1,8 @@
 'use client'
 
+import { type RecipeMinimalResponse } from '@repo/codegen/model'
 import { useRecipesControllerRecipesListV1 } from '@repo/codegen/recipes'
-import { RecipeTile } from './_components/RecipeTile'
+import { RecipeTile } from '../../components/RecipeTile'
 
 const Page = () => {
   const { data, isSuccess } = useRecipesControllerRecipesListV1({
@@ -10,8 +11,8 @@ const Page = () => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
-      {isSuccess && Array.isArray(data)
-        ? data.map((recipe) => (
+      {isSuccess && Array.isArray(data.data)
+        ? data.data.map((recipe: RecipeMinimalResponse) => (
             <RecipeTile
               key={recipe.id}
               href={`/recipes/${recipe.id}`}

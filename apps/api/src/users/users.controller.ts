@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiNoContentResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { JwtGuard } from '@src/auth/guards';
-import { throwIfConflict, throwIfNotFound } from '@src/common';
+import { throwIfNotFound } from '@src/common';
 import { parseHelper } from '@src/common/header.decorators';
 import { type Request } from 'express';
 import { PatchUserDto } from './contracts';
@@ -111,12 +111,6 @@ export class UsersController {
     @Req() req: Request,
   ) {
     const token = parseHelper(req);
-    try {
-      return await this.usersService.followUser(id, token.sub, body.follow);
-    } catch (error) {
-      throwIfConflict(error);
-      throwIfNotFound(error);
-      throw error;
-    }
+    await this.usersService.followUser(id, token.sub, body.follow);
   }
 }

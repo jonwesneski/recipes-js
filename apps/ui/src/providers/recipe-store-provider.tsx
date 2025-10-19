@@ -1,6 +1,6 @@
 'use client'
 
-import { type RecipeEntity } from '@repo/codegen/model'
+import { type RecipeResponse } from '@repo/codegen/model'
 import {
   IngredientItemType,
   InstructionsType,
@@ -15,7 +15,7 @@ import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import { type ReactNode, createContext, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
 
-const transformRecipe = (recipe?: Partial<RecipeEntity>): RecipeState => {
+const transformRecipe = (recipe?: Partial<RecipeResponse>): RecipeState => {
   return {
     ...defaultInitState,
     ...recipe,
@@ -71,7 +71,7 @@ export const RecipeStoreContext = createContext<RecipeStoreApi | null>(null)
 
 export interface RecipeStoreProviderProps {
   children: ReactNode
-  initialState?: Partial<RecipeEntity>
+  initialState?: Partial<RecipeResponse>
 }
 export const RecipeStoreProvider = ({
   children,

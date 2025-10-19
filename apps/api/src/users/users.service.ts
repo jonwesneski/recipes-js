@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@repo/database';
+import { Prisma, PrismaClientKnownRequestError } from '@repo/database';
 import { PrismaService } from '@repo/nest-shared';
 import { PatchUserDto } from './contracts';
 
@@ -116,15 +116,31 @@ export class UsersService {
 
   async followUser(id: string, requestedUser: string, isFollowing: boolean) {
     if (isFollowing) {
-      await this.prisma.userFollow.create({
-        data: { userId: requestedUser, followingId: id },
-      });
+      try {
+        await this.prisma.userFollow.create({
+          data: { userId: requestedUser, followingId: id },
+        });
+      } catch (error) {
+        if (!(error instanceof PrismaClientKnownRequestError)) {
+          throw error;
+        } else if (error.code !== 'P2002') {
+          throw error;
+        }
+      }
     } else {
-      await this.prisma.userFollow.delete({
-        where: {
-          userId_followingId: { userId: requestedUser, followingId: id },
-        },
-      });
+      try {
+        await this.prisma.userFollow.delete({
+          where: {
+            userId_followingId: { userId: requestedUser, followingId: id },
+          },
+        });
+      } catch (error) {
+        if (!(error instanceof PrismaClientKnownRequestError)) {
+          throw error;
+        } else if (error.code !== 'P2025') {
+          throw error;
+        }
+      }
     }
   }
 }
