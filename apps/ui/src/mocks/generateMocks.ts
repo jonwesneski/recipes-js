@@ -28,7 +28,7 @@ recipe.steps.forEach((s) => {
   s.imageUrl = null;
 });
 const followersList = getUsersControllerFollowersV1ResponseMock();
-followersList.forEach((f) => {
+followersList.data.forEach((f) => {
   f.imageUrl = null;
 });
 

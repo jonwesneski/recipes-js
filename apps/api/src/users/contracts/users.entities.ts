@@ -5,6 +5,7 @@ import {
   Prisma,
   UiTheme,
 } from '@repo/database';
+import { PaginationResponse } from '@src/common/common.responses';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
 import { NutritionalFactsEntity } from '@src/recipes';
 import { type UserType } from '../users.service';
@@ -62,4 +63,11 @@ export class UserFollowersResponse {
   handle: string;
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
+}
+
+export class UserFollowersPaginationResponse {
+  @ApiProperty({ type: [UserFollowersResponse] })
+  data: UserFollowersResponse[];
+  @ApiProperty({ type: PaginationResponse })
+  pagination: PaginationResponse;
 }

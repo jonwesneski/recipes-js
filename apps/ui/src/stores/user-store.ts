@@ -17,6 +17,7 @@ export type UserActions = {
   setMeasurementFormat: (_value: MeasurementFormat) => Promise<void>;
   setUiTheme: (_value: UiTheme) => Promise<void>;
   // setDiet: (_value: UserEntityDiet) => Promise<void>;
+  setHandle: (_value: string) => Promise<void>;
   setUseGuest: () => void;
 };
 
@@ -68,6 +69,13 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     //   await usersControllerUpdateUserV1(get().id, {});
     //   set(() => ({ diet }));
     // },
+    setHandle: async (handle: string) => {
+      const id = get().id;
+      if (id) {
+        await usersControllerUpdateUserV1(id, { handle });
+      }
+      set(() => ({ handle }));
+    },
     setUseGuest: () => {
       localStorage.clear();
     },

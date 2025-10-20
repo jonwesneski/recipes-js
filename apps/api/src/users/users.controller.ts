@@ -6,19 +6,20 @@ import {
   Param,
   Patch,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiNoContentResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { JwtGuard } from '@src/auth/guards';
-import { throwIfNotFound } from '@src/common';
+import { BaseQueryDto, throwIfNotFound } from '@src/common';
 import { parseHelper } from '@src/common/header.decorators';
 import { type Request } from 'express';
 import { PatchUserDto } from './contracts';
 import { PatchFollowUserDto } from './contracts/follow-user.dto';
 import {
   UserAccountResponse,
-  UserFollowersResponse,
+  UserFollowersPaginationResponse,
   UserPublicResponse,
 } from './contracts/users.entities';
 import { UsersService } from './users.service';
@@ -87,13 +88,15 @@ export class UsersController {
   @Get(':id/followers')
   @ApiOkResponse({
     description: "user's followers",
-    type: UserFollowersResponse,
-    isArray: true,
+    type: UserFollowersPaginationResponse,
   })
   @ApiParam({ name: 'id', type: String, description: "id of user's followers" })
   @UseGuards(JwtGuard)
-  async followers(@Param('id') id: string): Promise<UserFollowersResponse[]> {
-    return await this.usersService.getFollowers(id);
+  async followers(
+    @Param('id') id: string,
+    @Query() query: BaseQueryDto,
+  ): Promise<UserFollowersPaginationResponse> {
+    return await this.usersService.getFollowers({ id, ...query });
   }
 
   @Put(':id/follow')

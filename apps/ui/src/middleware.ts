@@ -15,5 +15,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/create-recipe', '/recipes/:id/edit'],
+  matcher: ['/create-recipe', '/recipes/:id/edit', '/account'],
 };
