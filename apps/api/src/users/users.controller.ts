@@ -21,7 +21,7 @@ import {
   UserAccountResponse,
   UserFollowersPaginationResponse,
   UserPublicResponse,
-} from './contracts/users.entities';
+} from './contracts/users.response';
 import { UsersService } from './users.service';
 
 @Controller({

@@ -1,5 +1,3 @@
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import nextTypescript from "eslint-config-next/typescript";
 import path from 'node:path';
 // eslint-disable-next-line import/order -- these need to be imported first
 import { fileURLToPath } from 'node:url';
@@ -14,9 +12,7 @@ const compat = new FlatCompat({
 });
 
 export default [
-  ...nextCoreWebVitals,
-  ...nextTypescript,
-  ...compat.extends("@repo/eslint-config/next"),
+  ...compat.extends('@repo/eslint-config/next'),
   {
     languageOptions: {
       //globals: globals.browser, // or node, etc.
@@ -44,6 +40,12 @@ export default [
     },
   },
   {
-    ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"]
-  }
+    ignores: [
+      'node_modules/**',
+      '.next/**',
+      'out/**',
+      'build/**',
+      'next-env.d.ts',
+    ],
+  },
 ];

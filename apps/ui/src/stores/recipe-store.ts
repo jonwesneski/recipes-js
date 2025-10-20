@@ -1,9 +1,9 @@
 import type {
-  BadRequestRecipeEntity,
+  BadRequestRecipeResponse,
   CreateRecipeDto,
   GenerateNutritionalFactsDto,
   GenerateTagsDto,
-  NutritionalFactsEntity,
+  NutritionalFactsResponse,
   RecipeResponse,
 } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
@@ -97,7 +97,7 @@ export type RecipeState = Omit<RecipeResponse, 'steps' | 'imageUrl'> & {
   imageSrc: string | null;
   steps: StepItemType[];
   isValid: boolean;
-  errors: BadRequestRecipeEntity;
+  errors: BadRequestRecipeResponse;
   scaleFactor: FactorType;
 };
 
@@ -121,13 +121,15 @@ export type RecipeActions = {
   updateIngredient: (_keyId: string, _ingredient: IngredientValidator) => void;
   setInstructions: (_keyId: string, _instructions: string) => void;
   setStepImage: (_keyId: string, _image: string | null) => void;
-  setNutritionalFacts: (_value: NutritionalFactsEntity) => void;
-  setPartialNutritionalFacts: (_value: Partial<NutritionalFactsEntity>) => void;
+  setNutritionalFacts: (_value: NutritionalFactsResponse) => void;
+  setPartialNutritionalFacts: (
+    _value: Partial<NutritionalFactsResponse>,
+  ) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
   makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
   makeGenerateTagsDto: () => GenerateTagsDto;
-  setErrors: (_data: BadRequestRecipeEntity) => void;
+  setErrors: (_data: BadRequestRecipeResponse) => void;
 };
 
 export type RecipeStore = RecipeState & RecipeActions;
@@ -401,17 +403,17 @@ export const createRecipeStore = (
             }
             return { steps: [...state.steps] };
           }),
-        setNutritionalFacts: (nutritionalFacts: NutritionalFactsEntity) =>
+        setNutritionalFacts: (nutritionalFacts: NutritionalFactsResponse) =>
           set(() => ({ nutritionalFacts })),
         setPartialNutritionalFacts: (
-          partial: Partial<NutritionalFactsEntity>,
+          partial: Partial<NutritionalFactsResponse>,
         ) =>
           set((state) => {
             const merged = {
               ...nutritionalFactsConst,
               ...(state.nutritionalFacts ?? {}),
               ...partial,
-            } as NutritionalFactsEntity;
+            } as NutritionalFactsResponse;
 
             return { nutritionalFacts: merged };
           }),
@@ -465,7 +467,7 @@ export const createRecipeStore = (
             }),
           };
         },
-        setErrors: (errors: BadRequestRecipeEntity) => {
+        setErrors: (errors: BadRequestRecipeResponse) => {
           set(() => ({ errors }));
         },
       }),

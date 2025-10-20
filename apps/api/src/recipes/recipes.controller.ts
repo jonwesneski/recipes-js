@@ -21,7 +21,7 @@ import { throwIfConflict, throwIfNotFound } from '@src/common';
 import { parseHelper } from '@src/common/header.decorators';
 import { type Request } from 'express';
 import {
-  BadRequestRecipeEntity,
+  BadRequestRecipeResponse,
   CreateRecipeDto,
   PatchRecipeDto,
   QueryParamsDto,
@@ -79,7 +79,7 @@ export class RecipesController {
   @Post()
   @ApiBody({ type: CreateRecipeDto })
   @ApiOkResponse({ type: RecipeResponse })
-  @ApiBadRequestResponse({ type: BadRequestRecipeEntity })
+  @ApiBadRequestResponse({ type: BadRequestRecipeResponse })
   @UseGuards(JwtGuard)
   async createRecipe(
     // TODO: can't get this to work in jest

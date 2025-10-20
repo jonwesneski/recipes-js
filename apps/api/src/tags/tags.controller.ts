@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { BaseQueryDto } from '@src/common';
-import { TagNamesEntity } from './contracts/tags.entities';
+import { TagNamesResponse } from './contracts/tags.response';
 import { TagsService } from './tags.service';
 
 @Controller({
@@ -13,9 +13,9 @@ export class TagsController {
   @Get('tag-names')
   @ApiOkResponse({
     description: 'All tag names',
-    type: TagNamesEntity,
+    type: TagNamesResponse,
   })
-  async tagNameList(@Query() query: BaseQueryDto): Promise<TagNamesEntity> {
+  async tagNameList(@Query() query: BaseQueryDto): Promise<TagNamesResponse> {
     return await this.tagsService.getTagNames(query);
   }
 }

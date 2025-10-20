@@ -51,11 +51,12 @@ export class UsersService {
             : undefined,
       },
     });
-    let amIFollowing =
+    const amIFollowing =
       id === requestedUser
         ? undefined
         : user.followers && user.followers.length > 0;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- only using followers to determine amIFollowing
     const { followers, ...rest } = user;
     return {
       ...rest,

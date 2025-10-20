@@ -4,7 +4,7 @@ import { type RecipeMinimalType, type RecipeType } from '@repo/nest-shared';
 import { PaginationResponse } from '@src/common/common.responses';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
 
-export class NutritionalFactsEntity
+export class NutritionalFactsResponse
   implements
     OmitPrismaFieldsEntity<Prisma.NutritionalFactsCreateInput, 'recipe'>
 {
@@ -62,7 +62,7 @@ export class NutritionalFactsEntity
   caloriesInKcal: number | null;
 }
 
-export class IngredientEntity
+export class IngredientResponse
   implements
     OmitPrismaFieldsEntity<
       Prisma.IngredientCreateInput,
@@ -85,7 +85,7 @@ export class IngredientEntity
   name: string;
 }
 
-export class StepEntity
+export class StepResponse
   implements
     Omit<
       Prisma.StepUncheckedCreateWithoutRecipeInput,
@@ -100,8 +100,8 @@ export class StepEntity
   updatedAt: Date;
   @ApiProperty({ type: String, nullable: true })
   instruction: string | null;
-  @ApiProperty({ type: [IngredientEntity] })
-  ingredients: IngredientEntity[];
+  @ApiProperty({ type: [IngredientResponse] })
+  ingredients: IngredientResponse[];
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
 }
@@ -110,7 +110,7 @@ export class TagsType {
   name: string;
 }
 
-export class RecipeUserEntity {
+export class RecipeUserResponse {
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -139,19 +139,19 @@ export class RecipeResponse implements RecipeType {
   imageUrl: string | null;
   @ApiProperty({ type: [String] })
   equipments: string[];
-  @ApiProperty({ type: [StepEntity] })
-  steps: StepEntity[];
-  @ApiProperty({ type: NutritionalFactsEntity, nullable: true })
-  nutritionalFacts: NutritionalFactsEntity | null;
+  @ApiProperty({ type: [StepResponse] })
+  steps: StepResponse[];
+  @ApiProperty({ type: NutritionalFactsResponse, nullable: true })
+  nutritionalFacts: NutritionalFactsResponse | null;
   @ApiProperty({ type: [String] })
   tags: string[];
-  @ApiProperty({ type: RecipeUserEntity })
-  user: RecipeUserEntity;
+  @ApiProperty({ type: RecipeUserResponse })
+  user: RecipeUserResponse;
   @ApiProperty()
   isPublic: boolean;
 }
 
-export class BadRequestIngredientEntity {
+export class BadRequestIngredientResponse {
   @ApiProperty({ type: String, required: false })
   amount: string;
   @ApiProperty({ type: String, required: false })
@@ -160,16 +160,16 @@ export class BadRequestIngredientEntity {
   name: string;
 }
 
-export class BadRequestStepEntity {
+export class BadRequestStepResponse {
   @ApiProperty({ type: String, required: false })
   instruction?: string;
-  @ApiProperty({ type: [BadRequestIngredientEntity], required: false })
-  ingredients?: BadRequestIngredientEntity[];
+  @ApiProperty({ type: [BadRequestIngredientResponse], required: false })
+  ingredients?: BadRequestIngredientResponse[];
   @ApiProperty({ type: String })
   base64Image?: string;
 }
 
-export class BadRequestNutritionalFactsEntity {
+export class BadRequestNutritionalFactsResponse {
   @ApiProperty({ type: String, required: false })
   servings?: string;
   @ApiProperty({ type: String, required: false })
@@ -230,7 +230,7 @@ export class BadRequestNutritionalFactsEntity {
   sugar?: string;
 }
 
-export class BadRequestRecipeEntity {
+export class BadRequestRecipeResponse {
   @ApiProperty({ type: String, required: false })
   name?: string;
   @ApiProperty({ type: String, required: false })
@@ -241,10 +241,10 @@ export class BadRequestRecipeEntity {
   preparationTimeInMinutes?: string;
   @ApiProperty({ type: String, required: false })
   cookingTimeInMinutes?: string;
-  @ApiProperty({ type: [BadRequestStepEntity], required: false })
-  steps?: BadRequestStepEntity[];
-  @ApiProperty({ type: BadRequestNutritionalFactsEntity, required: false })
-  nutritionalFacts?: BadRequestNutritionalFactsEntity;
+  @ApiProperty({ type: [BadRequestStepResponse], required: false })
+  steps?: BadRequestStepResponse[];
+  @ApiProperty({ type: BadRequestNutritionalFactsResponse, required: false })
+  nutritionalFacts?: BadRequestNutritionalFactsResponse;
   @ApiProperty({ type: [String], required: false })
   tags?: string[];
   @ApiProperty({ type: [String], required: false })
@@ -268,8 +268,8 @@ export class RecipeMinimalResponse implements RecipeMinimalType {
   imageUrl: string | null;
   @ApiProperty({ type: [String] })
   tags: string[];
-  @ApiProperty({ type: RecipeUserEntity })
-  user: RecipeUserEntity;
+  @ApiProperty({ type: RecipeUserResponse })
+  user: RecipeUserResponse;
 }
 
 export class RecipeListResponse {

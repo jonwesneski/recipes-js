@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { JwtGuard } from '@src/auth/guards';
-import { NutritionalFactsEntity } from '@src/recipes';
+import { NutritionalFactsResponse } from '@src/recipes';
 import { AiService } from './ai.service';
 import { GenerateNutritionalFactsDto } from './contracts/generate-nutritional-facts.dto';
 import { GenerateTagsDto } from './contracts/generate-tags.dto';
@@ -17,7 +17,7 @@ export class AiController {
   @ApiBody({ type: GenerateNutritionalFactsDto, isArray: true })
   @ApiOkResponse({
     description: 'The generated nutritional facts',
-    type: NutritionalFactsEntity,
+    type: NutritionalFactsResponse,
   })
   @UseGuards(JwtGuard)
   async nutritionalFacts(@Body() body: GenerateNutritionalFactsDto[]) {
