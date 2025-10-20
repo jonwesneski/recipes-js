@@ -1,12 +1,12 @@
 import {
-  IngredientEntityUnit,
+  IngredientResponseUnit,
   MeasurementFormat,
   type NumberFormat,
 } from '@repo/codegen/model';
 import { z } from 'zod/v4';
 
-export type AllMeasurements = NonNullable<IngredientEntityUnit>;
-export const measurementUnits = Object.keys(IngredientEntityUnit);
+export type AllMeasurements = NonNullable<IngredientResponseUnit>;
+export const measurementUnits = Object.keys(IngredientResponseUnit);
 export const measurementUnitsAbbreviated: Record<AllMeasurements, string> = {
   cups: 'cups',
   tablespoons: 'tbs',
@@ -55,7 +55,7 @@ export const measurementUnitsPlural: Record<AllMeasurements, string> = {
 
 const IMPERIAL_VOLUME_CONVERSIONS: Record<
   Extract<
-    IngredientEntityUnit,
+    IngredientResponseUnit,
     | 'cups'
     | 'tablespoons'
     | 'teaspoons'
@@ -76,7 +76,7 @@ const IMPERIAL_VOLUME_CONVERSIONS: Record<
 };
 
 const METRIC_VOLUME_CONVERSIONS: Record<
-  Extract<IngredientEntityUnit, 'milliliters' | 'liters'>,
+  Extract<IngredientResponseUnit, 'milliliters' | 'liters'>,
   number
 > = {
   milliliters: 236.588,
@@ -84,7 +84,7 @@ const METRIC_VOLUME_CONVERSIONS: Record<
 };
 
 const IMPERIAL_WEIGHT_CONVERSIONS: Record<
-  Extract<IngredientEntityUnit, 'pounds' | 'ounces'>,
+  Extract<IngredientResponseUnit, 'pounds' | 'ounces'>,
   number
 > = {
   pounds: 1,
@@ -92,7 +92,7 @@ const IMPERIAL_WEIGHT_CONVERSIONS: Record<
 };
 
 const METRIC_WEIGHT_CONVERSIONS: Record<
-  Extract<IngredientEntityUnit, 'grams' | 'kilograms'>,
+  Extract<IngredientResponseUnit, 'grams' | 'kilograms'>,
   number
 > = {
   grams: 1,
@@ -312,7 +312,7 @@ export const roundToDecimal = (num: number, decimalPlaces: number): number => {
 
 export const determineAmountUnit = (
   amount: number,
-  unit: IngredientEntityUnit,
+  unit: IngredientResponseUnit,
   convertTo: MeasurementFormat,
 ) => {
   if (!unit) {

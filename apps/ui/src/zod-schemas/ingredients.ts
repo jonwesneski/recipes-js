@@ -1,8 +1,8 @@
 import { z } from 'zod/v4';
 
-import {
-  type CreateIngredientDto,
-  type IngredientEntityUnit,
+import type {
+  CreateIngredientDto,
+  IngredientResponseUnit,
 } from '@repo/codegen/model';
 import { fractionToNumber, measurementUnits } from '@src/utils/measurements';
 
@@ -77,7 +77,7 @@ export const ingredientRowArraySchema = z
     const ingredient: CreateIngredientDto = {
       amount,
       isFraction,
-      unit: arg[1] ? (arg[1] as IngredientEntityUnit) : null,
+      unit: arg[1] ? (arg[1] as IngredientResponseUnit) : null,
       name: arg[2],
     };
     return ingredient;

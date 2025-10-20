@@ -2,8 +2,8 @@
 
 import { useAiControllerNutritionalFactsV1 } from '@repo/codegen/ai'
 import {
-  type NutritionalFactsEntity,
-  type NutritionalFactsEntityServingUnit,
+  type NutritionalFactsResponse,
+  type NutritionalFactsResponseServingUnit,
 } from '@repo/codegen/model'
 import { SelectLabel, TextButton, TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
@@ -51,7 +51,7 @@ export const NutritionalFacts = () => {
   ): void {
     if (event.target.value) {
       setPartialNutritionalFacts({
-        servingUnit: event.target.value as NutritionalFactsEntityServingUnit,
+        servingUnit: event.target.value as NutritionalFactsResponseServingUnit,
       })
     } else {
       setPartialNutritionalFacts({
@@ -113,7 +113,7 @@ export const NutritionalFacts = () => {
               onChange={(e) => handleOnChange(nf, e)}
               value={
                 nutritionalFacts?.[
-                  nf as keyof NutritionalFactsEntity
+                  nf as keyof NutritionalFactsResponse
                 ]?.toString() ?? ''
               }
             />

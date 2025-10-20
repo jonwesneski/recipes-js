@@ -1,6 +1,6 @@
 'use client'
 
-import type { IngredientEntity } from '@repo/codegen/model'
+import type { IngredientResponse } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
@@ -11,7 +11,7 @@ import {
 } from '@src/utils/measurements'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
 
-type IngredientParams = Omit<IngredientEntity, 'createdAt' | 'updatedAt'>
+type IngredientParams = Omit<IngredientResponse, 'createdAt' | 'updatedAt'>
 
 interface IngredientListProps {
   ingredients: IngredientParams[]

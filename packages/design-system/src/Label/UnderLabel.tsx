@@ -9,9 +9,9 @@ type LabelProps = Omit<
 export const UnderLabel = (props: LabelProps) => {
   return (
     <div className="relative flex flex-col">
-      {Boolean(props.isRequired) && (
+      {props.isRequired ? (
         <span className="absolute -left-3 text-red-900">*</span>
-      )}
+      ) : null}
       {props.children}
       <Label
         className={mergeCss('block border-0 border-t', {

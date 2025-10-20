@@ -11,7 +11,7 @@ import {
   PatchRecipeDto,
   PatchStepDto,
   RecipeResponse,
-  StepEntity,
+  StepResponse,
 } from '@src/recipes/contracts';
 import request from 'supertest';
 import { App } from 'supertest/types';
@@ -224,7 +224,7 @@ describe('RecipesController (e2e)', () => {
     };
 
     const stepEntityToDto = (
-      entity: StepEntity[],
+      entity: StepResponse[],
       newSteps?: PatchStepDto[],
     ): PatchStepDto[] => {
       const updated: PatchStepDto[] = entity.map((s) => {

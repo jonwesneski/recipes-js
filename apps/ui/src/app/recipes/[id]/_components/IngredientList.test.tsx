@@ -1,4 +1,4 @@
-import { type IngredientEntity } from '@repo/codegen/model'
+import { type IngredientResponse } from '@repo/codegen/model'
 import { renderRecipeComponent } from '@src/mocks/renderComponent'
 import IngredientList from './IngredientList'
 
@@ -20,7 +20,7 @@ describe('IngredientList', () => {
       updatedAt: '',
       id: '2',
     },
-  ] as IngredientEntity[]
+  ] as IngredientResponse[]
   it('Lists created', async () => {
     const { findByText } = renderRecipeComponent(
       <IngredientList scaleFactor={1} ingredients={sampleIngredients} />,

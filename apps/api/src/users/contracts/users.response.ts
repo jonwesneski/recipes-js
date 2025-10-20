@@ -7,7 +7,7 @@ import {
 } from '@repo/database';
 import { PaginationResponse } from '@src/common/common.responses';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
-import { NutritionalFactsEntity } from '@src/recipes';
+import { NutritionalFactsResponse } from '@src/recipes';
 import { type UserType } from '../users.service';
 
 export class UserPublicResponse implements UserType {
@@ -44,8 +44,8 @@ export class UserAccountResponse
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
-  @ApiProperty({ type: NutritionalFactsEntity, nullable: true })
-  diet: NutritionalFactsEntity | null;
+  @ApiProperty({ type: NutritionalFactsResponse, nullable: true })
+  diet: NutritionalFactsResponse | null;
   @ApiProperty({ enum: UiTheme, enumName: 'UiTheme' })
   uiTheme: UiTheme;
   @ApiProperty({ enum: NumberFormat, enumName: 'NumberFormat' })
