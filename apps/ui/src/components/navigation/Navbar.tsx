@@ -11,16 +11,16 @@ import { RadioGroup } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
 import Image from 'next/image'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { type JSX, useEffect, useRef, useState } from 'react'
 import { NavItem } from './NavItem'
 import { NavLink } from './NavLink'
 
-// I'm not sure if I want feed and search to be the same page.
-// But right now they are
-type RouteKeys = 'feed' | 'recipe' | 'edit' | 'create'
+// Logic for determining which nav links to show based on route
+type RouteKeys = 'list' | 'recipe' | 'edit' | 'create'
 const regexRouteKeyMap = new Map<RegExp, RouteKeys>()
-regexRouteKeyMap.set(/^\/recipes$/, 'feed')
+regexRouteKeyMap.set(/^\/recipes$/, 'list')
 regexRouteKeyMap.set(/^\/recipes\/\w+$/, 'recipe')
 regexRouteKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
 regexRouteKeyMap.set(/^\/create-recipe$/, 'create')
@@ -33,7 +33,7 @@ const SearchRecipesLink = (
 )
 const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   recipe: [CreateRecipeLink, SearchRecipesLink],
-  feed: [CreateRecipeLink],
+  list: [CreateRecipeLink],
   edit: [SearchRecipesLink],
   create: [SearchRecipesLink],
   NONE: null,
@@ -48,6 +48,7 @@ export const Navbar = () => {
     setMeasurementFormat,
     numberFormat,
     setNumberFormat,
+    id,
   } = useUserStore((state) => state)
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -166,6 +167,13 @@ export const Navbar = () => {
               ]}
             />
           </NavItem>
+          {id ? (
+            <NavItem>
+              <div className="text-center">
+                <Link href="/account">Account Settings</Link>
+              </div>
+            </NavItem>
+          ) : null}
         </div>
       </div>
     </div>

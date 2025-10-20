@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, PrismaClientKnownRequestError } from '@repo/database';
-import { PrismaService } from '@repo/nest-shared';
+import { PrismaQueryParams, PrismaService } from '@repo/nest-shared';
 import { PatchUserDto } from './contracts';
 
 export type UserPrismaType = Prisma.UserGetPayload<{
@@ -22,6 +22,10 @@ export type UserAccountPrismaType = Prisma.UserGetPayload<{
     diet: true;
   };
 }>;
+
+export type GetFollowersQueryParams = PrismaQueryParams & {
+  id: string;
+};
 
 @Injectable()
 export class UsersService {
@@ -104,14 +108,28 @@ export class UsersService {
     });
   }
 
-  async getFollowers(id: string) {
+  async getFollowers(params: GetFollowersQueryParams) {
     const followers = await this.prisma.userFollow.findMany({
-      where: { userId: id },
+      where: { userId: params.id },
+      cursor: params.cursorId ? { id: params.cursorId } : undefined,
+      skip: params.cursorId ? 1 : params.skip,
       select: {
+        id: true,
         following: { select: { id: true, handle: true, imageUrl: true } },
       },
     });
-    return followers.map((f) => f.following);
+    return {
+      data: followers.map((f) => f.following),
+      pagination: {
+        totalRecords: await this.prisma.userFollow.count({
+          where: { userId: params.id },
+        }),
+        currentCursor:
+          followers.length > 0 ? followers[0].id : params.cursorId || null,
+        nextCursor:
+          followers.length > 0 ? followers[followers.length - 1].id : null,
+      },
+    };
   }
 
   async followUser(id: string, requestedUser: string, isFollowing: boolean) {

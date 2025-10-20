@@ -4,6 +4,6 @@ export async function register() {
     process.env.NEXT_PUBLIC_ENABLE_MSW === 'true'
   ) {
     const { server } = await import('./mocks/server');
-    server.listen();
+    server.listen({ onUnhandledRequest: 'bypass' });
   }
 }
