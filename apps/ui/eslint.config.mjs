@@ -11,16 +11,19 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['./src/mocks/jest.setup.ts', './src/types/*'],
+    ignores: [
+      './src/mocks/jest.setup.ts',
+      './src/types/*',
+      'next-env.d.ts',
+      'next.config.ts',
+      'public/mockServiceWorker.js',
+    ],
   },
   ...compat.extends('@repo/eslint-config/next'),
   {
     languageOptions: {
-      //globals: globals.browser, // or node, etc.
-      //parser: tseslint.parser,
       parserOptions: {
-        //root: true,
-        project: './tsconfig.json', // Point to your tsconfig.json
+        project: './tsconfig.json',
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
