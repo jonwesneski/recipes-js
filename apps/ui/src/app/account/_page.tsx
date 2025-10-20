@@ -31,60 +31,64 @@ const Account = (props: IAccountProps) => {
 
   return (
     <div>
-      <h2>Account</h2>
+      <h2 className="font-bold">Account</h2>
 
-      <TextLabel
-        isRequired={false}
-        label="handle"
-        name="handle"
-        value={handle}
-        onChange={(e) => setHandle(e.target.value)}
-      />
-      <TextButton
-        text="Update handle"
-        onClick={() => void handleUpdateHandle()}
-      />
+      <div className="flex gap-4 mt-6">
+        <TextLabel
+          isRequired={false}
+          label="handle"
+          name="handle"
+          value={handle}
+          onChange={(e) => setHandle(e.target.value)}
+        />
+        <TextButton
+          text="Update handle"
+          onClick={() => void handleUpdateHandle()}
+        />
+      </div>
+      <div className="my-6 border-b-2">
+        <h6 className="text-center">Theme</h6>
+        <RadioGroup
+          selectedValue={settings.uiTheme}
+          onChange={(value) => void settings.setUiTheme(value as UiTheme)}
+          options={[
+            { label: 'light', value: 'light' },
+            { label: 'dark', value: 'dark' },
+            { label: 'system', value: 'system' },
+          ]}
+        />
 
-      <h6 className="text-center">Theme</h6>
-      <RadioGroup
-        selectedValue={settings.uiTheme}
-        onChange={(value) => void settings.setUiTheme(value as UiTheme)}
-        options={[
-          { label: 'light', value: 'light' },
-          { label: 'dark', value: 'dark' },
-          { label: 'system', value: 'system' },
-        ]}
-      />
+        <h6 className="text-center">Unit Format</h6>
+        <RadioGroup
+          selectedValue={settings.measurementFormat}
+          onChange={(value) =>
+            void settings.setMeasurementFormat(value as MeasurementFormat)
+          }
+          options={[
+            { label: 'default', value: 'default' },
+            { label: 'imperial', value: 'imperial' },
+            { label: 'metric', value: 'metric' },
+          ]}
+        />
 
-      <h6 className="text-center">Unit Format</h6>
-      <RadioGroup
-        selectedValue={settings.measurementFormat}
-        onChange={(value) =>
-          void settings.setMeasurementFormat(value as MeasurementFormat)
-        }
-        options={[
-          { label: 'default', value: 'default' },
-          { label: 'imperial', value: 'imperial' },
-          { label: 'metric', value: 'metric' },
-        ]}
-      />
+        <h6 className="text-center">Number Format</h6>
+        <RadioGroup
+          selectedValue={settings.numberFormat}
+          onChange={(value) =>
+            void settings.setNumberFormat(value as NumberFormat)
+          }
+          options={[
+            { label: 'default', value: 'default' },
+            { label: 'decimal', value: 'decimal' },
+            { label: 'fraction', value: 'fraction' },
+          ]}
+        />
+      </div>
 
-      <h6 className="text-center">Number Format</h6>
-      <RadioGroup
-        selectedValue={settings.numberFormat}
-        onChange={(value) =>
-          void settings.setNumberFormat(value as NumberFormat)
-        }
-        options={[
-          { label: 'default', value: 'default' },
-          { label: 'decimal', value: 'decimal' },
-          { label: 'fraction', value: 'fraction' },
-        ]}
-      />
-
+      <h2 className="font-bold text-center">Followers</h2>
       {props.followers.data.map((follower, i) => (
         <div key={follower.id} className="p-2 border-b">
-          <div className="flex">
+          <div className="flex justify-between">
             <p>{follower.handle}</p>
             <Toggle
               initialIsOn

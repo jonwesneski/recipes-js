@@ -6,12 +6,34 @@ export async function middleware(request: NextRequest) {
   // a cookie, maybe it was a valid case, but trying cookies() for now
   //const token = request.cookies.get('access_token')?.value;
   const token = (await cookies()).get('access_token')?.value;
-  if (!token && process.env.NEXT_PUBLIC_ENABLE_MSW !== 'true') {
+  const isMsw = process.env.NEXT_PUBLIC_ENABLE_MSW === 'true';
+  if (!token && !isMsw) {
     // Redirect to login page
     return NextResponse.redirect(new URL('/', request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  if (isMsw && !token) {
+    const { SignJWT } = await import('jose');
+    const genericJwt = await new SignJWT({
+      sub: '123',
+      handle: 'testuser',
+      email: 'j@j.com',
+    })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('3d')
+      .sign(new TextEncoder().encode('testing'));
+    response.cookies.set('access_token', genericJwt, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 60 * 60 * 24, // 24 hours
+      path: '/',
+      sameSite: 'lax',
+    });
+  }
+
+  return response;
 }
 
 export const config = {
