@@ -8,9 +8,9 @@ import type {
   UiTheme,
 } from '@repo/codegen/model'
 import { RadioGroup } from '@repo/design-system'
+import { ProfilePic } from '@src/components/ProfilePic'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
-import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { type JSX, useEffect, useRef, useState } from 'react'
@@ -108,23 +108,16 @@ export const Navbar = () => {
             setIsOpen((v) => !v)
           }}
         >
-          <Image
-            src={
-              imageUrl?.length
-                ? imageUrl
-                : 'https://www.gravatar.com/avatar/?d=mp'
-            }
-            alt="profile image"
-            priority
-            width={30}
-            height={30}
+          <ProfilePic
             className="mx-4 grow-0 cursor-pointer"
+            imageUrl={imageUrl}
+            handle="profile image"
           />
         </button>
 
         <div
           ref={menuRef}
-          className={`absolute flex flex-col-reverse -z-1 -translate-y-[10.5rem] md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
+          className={`absolute flex flex-col-reverse -z-1 -translate-y-[12rem] md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
           style={{ transformOrigin: 'bottom' }}
         >
           <NavItem>

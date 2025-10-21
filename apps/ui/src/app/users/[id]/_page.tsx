@@ -4,8 +4,7 @@ import type {
   RecipeListResponse,
   UserPublicResponse,
 } from '@repo/codegen/model'
-import { RecipeList } from '@src/components'
-import Image from 'next/image'
+import { ProfilePic, RecipeList } from '@src/components'
 
 interface IUserPublicProps {
   user: UserPublicResponse
@@ -16,17 +15,10 @@ const UserPublic = ({ user, recipes }: IUserPublicProps) => {
     <>
       <div className="fixed top-10 left-1/2 -translate-x-1/2 z-10 w-full flex justify-center gap-7 mt-5 border-b-2">
         <div>
-          <Image
+          <ProfilePic
             className="inline-block mr-2"
-            src={
-              user.imageUrl?.length
-                ? user.imageUrl
-                : 'https://www.gravatar.com/avatar/?d=mp'
-            }
-            alt={user.handle}
-            priority
-            width={30}
-            height={30}
+            imageUrl={user.imageUrl}
+            handle={user.handle}
           />
           <p>{user.handle}</p>
         </div>

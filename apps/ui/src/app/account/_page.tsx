@@ -8,6 +8,7 @@ import type {
 } from '@repo/codegen/model'
 import { useUsersControllerFollowUserV1 } from '@repo/codegen/users'
 import { RadioGroup, TextButton, TextLabel, Toggle } from '@repo/design-system'
+import { ProfilePic } from '@src/components'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { useCallback, useState } from 'react'
 
@@ -89,7 +90,14 @@ const Account = (props: IAccountProps) => {
       {props.followers.data.map((follower, i) => (
         <div key={follower.id} className="p-2 border-b">
           <div className="flex justify-between">
-            <p>{follower.handle}</p>
+            <div className="flex">
+              <ProfilePic
+                className="mr-2"
+                handle={follower.handle}
+                imageUrl={follower.imageUrl}
+              />
+              <span>{follower.handle}</span>
+            </div>
             <Toggle
               initialIsOn
               onClickAsync={async () => {
