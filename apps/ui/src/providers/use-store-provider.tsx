@@ -75,7 +75,7 @@ export const UserStoreProvider = ({
       }
     }
 
-    fetch().catch((e: unknown) => console.log(e))
+    fetch().catch((e: unknown) => console.error(e))
   }, [accessToken, setIsInitialized])
 
   return isInitialized ? (

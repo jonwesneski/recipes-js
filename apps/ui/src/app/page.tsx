@@ -15,7 +15,7 @@ const Page = () => {
     const run = async () => {
       await deleteCookie()
     }
-    run().catch(() => console.log('blah'))
+    run().catch((e: unknown) => console.error(e))
   }, [])
 
   const handleGoogleOAuth = (event: MouseEvent<HTMLButtonElement>) => {
