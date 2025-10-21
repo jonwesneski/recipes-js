@@ -12,7 +12,7 @@ const ClientRedirect = (props: IRedirectProps) => {
   const router = useRouter()
 
   useEffect(() => {
-    const fetch = () => {
+    const action = () => {
       if (accessToken) {
         router.push('/recipes')
       } else if (props.accessToken) {
@@ -22,7 +22,7 @@ const ClientRedirect = (props: IRedirectProps) => {
       }
     }
 
-    fetch()
+    action()
   }, [accessToken, setAccessToken])
 
   return null

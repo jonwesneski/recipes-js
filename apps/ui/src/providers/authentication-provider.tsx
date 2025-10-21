@@ -1,12 +1,6 @@
 'use client'
 
-import {
-  createContext,
-  type ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { createContext, type ReactNode, useContext, useState } from 'react'
 
 const ACCESS_TOKEN_KEY_NAME = 'accessToken'
 export type AuthenticationType = {
@@ -27,20 +21,11 @@ export const AuthenticationProvider = ({
 }: AuthenticationProviderProps) => {
   const [accessToken, _setAccessToken] = useState<string | null>(null)
 
-  useEffect(() => {
-    const token = localStorage.getItem(ACCESS_TOKEN_KEY_NAME)
-    if (token) {
-      _setAccessToken(token)
-    }
-  }, [])
-
   const setAccessToken = (value: string) => {
-    localStorage.setItem(ACCESS_TOKEN_KEY_NAME, value)
     _setAccessToken(value)
   }
 
   const clearAccessToken = () => {
-    localStorage.removeItem(ACCESS_TOKEN_KEY_NAME)
     _setAccessToken(null)
   }
 

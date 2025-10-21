@@ -117,6 +117,7 @@ export const Navbar = () => {
 
         <div
           ref={menuRef}
+          // Update -translate-y-* anytime you add a new NavItem to the dropdown
           className={`absolute flex flex-col-reverse -z-1 -translate-y-[12rem] md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
           style={{ transformOrigin: 'bottom' }}
         >
@@ -161,11 +162,18 @@ export const Navbar = () => {
             />
           </NavItem>
           {id ? (
-            <NavItem>
-              <div className="text-center">
-                <Link href="/account">Account Settings</Link>
-              </div>
-            </NavItem>
+            <>
+              <NavItem>
+                <div className="text-center">
+                  <Link href="/account">Account Settings</Link>
+                </div>
+              </NavItem>
+              <NavItem>
+                <div className="text-center">
+                  <Link href="/">Logout</Link>
+                </div>
+              </NavItem>
+            </>
           ) : null}
         </div>
       </div>
