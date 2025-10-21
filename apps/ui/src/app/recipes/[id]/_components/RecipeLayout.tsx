@@ -1,8 +1,8 @@
 'use client'
 
+import { ProfilePic } from '@src/components'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { isoDateToLocale } from '@src/utils/stringHelpers'
-import Image from 'next/image'
 
 export interface IRecipeLayoutProps {
   children: React.ReactNode
@@ -21,17 +21,10 @@ export const RecipeLayout = (props: IRecipeLayoutProps) => {
           <h1 className="font-bold">created</h1>
           <div className="px-3">
             <span className="mr-2">by:</span>
-            <Image
+            <ProfilePic
               className="inline-block mr-2"
-              src={
-                user.imageUrl?.length
-                  ? user.imageUrl
-                  : 'https://www.gravatar.com/avatar/?d=mp'
-              }
-              alt={user.handle}
-              priority
-              width={30}
-              height={30}
+              imageUrl={user.imageUrl}
+              handle={user.handle}
             />
             <span>{user.handle}</span>
             <h1>on: {isoDateToLocale(createdAt)}</h1>

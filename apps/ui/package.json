@@ -55,7 +55,7 @@
     "jest-environment-jsdom": "^30.0.0",
     "jest-fixed-jsdom": "^0.0.9",
     "jose": "^6.1.0",
-    "msw": "^2.10.2",
+    "msw": "^2.11.6",
     "postcss": "^8.5.5",
     "tailwindcss": "^4.1.10",
     "ts-jest": "^29.4.0",
