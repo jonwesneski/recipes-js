@@ -39,6 +39,15 @@ const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   NONE: null,
 }
 
+const nonAuthNavItemsHeightRem = 10.5
+const AuthNavItemsHeightRem = 3
+
+const determineHeightRem = (id: string) => {
+  return id
+    ? nonAuthNavItemsHeightRem + AuthNavItemsHeightRem
+    : nonAuthNavItemsHeightRem
+}
+
 export const Navbar = () => {
   const {
     imageUrl,
@@ -53,6 +62,7 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+  const navBarHeight = determineHeightRem(id)
 
   const getRouteKey = () => {
     for (const [regex, value] of regexRouteKeyMap) {
@@ -118,7 +128,7 @@ export const Navbar = () => {
         <div
           ref={menuRef}
           // Update -translate-y-* anytime you add a new NavItem to the dropdown
-          className={`absolute flex flex-col-reverse -z-1 -translate-y-[12rem] md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
+          className={`absolute flex flex-col-reverse -z-1 -translate-y-[${navBarHeight}rem] md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
           style={{ transformOrigin: 'bottom' }}
         >
           <NavItem>

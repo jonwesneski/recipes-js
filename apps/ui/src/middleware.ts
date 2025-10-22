@@ -13,25 +13,16 @@ export async function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
-  if (isMsw && !token) {
-    const { SignJWT } = await import('jose');
-    const genericJwt = await new SignJWT({
-      sub: '123',
-      handle: 'testuser',
-      email: 'j@j.com',
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('3d')
-      .sign(new TextEncoder().encode('testing'));
-    response.cookies.set('access_token', genericJwt, {
-      httpOnly: true,
-      secure: false,
-      maxAge: 60 * 60 * 24, // 24 hours
-      path: '/',
-      sameSite: 'lax',
-    });
-  }
+  // if (isMsw && !token) {
+  //   const genericJwt = await generateJwt();
+  //   response.cookies.set('access_token', genericJwt, {
+  //     httpOnly: true,
+  //     secure: false,
+  //     maxAge: 60 * 60 * 24, // 24 hours
+  //     path: '/',
+  //     sameSite: 'lax',
+  //   });
+  // }
 
   return response;
 }

@@ -17,6 +17,9 @@ import {
   getUsersControllerUserV1ResponseMock,
   getUsersMock,
 } from '@repo/codegen/mswUsers';
+import { http, ws } from 'msw';
+
+const websocketMock = ws.link('http://localhost:3001/socket.io/*');
 
 const recipesList = getRecipesControllerRecipesListV1ResponseMock();
 recipesList.data.forEach((r) => {
@@ -33,6 +36,10 @@ followersList.data.forEach((f) => {
 });
 
 export default [
+  // eslint-disable-next-line @typescript-eslint/no-empty-function -- I don't want to do anything here at the moment
+  http.get('http://localhost:3001/socket.io/*', () => {}),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function -- I don't want to do anything here at the moment
+  websocketMock.addEventListener('connection', (_connection) => {}),
   ...getHealthCheckMock(),
   getUsersControllerUserV1MockHandler(
     getUsersControllerUserV1ResponseMock({ imageUrl: null }),

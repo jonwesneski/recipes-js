@@ -2,7 +2,6 @@
 
 import { createContext, type ReactNode, useContext, useState } from 'react'
 
-const ACCESS_TOKEN_KEY_NAME = 'accessToken'
 export type AuthenticationType = {
   accessToken: string | null
   setAccessToken: (_value: string) => void
