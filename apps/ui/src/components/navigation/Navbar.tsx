@@ -88,7 +88,6 @@ export const Navbar = () => {
     }
   }
   useEffect(() => {
-    console.log('sss', isOpen)
     if (isOpen) {
       document.addEventListener('mousedown', handleClick)
     }
