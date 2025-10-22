@@ -27,7 +27,7 @@ const Page = () => {
     } else {
       void _submitJwtFormData()
         .catch((e: unknown) => console.error(e))
-        // Does not work if then is before catch for some reason
+        // Does not work if then() is before catch() for some reason
         .then(() => redirect('/redirect'))
     }
   }
@@ -45,7 +45,8 @@ const Page = () => {
     event.preventDefault()
     clearAccessToken()
     await deleteCookie()
-    redirect('/recipes')
+    // I want to trigger a refresh/reload
+    window.location.href = '/recipes'
   }
 
   return (
