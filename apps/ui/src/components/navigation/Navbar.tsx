@@ -7,7 +7,7 @@ import type {
   NumberFormat,
   UiTheme,
 } from '@repo/codegen/model'
-import { RadioGroup } from '@repo/design-system'
+import { mergeCss, RadioGroup } from '@repo/design-system'
 import { ProfilePic } from '@src/components/ProfilePic'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
@@ -39,15 +39,6 @@ const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   NONE: null,
 }
 
-const nonAuthNavItemsHeightRem = 10.5
-const AuthNavItemsHeightRem = 3
-
-const determineHeightRem = (id: string) => {
-  return id
-    ? nonAuthNavItemsHeightRem + AuthNavItemsHeightRem
-    : nonAuthNavItemsHeightRem
-}
-
 export const Navbar = () => {
   const {
     imageUrl,
@@ -62,7 +53,6 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
-  const navBarHeight = determineHeightRem(id)
 
   const getRouteKey = () => {
     for (const [regex, value] of regexRouteKeyMap) {
@@ -100,8 +90,8 @@ export const Navbar = () => {
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClick)
-      return () => document.removeEventListener('mousedown', handleClick)
     }
+    return () => document.removeEventListener('mousedown', handleClick)
   }, [isOpen])
 
   return (
@@ -127,8 +117,16 @@ export const Navbar = () => {
 
         <div
           ref={menuRef}
-          // Update -translate-y-* anytime you add a new NavItem to the dropdown
-          className={`absolute flex flex-col-reverse -z-1 -translate-y-[${navBarHeight}rem] md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in ${isOpen ? 'scale-y-100' : 'scale-y-0'}`}
+          className={mergeCss(
+            `absolute flex flex-col-reverse -z-1 md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in`,
+            {
+              'scale-y-100': isOpen,
+              'scale-y-0': !isOpen,
+              // Update -translate-y-* anytime you add a new NavItem to the dropdown
+              '-translate-y-[10.5rem]': !id,
+              '-translate-y-[13.5rem]': id,
+            },
+          )}
           style={{ transformOrigin: 'bottom' }}
         >
           <NavItem>

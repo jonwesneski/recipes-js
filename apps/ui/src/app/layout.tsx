@@ -1,6 +1,7 @@
 import '@repo/design-system/styles.css'
 import Loading from '@src/components/LoadingComponent'
 import { MainLayout } from '@src/components/MainLayout'
+import { getAccessToken } from '@src/utils/getAccessToken'
 import { type Metadata, type Viewport } from 'next'
 import AppProviders from './_providers'
 import './globals.css'
@@ -17,7 +18,9 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+  const token = await getAccessToken()
+
   return (
     <html lang="en">
       <body>
@@ -28,7 +31,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           }}
         >
           <div id="root" className="px-2">
-            <AppProviders>
+            <AppProviders token={token}>
               <Loading>
                 <MainLayout>{children}</MainLayout>
               </Loading>

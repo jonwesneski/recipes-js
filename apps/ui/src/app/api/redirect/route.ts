@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Token missing' }, { status: 400 });
     }
 
-    const response = NextResponse.redirect(new URL('/redirect', request.url));
+    const response = NextResponse.redirect(new URL('/recipes', request.url));
 
     response.cookies.set({
       name: 'access_token',

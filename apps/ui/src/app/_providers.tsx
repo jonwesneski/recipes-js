@@ -7,11 +7,12 @@ import { type UserStore } from '@src/stores/user-store'
 
 interface AppProvidersProps {
   children: React.ReactNode
+  token?: string
   initialState?: Partial<UserStore>
 }
 const AppProviders = (props: AppProvidersProps) => {
   return (
-    <AuthenticationProvider>
+    <AuthenticationProvider token={props.token}>
       <InitProvider>
         <UserStoreProvider initialState={props.initialState}>
           <ModalStoreProvider>
