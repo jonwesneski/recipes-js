@@ -4,6 +4,7 @@ import GoogleLogo from '@public/Google__G__logo.svg'
 import { IconTextButton, TextButton } from '@repo/design-system'
 import { useAuthentication } from '@src/providers/authentication-provider'
 import { type Svg } from '@src/types/svg'
+import { generateJwt } from '@src/utils/genericJwt'
 import { redirect } from 'next/navigation'
 import { useEffect, type MouseEvent } from 'react'
 import { deleteCookie } from './deleteAuthCookie.action'
@@ -15,13 +16,29 @@ const Page = () => {
     const run = async () => {
       await deleteCookie()
     }
-    run().catch(() => console.log('blah'))
+    run().catch((e: unknown) => console.error(e))
   }, [])
 
   const handleGoogleOAuth = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     clearAccessToken()
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
+    if (!(process.env.NEXT_PUBLIC_ENABLE_MSW === 'true')) {
+      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
+    } else {
+      void _submitJwtFormData()
+        .catch((e: unknown) => console.error(e))
+        // Does not work if then is before catch for some reason
+        .then(() => redirect('/redirect'))
+    }
+  }
+
+  const _submitJwtFormData = async () => {
+    const formData = new FormData()
+    formData.append('access_token', await generateJwt())
+    await fetch('api/redirect', {
+      method: 'POST',
+      body: formData,
+    })
   }
 
   const handleGuest = async (event: MouseEvent<HTMLButtonElement>) => {
