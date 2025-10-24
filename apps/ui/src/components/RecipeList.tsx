@@ -1,5 +1,3 @@
-'use client'
-
 import type { RecipeListResponse } from '@repo/codegen/model'
 import { RecipeTile } from './RecipeTile'
 
@@ -10,15 +8,7 @@ export const RecipeList = ({ recipes }: IRecipesListProps) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
       {recipes.data.map((recipe) => (
-        <RecipeTile
-          key={recipe.id}
-          id={recipe.id}
-          imageUrl={recipe.imageUrl ?? undefined}
-          name={recipe.name}
-          bookmarked={false}
-          preparationTimeInMinutes={recipe.preparationTimeInMinutes}
-          cookingTimeInMinutes={recipe.cookingTimeInMinutes}
-        />
+        <RecipeTile key={recipe.id} recipe={recipe} />
       ))}
     </div>
   )

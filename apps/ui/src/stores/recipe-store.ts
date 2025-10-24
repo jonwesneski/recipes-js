@@ -429,12 +429,14 @@ export const createRecipeStore = (
             errors,
             imageSrc,
             scaleFactor,
+            isPublic,
             ...recipe
           } = get();
           /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
 
           return {
             ...recipe,
+            isPublic: true, // TODO: handle making public and private
             base64Image: imageSrc?.split(',')[1] ?? null,
             steps: recipe.steps.map((s) => {
               return {

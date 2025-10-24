@@ -9,12 +9,12 @@ import { BookmarkOwnerError } from './exceptions';
 import {
   type RecipeCreateType,
   RecipeInclude,
+  RecipeMinimalPrismaInclude,
   type RecipeMinimalPrismaType,
   type RecipeMinimalType,
   type RecipePrismaType,
   type RecipeType,
   type RecipeUpdateType,
-  type RecipeUserType,
 } from './types';
 
 export type GetRecipesQueryParams = PrismaQueryParams & {
@@ -25,26 +25,6 @@ export type GetRecipesQueryParams = PrismaQueryParams & {
 export class RecipeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  transformRecipe<T extends RecipePrismaType | RecipeMinimalPrismaType>(
-    recipe: T,
-  ): Omit<T, 'recipeTags'> & {
-    tags: string[];
-    equipments?: string[];
-    user: RecipeUserType;
-  } {
-    const { recipeTags, ...rest } = recipe;
-
-    let equipments: string[] | undefined = undefined;
-    if ((recipe as RecipePrismaType).equipments) {
-      equipments = (recipe as RecipePrismaType).equipments.map((e) => e.name);
-    }
-    return {
-      ...rest,
-      equipments,
-      tags: recipeTags.map((rt) => rt.tag.name),
-    };
-  }
-
   async getRecipes(
     params: GetRecipesQueryParams,
   ): Promise<PrismaResults<RecipeMinimalType[]>> {
@@ -52,21 +32,18 @@ export class RecipeRepository {
       where: { isPublic: true, userId: params.userId },
       cursor: params.cursorId ? { id: params.cursorId } : undefined,
       skip: params.cursorId ? 1 : undefined,
+      ...RecipeMinimalPrismaInclude,
       include: {
-        user: { select: { handle: true, id: true, imageUrl: true } },
-        recipeTags: {
-          include: { tag: { select: { name: true } } },
+        ...RecipeMinimalPrismaInclude.include,
+        _count: {
+          select: {
+            bookmarkedBy: { where: { userId: params.userId } },
+          },
         },
       },
-      omit: {
-        userId: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      orderBy: { updatedAt: 'desc' },
     });
     return {
-      data: recipes.map((recipe) => this.transformRecipe(recipe)),
+      data: recipes.map((recipe) => this.transformRecipeMinimal(recipe)),
       pagination: {
         totalRecords: await this.prisma.recipe.count({
           where: { isPublic: true, userId: params.userId },
@@ -75,6 +52,22 @@ export class RecipeRepository {
           recipes.length > 0 ? recipes[0].id : params.cursorId || null,
         nextCursor: recipes.length > 0 ? recipes[recipes.length - 1].id : null,
       },
+    };
+  }
+
+  private transformRecipeMinimal(
+    recipe: RecipeMinimalPrismaType,
+    requestedUserId?: string,
+  ): RecipeMinimalType {
+    const { recipeTags, _count, ...rest } = recipe;
+    let bookmarked: boolean | undefined = undefined;
+    if (requestedUserId && requestedUserId !== recipe.user.id) {
+      bookmarked = _count.bookmarkedBy > 0;
+    }
+    return {
+      ...rest,
+      tags: recipeTags.map((rt) => rt.tag.name),
+      bookmarked,
     };
   }
 
@@ -87,6 +80,28 @@ export class RecipeRepository {
       ...RecipeInclude,
     });
     return this.transformRecipe(recipe);
+  }
+
+  private transformRecipe(
+    recipe: RecipePrismaType,
+    requestedUserId?: string,
+  ): RecipeType {
+    const { recipeTags, equipments, isPublic, _count, ...rest } = recipe;
+    let bookmarked: boolean | undefined = undefined;
+    if (requestedUserId && requestedUserId !== recipe.user.id) {
+      bookmarked = _count.bookmarkedBy > 0;
+    }
+    let isRecipePublic: boolean | undefined = undefined;
+    if (requestedUserId && requestedUserId === recipe.user.id) {
+      isRecipePublic = isPublic;
+    }
+    return {
+      ...rest,
+      isPublic: isRecipePublic,
+      equipments: equipments.map((e) => e.name),
+      tags: recipeTags.map((rt) => rt.tag.name),
+      bookmarked,
+    };
   }
 
   async createRecipe(

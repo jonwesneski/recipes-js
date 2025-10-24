@@ -3,6 +3,7 @@
 import BookmarkIcon from '@public/bookmark.svg'
 import ClockIcon from '@public/clockIcon.svg'
 import ShareIcon from '@public/shareIcon.svg'
+import type { RecipeMinimalResponse } from '@repo/codegen/model'
 import { useRecipesControllerBookmarkRecipeV1 } from '@repo/codegen/recipes'
 import { IconButton } from '@repo/design-system'
 import { useNotification } from '@src/providers/NotificationProvider'
@@ -13,22 +14,17 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 interface IRecipeProps {
-  id: string
-  imageUrl?: string
-  name: string
-  bookmarked: boolean
-  preparationTimeInMinutes: number | null
-  cookingTimeInMinutes: number | null
+  recipe: RecipeMinimalResponse
 }
 export const RecipeTile = (props: IRecipeProps) => {
-  const href = `/recipes/${props.id}`
-  const [isBookmarked, setIsBookmarked] = useState(props.bookmarked)
+  const href = `/recipes/${props.recipe.id}`
+  const [isBookmarked, setIsBookmarked] = useState(props.recipe.bookmarked)
   const { showToast } = useNotification()
   const { mutateAsync } = useRecipesControllerBookmarkRecipeV1()
 
   const handleBookmarkedClick = async () => {
     const bookmark = !isBookmarked
-    await mutateAsync({ id: props.id, data: { bookmark } })
+    await mutateAsync({ id: props.recipe.id, data: { bookmark } })
     setIsBookmarked(bookmark)
   }
 
@@ -52,12 +48,12 @@ export const RecipeTile = (props: IRecipeProps) => {
         <div className="relative w-full h-[100px]">
           <Image
             src={
-              props.imageUrl?.length
-                ? props.imageUrl
+              props.recipe.imageUrl?.length
+                ? props.recipe.imageUrl
                 : // TODO: figure out stock image to use here
                   'https://www.gravatar.com/avatar/?d=mp'
             }
-            alt={props.name}
+            alt={props.recipe.name}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             priority
@@ -66,18 +62,19 @@ export const RecipeTile = (props: IRecipeProps) => {
         </div>
         <Link href={href} className="font-bold text-xs">
           <span className="absolute inset-0" />
-          {props.name}
+          {props.recipe.name}
         </Link>
       </div>
 
       <div className="h-6">
-        {props.preparationTimeInMinutes && props.cookingTimeInMinutes ? (
+        {props.recipe.preparationTimeInMinutes &&
+        props.recipe.cookingTimeInMinutes ? (
           <>
             <ClockIcon className="w-6 h-6 inline mr-1 fill-text" />
             <p className="inline">
               {timeInHourAndMinutes(
-                props.preparationTimeInMinutes,
-                props.cookingTimeInMinutes,
+                props.recipe.preparationTimeInMinutes,
+                props.recipe.cookingTimeInMinutes,
               )}
             </p>
           </>
