@@ -12,10 +12,10 @@ export const RecipeList = ({ recipes }: IRecipesListProps) => {
       {recipes.data.map((recipe) => (
         <RecipeTile
           key={recipe.id}
-          href={`/recipes/${recipe.id}`}
+          id={recipe.id}
           imageUrl={recipe.imageUrl ?? undefined}
           name={recipe.name}
-          starred={false}
+          bookmarked={false}
           preparationTimeInMinutes={recipe.preparationTimeInMinutes}
           cookingTimeInMinutes={recipe.cookingTimeInMinutes}
         />
