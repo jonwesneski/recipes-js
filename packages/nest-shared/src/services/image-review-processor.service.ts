@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { NewRecipeMessageType, NewRecipeStepMessageType } from '../kafka/types';
-import { RecipeRepository } from '../repositories/recipe.repository';
+import { RecipeRepository } from '../repositories/recipes';
 import { RekognitionService } from './rekognition.service';
 import { S3Service } from './s3.service';
 

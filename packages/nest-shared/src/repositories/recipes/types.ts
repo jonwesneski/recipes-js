@@ -1,62 +1,28 @@
 import { Prisma } from '@repo/database';
 
-export type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<{
+export const RecipeMinimalPrismaInclude = {
   include: {
-    user: { select: { handle: true; id: true; imageUrl: true } };
+    user: { select: { handle: true, id: true, imageUrl: true } },
     recipeTags: {
-      include: {
-        tag: {
-          select: { name: true };
-        };
-      };
-    };
-  };
+      include: { tag: { select: { name: true } } },
+    },
+    _count: {
+      select: {
+        bookmarkedBy: { where: { userId: '' } },
+      },
+    },
+  },
   omit: {
-    userId: true;
-    createdAt: true;
-    updatedAt: true;
-    isPublic: true;
-  };
-}>;
-
-export type RecipePrismaType = Prisma.RecipeGetPayload<{
-  include: {
-    user: { select: { handle: true; id: true; imageUrl: true } };
-    equipments: {
-      omit: {
-        id: true;
-        createdAt: true;
-        updatedAt: true;
-        recipeId: true;
-      };
-    };
-    steps: {
-      include: {
-        ingredients: {
-          omit: { stepId: true; displayOrder: true };
-        };
-      };
-      omit: { recipeId: true; displayOrder: true };
-    };
-    nutritionalFacts: {
-      omit: {
-        id: true;
-        createdAt: true;
-        updatedAt: true;
-        recipeId: true;
-        userId: true;
-      };
-    };
-    recipeTags: {
-      include: {
-        tag: {
-          select: { name: true };
-        };
-      };
-    };
-  };
-  omit: { userId: true };
-}>;
+    userId: true,
+    createdAt: true,
+    updatedAt: true,
+    isPublic: true,
+  },
+  orderBy: { updatedAt: 'desc' },
+} as const;
+export type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<
+  typeof RecipeMinimalPrismaInclude
+>;
 
 export const RecipeInclude = {
   include: {
@@ -90,25 +56,38 @@ export const RecipeInclude = {
     recipeTags: {
       include: { tag: { select: { name: true } } },
     },
+    _count: {
+      select: {
+        bookmarkedBy: { where: { userId: '' } },
+      },
+    },
   },
   omit: { userId: true },
 } as const;
+export type RecipePrismaType = Prisma.RecipeGetPayload<typeof RecipeInclude>;
 
-export type RecipeUserType = { id: string; handle: string };
+export type RecipeUserType = {
+  id: string;
+  handle: string;
+  imageUrl: string | null;
+};
 export type RecipeType = Omit<
   RecipePrismaType,
-  'recipeTags' | 'userId' | 'equipments'
+  'recipeTags' | 'userId' | 'isPublic' | 'equipments' | '_count'
 > & {
   tags: string[];
   equipments: string[];
   user: RecipeUserType;
+  isPublic?: boolean;
+  bookmarked?: boolean;
 };
 export type RecipeMinimalType = Omit<
   RecipeMinimalPrismaType,
-  'recipeTags' | 'userId'
+  'recipeTags' | 'userId' | '_count'
 > & {
   tags: string[];
   user: RecipeUserType;
+  bookmarked?: boolean;
 };
 
 type IngredientCreateType = Prisma.IngredientGetPayload<{

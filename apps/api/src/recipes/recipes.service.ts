@@ -16,6 +16,7 @@ import {
   PatchStepDto,
   RecipeListResponse,
 } from './contracts';
+import { PutBookmarkRecipeDto } from './contracts/bookmark-recipe.dto';
 import { GetRecipesDto } from './contracts/get-recipes.dto';
 
 @Injectable()
@@ -149,5 +150,13 @@ export class RecipesService {
     }
 
     return recipeData as RecipeUpdateType;
+  }
+
+  async bookmarkRecipe(
+    recipeId: string,
+    userId: string,
+    body: PutBookmarkRecipeDto,
+  ) {
+    await this.recipeRepository.bookmark(recipeId, userId, body.bookmark);
   }
 }

@@ -147,8 +147,10 @@ export class RecipeResponse implements RecipeType {
   tags: string[];
   @ApiProperty({ type: RecipeUserResponse })
   user: RecipeUserResponse;
-  @ApiProperty()
-  isPublic: boolean;
+  @ApiProperty({ type: Boolean, required: false })
+  isPublic?: boolean;
+  @ApiProperty({ type: Boolean, required: false })
+  bookmarked?: boolean;
 }
 
 export class BadRequestIngredientResponse {
@@ -270,6 +272,8 @@ export class RecipeMinimalResponse implements RecipeMinimalType {
   tags: string[];
   @ApiProperty({ type: RecipeUserResponse })
   user: RecipeUserResponse;
+  @ApiProperty({ type: Boolean, required: false })
+  bookmarked?: boolean;
 }
 
 export class RecipeListResponse {

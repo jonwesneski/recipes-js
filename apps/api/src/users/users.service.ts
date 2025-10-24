@@ -135,17 +135,10 @@ export class UsersService {
 
   async followUser(id: string, requestedUser: string, isFollowing: boolean) {
     if (isFollowing) {
-      try {
-        await this.prisma.userFollow.create({
-          data: { userId: requestedUser, followingId: id },
-        });
-      } catch (error) {
-        if (!(error instanceof PrismaClientKnownRequestError)) {
-          throw error;
-        } else if (error.code !== 'P2002') {
-          throw error;
-        }
-      }
+      await this.prisma.userFollow.createMany({
+        data: { userId: requestedUser, followingId: id },
+        skipDuplicates: true, // Ignoring if it already exists
+      });
     } else {
       try {
         await this.prisma.userFollow.delete({
@@ -154,9 +147,10 @@ export class UsersService {
           },
         });
       } catch (error) {
-        if (!(error instanceof PrismaClientKnownRequestError)) {
-          throw error;
-        } else if (error.code !== 'P2025') {
+        if (
+          !(error instanceof PrismaClientKnownRequestError) ||
+          error.code !== 'P2025'
+        ) {
           throw error;
         }
       }
