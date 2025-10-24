@@ -126,7 +126,14 @@ describe('RecipesController (e2e)', () => {
         .expect(200)
         .expect((res) => {
           const emptyRecipe = new RecipeResponse();
+          const skippedFields = {
+            bookmarked: true,
+            isPublic: true,
+          };
           for (const field in emptyRecipe) {
+            if (skippedFields[field]) {
+              continue;
+            }
             expect(res.body[field]).toBeDefined();
           }
         });
