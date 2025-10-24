@@ -16,7 +16,7 @@ import { BaseQueryDto, throwIfNotFound } from '@src/common';
 import { parseHelper } from '@src/common/header.decorators';
 import { type Request } from 'express';
 import { PatchUserDto } from './contracts';
-import { PatchFollowUserDto } from './contracts/follow-user.dto';
+import { PutFollowUserDto } from './contracts/follow-user.dto';
 import {
   UserAccountResponse,
   UserFollowersPaginationResponse,
@@ -101,7 +101,7 @@ export class UsersController {
 
   @Put(':id/follow')
   @HttpCode(204)
-  @ApiNoContentResponse({ description: '(un)follow a user' })
+  @ApiNoContentResponse({ description: '(un)followed a user' })
   @ApiParam({
     name: 'id',
     type: String,
@@ -110,7 +110,7 @@ export class UsersController {
   @UseGuards(JwtGuard)
   async followUser(
     @Param('id') id: string,
-    @Body() body: PatchFollowUserDto,
+    @Body() body: PutFollowUserDto,
     @Req() req: Request,
   ) {
     const token = parseHelper(req);

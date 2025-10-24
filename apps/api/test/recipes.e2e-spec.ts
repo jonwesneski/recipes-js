@@ -26,8 +26,10 @@ describe('RecipesController (e2e)', () => {
 
   const { createTestingModule } = createTestingFixtures();
   let user1: Awaited<ReturnType<PrismaService['user']['findFirstOrThrow']>>;
+  let user2: Awaited<ReturnType<PrismaService['user']['findFirstOrThrow']>>;
   let recipe1: RecipePrismaType;
   let token: string;
+  let token2: string;
 
   beforeEach(async () => {
     const moduleFixture = await createTestingModule();
@@ -38,6 +40,9 @@ describe('RecipesController (e2e)', () => {
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
     user1 = await prismaService.user.findUniqueOrThrow({
       where: { handle: 'jon' },
+    });
+    user2 = await prismaService.user.findUniqueOrThrow({
+      where: { handle: 'jon2' },
     });
     recipe1 = await prismaService.recipe.findUniqueOrThrow({
       where: {
@@ -56,6 +61,14 @@ describe('RecipesController (e2e)', () => {
     };
     const secret = process.env.JWT_SECRET;
     token = new JwtService().sign(payload, { secret });
+    token2 = new JwtService().sign(
+      {
+        sub: user2.id,
+        email: user2.email,
+        handle: user2.handle,
+      },
+      { secret },
+    );
 
     await app.init();
   });
@@ -106,7 +119,7 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe(`GET ${basePath}/[id]`, () => {
+  describe(`GET ${basePath}/:id`, () => {
     it('existing recipe', () => {
       return request(app.getHttpServer())
         .get(`${basePath}/${recipe1!.id}`)
@@ -211,7 +224,7 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
-  describe(`PATCH ${basePath}/[id]`, () => {
+  describe(`PATCH ${basePath}/:id`, () => {
     const createRecipe = async (): Promise<RecipeResponse> => {
       const sampleRecipe = makeCreateDto({ name: uuidv4() });
 
@@ -361,6 +374,70 @@ describe('RecipesController (e2e)', () => {
         .expect((res) => {
           expect(res.body).toBeDefined();
         });
+    });
+  });
+
+  describe(`PUT ${basePath}/:id/bookmark`, () => {
+    const bookmarkPath = () => `${basePath}/${recipe1.id}/bookmark`;
+
+    it('bookmark valid', async () => {
+      const response = await request(app.getHttpServer())
+        .put(bookmarkPath())
+        .send({ bookmark: true })
+        .set('Authorization', `Bearer ${token2}`);
+
+      expect(response.status).toBe(204);
+    });
+
+    it('bookmark already exists is valid', async () => {
+      const response = await request(app.getHttpServer())
+        .put(bookmarkPath())
+        .send({ bookmark: true })
+        .set('Authorization', `Bearer ${token2}`);
+
+      expect(response.status).toBe(204);
+    });
+
+    it('bad request', async () => {
+      const response = await request(app.getHttpServer())
+        .put(bookmarkPath())
+        .send({ bookmark: 1 })
+        .set('Authorization', `Bearer ${token2}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.bookmark).toBe('bookmark must be a boolean value');
+    });
+
+    it('unbookmark valid', async () => {
+      const response = await request(app.getHttpServer())
+        .put(bookmarkPath())
+        .send({ bookmark: false })
+        .set('Authorization', `Bearer ${token2}`);
+
+      expect(response.status).toBe(204);
+    });
+
+    it('unbookmark again valid', async () => {
+      const response = await request(app.getHttpServer())
+        .put(bookmarkPath())
+        .send({ bookmark: false })
+        .set('Authorization', `Bearer ${token2}`);
+
+      expect(response.status).toBe(204);
+    });
+
+    it("can't bookmark if user owns recipe", async () => {
+      const response = await request(app.getHttpServer())
+        .put(bookmarkPath())
+        .send({ bookmark: true })
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({
+        error: 'Bad Request',
+        message: "Can't bookmark user's own recipe",
+        statusCode: 400,
+      });
     });
   });
 });

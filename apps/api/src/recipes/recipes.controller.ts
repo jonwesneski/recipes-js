@@ -1,11 +1,14 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -13,9 +16,11 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBody,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiParam,
 } from '@nestjs/swagger';
+import { BookmarkOwnerError } from '@repo/nest-shared';
 import { JwtGuard } from '@src/auth/guards';
 import { throwIfConflict, throwIfNotFound } from '@src/common';
 import { parseHelper } from '@src/common/header.decorators';
@@ -28,6 +33,7 @@ import {
   RecipeListResponse,
   RecipeResponse,
 } from './contracts';
+import { PutBookmarkRecipeDto } from './contracts/bookmark-recipe.dto';
 import { GetRecipesDto } from './contracts/get-recipes.dto';
 import { RecipesService } from './recipes.service';
 
@@ -112,6 +118,30 @@ export class RecipesController {
       return await this.recipesService.updateRecipe(token.sub, id, body);
     } catch (error) {
       throwIfConflict(error);
+      throw error;
+    }
+  }
+
+  @Put(':id/bookmark')
+  @HttpCode(204)
+  @ApiNoContentResponse({ description: '(un)bookmarked a recipe' })
+  @ApiBody({ type: PutBookmarkRecipeDto })
+  @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
+  @UseGuards(JwtGuard)
+  async bookmarkRecipe(
+    @Param('id') id: string,
+    // TODO: can't get this to work in jest
+    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
+    @Body() body: PutBookmarkRecipeDto,
+    @Req() req: Request,
+  ) {
+    const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
+    try {
+      return await this.recipesService.bookmarkRecipe(id, token.sub, body);
+    } catch (error) {
+      if (error instanceof BookmarkOwnerError) {
+        throw new BadRequestException(error.message);
+      }
       throw error;
     }
   }

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@repo/database';
 import {
   PrismaQueryParams,
   PrismaResults,
   PrismaService,
-} from '../services/prisma.service';
+} from '../../services/prisma.service';
+import { BookmarkOwnerError } from './exceptions';
 import {
   type RecipeCreateType,
   RecipeInclude,
@@ -273,5 +275,37 @@ export class RecipeRepository {
       where: { id },
       data: { imageUrl },
     });
+  }
+
+  async bookmark(recipeId: string, userId: string, bookmark: boolean) {
+    if (bookmark) {
+      const recipe = await this.prisma.recipe.findUnique({
+        where: { id: recipeId, userId },
+      });
+      if (recipe) {
+        throw new BookmarkOwnerError();
+      }
+
+      await this.prisma.recipeBookmark.createMany({
+        data: { userId, recipeId },
+        skipDuplicates: true, // Ignoring if it already exists
+      });
+    } else {
+      try {
+        await this.prisma.recipeBookmark.delete({
+          where: {
+            userId_recipeId: { userId, recipeId },
+          },
+        });
+      } catch (error) {
+        if (
+          !(error instanceof PrismaClientKnownRequestError) ||
+          error.code !== 'P2025'
+        ) {
+          throw error;
+        }
+        // Ignoring if it doesn't exist
+      }
+    }
   }
 }

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean } from 'class-validator';
 
-export class PutFollowUserDto {
+export class PutBookmarkRecipeDto {
   @IsBoolean()
   @ApiProperty({ type: Boolean })
-  follow: boolean;
+  bookmark: boolean;
 }
