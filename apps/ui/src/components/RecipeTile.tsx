@@ -1,10 +1,10 @@
 'use client'
 
+import BookmarkIcon from '@public/bookmark.svg'
 import ClockIcon from '@public/clockIcon.svg'
 import ShareIcon from '@public/shareIcon.svg'
-import StarIcon from '@public/starIcon.svg'
-import StarredIcon from '@public/starredIcon.svg'
 import { IconButton } from '@repo/design-system'
+import { useNotification } from '@src/providers/NotificationProvider'
 import { type Svg } from '@src/types/svg'
 import { timeInHourAndMinutes } from '@src/utils/timeHelper'
 import Image from 'next/image'
@@ -20,10 +20,11 @@ interface IRecipeProps {
   cookingTimeInMinutes: number | null
 }
 export const RecipeTile = (props: IRecipeProps) => {
-  const [isStarred, setIsStarred] = useState(props.starred)
+  const [isBookmarked, setIsBookmarked] = useState(props.starred)
+  const { showToast } = useNotification()
 
   const handleStarredClick = () => {
-    setIsStarred((v) => !v)
+    setIsBookmarked((v) => !v)
   }
 
   const handleCopyClick = async () => {
@@ -31,6 +32,12 @@ export const RecipeTile = (props: IRecipeProps) => {
       await navigator.clipboard.writeText(
         `${window.location.origin}${props.href}`,
       )
+      showToast({
+        title: 'copied!',
+        message: '',
+        toastId: 'copied-recipe-url',
+        durationMs: 800,
+      })
     } catch (err) {
       console.error('Failed to copy text:', err)
     }
@@ -76,8 +83,9 @@ export const RecipeTile = (props: IRecipeProps) => {
 
       <div className="flex justify-around items-center">
         <IconButton
-          svgIcon={(isStarred ? StarredIcon : StarIcon) as Svg}
+          svgIcon={BookmarkIcon as Svg}
           onClick={handleStarredClick}
+          svgClassName={isBookmarked ? 'fill-text' : undefined}
         />
         <div className="w-[2px] h-[25px] bg-text" />
         <IconButton

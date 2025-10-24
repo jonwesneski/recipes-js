@@ -14,13 +14,12 @@ export type ToastParams = {
   message: string
   type?: ToastType
   navigationUrl?: string
+  durationMs?: number
 }
 export type NotificationType = {
   showToast: (_params: ToastParams) => void
 }
 export const NotificationContext = createContext<NotificationType | null>(null)
-
-const TOAST_DURATION_MS = 5000
 
 export interface NotificationProviderProps {
   children: ReactNode
@@ -40,6 +39,7 @@ export const NotificationProvider = ({
     message,
     type = 'info',
     navigationUrl,
+    durationMs = 5000,
   }: ToastParams) => {
     showModal(toastId, Toast, {
       title,
@@ -47,7 +47,7 @@ export const NotificationProvider = ({
       type,
       onClose: closeModal,
       onClick: navigationUrl ? () => router.push(navigationUrl) : undefined,
-      duration: TOAST_DURATION_MS,
+      duration: durationMs,
     })
   }
 
@@ -62,7 +62,7 @@ export const NotificationProvider = ({
           showToast({
             toastId: `NewRecipe-${result.id}`,
             title: `New Recipe from ${result.user.handle}`,
-            message: result.name,
+            message: `Click to view: ${result.name}`,
             navigationUrl: `/recipes/${result.id}`,
           })
         } catch (e) {
