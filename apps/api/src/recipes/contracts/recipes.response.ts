@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MeasurementUnit, Prisma } from '@repo/database';
+import {
+  CuisineType,
+  DietaryType,
+  DifficultyLevelType,
+  DishType,
+  MealType,
+  MeasurementUnit,
+  Prisma,
+  ProteinType,
+} from '@repo/database';
 import { type RecipeMinimalType, type RecipeType } from '@repo/nest-shared';
 import { PaginationResponse } from '@src/common/common.responses';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
@@ -145,6 +154,30 @@ export class RecipeResponse implements RecipeType {
   nutritionalFacts: NutritionalFactsResponse | null;
   @ApiProperty({ type: [String] })
   tags: string[];
+  @ApiProperty({ enum: MealType, enumName: 'MealType', nullable: true })
+  meal: MealType | null;
+  @ApiProperty({ enum: CuisineType, enumName: 'CuisineType', nullable: true })
+  cuisine: CuisineType | null;
+  @ApiProperty({
+    enum: DietaryType,
+    isArray: true,
+    enumName: 'DietaryType',
+  })
+  diets: DietaryType[];
+  @ApiProperty({ enum: DishType, enumName: 'DishType', nullable: true })
+  dish: DishType | null;
+  @ApiProperty({
+    enum: ProteinType,
+    isArray: true,
+    enumName: 'ProteinType',
+  })
+  proteins: ProteinType[];
+  @ApiProperty({
+    enum: DifficultyLevelType,
+    enumName: 'DifficultyLevelType',
+    nullable: true,
+  })
+  difficultyLevel: DifficultyLevelType | null;
   @ApiProperty({ type: RecipeUserResponse })
   user: RecipeUserResponse;
   @ApiProperty({ type: Boolean, required: false })
@@ -270,6 +303,30 @@ export class RecipeMinimalResponse implements RecipeMinimalType {
   imageUrl: string | null;
   @ApiProperty({ type: [String] })
   tags: string[];
+  @ApiProperty({ enum: MealType, enumName: 'MealType', nullable: true })
+  meal: MealType | null;
+  @ApiProperty({ enum: CuisineType, enumName: 'CuisineType', nullable: true })
+  cuisine: CuisineType | null;
+  @ApiProperty({
+    enum: DietaryType,
+    isArray: true,
+    enumName: 'DietaryType',
+  })
+  diets: DietaryType[];
+  @ApiProperty({ enum: DishType, enumName: 'DishType', nullable: true })
+  dish: DishType | null;
+  @ApiProperty({
+    enum: ProteinType,
+    isArray: true,
+    enumName: 'ProteinType',
+  })
+  proteins: ProteinType[];
+  @ApiProperty({
+    enum: DifficultyLevelType,
+    enumName: 'DifficultyLevelType',
+    nullable: true,
+  })
+  difficultyLevel: DifficultyLevelType | null;
   @ApiProperty({ type: RecipeUserResponse })
   user: RecipeUserResponse;
   @ApiProperty({ type: Boolean, required: false })

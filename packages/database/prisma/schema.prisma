@@ -48,6 +48,220 @@ enum MeasurementFormat {
   metric
 }
 
+enum CuisineType {
+  // Asian
+  thai
+  indian
+  chinese
+  japanese
+  korean
+  vietnamese
+  filipino
+  indonesian
+  malaysian
+  singaporean
+  taiwanese
+  burmese
+  mongolian
+
+  // European
+  spanish
+  french
+  italian
+  british
+  german
+  irish
+  polish
+  russian
+  portuguese
+  turkish
+  scandinavian
+  dutch
+  belgian
+  austrian
+  swiss
+  hungarian
+  czech
+
+  // Mediterranean
+  middleEastern
+  greek
+  lebanese
+  moroccan
+  egyptian
+  tunisian
+  israeli
+
+  // Americas
+  mexican
+  american
+  caribbean
+  brazilian
+  peruvian
+  argentinian
+  colombian
+  cuban
+  jamaican
+
+  // African
+  ethiopian
+  nigerian
+  southAfrican
+  kenyan
+  ghanaian
+
+  // Fusion & Modern
+  fusion
+  contemporary
+  cajunCreole
+  texMex
+
+  // Regional/Specialty
+  mediterranean
+  latinAmerican
+  southeastAsian
+  eastAsian
+  northAfrican
+  westAfrican
+  centralAmerican
+  southAmerican
+  pacificIslander
+}
+
+enum MealType {
+  breakfast
+  lunch
+  dinner
+  snack
+  dessert
+}
+
+enum DishType {
+  // Liquid-based
+  soup
+  stew
+  chili
+  broth
+  bisque
+
+  // Salads & Raw
+  salad
+  slaw
+
+  // Main dishes
+  casserole
+  stirFry
+  roast
+  grill
+  pasta
+  pizza
+  sandwich
+  burger
+  tacos
+  curry
+  rice
+  noodles
+
+  // Sides
+  side
+  appetizer
+  dimSum
+  mezes
+
+  // Baked goods
+  bread
+  pastry
+  pie
+  cake
+  cookies
+
+  // Beverages
+  beverage
+  smoothie
+  cocktail
+
+  // Other
+  sauce
+  condiment
+  dip
+  chutney
+  salsa
+}
+
+enum DietaryType {
+  vegetarian
+  vegan
+  glutenFree
+  dairyFree
+  nutFree
+  lowCarb
+}
+
+enum ProteinType {
+  // Poultry
+  chicken
+  turkey
+  duck
+  quail
+
+  // Red Meat
+  beef
+  pork
+  lamb
+  veal
+  venison
+  bison
+  goat
+
+  // Fish
+  salmon
+  tuna
+  cod
+  halibut
+  tilapia
+  trout
+  mahi
+  swordfish
+  seaBass
+  snapper
+
+  // Shellfish
+  shrimp
+  crab
+  lobster
+  scallops
+  clams
+  mussels
+  oysters
+  squid
+  octopus
+
+  // Plant-Based Proteins
+  tofu
+  tempeh
+  seitan
+  legumes
+  nuts
+  seeds
+
+  // Eggs & Dairy
+  eggs
+  cheese
+  yogurt
+
+  // Processed/Alternative
+  bacon
+  sausage
+  deli
+  plantBasedMeat // Beyond, Impossible, etc.
+}
+
+enum DifficultyLevelType {
+  easy
+  medium
+  hard
+}
+
 model User {
   id                String            @id @default(cuid())
   name              String
@@ -56,6 +270,7 @@ model User {
   numberFormat      NumberFormat      @default(default)
   measurementFormat MeasurementFormat @default(default)
   uiTheme           UiTheme           @default(system)
+  // todo: change to dailyNutrition
   diet              NutritionalFacts? @relation("UserNutritionalFacts")
   imageUrl          String?
   createdAt         DateTime          @default(now())
@@ -69,7 +284,8 @@ model User {
   followers  UserFollow[] @relation("UserFollowings")
   followings UserFollow[] @relation("UserFollows")
 
-  bookmarks RecipeBookmark[]
+  bookmarks     RecipeBookmark[]
+  preferedDiets DietaryType[]
 
   @@map("users")
 }
@@ -105,8 +321,27 @@ model Recipe {
   nutritionalFacts         NutritionalFacts? @relation("RecipeNutritionalFacts")
   bookmarkedBy             RecipeBookmark[]
 
+  cuisine         CuisineType?
+  meal            MealType?
+  dish            DishType?
+  diets           DietaryType[]
+  proteins        ProteinType[]
+  difficultyLevel DifficultyLevelType?
+
   @@unique([userId, name])
   @@map("recipes")
+}
+
+model FoodTag {
+  id           String        @id @default(cuid())
+  recipeId     String?       @unique
+  userId       String?       @unique
+  cuisineType  CuisineType?
+  mealType     MealType?
+  dishType     DishType?
+  dietaryFlags DietaryType[] // vegetarian, vegan, etc.
+  // e.g., surf & turf could be [beef, shrimp]
+  proteinTypes ProteinType[]
 }
 
 model RecipeBookmark {
