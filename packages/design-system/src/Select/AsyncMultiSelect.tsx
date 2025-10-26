@@ -1,36 +1,46 @@
 'use client'
 
+import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import { ClassValue } from 'clsx'
 import { useRef, useState } from 'react'
-import type { MultiValue } from 'react-select'
-import Select from 'react-select'
+import type { GroupBase, MultiValue, OptionsOrGroups } from 'react-select'
+import Select from 'react-select/async-creatable'
 import { Label } from '../Label'
 import { mergeCss } from '../utils'
 import { OptionType } from './types'
 
-interface IMultiSelectProps {
+interface IAsyncMultiSelectProps {
   label: string
   id: string
   value: OptionType[]
   options: OptionType[]
   onChange: (_selected: MultiValue<OptionType>) => void
+  onLoadOptions: (
+    _inputValue: string,
+  ) => Promise<OptionsOrGroups<OptionType, GroupBase<OptionType>>>
   className?: ClassValue
 }
-export const MultiSelect = (props: IMultiSelectProps) => {
+export const AsyncMultiSelect = (props: IAsyncMultiSelectProps) => {
   const ref = useRef<HTMLSelectElement>(null)
   const [isFocused, setIsFocused] = useState(false)
+
+  const debouncedHandleLoadOptions = AwesomeDebouncePromise(
+    props.onLoadOptions,
+    500,
+  )
 
   return (
     <div className="relative">
       <Select
-        id={props.id}
         isMulti
         onChange={props.onChange}
         isClearable
         isSearchable
+        cacheOptions
         placeholder=""
-        options={props.options}
+        defaultOptions={props.options}
         value={props.value}
+        loadOptions={debouncedHandleLoadOptions}
         unstyled
         classNames={{
           container: () =>

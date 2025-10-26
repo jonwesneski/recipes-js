@@ -1,14 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MeasurementUnit } from '@repo/database';
 import {
+  CuisineType,
+  DietaryType,
+  DifficultyLevelType,
+  DishType,
+  MealType,
+  MeasurementUnit,
+  ProteinType,
+} from '@repo/database';
+import {
+  GeneratedCategoriesSchema,
+  GeneratedCategoriesType,
   type GeneratedNutiritionalFactsType,
   GeneratedNutritionalFactsSchema,
-  GeneratedTagsSchema,
 } from '@repo/zod-schemas';
 import { NutritionalFactsDto } from '@src/recipes';
 import { GenerateBaseDto } from './contracts/generate-base.dto';
+import { GenerateCategoriesDto } from './contracts/generate-categories.dto';
 import { GenerateNutritionalFactsDto } from './contracts/generate-nutritional-facts.dto';
-import { GenerateTagsDto } from './contracts/generate-tags.dto';
 
 // '@google/genai' is an ESM. I tried changing my project to ESM
 // I got the src to build and run, but I couldn't get jest to compile
@@ -108,11 +117,52 @@ const nutritionalFactsDeclaration /*: FunctionDeclaration*/ = {
   },
 };
 
-const tagsDeclaration /*: FunctionDeclaration*/ = {
-  name: 'tags',
+const categoriesDeclaration /*: FunctionDeclaration*/ = {
+  name: 'categories',
   parametersJsonSchema: {
-    type: 'array',
-    items: { type: 'string' },
+    type: 'object',
+    properties: {
+      cuisine: {
+        type: ['string', 'null'],
+        enum: [...Object.values(CuisineType), null],
+      },
+      diets: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: [...Object.values(DietaryType), null],
+        },
+        default: [],
+      },
+      dish: {
+        type: ['string', 'null'],
+        enum: [...Object.values(DishType), null],
+      },
+      meal: {
+        type: ['string', 'null'],
+        enum: [...Object.values(MealType), null],
+      },
+      proteins: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: [...Object.values(ProteinType), null],
+        },
+        default: [],
+      },
+      difficultyLevel: {
+        type: ['string', 'null'],
+        enum: [...Object.values(DifficultyLevelType), null],
+      },
+      tags: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        default: [],
+      },
+    },
+    required: ['diets', 'proteins', 'tags'],
   },
 };
 
@@ -176,42 +226,45 @@ ${step.instruction ? step.instruction : '- None'}
     return `Give me nutritional facts for:\n${this.basePrompt(steps)}`;
   }
 
-  async tags(body: GenerateTagsDto): Promise<string[]> {
+  async categories(
+    body: GenerateCategoriesDto,
+  ): Promise<GeneratedCategoriesType> {
     const response = await this.ai.models.generateContent({
       model: 'gemini-2.0-flash-lite',
-      contents: this.tagsPrompt(body),
+      contents: this.categoriesPrompt(body),
       config: {
         responseMimeType: 'application/json',
-        responseSchema: tagsDeclaration.parametersJsonSchema,
+        responseSchema: categoriesDeclaration.parametersJsonSchema,
       },
     });
 
     try {
-      return GeneratedTagsSchema.parse(JSON.parse(response.text ?? '[]'));
+      return GeneratedCategoriesSchema.parse(
+        JSON.parse(response.text ?? 'null'),
+      );
     } catch (error) {
       this.logger.error('JSON parsing or validation error:', error);
       throw error;
     }
   }
 
-  tagsPrompt(body: GenerateTagsDto) {
-    return `Give me recipe tags for:
+  categoriesPrompt(body: GenerateCategoriesDto) {
+    return `Give me recipe categories for:
 - recipe: ${body.name}
-${body.description ? `- description: ${body.description}` : ``}
+${body.description ? `- description: ${body.description}` : ''}
 
 ${this.basePrompt(body.steps)}
 
-Tag Requirements:
-- Make all the tags lowercase
-- Total Tags: Aim for around 10 tags.
-- Cuisine Tag: Include at least 1 tag representing the cuisine.
-- Meal Tag: Include only 1 tag if it has a meal type (e.g., breakfast, lunch, dinner, dessert).
-- Protein Tag: Include only 1 tag if it has a main protien (e.g., beef, chicken, tofu, lentils).
-- Shareable Tag: Include only 1 tag if it has a shareable type (e.g., appetizer, snack, dim sum, mezes).
-- Diet Tag: Include at least 1 tag that indicates dietary considerations (e.g., vegan, gluten-free).
-- Seasonal Tag: Include only 1 tag if the recipe is seasonal (e.g., summer, winter).
-- Festive/Holiday Tag: Include only 1 tag if the recipe is associated with a specific holiday or festival.
-- Categories: Tags must belong into a category: Cuisine, Meal, Protein, Shareable, Diet, Seasonal, or Festive/Holiday
-- Exclusions: Avoid using tags don't fit into the above requirements or that are overly general or redundant, such as "party," "sweet," "celebration," "dairy," and "baked."`;
+//todo: update this
+Category Requirements:
+- Only add a cuisine if the recipe mostly fits in one of them
+- Only add diet(s) if the recipe mostly fits in them
+- Only add a dish if the recipe mostly fits in one of them
+- Only add a meal if the recipe mostly fits in one of them
+- Only add a protein(s) if the recipe mostly fits in them
+- Only add a difficultyLevel if the recipe mostly fits in one of them
+- I want preferably 0 tags, buy only add tags if: 
+  - total tags is less than 5
+  - value has not already used in one of the above categories: (cuisine, diet, dish, meal, protein, difficultyLevel)`;
   }
 }

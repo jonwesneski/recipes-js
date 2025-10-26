@@ -756,7 +756,7 @@
 							"response": []
 						},
 						{
-							"name": "AI Controller generate tags",
+							"name": "AI Controller generate categories",
 							"request": {
 								"auth": {
 									"type": "noauth"
@@ -773,14 +773,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/v1/ai/tags",
+									"raw": "{{host}}/v1/ai/categories",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"v1",
 										"ai",
-										"tags"
+										"categories"
 									]
 								}
 							},

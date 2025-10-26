@@ -1,9 +1,15 @@
 import type {
   BadRequestRecipeResponse,
   CreateRecipeDto,
+  CuisineType,
+  DietaryType,
+  DifficultyLevelType,
+  DishType,
+  GenerateCategoriesDto,
   GenerateNutritionalFactsDto,
-  GenerateTagsDto,
+  MealType,
   NutritionalFactsResponse,
+  ProteinType,
   RecipeResponse,
 } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
@@ -96,6 +102,8 @@ export type FactorType = 0.5 | 1 | 1.5 | 2 | 4;
 export type RecipeState = Omit<RecipeResponse, 'steps' | 'imageUrl'> & {
   imageSrc: string | null;
   steps: StepItemType[];
+
+  // Metadata
   isValid: boolean;
   errors: BadRequestRecipeResponse;
   scaleFactor: FactorType;
@@ -125,10 +133,16 @@ export type RecipeActions = {
   setPartialNutritionalFacts: (
     _value: Partial<NutritionalFactsResponse>,
   ) => void;
+  setCuisine: (_value: CuisineType | null) => void;
+  setMeal: (_value: MealType | null) => void;
+  setDish: (_value: DishType | null) => void;
+  setDiets: (_value: DietaryType[]) => void;
+  setProteins: (_value: ProteinType[]) => void;
+  setDifficultyLevel: (_value: DifficultyLevelType | null) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
   makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
-  makeGenerateTagsDto: () => GenerateTagsDto;
+  makeGenerateCategoriesDto: () => GenerateCategoriesDto;
   setErrors: (_data: BadRequestRecipeResponse) => void;
 };
 
@@ -174,6 +188,12 @@ export const defaultInitState: RecipeState = {
   nutritionalFacts: null,
   isPublic: true,
   tags: [],
+  cuisine: null,
+  diets: [],
+  difficultyLevel: null,
+  dish: null,
+  meal: null,
+  proteins: [],
   isValid: false,
   errors: {},
   scaleFactor: 1,
@@ -417,6 +437,13 @@ export const createRecipeStore = (
 
             return { nutritionalFacts: merged };
           }),
+        setCuisine: (cuisine: CuisineType | null) => set(() => ({ cuisine })),
+        setMeal: (meal: MealType | null) => set(() => ({ meal })),
+        setDish: (dish: DishType | null) => set(() => ({ dish })),
+        setDiets: (diets: DietaryType[]) => set(() => ({ diets })),
+        setProteins: (proteins: ProteinType[]) => set(() => ({ proteins })),
+        setDifficultyLevel: (difficultyLevel: DifficultyLevelType | null) =>
+          set(() => ({ difficultyLevel })),
         setTags: (tags: string[]) => set(() => ({ tags })),
         makeCreateDto: () => {
           /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
@@ -456,7 +483,7 @@ export const createRecipeStore = (
             };
           });
         },
-        makeGenerateTagsDto: () => {
+        makeGenerateCategoriesDto: () => {
           const { name, description, steps } = get();
           return {
             name,
