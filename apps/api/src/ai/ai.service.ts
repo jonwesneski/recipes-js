@@ -1,14 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MeasurementUnit } from '@repo/database';
 import {
+  CuisineType,
+  DietaryType,
+  DifficultyLevelType,
+  DishType,
+  MealType,
+  MeasurementUnit,
+  ProteinType,
+} from '@repo/database';
+import {
+  GeneratedClassifiersSchema,
+  GeneratedClassifiersType,
   type GeneratedNutiritionalFactsType,
   GeneratedNutritionalFactsSchema,
-  GeneratedTagsSchema,
 } from '@repo/zod-schemas';
 import { NutritionalFactsDto } from '@src/recipes';
 import { GenerateBaseDto } from './contracts/generate-base.dto';
+import { GenerateClassifiersDto } from './contracts/generate-classifiers.dto';
 import { GenerateNutritionalFactsDto } from './contracts/generate-nutritional-facts.dto';
-import { GenerateTagsDto } from './contracts/generate-tags.dto';
 
 // '@google/genai' is an ESM. I tried changing my project to ESM
 // I got the src to build and run, but I couldn't get jest to compile
@@ -111,8 +120,45 @@ const nutritionalFactsDeclaration /*: FunctionDeclaration*/ = {
 const tagsDeclaration /*: FunctionDeclaration*/ = {
   name: 'tags',
   parametersJsonSchema: {
-    type: 'array',
-    items: { type: 'string' },
+    type: 'object',
+    properties: {
+      cuisine: {
+        type: 'string',
+        enum: Object.values(CuisineType),
+      },
+      diets: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: Object.values(DietaryType),
+        },
+      },
+      dish: {
+        type: 'string',
+        enum: Object.values(DishType),
+      },
+      meal: {
+        type: 'string',
+        enum: Object.values(MealType),
+      },
+      proteins: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: Object.values(ProteinType),
+        },
+      },
+      difficultyLevel: {
+        type: 'string',
+        enum: Object.values(DifficultyLevelType),
+      },
+      tags: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    },
   },
 };
 
@@ -176,10 +222,12 @@ ${step.instruction ? step.instruction : '- None'}
     return `Give me nutritional facts for:\n${this.basePrompt(steps)}`;
   }
 
-  async tags(body: GenerateTagsDto): Promise<string[]> {
+  async classifiers(
+    body: GenerateClassifiersDto,
+  ): Promise<GeneratedClassifiersType> {
     const response = await this.ai.models.generateContent({
       model: 'gemini-2.0-flash-lite',
-      contents: this.tagsPrompt(body),
+      contents: this.classifiersPrompt(body),
       config: {
         responseMimeType: 'application/json',
         responseSchema: tagsDeclaration.parametersJsonSchema,
@@ -187,14 +235,16 @@ ${step.instruction ? step.instruction : '- None'}
     });
 
     try {
-      return GeneratedTagsSchema.parse(JSON.parse(response.text ?? '[]'));
+      return GeneratedClassifiersSchema.parse(
+        JSON.parse(response.text ?? '{}'),
+      );
     } catch (error) {
       this.logger.error('JSON parsing or validation error:', error);
       throw error;
     }
   }
 
-  tagsPrompt(body: GenerateTagsDto) {
+  classifiersPrompt(body: GenerateClassifiersDto) {
     return `Give me recipe tags for:
 - recipe: ${body.name}
 ${body.description ? `- description: ${body.description}` : ``}

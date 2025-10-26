@@ -329,6 +329,10 @@ model Recipe {
   difficultyLevel DifficultyLevelType?
 
   @@unique([userId, name])
+  // todo: add indexes
+  // @@index([name]) // For name searches
+  // @@index([isPublic, userId]) // For filtered queries
+  // @@index([createdAt]) // If sorting by date
   @@map("recipes")
 }
 
@@ -454,5 +458,6 @@ model RecipeTag {
   tag      Tag    @relation(fields: [tagId], references: [id])
 
   @@id([recipeId, tagId])
+  // @@index([tagId])
   @@map("recipe_tags")
 }

@@ -10,9 +10,11 @@ import type { GroupBase, MultiValue, OptionsOrGroups } from 'react-select'
 export const Tags = () => {
   const { tags: fetchedTags, fetchTags } = useTags()
   const [options, setOptions] = useState<OptionType[]>([])
-  const { tags, setTags, makeGenerateTagsDto } = useRecipeStore(
-    (state) => state,
-  )
+  const {
+    tags,
+    setTags,
+    makeGenerateClassifiersDto: makeGenerateTagsDto,
+  } = useRecipeStore((state) => state)
   const { mutate } = useAiControllerTagsV1({
     mutation: { retry: false },
   })
@@ -26,9 +28,9 @@ export const Tags = () => {
       { data: makeGenerateTagsDto() },
       {
         onSuccess: (data) => {
-          setTags(data)
+          setTags(data.tags)
           setOptions((value) => [
-            ...data.map((d) => ({ value: d, label: d })),
+            ...data.tags.map((t) => ({ value: t, label: t })),
             ...value,
           ])
         },

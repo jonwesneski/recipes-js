@@ -3,8 +3,9 @@ import { ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { JwtGuard } from '@src/auth/guards';
 import { NutritionalFactsResponse } from '@src/recipes';
 import { AiService } from './ai.service';
+import { GenerateClassifiersDto } from './contracts/generate-classifiers.dto';
+import { GeneratedClassifiersResponse } from './contracts/generate-classifiers.response';
 import { GenerateNutritionalFactsDto } from './contracts/generate-nutritional-facts.dto';
-import { GenerateTagsDto } from './contracts/generate-tags.dto';
 
 @Controller({
   version: '1',
@@ -24,14 +25,14 @@ export class AiController {
     return await this.aiService.nutritionalFacts(body);
   }
 
-  @Post('tags')
-  @ApiBody({ type: GenerateTagsDto })
+  @Post('classifiers')
+  @ApiBody({ type: GenerateClassifiersDto })
   @ApiOkResponse({
-    description: 'The generated tags',
-    type: [String],
+    description: 'The generated classifiers',
+    type: GeneratedClassifiersResponse,
   })
   @UseGuards(JwtGuard)
-  async tags(@Body() body: GenerateTagsDto) {
-    return await this.aiService.tags(body);
+  async tags(@Body() body: GenerateClassifiersDto) {
+    return await this.aiService.classifiers(body);
   }
 }

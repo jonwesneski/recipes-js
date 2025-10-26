@@ -1,8 +1,8 @@
 import type {
   BadRequestRecipeResponse,
   CreateRecipeDto,
+  GenerateClassifiersDto,
   GenerateNutritionalFactsDto,
-  GenerateTagsDto,
   NutritionalFactsResponse,
   RecipeResponse,
 } from '@repo/codegen/model';
@@ -128,7 +128,7 @@ export type RecipeActions = {
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
   makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
-  makeGenerateTagsDto: () => GenerateTagsDto;
+  makeGenerateClassifiersDto: () => GenerateClassifiersDto;
   setErrors: (_data: BadRequestRecipeResponse) => void;
 };
 
@@ -462,7 +462,7 @@ export const createRecipeStore = (
             };
           });
         },
-        makeGenerateTagsDto: () => {
+        makeGenerateClassifiersDto: () => {
           const { name, description, steps } = get();
           return {
             name,
