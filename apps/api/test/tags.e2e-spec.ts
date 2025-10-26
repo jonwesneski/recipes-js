@@ -48,7 +48,7 @@ describe('TagsController (e2e)', () => {
         data,
       });
 
-      let cursorId = 0;
+      let cursorId = undefined;
       let loops = 0; // don't want to loop forever in case of an error
       while (cursorId !== null || loops < 5) {
         const response = await request(app.getHttpServer())
