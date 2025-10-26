@@ -9,12 +9,12 @@ import {
 } from './recipe-categories';
 
 export const GeneratedCategoriesSchema = z.object({
-  cuisine: CuisineTypeSchema,
+  cuisine: CuisineTypeSchema.nullable(),
   diets: z.array(DietaryTypeSchema),
-  dish: DishTypeSchema,
-  meal: MealTypeSchema,
+  dish: DishTypeSchema.nullable(),
+  meal: MealTypeSchema.nullable(),
   proteins: z.array(ProteinTypeSchema),
-  difficultyLevel: DifficultyLevelTypeSchema,
+  difficultyLevel: DifficultyLevelTypeSchema.nullable(),
   tags: z.array(z.string()),
 });
 
