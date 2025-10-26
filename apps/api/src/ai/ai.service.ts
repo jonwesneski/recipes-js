@@ -235,7 +235,9 @@ ${step.instruction ? step.instruction : '- None'}
     });
 
     try {
-      return GeneratedCategoriesSchema.parse(JSON.parse(response.text ?? '{}'));
+      return GeneratedCategoriesSchema.parse(
+        JSON.parse(response.text ?? 'null'),
+      );
     } catch (error) {
       this.logger.error('JSON parsing or validation error:', error);
       throw error;

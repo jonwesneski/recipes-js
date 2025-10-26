@@ -71,7 +71,7 @@ export const NutritionalFacts = () => {
       <SelectLabel
         label="serving unit"
         id="serving-unit"
-        defaultValue=""
+        isRequired={false}
         options={Object.keys(measurementUnitsPlural).map((u) => {
           return {
             label:
