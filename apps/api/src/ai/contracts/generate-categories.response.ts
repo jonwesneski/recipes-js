@@ -7,21 +7,21 @@ import {
   MealType,
   ProteinType,
 } from '@repo/database';
-import { GeneratedClassifiersType } from '@repo/zod-schemas';
+import { GeneratedCategoriesType } from '@repo/zod-schemas';
 
-export class GeneratedClassifiersResponse implements GeneratedClassifiersType {
+export class GeneratedCategoriesResponse implements GeneratedCategoriesType {
   @ApiProperty({ enum: CuisineType, enumName: 'CuisineType' })
-  cuisine: string;
+  cuisine: CuisineType;
   @ApiProperty({ enum: DietaryType, enumName: 'DietaryType', isArray: true })
-  diets: string[];
+  diets: DietaryType[];
   @ApiProperty({ enum: DishType, enumName: 'DishType' })
-  dish: string;
+  dish: DishType;
   @ApiProperty({ enum: MealType, enumName: 'MealType' })
-  meal: string;
+  meal: MealType;
   @ApiProperty({ enum: ProteinType, enumName: 'ProteinType', isArray: true })
-  proteins: string[];
+  proteins: ProteinType[];
   @ApiProperty({ enum: DifficultyLevelType, enumName: 'DifficultyLevelType' })
-  difficultyLevel: string;
+  difficultyLevel: DifficultyLevelType;
   @ApiProperty({ type: String, isArray: true })
   tags: string[];
 }

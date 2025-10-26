@@ -1,21 +1,21 @@
 'use client'
 
-import { useAiControllerTagsV1 } from '@repo/codegen/ai'
+import { useAiControllerCategoriesV1 } from '@repo/codegen/ai'
 import { MultiSelect, type OptionType, TextButton } from '@repo/design-system'
 import useTags from '@src/hooks/useTags'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useState } from 'react'
 import type { GroupBase, MultiValue, OptionsOrGroups } from 'react-select'
 
-export const Tags = () => {
+export const Categories = () => {
   const { tags: fetchedTags, fetchTags } = useTags()
   const [options, setOptions] = useState<OptionType[]>([])
   const {
     tags,
     setTags,
-    makeGenerateClassifiersDto: makeGenerateTagsDto,
+    makeGenerateCategoriesDto: makeGenerateTagsDto,
   } = useRecipeStore((state) => state)
-  const { mutate } = useAiControllerTagsV1({
+  const { mutate } = useAiControllerCategoriesV1({
     mutation: { retry: false },
   })
 
@@ -49,7 +49,7 @@ export const Tags = () => {
 
   return (
     <section>
-      <h1 className="text-3xl font-bold mb-10">Tags</h1>
+      <h1 className="text-3xl font-bold mb-10">Categories</h1>
       <TextButton
         className="mb-5"
         text="auto generate tags"

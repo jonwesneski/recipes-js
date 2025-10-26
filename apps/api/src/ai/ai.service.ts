@@ -9,14 +9,14 @@ import {
   ProteinType,
 } from '@repo/database';
 import {
-  GeneratedClassifiersSchema,
-  GeneratedClassifiersType,
+  GeneratedCategoriesSchema,
+  GeneratedCategoriesType,
   type GeneratedNutiritionalFactsType,
   GeneratedNutritionalFactsSchema,
 } from '@repo/zod-schemas';
 import { NutritionalFactsDto } from '@src/recipes';
 import { GenerateBaseDto } from './contracts/generate-base.dto';
-import { GenerateClassifiersDto } from './contracts/generate-classifiers.dto';
+import { GenerateCategoriesDto } from './contracts/generate-categories.dto';
 import { GenerateNutritionalFactsDto } from './contracts/generate-nutritional-facts.dto';
 
 // '@google/genai' is an ESM. I tried changing my project to ESM
@@ -117,7 +117,7 @@ const nutritionalFactsDeclaration /*: FunctionDeclaration*/ = {
   },
 };
 
-const tagsDeclaration /*: FunctionDeclaration*/ = {
+const categoriesDeclaration /*: FunctionDeclaration*/ = {
   name: 'tags',
   parametersJsonSchema: {
     type: 'object',
@@ -222,35 +222,34 @@ ${step.instruction ? step.instruction : '- None'}
     return `Give me nutritional facts for:\n${this.basePrompt(steps)}`;
   }
 
-  async classifiers(
-    body: GenerateClassifiersDto,
-  ): Promise<GeneratedClassifiersType> {
+  async categories(
+    body: GenerateCategoriesDto,
+  ): Promise<GeneratedCategoriesType> {
     const response = await this.ai.models.generateContent({
       model: 'gemini-2.0-flash-lite',
-      contents: this.classifiersPrompt(body),
+      contents: this.categoriesPrompt(body),
       config: {
         responseMimeType: 'application/json',
-        responseSchema: tagsDeclaration.parametersJsonSchema,
+        responseSchema: categoriesDeclaration.parametersJsonSchema,
       },
     });
 
     try {
-      return GeneratedClassifiersSchema.parse(
-        JSON.parse(response.text ?? '{}'),
-      );
+      return GeneratedCategoriesSchema.parse(JSON.parse(response.text ?? '{}'));
     } catch (error) {
       this.logger.error('JSON parsing or validation error:', error);
       throw error;
     }
   }
 
-  classifiersPrompt(body: GenerateClassifiersDto) {
-    return `Give me recipe tags for:
+  categoriesPrompt(body: GenerateCategoriesDto) {
+    return `Give me recipe categories for:
 - recipe: ${body.name}
 ${body.description ? `- description: ${body.description}` : ``}
 
 ${this.basePrompt(body.steps)}
 
+//todo: update this
 Tag Requirements:
 - Make all the tags lowercase
 - Total Tags: Aim for around 10 tags.

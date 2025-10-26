@@ -1,7 +1,7 @@
 import type {
   BadRequestRecipeResponse,
   CreateRecipeDto,
-  GenerateClassifiersDto,
+  GenerateCategoriesDto,
   GenerateNutritionalFactsDto,
   NutritionalFactsResponse,
   RecipeResponse,
@@ -96,6 +96,8 @@ export type FactorType = 0.5 | 1 | 1.5 | 2 | 4;
 export type RecipeState = Omit<RecipeResponse, 'steps' | 'imageUrl'> & {
   imageSrc: string | null;
   steps: StepItemType[];
+
+  // Metadata
   isValid: boolean;
   errors: BadRequestRecipeResponse;
   scaleFactor: FactorType;
@@ -128,7 +130,7 @@ export type RecipeActions = {
   setTags: (_value: string[]) => void;
   makeCreateDto: () => CreateRecipeDto;
   makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
-  makeGenerateClassifiersDto: () => GenerateClassifiersDto;
+  makeGenerateCategoriesDto: () => GenerateCategoriesDto;
   setErrors: (_data: BadRequestRecipeResponse) => void;
 };
 
@@ -462,7 +464,7 @@ export const createRecipeStore = (
             };
           });
         },
-        makeGenerateClassifiersDto: () => {
+        makeGenerateCategoriesDto: () => {
           const { name, description, steps } = get();
           return {
             name,

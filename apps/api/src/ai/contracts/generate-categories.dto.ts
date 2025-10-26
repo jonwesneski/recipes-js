@@ -6,7 +6,7 @@ import { GenerateBaseDto } from './generate-base.dto';
 
 type ExtrasType = Pick<CreateRecipeDto, 'name' | 'description'>;
 
-export class GenerateClassifiersDto implements ExtrasType {
+export class GenerateCategoriesDto implements ExtrasType {
   @IsString()
   @ApiProperty({ type: String })
   name: string;
