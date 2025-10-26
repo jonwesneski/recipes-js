@@ -19,14 +19,13 @@ export type SelectLabelProps = DetailedHTMLProps<
   id: string
   className?: ClassValue
   options: { label: string; value: string }[]
+  isRequired: boolean
 }
 export const SelectLabel = (props: SelectLabelProps) => {
   const ref = useRef<HTMLSelectElement>(null)
   const [isFocused, setIsFocused] = useState(false)
-  const [hasValue, setHasValue] = useState(props.defaultValue !== '')
 
   function handleOnChange(event: ChangeEvent<HTMLSelectElement>): void {
-    setHasValue(event.target.value !== '')
     props.onChange?.(event)
   }
 
@@ -34,15 +33,16 @@ export const SelectLabel = (props: SelectLabelProps) => {
     <div className="relative">
       <select
         ref={ref}
-        className="px-2 py-2 align-text-bottom border-2 focus:border-[3px] focus:outline-none focus:transform focus:origin-left focus:scale-x-105 focus:scale-y-110"
-        defaultValue={props.defaultValue}
+        className={mergeCss(
+          'px-2 py-2 align-text-bottom border-2 focus:border-[3px] focus:outline-none focus:transform focus:origin-left focus:scale-x-105 focus:scale-y-110',
+          props.className,
+        )}
+        value={props.value}
         id={props.id}
         onChange={handleOnChange}
         onBlur={() => setIsFocused(false)}
       >
-        {props.defaultValue !== undefined ? (
-          <option value={props.defaultValue}>{props.defaultValue}</option>
-        ) : null}
+        {!props.isRequired ? <option value="" selected></option> : null}
 
         {props.options.map((o) => {
           return (
@@ -58,7 +58,7 @@ export const SelectLabel = (props: SelectLabelProps) => {
         className={mergeCss(
           'absolute left-3 top-2 transition-all cursor-text text-text/35',
           {
-            'text-xs top-0 text-text': isFocused || hasValue,
+            'text-xs top-0 text-text': isFocused || props.value,
           },
           'w-[216px]',
         )}

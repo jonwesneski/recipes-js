@@ -66,6 +66,8 @@ export const Categories = () => {
     mutation: { retry: false },
   })
 
+  console.log(difficultyLevel, 'ddd')
+
   const handleDifficultyChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setDifficultyLevel(
       event.target.value ? (event.target.value as DifficultyLevelType) : null,
@@ -136,44 +138,61 @@ export const Categories = () => {
         onClick={handleOnAutoGenerate}
       />
       <SelectLabel
+        className="w-64"
         id="difficulty"
         label="difficulty"
+        isRequired={false}
         value={difficultyLevel as string}
         options={difficultyOptions}
         onChange={handleDifficultyChange}
       />
       <SelectLabel
+        className="w-64"
         id="cuisine"
         label="cuisine"
+        isRequired={false}
         value={cuisine as string}
         options={cuisineOptions}
         onChange={handleCuisineChange}
       />
       <SelectLabel
+        className="w-64"
         id="meal"
         label="meal"
+        isRequired={false}
         value={meal as string}
         options={mealOptions}
         onChange={handleMealChange}
       />
       <SelectLabel
+        className="w-64"
         id="dish"
         label="dish"
+        isRequired={false}
         value={dish as string}
         options={dishOptions}
         onChange={handleDishChange}
       />
       <MultiSelect
+        id="diets"
+        label="diet(s)"
+        className="w-64"
         options={dietOptions}
         value={diets.map((d) => ({ label: d, value: d }))}
         onChange={handleDietsChange}
       />
       <MultiSelect
+        id="proteins"
+        label="protien(s)"
+        className="w-64"
         options={proteinOptions}
         value={proteins.map((p) => ({ label: p, value: p }))}
         onChange={handleProteinsChange}
       />
       <AsyncMultiSelect
+        id="tags"
+        label="tag(s)"
+        className="w-64"
         options={options}
         value={tags.map((t) => ({ label: t, value: t }))}
         onChange={handleTagsChange}
