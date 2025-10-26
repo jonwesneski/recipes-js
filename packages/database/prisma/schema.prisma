@@ -321,6 +321,7 @@ model Recipe {
   nutritionalFacts         NutritionalFacts? @relation("RecipeNutritionalFacts")
   bookmarkedBy             RecipeBookmark[]
 
+  // Categories
   cuisine         CuisineType?
   meal            MealType?
   dish            DishType?

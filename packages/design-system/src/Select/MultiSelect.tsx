@@ -1,36 +1,24 @@
 'use client'
 
-import AwesomeDebouncePromise from 'awesome-debounce-promise'
-import type { GroupBase, MultiValue, OptionsOrGroups } from 'react-select'
-import Select from 'react-select/async-creatable'
-
-export type OptionType = { value: string; label: string }
+import type { MultiValue } from 'react-select'
+import Select from 'react-select'
+import { OptionType } from './types'
 
 interface IMultiSelectProps {
   value: OptionType[]
   options: OptionType[]
   onChange: (_selected: MultiValue<OptionType>) => void
-  onLoadOptions: (
-    _inputValue: string,
-  ) => Promise<OptionsOrGroups<OptionType, GroupBase<OptionType>>>
 }
 export const MultiSelect = (props: IMultiSelectProps) => {
-  const debouncedHandleLoadOptions = AwesomeDebouncePromise(
-    props.onLoadOptions,
-    500,
-  )
-
   return (
     <Select
       isMulti
       onChange={props.onChange}
       isClearable
       isSearchable
-      cacheOptions
       placeholder=""
-      defaultOptions={props.options}
+      options={props.options}
       value={props.value}
-      loadOptions={debouncedHandleLoadOptions}
       unstyled
       classNames={{
         container: () =>
