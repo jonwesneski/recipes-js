@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsOptional } from 'class-validator';
 
-export class QueryParamsDto {
+export class GetRecipeDto {
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => value === 'true')

@@ -7,7 +7,7 @@ import {
   ProteinType,
 } from '@repo/database';
 import { BaseQueryDto } from '@src/common';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class GetRecipesDto extends BaseQueryDto {
   @IsOptional()
@@ -20,13 +20,15 @@ export class GetRecipesDto extends BaseQueryDto {
   @IsEnum(CuisineType)
   cuisine?: CuisineType;
   @IsOptional()
-  @IsEnum(DietaryType)
-  diets?: DietaryType;
-  @IsOptional()
   @IsEnum(DishType)
   dish?: DishType;
   @IsOptional()
-  @IsEnum(ProteinType)
+  @IsArray()
+  @IsEnum(DietaryType, { each: true })
+  diets?: DietaryType;
+  @IsOptional()
+  @IsArray()
+  @IsEnum(ProteinType, { each: true })
   proteins?: ProteinType;
   @IsOptional()
   @IsEnum(DifficultyLevelType)

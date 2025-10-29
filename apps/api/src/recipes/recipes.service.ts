@@ -33,11 +33,18 @@ export class RecipesService {
   }
 
   async getRecipes(params: GetRecipesDto): Promise<RecipeListResponse> {
-    return await this.recipeRepository.getRecipes(params);
+    return await this.recipeRepository.getPublicRecipes(params);
+  }
+
+  async getPublicRecipe(id: string): Promise<RecipeType> {
+    return await this.recipeRepository.getPublicRecipe(id);
   }
 
   async getRecipe(id: string, userId?: string): Promise<RecipeType> {
-    return await this.recipeRepository.getRecipe(id, userId);
+    if (userId) {
+      return await this.recipeRepository.getRecipe(id, userId);
+    }
+    return await this.recipeRepository.getPublicRecipe(id);
   }
 
   async createRecipe(

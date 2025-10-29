@@ -28,8 +28,8 @@ import { type Request } from 'express';
 import {
   BadRequestRecipeResponse,
   CreateRecipeDto,
+  GetRecipeDto,
   PatchRecipeDto,
-  QueryParamsDto,
   RecipeListResponse,
   RecipeResponse,
 } from './contracts';
@@ -64,7 +64,7 @@ export class RecipesController {
     //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Param('id') id: string,
     @Req() request: Request,
-    @Query() query: QueryParamsDto,
+    @Query() query: GetRecipeDto,
   ): Promise<RecipeResponse> {
     let userId: string | undefined;
     try {
