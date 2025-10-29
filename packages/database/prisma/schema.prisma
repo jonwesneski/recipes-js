@@ -300,6 +300,9 @@ model UserFollow {
   following   User     @relation("UserFollowings", fields: [followingId], references: [id])
 
   @@unique([userId, followingId])
+  @@index([followingId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([followingId, createdAt(sort: Desc)])
   @@map("user_follows")
 }
 
@@ -330,10 +333,22 @@ model Recipe {
   difficultyLevel DifficultyLevelType?
 
   @@unique([userId, name])
-  // todo: add indexes
-  // @@index([name]) // For name searches
-  // @@index([isPublic, userId]) // For filtered queries
-  // @@index([createdAt]) // If sorting by date
+  // Core query patterns
+  @@index([isPublic])
+  @@index([isPublic, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, isPublic])
+  // Search and filtering
+  @@index([name])
+  @@index([isPublic, cuisine])
+  @@index([isPublic, meal])
+  @@index([isPublic, dish])
+  @@index([isPublic, difficultyLevel])
+  @@index([diets], type: Gin)
+  @@index([proteins], type: Gin)
+  // Time-based filtering
+  @@index([isPublic, preparationTimeInMinutes])
+  @@index([isPublic, cookingTimeInMinutes])
   @@map("recipes")
 }
 
@@ -344,8 +359,7 @@ model FoodTag {
   cuisineType  CuisineType?
   mealType     MealType?
   dishType     DishType?
-  dietaryFlags DietaryType[] // vegetarian, vegan, etc.
-  // e.g., surf & turf could be [beef, shrimp]
+  dietaryFlags DietaryType[]
   proteinTypes ProteinType[]
 }
 
@@ -359,6 +373,8 @@ model RecipeBookmark {
   recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, recipeId])
+  @@index([recipeId])
+  @@index([userId, createdAt(sort: Desc)])
   @@map("recipe_bookmarks")
 }
 
@@ -423,6 +439,7 @@ model Equipment {
   recipeId  String
   recipe    Recipe   @relation(fields: [recipeId], references: [id])
 
+  @@index([recipeId])
   @@map("equipments")
 }
 
@@ -439,6 +456,7 @@ model Ingredient {
   step         Step             @relation(fields: [stepId], references: [id], onDelete: Cascade)
 
   @@unique([stepId, displayOrder])
+  @@index([name])
   @@map("ingredients")
 }
 
@@ -459,6 +477,6 @@ model RecipeTag {
   tag      Tag    @relation(fields: [tagId], references: [id])
 
   @@id([recipeId, tagId])
-  // @@index([tagId])
+  @@index([tagId])
   @@map("recipe_tags")
 }
