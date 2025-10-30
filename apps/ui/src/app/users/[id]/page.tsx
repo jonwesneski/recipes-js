@@ -7,7 +7,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const [user, recipes] = await Promise.all([
     usersControllerUserV1(id),
     recipesControllerRecipesListV1({
-      params: { userId: id },
+      filters: { userId: id },
     }),
   ])
   return <UserPublic user={user} recipes={recipes} />

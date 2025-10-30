@@ -1,13 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CuisineType,
-  DietaryType,
-  DifficultyLevelType,
-  DishType,
-  MealType,
-  PrismaClientKnownRequestError,
-  ProteinType,
-} from '@repo/database';
+import { Prisma, PrismaClientKnownRequestError } from '@repo/database';
 import {
   PrismaQueryParams,
   PrismaResults,
@@ -15,6 +7,7 @@ import {
 } from '../../services/prisma.service';
 import { BookmarkOwnerError } from './exceptions';
 import {
+  PublicRecipesSearch,
   type RecipeCreateType,
   RecipeInclude,
   RecipeMinimalPrismaInclude,
@@ -26,20 +19,11 @@ import {
 } from './types';
 
 export type GetRecipesQueryParams = PrismaQueryParams & {
-  userId: string;
-  meal?: MealType;
-  cuisine?: CuisineType;
-  dish?: DishType;
-  diets?: DietaryType;
-  proteins?: ProteinType;
-  difficultyLevel?: DifficultyLevelType;
+  where: Prisma.RecipeWhereInput;
 };
 
-export type GetPublicRecipesQueryParams = Omit<
-  GetRecipesQueryParams,
-  'userId'
-> & {
-  userId?: string;
+export type GetPublicRecipesQueryParams = PrismaQueryParams & {
+  where: PublicRecipesSearch;
 };
 
 @Injectable()
@@ -49,13 +33,8 @@ export class RecipeRepository {
   async getRecipes(
     params: GetRecipesQueryParams,
   ): Promise<PrismaResults<RecipeMinimalType[]>> {
-    const { diets, proteins, ...rest } = params;
     const recipes = await this.prisma.recipe.findMany({
-      where: {
-        ...rest,
-        diets: diets ? { has: diets } : undefined,
-        proteins: proteins ? { has: proteins } : undefined,
-      },
+      where: params.where,
       cursor: params.cursorId ? { id: params.cursorId } : undefined,
       skip: params.cursorId ? 1 : undefined,
       ...RecipeMinimalPrismaInclude,
@@ -64,7 +43,7 @@ export class RecipeRepository {
       data: recipes.map((recipe) => this.transformRecipeMinimal(recipe)),
       pagination: {
         totalRecords: await this.prisma.recipe.count({
-          where: { isPublic: true, userId: params.userId },
+          where: { isPublic: true, userId: params.where.userId },
         }),
         currentCursor:
           recipes.length > 0 ? recipes[0].id : params.cursorId || null,
@@ -76,13 +55,11 @@ export class RecipeRepository {
   async getPublicRecipes(
     params: GetPublicRecipesQueryParams,
   ): Promise<PrismaResults<RecipeMinimalType[]>> {
-    const { diets, proteins, ...rest } = params;
+    // const { diets, proteins, ...rest } = params;
     const recipes = await this.prisma.recipe.findMany({
       where: {
+        ...params.where,
         isPublic: true,
-        ...rest,
-        diets: diets ? { has: diets } : undefined,
-        proteins: proteins ? { has: proteins } : undefined,
       },
       cursor: params.cursorId ? { id: params.cursorId } : undefined,
       skip: params.cursorId ? 1 : undefined,
@@ -91,7 +68,9 @@ export class RecipeRepository {
         ...RecipeMinimalPrismaInclude.include,
         _count: {
           select: {
-            bookmarkedBy: { where: { userId: params.userId } },
+            bookmarkedBy: {
+              where: { userId: params.where.userId as string | undefined },
+            },
           },
         },
       },
@@ -100,7 +79,7 @@ export class RecipeRepository {
       data: recipes.map((recipe) => this.transformRecipeMinimal(recipe)),
       pagination: {
         totalRecords: await this.prisma.recipe.count({
-          where: { isPublic: true, userId: params.userId },
+          where: { isPublic: true, userId: params.where.userId },
         }),
         currentCursor:
           recipes.length > 0 ? recipes[0].id : params.cursorId || null,

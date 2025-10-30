@@ -1,5 +1,7 @@
 import { Prisma } from '@repo/database';
 
+export type PublicRecipesSearch = Omit<Prisma.RecipeWhereInput, 'isPublic'>;
+
 export const RecipeMinimalPrismaInclude = {
   include: {
     user: { select: { handle: true, id: true, imageUrl: true } },
@@ -20,6 +22,7 @@ export const RecipeMinimalPrismaInclude = {
   },
   orderBy: { updatedAt: 'desc' },
 } as const;
+
 export type RecipeMinimalPrismaType = Prisma.RecipeGetPayload<
   typeof RecipeMinimalPrismaInclude
 >;

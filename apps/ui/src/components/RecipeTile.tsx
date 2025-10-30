@@ -7,6 +7,7 @@ import type { RecipeMinimalResponse } from '@repo/codegen/model'
 import { useRecipesControllerBookmarkRecipeV1 } from '@repo/codegen/recipes'
 import { IconButton } from '@repo/design-system'
 import { useNotification } from '@src/providers/NotificationProvider'
+import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
 import { timeInHourAndMinutes } from '@src/utils/timeHelper'
 import Image from 'next/image'
@@ -20,6 +21,7 @@ export const RecipeTile = (props: IRecipeProps) => {
   const href = `/recipes/${props.recipe.id}`
   const [isBookmarked, setIsBookmarked] = useState(props.recipe.bookmarked)
   const { showToast } = useNotification()
+  const userId = useUserStore((state) => state.id)
   const { mutateAsync } = useRecipesControllerBookmarkRecipeV1()
 
   const handleBookmarkedClick = async () => {
@@ -82,11 +84,16 @@ export const RecipeTile = (props: IRecipeProps) => {
       </div>
 
       <div className="flex justify-around items-center">
-        <IconButton
-          svgIcon={BookmarkIcon as Svg}
-          onClick={() => void handleBookmarkedClick()}
-          svgClassName={isBookmarked ? 'fill-text' : undefined}
-        />
+        {userId ? (
+          <IconButton
+            svgIcon={BookmarkIcon as Svg}
+            onClick={() => void handleBookmarkedClick()}
+            svgClassName={isBookmarked ? 'fill-text' : undefined}
+          />
+        ) : (
+          <div className="w-8 h-8" />
+        )}
+
         <div className="w-[2px] h-[25px] bg-text" />
         <IconButton
           svgIcon={ShareIcon as Svg}

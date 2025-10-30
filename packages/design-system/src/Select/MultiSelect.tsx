@@ -1,12 +1,12 @@
 'use client'
 
-import { ClassValue } from 'clsx'
+import { type ClassValue } from 'clsx'
 import { useRef, useState } from 'react'
 import type { MultiValue } from 'react-select'
 import Select from 'react-select'
 import { Label } from '../Label'
 import { mergeCss } from '../utils'
-import { OptionType } from './types'
+import type { OptionType } from './types'
 
 interface IMultiSelectProps {
   label: string

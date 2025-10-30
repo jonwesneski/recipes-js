@@ -1,13 +1,13 @@
 'use client'
 
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
-import { ClassValue } from 'clsx'
+import { type ClassValue } from 'clsx'
 import { useRef, useState } from 'react'
 import type { GroupBase, MultiValue, OptionsOrGroups } from 'react-select'
 import Select from 'react-select/async-creatable'
 import { Label } from '../Label'
 import { mergeCss } from '../utils'
-import { OptionType } from './types'
+import type { OptionType } from './types'
 
 interface IAsyncMultiSelectProps {
   label: string

@@ -44,13 +44,17 @@ import { RecipesService } from './recipes.service';
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
-  @Get()
+  @Post('/search')
+  @ApiBody({ type: GetRecipesDto })
+  @HttpCode(200)
   @ApiOkResponse({
-    description: 'The recipe records',
+    description: 'Search for recipes',
     type: RecipeListResponse,
   })
-  async recipesList(@Query() query: GetRecipesDto) {
-    return this.recipesService.getRecipes(query);
+  async recipesList(
+    @Body() bodyQuery: GetRecipesDto,
+  ): Promise<RecipeListResponse> {
+    return this.recipesService.getRecipes(bodyQuery);
   }
 
   @Get(':id')

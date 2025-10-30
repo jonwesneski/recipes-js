@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  GetPublicRecipesQueryParams,
   ImageReviewProcessorService,
   RecipeCreateType,
   RecipeRepository,
   type RecipeType,
   RecipeUpdateType,
 } from '@repo/nest-shared';
-import { KafkaProducerService } from '@src/common';
+import { KafkaProducerService, OperatorEnum } from '@src/common';
 import { NotificationsService } from '@src/notifications/notifications.service';
 import {
   CreateRecipeDto,
@@ -33,7 +34,46 @@ export class RecipesService {
   }
 
   async getRecipes(params: GetRecipesDto): Promise<RecipeListResponse> {
-    return await this.recipeRepository.getPublicRecipes(params);
+    const query: GetPublicRecipesQueryParams = {
+      where: {
+        userId: params.filters?.userId,
+      },
+      cursorId: params.pagination?.cursorId,
+    };
+
+    if (params.filters?.cuisines) {
+      query.where.cuisine = { in: params.filters.cuisines };
+    }
+
+    if (params.filters?.meals) {
+      query.where.meal = { in: params.filters.meals };
+    }
+
+    if (params.filters?.dishes) {
+      query.where.dish = { in: params.filters.dishes };
+    }
+
+    if (params.filters?.difficultyLevel) {
+      query.where.difficultyLevel = { in: params.filters.difficultyLevel };
+    }
+
+    if (params.filters?.diets) {
+      const operator = params.filters.diets.operator;
+      query.where.diets =
+        operator === OperatorEnum.And
+          ? { hasEvery: params.filters.diets.values }
+          : { hasSome: params.filters.diets.values };
+    }
+
+    if (params.filters?.proteins) {
+      const operator = params.filters.proteins.operator;
+      query.where.proteins =
+        operator === OperatorEnum.Or
+          ? { hasSome: params.filters.proteins.values }
+          : { hasEvery: params.filters.proteins.values };
+    }
+
+    return await this.recipeRepository.getPublicRecipes(query);
   }
 
   async getPublicRecipe(id: string): Promise<RecipeType> {
