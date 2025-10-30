@@ -28,8 +28,8 @@ import { type Request } from 'express';
 import {
   BadRequestRecipeResponse,
   CreateRecipeDto,
+  GetRecipeDto,
   PatchRecipeDto,
-  QueryParamsDto,
   RecipeListResponse,
   RecipeResponse,
 } from './contracts';
@@ -44,13 +44,17 @@ import { RecipesService } from './recipes.service';
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
-  @Get()
+  @Post('/search')
+  @ApiBody({ type: GetRecipesDto })
+  @HttpCode(200)
   @ApiOkResponse({
-    description: 'The recipe records',
+    description: 'Search for recipes',
     type: RecipeListResponse,
   })
-  async recipesList(@Query() query: GetRecipesDto) {
-    return this.recipesService.getRecipes(query);
+  async recipesList(
+    @Body() bodyQuery: GetRecipesDto,
+  ): Promise<RecipeListResponse> {
+    return this.recipesService.getRecipes(bodyQuery);
   }
 
   @Get(':id')
@@ -64,7 +68,7 @@ export class RecipesController {
     //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Param('id') id: string,
     @Req() request: Request,
-    @Query() query: QueryParamsDto,
+    @Query() query: GetRecipeDto,
   ): Promise<RecipeResponse> {
     let userId: string | undefined;
     try {

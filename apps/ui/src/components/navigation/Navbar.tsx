@@ -123,7 +123,7 @@ export const Navbar = () => {
               'scale-y-100': isOpen,
               'scale-y-0': !isOpen,
               // Update -translate-y-* anytime you add a new NavItem to the dropdown
-              '-translate-y-[10.5rem]': !id,
+              '-translate-y-[12rem]': !id,
               '-translate-y-[13.5rem]': id,
             },
           )}
@@ -170,19 +170,17 @@ export const Navbar = () => {
             />
           </NavItem>
           {id ? (
-            <>
-              <NavItem>
-                <div className="text-center">
-                  <Link href="/account">Account Settings</Link>
-                </div>
-              </NavItem>
-              <NavItem>
-                <div className="text-center">
-                  <Link href="/">Logout</Link>
-                </div>
-              </NavItem>
-            </>
+            <NavItem>
+              <div className="text-center">
+                <Link href="/account">Account Settings</Link>
+              </div>
+            </NavItem>
           ) : null}
+          <NavItem>
+            <div className="text-center">
+              <Link href="/">{id ? 'Logout' : 'Login'}</Link>
+            </div>
+          </NavItem>
         </div>
       </div>
     </div>

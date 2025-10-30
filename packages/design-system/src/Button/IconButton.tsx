@@ -1,4 +1,4 @@
-import { ClassValue } from 'clsx'
+import { type ClassValue } from 'clsx'
 import { mergeCss } from '../utils'
 import { type ButtonProps } from './Button'
 

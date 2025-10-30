@@ -13,6 +13,7 @@ import {
   RecipeResponse,
   StepResponse,
 } from '@src/recipes/contracts';
+import { GetRecipesDto } from '@src/recipes/contracts/get-recipes.dto';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -108,10 +109,18 @@ describe('RecipesController (e2e)', () => {
     };
   };
 
-  describe(`GET ${basePath}`, () => {
-    it('no query params', () => {
+  describe(`POST ${basePath}/search`, () => {
+    const searchPath = `${basePath}/search`;
+    const makeSearchRequest = (
+      filters?: GetRecipesDto['filters'],
+    ): GetRecipesDto => {
+      return { filters };
+    };
+
+    it('no filters', () => {
       return request(app.getHttpServer())
-        .get(basePath)
+        .post(searchPath)
+        .send(makeSearchRequest())
         .expect(200)
         .expect((res) => {
           expect(res.body.data.length).toBeGreaterThan(0);

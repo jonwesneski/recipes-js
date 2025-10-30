@@ -42,7 +42,7 @@ export const SelectLabel = (props: SelectLabelProps) => {
         onChange={handleOnChange}
         onBlur={() => setIsFocused(false)}
       >
-        {!props.isRequired ? <option value="" selected></option> : null}
+        {!props.isRequired ? <option value="" selected /> : null}
 
         {props.options.map((o) => {
           return (
