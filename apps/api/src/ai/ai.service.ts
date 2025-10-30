@@ -1,23 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  CuisineType,
-  DietaryType,
-  DifficultyLevelType,
-  DishType,
-  MealType,
-  MeasurementUnit,
-  ProteinType,
-} from '@repo/database';
+import { RecipeRepository } from '@repo/nest-shared';
 import {
   GeneratedCategoriesSchema,
   GeneratedCategoriesType,
   type GeneratedNutiritionalFactsType,
   GeneratedNutritionalFactsSchema,
 } from '@repo/zod-schemas';
-import { NutritionalFactsDto } from '@src/recipes';
+import { recipesDtoToQueryParams } from '@src/common/transforms';
+import { GetRecipesDto } from '@src/recipes';
 import { GenerateBaseDto } from './contracts/generate-base.dto';
 import { GenerateCategoriesDto } from './contracts/generate-categories.dto';
 import { GenerateNutritionalFactsDto } from './contracts/generate-nutritional-facts.dto';
+import { GetRecipesSearchDto } from './contracts/get-recipes.dto';
+import {
+  categoriesDeclaration,
+  CuisineTypeValues,
+  DietaryTypeValues,
+  DifficultyLevelTypeValues,
+  DishTypeValues,
+  GeneratedReceipesSearchResponseSchema,
+  MealTypeValues,
+  nutritionalFactsDeclaration,
+  ProteinTypeValues,
+  recipesSearchDeclaration,
+} from './response-schemas';
 
 // '@google/genai' is an ESM. I tried changing my project to ESM
 // I got the src to build and run, but I couldn't get jest to compile
@@ -28,155 +34,25 @@ const createGoogleGenAI = async (apiKey: string) => {
 };
 type GoogleGenAIType = Awaited<ReturnType<typeof createGoogleGenAI>>;
 
-const nutritionalFactsDeclaration /*: FunctionDeclaration*/ = {
-  name: 'nutritionalFacts',
-  parametersJsonSchema: {
-    type: 'object',
-    properties: {
-      servings: {
-        type: 'number',
-      },
-      servingAmount: {
-        type: 'number',
-      },
-      servingUnit: {
-        type: 'string',
-        enum: Object.values(MeasurementUnit),
-      },
-      proteinInG: {
-        type: 'number',
-      },
-      calciumInMg: {
-        type: 'number',
-      },
-      caloriesInKcal: {
-        type: 'number',
-      },
-      carbohydratesInG: {
-        type: 'number',
-      },
-      cholesterolInMg: {
-        type: 'number',
-      },
-      fiberInG: {
-        type: 'number',
-      },
-      folateInMcg: {
-        type: 'number',
-      },
-      ironInMg: {
-        type: 'number',
-      },
-      magnesiumInMg: {
-        type: 'number',
-      },
-      niacinInMg: {
-        type: 'number',
-      },
-      potassiumInMg: {
-        type: 'number',
-      },
-      riboflavinInMg: {
-        type: 'number',
-      },
-      saturatedFatInG: {
-        type: 'number',
-      },
-      sodiumInMg: {
-        type: 'number',
-      },
-      sugarInG: {
-        type: 'number',
-      },
-      thiaminInMg: {
-        type: 'number',
-      },
-      totalFatInG: {
-        type: 'number',
-      },
-      transFatInG: {
-        type: 'number',
-      },
-      vitaminAInIU: {
-        type: 'number',
-      },
-      vitaminB12InMg: {
-        type: 'number',
-      },
-      vitaminB6InMg: {
-        type: 'number',
-      },
-      vitaminCInMg: {
-        type: 'number',
-      },
-      vitaminDInIU: {
-        type: 'number',
-      },
-    } as Record<keyof NutritionalFactsDto, { type: string; enum?: string[] }>,
-    required: ['caloriesInKcal'],
-  },
-};
-
-const categoriesDeclaration /*: FunctionDeclaration*/ = {
-  name: 'categories',
-  parametersJsonSchema: {
-    type: 'object',
-    properties: {
-      cuisine: {
-        type: ['string', 'null'],
-        enum: [...Object.values(CuisineType), null],
-      },
-      diets: {
-        type: 'array',
-        items: {
-          type: 'string',
-          enum: [...Object.values(DietaryType), null],
-        },
-        default: [],
-      },
-      dish: {
-        type: ['string', 'null'],
-        enum: [...Object.values(DishType), null],
-      },
-      meal: {
-        type: ['string', 'null'],
-        enum: [...Object.values(MealType), null],
-      },
-      proteins: {
-        type: 'array',
-        items: {
-          type: 'string',
-          enum: [...Object.values(ProteinType), null],
-        },
-        default: [],
-      },
-      difficultyLevel: {
-        type: ['string', 'null'],
-        enum: [...Object.values(DifficultyLevelType), null],
-      },
-      tags: {
-        type: 'array',
-        items: {
-          type: 'string',
-        },
-        default: [],
-      },
-    },
-    required: ['diets', 'proteins', 'tags'],
-  },
-};
+const AI_MODEL = 'gemini-2.0-flash-lite';
 
 @Injectable()
 export class AiService {
   private readonly logger = new Logger(AiService.name);
   private readonly ai: GoogleGenAIType;
 
-  constructor(googleAi: GoogleGenAIType) {
+  constructor(
+    googleAi: GoogleGenAIType,
+    private readonly recipeRepository: RecipeRepository,
+  ) {
     this.ai = googleAi;
   }
 
-  static async createInstance(apiKey: string) {
-    return new AiService(await createGoogleGenAI(apiKey));
+  static async createInstance(
+    apiKey: string,
+    recipeRepository: RecipeRepository,
+  ) {
+    return new AiService(await createGoogleGenAI(apiKey), recipeRepository);
   }
 
   basePrompt(steps: GenerateBaseDto[]) {
@@ -204,7 +80,7 @@ ${step.instruction ? step.instruction : '- None'}
     steps: GenerateNutritionalFactsDto[],
   ): Promise<GeneratedNutiritionalFactsType> {
     const response = await this.ai.models.generateContent({
-      model: 'gemini-2.0-flash-lite',
+      model: AI_MODEL,
       contents: this.nutritionalPrompt(steps),
       config: {
         responseMimeType: 'application/json',
@@ -230,7 +106,7 @@ ${step.instruction ? step.instruction : '- None'}
     body: GenerateCategoriesDto,
   ): Promise<GeneratedCategoriesType> {
     const response = await this.ai.models.generateContent({
-      model: 'gemini-2.0-flash-lite',
+      model: AI_MODEL,
       contents: this.categoriesPrompt(body),
       config: {
         responseMimeType: 'application/json',
@@ -255,7 +131,6 @@ ${body.description ? `- description: ${body.description}` : ''}
 
 ${this.basePrompt(body.steps)}
 
-//todo: update this
 Category Requirements:
 - Only add a cuisine if the recipe mostly fits in one of them
 - Only add diet(s) if the recipe mostly fits in them
@@ -266,5 +141,53 @@ Category Requirements:
 - I want preferably 0 tags, buy only add tags if: 
   - total tags is less than 5
   - value has not already used in one of the above categories: (cuisine, diet, dish, meal, protein, difficultyLevel)`;
+  }
+
+  async recipesSearch(body: GetRecipesSearchDto) {
+    const response = await this.ai.models.generateContent({
+      model: AI_MODEL,
+      contents: this.recipesSearchPrompt(body),
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: recipesSearchDeclaration.parametersJsonSchema,
+      },
+    });
+
+    let params: GetRecipesDto = {};
+    try {
+      params = GeneratedReceipesSearchResponseSchema.parse(
+        JSON.parse(response.text ?? 'null'),
+      );
+    } catch (error) {
+      this.logger.error('JSON parsing or validation error:', error);
+      throw error;
+    }
+    return await this.recipeRepository.getPublicRecipes(
+      recipesDtoToQueryParams(params),
+    );
+  }
+
+  recipesSearchPrompt(body: GetRecipesSearchDto) {
+    return `You are a recipe search assistant. Convert the natural language query into structured filters.
+    
+Valid filter options:
+- meals: ${MealTypeValues.join(', ')}
+- dishes: ${DishTypeValues.join(', ')}
+- cuisine: ${CuisineTypeValues.join(', ')}
+- difficultyLevel: ${DifficultyLevelTypeValues.join(', ')}
+- diets: ${DietaryTypeValues.join(', ')}
+- proteins: ${ProteinTypeValues.join(', ')}
+
+Operators:
+- "AND" (must have ALL of option), "OR" (can have ANY of option), "NOT" (must NOT have these options)
+
+User query: "${body.input}"
+
+Return ONLY a JSON object with a "filters" key. Only include filters that are explicitly mentioned or strongly implied. Use camelCase for values like "glutenFree".
+
+Examples:
+- "vegetarian Italian dinner" -> {"filters": {"meals": ["dinner"], "cuisines": ["italian"], "diets": ["vegetarian"]}}
+- "easy chicken or beef lunch" -> {"filters": {"meals": ["lunch"], "difficultyLevels": ["easy"], "proteins": {"operator": "OR", "values: ["chicken", "beef"]}}}
+- "vegan and gluten free breakfast" -> {"filters": {"meals": ["breakfast"], "diets": {"operator": "AND", "values": ["vegan", "glutenFree"]}}}`;
   }
 }

@@ -69,7 +69,7 @@ export class RecipeFiltersDto {
     required: false,
     isArray: true,
   })
-  difficultyLevel?: DifficultyLevelType[];
+  difficultyLevels?: DifficultyLevelType[];
   @IsOptional()
   @ValidateNested()
   @ApiProperty({
