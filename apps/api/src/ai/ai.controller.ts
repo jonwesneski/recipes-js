@@ -9,12 +9,13 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { JwtGuard } from '@src/auth/guards';
-import { NutritionalFactsResponse, RecipeListResponse } from '@src/recipes';
+import { NutritionalFactsResponse } from '@src/recipes';
 import { AiService } from './ai.service';
 import { GenerateCategoriesDto } from './contracts/generate-categories.dto';
 import { GeneratedCategoriesResponse } from './contracts/generate-categories.response';
 import { GenerateNutritionalFactsDto } from './contracts/generate-nutritional-facts.dto';
 import { GetRecipesSearchDto } from './contracts/get-recipes.dto';
+import { AiRecipesSearchResponse } from './contracts/recipe-search.response';
 
 @Controller({
   version: '1',
@@ -48,11 +49,12 @@ export class AiController {
   }
 
   @Get('recipes-search')
-  @ApiBody({ type: GenerateCategoriesDto })
   @ApiOkResponse({
-    description: 'The generated categories',
-    type: RecipeListResponse,
+    description: 'The recipes that fit the search',
+    type: AiRecipesSearchResponse,
   })
+  // todo: lets return the query created by AI as well
+  // so that i can put it in the browser url query params
   async recipesSearch(@Query() body: GetRecipesSearchDto) {
     return await this.aiService.recipesSearch(body);
   }
