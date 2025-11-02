@@ -2,10 +2,16 @@
 
 import { TextLabel } from '@repo/design-system'
 import { useRecipesListStore } from '@src/providers/recipes-list-store-provider'
-import { type FormEvent, type KeyboardEvent } from 'react'
+import {
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type KeyboardEvent,
+} from 'react'
 
 export const SearchBar = () => {
   const { aiFetchRecipes } = useRecipesListStore()
+  const [input, setInput] = useState('')
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -19,16 +25,23 @@ export const SearchBar = () => {
     handleSubmit(searchValue)
   }
 
-  const handleSubmit = (input: string) => {
-    aiFetchRecipes(input).catch((e: unknown) => console.error(e))
+  const handleSubmit = (value: string) => {
+    aiFetchRecipes(value).catch((e: unknown) => console.error(e))
+  }
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>): void {
+    setInput(event.target.value)
   }
 
   return (
     <form onSubmit={handleOnSubmit}>
       <TextLabel
+        className="w-full"
         name="search"
         label="search"
+        value={input}
         isRequired={false}
+        onChange={handleChange}
         enterKeyHint="go"
         onKeyDown={handleKeyDown}
       />
