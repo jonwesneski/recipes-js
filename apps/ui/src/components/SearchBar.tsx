@@ -2,7 +2,7 @@
 
 import { TextLabel } from '@repo/design-system'
 import { useRecipesListStore } from '@src/providers/recipes-list-store-provider'
-import { FormEvent, type KeyboardEvent } from 'react'
+import { type FormEvent, type KeyboardEvent } from 'react'
 
 export const SearchBar = () => {
   const { aiFetchRecipes } = useRecipesListStore()
@@ -15,16 +15,16 @@ export const SearchBar = () => {
   const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    const searchValue = formData.get('search')?.toString() ?? ''
+    const searchValue = formData.get('search') as string
     handleSubmit(searchValue)
   }
 
   const handleSubmit = (input: string) => {
-    aiFetchRecipes(input).catch((e) => console.error(e))
+    aiFetchRecipes(input).catch((e: unknown) => console.error(e))
   }
 
   return (
-    <form onSubmit={(e) => void handleOnSubmit(e)}>
+    <form onSubmit={handleOnSubmit}>
       <TextLabel
         name="search"
         label="search"

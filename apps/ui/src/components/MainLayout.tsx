@@ -6,6 +6,7 @@ import { useUserStore } from '@src/providers/use-store-provider'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import { Navbar } from './navigation'
+import { SearchBar } from './SearchBar'
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { width, breakpointPxs } = useMediaQuery()
@@ -29,6 +30,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           'top-0': width >= breakpointPxs.md,
         })}
       >
+        <SearchBar />
         <Navbar />
       </nav>
 

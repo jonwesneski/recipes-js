@@ -216,6 +216,11 @@ export const createRecipeStore = (
         }));
       },
       store: (set, get) => ({
+        /**
+         * todo: To help determine what fields actually changed during updates
+         * check intialState (loop through Object.keys()) against state
+         * Then I will only send what fields actually changed during an update/edit
+         */
         ...initState,
         setName: (name: string) => set(() => ({ name })),
         setDescription: (description: string) => set(() => ({ description })),
