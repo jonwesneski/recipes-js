@@ -24,7 +24,7 @@ export const TextLabel = ({
   const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <div className="relative">
+    <div className="relative bg-transparent flex flex-col">
       {isRequired ? (
         <span className="absolute -left-3 text-red-900">*</span>
       ) : null}

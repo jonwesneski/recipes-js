@@ -6,6 +6,7 @@ import { useUserStore } from '@src/providers/use-store-provider'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import { Navbar } from './navigation'
+import { SearchBar } from './SearchBar'
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { width, breakpointPxs } = useMediaQuery()
@@ -24,12 +25,16 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return pathname !== '/' ? (
     <>
       <nav
-        className={mergeCss('fixed w-screen left-0 right-0 z-50', {
-          'bottom-0': width < breakpointPxs.md,
-          'top-0': width >= breakpointPxs.md,
-        })}
+        className={mergeCss(
+          'fixed w-screen left-0 right-0 z-50 flex flex-col-reverse md:flex-col',
+          {
+            'bottom-0': width < breakpointPxs.md,
+            'top-0': width >= breakpointPxs.md,
+          },
+        )}
       >
         <Navbar />
+        <SearchBar />
       </nav>
 
       <main className="pt-10 pb-40">{children}</main>

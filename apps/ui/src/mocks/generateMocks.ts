@@ -1,4 +1,8 @@
-import { getAiMock } from '@repo/codegen/mswAi';
+import {
+  getAiControllerRecipesSearchV1MockHandler,
+  getAiControllerRecipesSearchV1ResponseMock,
+  getAiMock,
+} from '@repo/codegen/mswAi';
 import { getHealthCheckMock } from '@repo/codegen/mswHealthCheck';
 import {
   getRecipesControllerRecipesListV1MockHandler,
@@ -23,6 +27,10 @@ const websocketMock = ws.link('http://localhost:3001/socket.io/*');
 
 const recipesList = getRecipesControllerRecipesListV1ResponseMock();
 recipesList.data.forEach((r) => {
+  r.imageUrl = null;
+});
+const aiRecipesList = getAiControllerRecipesSearchV1ResponseMock();
+aiRecipesList.data.forEach((r) => {
   r.imageUrl = null;
 });
 const recipe = getRecipesControllerRecipeV1ResponseMock({ imageUrl: null });
@@ -53,5 +61,6 @@ export default [
   getRecipesControllerRecipeV1MockHandler(recipe),
   ...getRecipesMock(),
   ...getTagsMock(),
+  getAiControllerRecipesSearchV1MockHandler(aiRecipesList),
   ...getAiMock(),
 ];
