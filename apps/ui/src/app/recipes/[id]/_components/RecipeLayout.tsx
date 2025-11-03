@@ -3,6 +3,7 @@
 import { ProfilePic } from '@src/components'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { isoDateToLocale } from '@src/utils/stringHelpers'
+import Link from 'next/link'
 
 export interface IRecipeLayoutProps {
   children: React.ReactNode
@@ -21,12 +22,17 @@ export const RecipeLayout = (props: IRecipeLayoutProps) => {
           <h1 className="font-bold">created</h1>
           <div className="px-3">
             <span className="mr-2">by:</span>
-            <ProfilePic
-              className="inline-block mr-2"
-              imageUrl={user.imageUrl}
-              handle={user.handle}
-            />
-            <span>{user.handle}</span>
+            <div className="relative inline">
+              <ProfilePic
+                className="inline-block mr-2"
+                imageUrl={user.imageUrl}
+                handle={user.handle}
+              />
+              <Link href={`/users/${user.id}`}>
+                <span className="absolute inset-0" />
+                {user.handle}
+              </Link>
+            </div>
             <h1>on: {isoDateToLocale(createdAt)}</h1>
           </div>
         </div>

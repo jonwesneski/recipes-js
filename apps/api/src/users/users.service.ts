@@ -5,6 +5,7 @@ import { PatchUserDto } from './contracts';
 
 export type UserPrismaType = Prisma.UserGetPayload<{
   select: {
+    id: true;
     handle: true;
     imageUrl: true;
     _count: { select: { followers: true; followings: true; recipes: true } };
@@ -35,6 +36,7 @@ export class UsersService {
     const user = await this.prisma.user.findFirstOrThrow({
       where: { id },
       select: {
+        id: true,
         createdAt: true,
         handle: true,
         imageUrl: true,
