@@ -12,6 +12,8 @@ import { type UserType } from '../users.service';
 
 export class UserPublicResponse implements UserType {
   @ApiProperty({ type: String })
+  id: string;
+  @ApiProperty({ type: String })
   handle: string;
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;

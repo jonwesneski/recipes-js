@@ -18,12 +18,13 @@ import { NavItem } from './NavItem'
 import { NavLink } from './NavLink'
 
 // Logic for determining which nav links to show based on route
-type RouteKeys = 'list' | 'recipe' | 'edit' | 'create'
+type RouteKeys = 'list' | 'recipe' | 'edit' | 'create' | 'user'
 const regexRouteKeyMap = new Map<RegExp, RouteKeys>()
 regexRouteKeyMap.set(/^\/recipes$/, 'list')
 regexRouteKeyMap.set(/^\/recipes\/\w+$/, 'recipe')
 regexRouteKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
 regexRouteKeyMap.set(/^\/create-recipe$/, 'create')
+regexRouteKeyMap.set(/^\/users\/\w+$/, 'user')
 
 const CreateRecipeLink = (
   <NavLink key="create" href="/create-recipe" svgIcon={AddIcon as Svg} />
@@ -36,6 +37,7 @@ const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   list: [CreateRecipeLink],
   edit: [SearchRecipesLink],
   create: [SearchRecipesLink],
+  user: [SearchRecipesLink],
   NONE: null,
 }
 
