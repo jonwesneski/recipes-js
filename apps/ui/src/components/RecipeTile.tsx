@@ -12,10 +12,11 @@ import { type Svg } from '@src/types/svg'
 import { timeInHourAndMinutes } from '@src/utils/timeHelper'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { type Ref, useState } from 'react'
 
 interface IRecipeProps {
   recipe: RecipeMinimalResponse
+  innerRef?: Ref<HTMLDivElement>
 }
 export const RecipeTile = (props: IRecipeProps) => {
   const href = `/recipes/${props.recipe.id}`
@@ -45,7 +46,7 @@ export const RecipeTile = (props: IRecipeProps) => {
   }
 
   return (
-    <div className="border p-1">
+    <div ref={props.innerRef} className="border p-1">
       <div className="relative">
         <div className="relative w-full h-[100px]">
           <Image

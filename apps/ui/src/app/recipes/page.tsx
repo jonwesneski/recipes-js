@@ -1,6 +1,7 @@
 import type {
   DietsExpressionDto,
   ProteinsExpressionDto,
+  RecipeFiltersDto,
 } from '@repo/codegen/model'
 import { recipesControllerRecipesListV1 } from '@repo/codegen/recipes'
 import { RecipeList } from '@src/components'
@@ -30,9 +31,14 @@ const Page = async ({ searchParams }: IPageProps) => {
     }
   }
 
+  const filters: RecipeFiltersDto = {
+    ...rest,
+    diets: dietFilters,
+    proteins: proteinsFilters,
+  }
   const recipes = await recipesControllerRecipesListV1({
-    filters: { ...rest, diets: dietFilters, proteins: proteinsFilters },
+    filters,
   })
-  return <RecipeList recipes={recipes} />
+  return <RecipeList recipes={recipes} filters={filters} />
 }
 export default Page

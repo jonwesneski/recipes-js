@@ -7,6 +7,7 @@ export type RecipesState = RecipeListResponse & {
 
 export type RecipeActions = {
   setRecipes: (_value: RecipesState) => void;
+  appendRecipes: (_value: RecipesState) => void;
 };
 
 export type RecipesListStore = RecipesState & RecipeActions;
@@ -27,6 +28,14 @@ export const createRecipesListStore = (
     ...initState,
     setRecipes: (recipes) => {
       set(() => ({ ...recipes }));
+    },
+    appendRecipes: (recipes) => {
+      set((state) => {
+        return {
+          ...recipes,
+          data: [...state.data, ...recipes.data],
+        };
+      });
     },
   }));
 };
