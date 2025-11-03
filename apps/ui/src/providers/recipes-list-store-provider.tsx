@@ -20,6 +20,7 @@ export type RecipesListStoreContextType = {
   recipes: RecipeListResponse['data']
   aiFetchRecipes: (_input: string) => Promise<void>
   setRecipes: (_value: RecipeListResponse) => void
+  appendRecipes: (_value: RecipeListResponse) => void
 }
 export const RecipesListStoreContext =
   createContext<RecipesListStoreContextType | null>(null)
@@ -85,6 +86,7 @@ export const RecipesListStoreProvider = ({
         recipes: store.data,
         aiFetchRecipes,
         setRecipes: store.setRecipes,
+        appendRecipes: store.appendRecipes,
       }}
     >
       {children}

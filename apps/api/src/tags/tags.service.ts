@@ -11,8 +11,10 @@ export class TagsService {
 
   async getTagNames(
     params: PrismaQueryParams,
+    includes?: string,
   ): Promise<PrismaResults<string[]>> {
     const tags = await this.prisma.tag.findMany({
+      where: includes ? { name: includes } : undefined,
       cursor: params.cursorId ? { id: params.cursorId } : undefined,
       skip: params.cursorId ? 1 : undefined,
     });

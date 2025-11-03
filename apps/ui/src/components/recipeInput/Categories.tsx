@@ -66,8 +66,6 @@ export const Categories = () => {
     mutation: { retry: false },
   })
 
-  console.log(difficultyLevel, 'ddd')
-
   const handleDifficultyChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setDifficultyLevel(
       event.target.value ? (event.target.value as DifficultyLevelType) : null,

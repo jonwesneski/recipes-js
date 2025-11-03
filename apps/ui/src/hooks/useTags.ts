@@ -6,7 +6,8 @@ export default () => {
 
   const fetchTags = async (nextCursor?: string, includes?: string) => {
     const currentTags = await tagsControllerTagNameListV1({
-      params: { cursorId: nextCursor, includes },
+      cursorId: nextCursor,
+      includes,
     });
     setTags((t) => [...t, ...currentTags.data]);
     if (currentTags.pagination.nextCursor !== null) {

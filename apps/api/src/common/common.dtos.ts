@@ -3,15 +3,18 @@ import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class BaseQueryDto {
+  @ApiProperty({ type: String, required: false })
   @IsOptional()
   @IsString()
   cursorId?: string;
 
+  @ApiProperty({ type: Number, required: false })
   @IsOptional()
   @IsInt()
   @Type(() => Number)
   take?: number;
 
+  @ApiProperty({ type: Number, required: false })
   @IsOptional()
   @IsInt()
   @Type(() => Number)
