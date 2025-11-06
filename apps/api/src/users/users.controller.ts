@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  Logger,
   Param,
   Patch,
   Put,
@@ -29,6 +30,7 @@ import { UsersService } from './users.service';
   path: 'users',
 })
 export class UsersController {
+  private readonly logger = new Logger(UsersController.name);
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':id')
@@ -61,9 +63,14 @@ export class UsersController {
     type: UserAccountResponse,
   })
   @ApiParam({ name: 'id', type: String, description: 'id of user' })
-  @UseGuards(JwtGuard)
-  async userAccount(@Param('id') id: string): Promise<UserAccountResponse> {
+  //@UseGuards(JwtGuard)
+  async userAccount(
+    @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<UserAccountResponse> {
     try {
+      this.logger.log('answer');
+      this.logger.log(JSON.stringify(parseHelper(req)));
       return await this.usersService.getUserAccount(id);
     } catch (error) {
       throwIfNotFound(error);

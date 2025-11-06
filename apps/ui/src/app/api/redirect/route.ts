@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.redirect(new URL('/recipes', request.url));
 
     response.cookies.set({
+      maxAge: 2592000000,
       name: 'access_token',
       value: token,
       path: '/',
