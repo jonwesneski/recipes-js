@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const token = await getAccessToken()
-
+  console.log('layoutttttt', token)
   return (
     <html lang="en">
       <body>

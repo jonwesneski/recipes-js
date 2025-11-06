@@ -33,29 +33,29 @@ export class AuthController {
 
       // This approach is not working in production.
       // browser blocks the cookie from being set from a 3rd party domain.
-      // const isDev = this.configService.get('ENV') === 'dev';
-      // res.cookie('access_token', googleUser.tokens.accessToken, {
-      //   maxAge: 2592000000,
-      //   sameSite: isDev ? 'lax' : 'none',
-      //   secure: !isDev,
-      //   //domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
-      //   httpOnly: true,
-      //   //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
-      // });
-      // res.redirect(`${frontendUrl}redirect`);
+      const isDev = this.configService.get('ENV') === 'dev';
+      res.cookie('access_token', googleUser.tokens.accessToken, {
+        maxAge: 2592000000,
+        sameSite: isDev ? 'lax' : 'none',
+        secure: !isDev,
+        //domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
+        httpOnly: true,
+        //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
+      });
+      res.redirect(`${frontendUrl}recipes`);
 
-      res.send(`
-        <html>
-          <body>
-            <form id="tokenForm" action="${frontendUrl}api/redirect" method="POST">
-              <input type="hidden" name="access_token" value="${googleUser.tokens.accessToken}" />
-            </form>
-            <script>
-              document.getElementById('tokenForm').submit();
-            </script>
-          </body>
-        </html>
-      `);
+      // res.send(`
+      //   <html>
+      //     <body>
+      //       <form id="tokenForm" action="${frontendUrl}api/redirect" method="POST">
+      //         <input type="hidden" name="access_token" value="${googleUser.tokens.accessToken}" />
+      //       </form>
+      //       <script>
+      //         document.getElementById('tokenForm').submit();
+      //       </script>
+      //     </body>
+      //   </html>
+      // `);
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });
     }

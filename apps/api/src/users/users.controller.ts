@@ -70,7 +70,7 @@ export class UsersController {
   ): Promise<UserAccountResponse> {
     try {
       this.logger.log('answer');
-      this.logger.log(JSON.stringify(parseHelper(req)));
+      this.logger.log(JSON.stringify(req.cookies));
       return await this.usersService.getUserAccount(id);
     } catch (error) {
       throwIfNotFound(error);
