@@ -31,32 +31,32 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    const token = request.cookies.get('access_token')?.value;
-    if (!token) {
-      return NextResponse.json({ error: 'Token missing' }, { status: 400 });
-    }
+// export async function GET(request: NextRequest) {
+//   try {
+//     const token = request.cookies.get('access_token')?.value;
+//     if (!token) {
+//       return NextResponse.json({ error: 'Token missing' }, { status: 400 });
+//     }
 
-    const response = NextResponse.redirect(new URL('/recipes', request.url));
+//     const response = NextResponse.redirect(new URL('/recipes', request.url));
 
-    console.log('aaaaaaa', token);
-    // response.cookies.set({
-    //   maxAge: 2592000000,
-    //   name: 'access_token',
-    //   value: token,
-    //   path: '/',
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: 'none',
-    // });
+//     console.log('aaaaaaa', token);
+//     // response.cookies.set({
+//     //   maxAge: 2592000000,
+//     //   name: 'access_token',
+//     //   value: token,
+//     //   path: '/',
+//     //   httpOnly: true,
+//     //   secure: true,
+//     //   sameSite: 'none',
+//     // });
 
-    return response;
-  } catch (error) {
-    console.error('Auth callback error:', error);
-    return NextResponse.json(
-      { error: 'Authentication failed' },
-      { status: 500 },
-    );
-  }
-}
+//     return response;
+//   } catch (error) {
+//     console.error('Auth callback error:', error);
+//     return NextResponse.json(
+//       { error: 'Authentication failed' },
+//       { status: 500 },
+//     );
+//   }
+// }
