@@ -6,14 +6,12 @@ import type {
   UiTheme,
 } from '@repo/codegen/model'
 import { usersControllerUserAccountV1 } from '@repo/codegen/users'
-import { jwtGoogleSchema } from '@repo/zod-schemas'
 import {
   type UserState,
   type UserStore,
   createUserStore,
   defaultInitState,
 } from '@src/stores/user-store'
-import { jwtDecode } from 'jwt-decode'
 import {
   type ReactNode,
   createContext,
@@ -63,7 +61,7 @@ export const UserStoreProvider = ({
         setIsInitialized(true)
         if (accessToken) {
           try {
-            const decodedToken = jwtGoogleSchema.parse(jwtDecode(accessToken))
+            // const decodedToken = jwtGoogleSchema.parse(jwtDecode(accessToken))
             const user = await usersControllerUserAccountV1()
             storeRef.current.setState(user)
           } catch (error) {

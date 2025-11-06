@@ -20,7 +20,9 @@ export const AuthenticationProvider = ({
   children,
   token,
 }: AuthenticationProviderProps) => {
-  const [accessToken, _setAccessToken] = useState<string | undefined>(token)
+  const [accessToken, _setAccessToken] = useState<string | undefined>(
+    token ?? '1',
+  )
 
   const setAccessToken = (value: string) => {
     _setAccessToken(value)
