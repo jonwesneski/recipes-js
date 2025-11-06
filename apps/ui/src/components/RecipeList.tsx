@@ -32,6 +32,7 @@ export const RecipeList = (props: IRecipesListProps) => {
     },
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.pagination.nextCursor,
+    enabled: false,
   })
 
   useEffect(() => {
@@ -47,10 +48,7 @@ export const RecipeList = (props: IRecipesListProps) => {
   }, [data])
 
   return (
-    <div
-      ref={ref}
-      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3"
-    >
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
       {recipes.map((recipe, index) => (
         <RecipeTile
           innerRef={recipes.length - index < 3 && hasNextPage ? ref : undefined}

@@ -8,6 +8,8 @@ export const recipesDtoToQueryParams = (params: GetRecipesDto) => {
       userId: params.filters?.userId,
     },
     cursorId: params.pagination?.cursorId,
+    take: params.pagination?.take,
+    skip: params.pagination?.skip,
   };
 
   if (params.filters?.cuisines) {

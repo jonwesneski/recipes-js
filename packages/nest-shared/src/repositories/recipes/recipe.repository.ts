@@ -36,7 +36,8 @@ export class RecipeRepository {
     const recipes = await this.prisma.recipe.findMany({
       where: params.where,
       cursor: params.cursorId ? { id: params.cursorId } : undefined,
-      skip: params.cursorId ? 1 : undefined,
+      skip: params.cursorId ? 1 : params.skip,
+      take: params.take,
       ...RecipeMinimalPrismaInclude,
     });
     return {
@@ -62,7 +63,8 @@ export class RecipeRepository {
         isPublic: true,
       },
       cursor: params.cursorId ? { id: params.cursorId } : undefined,
-      skip: params.cursorId ? 1 : undefined,
+      skip: params.cursorId ? 1 : params.skip,
+      take: params.take,
       ...RecipeMinimalPrismaInclude,
       include: {
         ...RecipeMinimalPrismaInclude.include,
