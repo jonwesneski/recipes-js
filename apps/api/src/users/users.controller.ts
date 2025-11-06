@@ -33,6 +33,28 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
   constructor(private readonly usersService: UsersService) {}
 
+  @Get('account')
+  @ApiOkResponse({
+    description: "user's account info",
+    type: UserAccountResponse,
+  })
+  //@ApiParam({ name: 'id', type: String, description: 'id of user' })
+  @UseGuards(JwtGuard)
+  async userAccount(
+    // @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<UserAccountResponse> {
+    try {
+      this.logger.log('answer');
+      this.logger.log(JSON.stringify(req.cookies));
+      const token = parseHelper(req);
+      return await this.usersService.getUserAccount(token.sub);
+    } catch (error) {
+      throwIfNotFound(error);
+      throw error;
+    }
+  }
+
   @Get(':id')
   @ApiOkResponse({
     description: "user's public info",
@@ -51,27 +73,6 @@ export class UsersController {
         // ignore
       }
       return await this.usersService.getUser(id, requestedUser);
-    } catch (error) {
-      throwIfNotFound(error);
-      throw error;
-    }
-  }
-
-  @Get(':id/account')
-  @ApiOkResponse({
-    description: "user's account info",
-    type: UserAccountResponse,
-  })
-  @ApiParam({ name: 'id', type: String, description: 'id of user' })
-  //@UseGuards(JwtGuard)
-  async userAccount(
-    @Param('id') id: string,
-    @Req() req: Request,
-  ): Promise<UserAccountResponse> {
-    try {
-      this.logger.log('answer');
-      this.logger.log(JSON.stringify(req.cookies));
-      return await this.usersService.getUserAccount(id);
     } catch (error) {
       throwIfNotFound(error);
       throw error;

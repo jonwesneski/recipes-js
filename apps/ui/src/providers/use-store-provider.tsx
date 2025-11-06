@@ -64,7 +64,7 @@ export const UserStoreProvider = ({
         if (accessToken) {
           try {
             const decodedToken = jwtGoogleSchema.parse(jwtDecode(accessToken))
-            const user = await usersControllerUserAccountV1(decodedToken.sub)
+            const user = await usersControllerUserAccountV1()
             storeRef.current.setState(user)
           } catch (error) {
             console.error('Error decoding JWT:', error)
