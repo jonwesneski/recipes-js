@@ -584,32 +584,6 @@
 									"response": []
 								},
 								{
-									"name": "User Account",
-									"request": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{host}}/v1/users/:id/account",
-											"host": [
-												"{{host}}"
-											],
-											"path": [
-												"v1",
-												"users",
-												":id",
-												"account"
-											],
-											"variable": [
-												{
-													"key": "id",
-													"value": ""
-												}
-											]
-										}
-									},
-									"response": []
-								},
-								{
 									"name": "Users Followers",
 									"request": {
 										"method": "GET",
@@ -710,6 +684,25 @@
 									"path": [
 										"v1",
 										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User Account",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/v1/users/account",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"account"
 									]
 								}
 							},

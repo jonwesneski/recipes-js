@@ -1,6 +1,7 @@
 'use client'
 
 import { Label, mergeCss } from '@repo/design-system'
+import useMediaQuery from '@src/hooks/useMediaQuery'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import { type AllMeasurements } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
@@ -27,7 +28,7 @@ export interface IngredientRowHandle {
   ) => void
 }
 
-interface IngriedientRowProps {
+interface IIngriedientRowProps {
   keyId: string
   label?: string
   htmlFor?: string
@@ -44,35 +45,19 @@ interface IngriedientRowProps {
 }
 export const IngredientRow = forwardRef<
   IngredientRowHandle,
-  IngriedientRowProps
+  IIngriedientRowProps
 >((props, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const [isSmallScreen, setIsSmallScreen] = useState(false)
   const [isPopupVisible, setIsPopupVisible] = useState(false)
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
   const [isFocused, setIsFocused] = useState(false)
+  const { width, breakpointPxs } = useMediaQuery()
 
   useEffect(() => {
     if (props.focusOnMount && textareaRef.current) {
       textareaRef.current.selectionStart = textareaRef.current.value.length
       textareaRef.current.selectionEnd = textareaRef.current.value.length
       textareaRef.current.focus()
-    }
-  }, [])
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 640px)')
-
-    const handleMediaQueryChange = (event: MediaQueryListEvent) => {
-      setIsSmallScreen(event.matches)
-    }
-
-    setIsSmallScreen(mediaQuery.matches)
-
-    mediaQuery.addEventListener('change', handleMediaQueryChange)
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleMediaQueryChange)
     }
   }, [])
 
@@ -176,7 +161,7 @@ export const IngredientRow = forwardRef<
       const position = getCaretPosition(textareaRef.current)
       if (position.column === 1) {
         let yOffset = -150
-        if (!isSmallScreen) {
+        if (!(width < breakpointPxs.md)) {
           const y = position.row + 1
           const yMultipler = y * 10
           yOffset = 40 + yMultipler
@@ -226,7 +211,7 @@ export const IngredientRow = forwardRef<
         rows={1}
         ref={textareaRef}
         id={props.htmlFor}
-        className="block focus:outline-none bg-transparent resize-none"
+        className="block focus:outline-none bg-transparent resize-none w-full"
         name="ingredient-row"
         placeholder={isFocused && !props.value ? props.placeholder : undefined}
         value={props.value}
@@ -237,18 +222,24 @@ export const IngredientRow = forwardRef<
         onKeyDown={handleKeyDown}
       />
       {props.value && props.error && props.error.length > 0 ? (
-        <div className="text-red-900 text-sm mt-1 bg-transparent">
+        <div className="text-text-error text-sm mt-1 bg-transparent">
           {props.error}
         </div>
       ) : null}
-      {isPopupVisible ? (
-        <IngredientsMeasurementPopUp
-          top={popupPosition.y}
-          left={popupPosition.x}
-          onClick={handleMeasurementInPopupClick}
-          onBlur={handleHideMeasurementPopUp}
-        />
-      ) : null}
+
+      <IngredientsMeasurementPopUp
+        top={popupPosition.y}
+        left={popupPosition.x}
+        onClick={handleMeasurementInPopupClick}
+        onBlur={handleHideMeasurementPopUp}
+        className={mergeCss(`transition-transform duration-300 ease-in`, {
+          'scale-y-100': isPopupVisible,
+          'scale-y-0': !isPopupVisible,
+        })}
+        style={{
+          transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',
+        }}
+      />
       {props.label ? (
         <Label
           htmlFor={props.htmlFor}

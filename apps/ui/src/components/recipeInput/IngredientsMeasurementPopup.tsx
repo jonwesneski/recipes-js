@@ -1,16 +1,19 @@
 'use client'
 
+import { mergeCss, type ClassValue } from '@repo/design-system'
 import {
-  type AllMeasurements,
   measurementUnitsAbbreviated,
+  type AllMeasurements,
 } from '@src/utils/measurements'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type CSSProperties } from 'react'
 
 interface IIngredientsMeasurementPopUpProps {
   top: number
   left: number
   onClick: (_value: AllMeasurements) => void
   onBlur: () => void
+  className?: ClassValue
+  style?: CSSProperties
 }
 export const IngredientsMeasurementPopUp = (
   props: IIngredientsMeasurementPopUpProps,
@@ -34,13 +37,14 @@ export const IngredientsMeasurementPopUp = (
     <div
       ref={ref}
       style={{
+        ...props.style,
         position: 'absolute',
         top: props.top,
         left: props.left,
         padding: '10px',
         zIndex: 1000,
       }}
-      className="border"
+      className={mergeCss('border', props.className)}
     >
       <div className="grid grid-cols-4 gap-3">
         {Object.keys(measurementUnitsAbbreviated).map((m) => {

@@ -7,8 +7,9 @@ import type {
   NumberFormat,
   UiTheme,
 } from '@repo/codegen/model'
-import { mergeCss, RadioGroup } from '@repo/design-system'
+import { type ClassValue, mergeCss, RadioGroup } from '@repo/design-system'
 import { ProfilePic } from '@src/components/ProfilePic'
+import useMediaQuery from '@src/hooks/useMediaQuery'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
 import Link from 'next/link'
@@ -41,7 +42,10 @@ const routeKeyLinksMap: Record<RouteKeys | 'NONE', JSX.Element[] | null> = {
   NONE: null,
 }
 
-export const Navbar = () => {
+interface INavbarProps {
+  className?: ClassValue
+}
+export const Navbar = (props: INavbarProps) => {
   const {
     imageUrl,
     uiTheme,
@@ -55,6 +59,7 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+  const { width, breakpointPxs } = useMediaQuery()
 
   const getRouteKey = () => {
     for (const [regex, value] of regexRouteKeyMap) {
@@ -97,7 +102,12 @@ export const Navbar = () => {
   }, [isOpen])
 
   return (
-    <div className="flex justify-between relative border-2">
+    <div
+      className={mergeCss(
+        'flex justify-between relative border-2',
+        props.className,
+      )}
+    >
       <div className="flex-1" />
       <div className="flex-2 mx-auto flex justify-center gap-3">
         {renderNavItems()}
@@ -129,7 +139,9 @@ export const Navbar = () => {
               '-translate-y-[13.5rem]': id,
             },
           )}
-          style={{ transformOrigin: 'bottom' }}
+          style={{
+            transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',
+          }}
         >
           <NavItem>
             <h6 className="text-center">Theme</h6>
