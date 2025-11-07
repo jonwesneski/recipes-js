@@ -86,12 +86,12 @@ describe('UsersController (e2e)', () => {
     });
   });
 
-  describe(`GET ${basePath}/:id/account`, () => {
-    const accountPath = () => `${basePath}/${user1.id}/account`;
+  describe(`GET ${basePath}/account`, () => {
+    const accountPath = `${basePath}/account`;
 
     it('valid', async () => {
       const response = await request(app.getHttpServer())
-        .get(accountPath())
+        .get(accountPath)
         .set('Authorization', `Bearer ${token1}`);
 
       expect(response.status).toBe(200);
@@ -101,7 +101,7 @@ describe('UsersController (e2e)', () => {
     it('unauthorized', async () => {
       mockJwtGuard.canActivate.mockImplementationOnce(() => false);
 
-      const response = await request(app.getHttpServer()).get(accountPath());
+      const response = await request(app.getHttpServer()).get(accountPath);
 
       expect(response.status).toBe(403);
     });
