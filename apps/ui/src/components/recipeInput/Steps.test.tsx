@@ -32,7 +32,7 @@ const instructionsString = 'my second step\n\nmy third step\n\nmy fourth step'
 describe('Steps', () => {
   describe('On New', () => {
     it('Initial Load', async () => {
-      const { findAllByTestId } = renderRecipeComponent(<Steps />)
+      const { findAllByTestId } = await renderRecipeComponent(<Steps />)
       const ingredients = await findAllByTestId(INGREDIENT_ID)
       const instructions = await findAllByTestId(INSTRUCTIONS_ID)
       expect(ingredients.length).toBe(1)
@@ -45,7 +45,7 @@ describe('Steps', () => {
         '\r\n\r\n',
       )
       const dataList = ingredientsStringFromWindows.split('\r\n\r\n')
-      const { findAllByTestId } = renderRecipeComponent(<Steps />)
+      const { findAllByTestId } = await renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENT_ID)
 
       act(() => {
@@ -68,7 +68,7 @@ describe('Steps', () => {
 
     it('Pasting ingredients: Linux', async () => {
       const dataList = ingredientsString.split('\n\n')
-      const { findAllByTestId } = renderRecipeComponent(<Steps />)
+      const { findAllByTestId } = await renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENT_ID)
 
       act(() => {
@@ -96,7 +96,7 @@ describe('Steps', () => {
         '\r\n\r\n',
       )
       const dataList = instructionStringFromWindows.split('\r\n\r\n')
-      const { findAllByTestId } = renderRecipeComponent(<Steps />)
+      const { findAllByTestId } = await renderRecipeComponent(<Steps />)
       let instructions = await findAllByTestId(INSTRUCTIONS_ID)
 
       act(() => {
@@ -119,7 +119,7 @@ describe('Steps', () => {
 
     it('Pasting instructions: Linux', async () => {
       const dataList = instructionsString.split('\n\n')
-      const { findAllByTestId } = renderRecipeComponent(<Steps />)
+      const { findAllByTestId } = await renderRecipeComponent(<Steps />)
       let instructions = await findAllByTestId(INSTRUCTIONS_ID)
 
       act(() => {
@@ -143,7 +143,7 @@ describe('Steps', () => {
     it('Pasting uneven steps', async () => {
       const ingredientsList = ingredientsString.split('\n\n')
       const instructionsList = instructionsString.split('\n\n')
-      const { findAllByTestId } = renderRecipeComponent(<Steps />)
+      const { findAllByTestId } = await renderRecipeComponent(<Steps />)
       let ingredients = await findAllByTestId(INGREDIENT_ID)
 
       act(() => {
