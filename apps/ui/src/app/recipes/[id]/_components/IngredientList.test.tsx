@@ -22,7 +22,7 @@ describe('IngredientList', () => {
     },
   ] as IngredientResponse[]
   it('Lists created', async () => {
-    const { findByText } = renderRecipeComponent(
+    const { findByText } = await renderRecipeComponent(
       <IngredientList scaleFactor={1} ingredients={sampleIngredients} />,
     )
     await findByText(sampleIngredients[0].name)

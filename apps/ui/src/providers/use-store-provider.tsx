@@ -51,11 +51,11 @@ export const UserStoreProvider = ({
     ...initialState,
   })
 
-  const [isInitialized, setIsInitialized] = useState<boolean>(false)
+  const [isInitialized, setIsInitialized] = useState<boolean>(!initialState?.id)
 
   useEffect(() => {
     const fetch = async () => {
-      if (typeof window !== 'undefined' && storeRef.current) {
+      if (!isInitialized && typeof window !== 'undefined' && storeRef.current) {
         try {
           const user = await usersControllerUserAccountV1()
           storeRef.current.setState(user)
@@ -68,7 +68,7 @@ export const UserStoreProvider = ({
     }
 
     fetch().catch((e: unknown) => console.error(e))
-  }, [setIsInitialized])
+  }, [isInitialized, setIsInitialized])
 
   return isInitialized ? (
     <UserStoreContext.Provider value={storeRef.current}>

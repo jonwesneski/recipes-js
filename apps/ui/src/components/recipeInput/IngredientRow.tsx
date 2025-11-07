@@ -86,7 +86,7 @@ export const IngredientRow = forwardRef<
   }))
 
   const getCaretPosition = (element: HTMLTextAreaElement) => {
-    const position: { row: number; column: number } = {
+    const position: PositionType = {
       row: 0,
       column: 0,
     }
@@ -165,35 +165,33 @@ export const IngredientRow = forwardRef<
   }
 
   const _handleShowPopUp = (ingredientValidator: IngredientValidator) => {
+    const fieldErrors = ingredientValidator.error?.fieldErrors
+    if (!fieldErrors) {
+      _handleMeasurementPopUp()
+    }
+  }
+
+  const _handleMeasurementPopUp = () => {
     if (textareaRef.current) {
-      const rect = textareaRef.current.getBoundingClientRect()
       const position = getCaretPosition(textareaRef.current)
-      // Amount is okay and has unit error and caret is in measurement-unit column
-      const fieldErrors = ingredientValidator.error?.fieldErrors
-      if (
-        fieldErrors &&
-        fieldErrors.amount === undefined &&
-        fieldErrors.unit?.[0] &&
-        position.column === 1
-      ) {
-        _handleMeasurementPopUp(position, rect)
+      if (position.column === 1) {
+        let yOffset = -150
+        if (!isSmallScreen) {
+          const y = position.row + 1
+          const yMultipler = y * 10
+          yOffset = 40 + yMultipler
+        }
+        const rect = textareaRef.current.getBoundingClientRect()
+        setPopupPosition({
+          x: rect.x,
+          y: yOffset,
+        })
+        setIsPopupVisible(true)
       }
     }
   }
 
-  const _handleMeasurementPopUp = (position: PositionType, rect: DOMRect) => {
-    const y = position.row + 1
-    let yMultipler = y * 10
-    yMultipler = isSmallScreen ? -yMultipler : yMultipler
-    const yOffset = isSmallScreen ? -50 : 150
-    setPopupPosition({
-      x: rect.x,
-      y: rect.y + yMultipler + yOffset,
-    })
-    setIsPopupVisible(true)
-  }
-
-  function handleMeasurementClick(value: AllMeasurements): void {
+  const handleMeasurementInPopupClick = (value: AllMeasurements): void => {
     const text = textareaRef.current?.textContent
     if (!text) {
       return
@@ -212,8 +210,13 @@ export const IngredientRow = forwardRef<
     setIsPopupVisible(false)
   }
 
-  function handleHideMeasurement(): void {
+  const handleHideMeasurementPopUp = (): void => {
     setIsPopupVisible(false)
+  }
+
+  const handleFocused = (): void => {
+    setIsFocused(true)
+    _handleMeasurementPopUp()
   }
 
   return (
@@ -227,7 +230,7 @@ export const IngredientRow = forwardRef<
         name="ingredient-row"
         placeholder={isFocused && !props.value ? props.placeholder : undefined}
         value={props.value}
-        onFocus={() => setIsFocused(true)}
+        onSelect={handleFocused}
         onBlur={() => setIsFocused(false)}
         onInput={handleInput}
         onPaste={handleOnPaste}
@@ -242,8 +245,8 @@ export const IngredientRow = forwardRef<
         <IngredientsMeasurementPopUp
           top={popupPosition.y}
           left={popupPosition.x}
-          onClick={handleMeasurementClick}
-          onBlur={handleHideMeasurement}
+          onClick={handleMeasurementInPopupClick}
+          onBlur={handleHideMeasurementPopUp}
         />
       ) : null}
       {props.label ? (
