@@ -6,14 +6,14 @@ import {
 } from '@src/utils/measurements'
 import { useEffect, useRef } from 'react'
 
-interface IngredientsMeasurementPopUpProps {
+interface IIngredientsMeasurementPopUpProps {
   top: number
   left: number
   onClick: (_value: AllMeasurements) => void
   onBlur: () => void
 }
 export const IngredientsMeasurementPopUp = (
-  props: IngredientsMeasurementPopUpProps,
+  props: IIngredientsMeasurementPopUpProps,
 ) => {
   const ref = useRef<HTMLDivElement>(null)
 
