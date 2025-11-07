@@ -38,15 +38,13 @@ export class UsersController {
     description: "user's account info",
     type: UserAccountResponse,
   })
-  //@ApiParam({ name: 'id', type: String, description: 'id of user' })
   @UseGuards(JwtGuard)
   async userAccount(
-    // @Param('id') id: string,
+    // TODO: can't get this to work in jest
+    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Req() req: Request,
   ): Promise<UserAccountResponse> {
     try {
-      this.logger.log('answer');
-      this.logger.log(JSON.stringify(req.cookies));
       const token = parseHelper(req);
       return await this.usersService.getUserAccount(token.sub);
     } catch (error) {
@@ -62,6 +60,8 @@ export class UsersController {
   })
   @ApiParam({ name: 'id', type: String, description: 'id of user' })
   async user(
+    // TODO: can't get this to work in jest
+    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Param('id') id: string,
     @Req() req: Request,
   ): Promise<UserPublicResponse> {

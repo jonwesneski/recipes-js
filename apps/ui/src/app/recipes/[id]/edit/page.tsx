@@ -4,18 +4,11 @@ import type { PatchRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
 import { TextButton } from '@repo/design-system'
 import { RecipeInput } from '@src/components/recipeInput'
-import { useAuthentication } from '@src/providers/authentication-provider'
 import { CameraProvider } from '@src/providers/CameraProvider'
 
 const Page = () => {
-  const { accessToken } = useAuthentication()
   const { mutate } = useRecipesControllerUpdateRecipeV1({
     mutation: { retry: false },
-    request: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
   })
 
   const handleSubmit = () => {

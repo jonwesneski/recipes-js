@@ -1,4 +1,12 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
@@ -12,6 +20,18 @@ export class AuthController {
     private authService: AuthService,
     private configService: ConfigService,
   ) {}
+
+  @Post('logout')
+  @HttpCode(204)
+  logout(@Res() res: Response) {
+    const isDev = this.configService.get('ENV') === 'dev';
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      sameSite: isDev ? 'lax' : 'none',
+      secure: !isDev,
+      path: '/',
+    });
+  }
 
   @Get('google')
   @UseGuards(GoogleOauthGuard)
@@ -31,8 +51,6 @@ export class AuthController {
         req.user as GoogleAuthDto,
       );
 
-      // This approach is not working in production.
-      // browser blocks the cookie from being set from a 3rd party domain.
       const isDev = this.configService.get('ENV') === 'dev';
       res.cookie('access_token', googleUser.tokens.accessToken, {
         maxAge: 2592000000,

@@ -3,23 +3,16 @@
 import { useRecipesControllerCreateRecipeV1 } from '@repo/codegen/recipes'
 import { TextButton } from '@repo/design-system'
 import { RecipeInput } from '@src/components/recipeInput'
-import { useAuthentication } from '@src/providers/authentication-provider'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useRouter } from 'next/navigation'
 import { type FormEvent } from 'react'
 
 const Page = () => {
-  const { accessToken } = useAuthentication()
   const { makeCreateDto, setErrors: setBadRequest } = useRecipeStore(
     (state) => state,
   )
   const { mutate } = useRecipesControllerCreateRecipeV1({
     mutation: { retry: false },
-    request: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
   })
   const router = useRouter()
 

@@ -8,6 +8,10 @@
       "import": "./dist/api/ai/ai.js",
       "types": "./dist/types/api/ai/ai.d.ts"
     },
+    "./auth": {
+      "import": "./dist/api/auth/auth.js",
+      "types": "./dist/types/api/auth/auth.d.ts"
+    },
     "./healthCheck": {
       "import": "./dist/api/health-check/health-check.js",
       "types": "./dist/types/api/health-check/health-check.d.ts"
@@ -19,6 +23,10 @@
     "./mswAi": {
       "import": "./dist/api/ai/ai.msw.js",
       "types": "./dist/types/api/ai/ai.msw.d.ts"
+    },
+    "./mswAuth": {
+      "import": "./dist/api/auth/auth.msw.js",
+      "types": "./dist/types/api/auth/auth.msw.d.ts"
     },
     "./mswHealthCheck": {
       "import": "./dist/api/health-check/health-check.msw.js",

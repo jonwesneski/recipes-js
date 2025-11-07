@@ -1,8 +1,8 @@
 'use client'
 
 import GoogleLogo from '@public/Google__G__logo.svg'
+import { useAuthControllerLogout } from '@repo/codegen/auth'
 import { IconTextButton, TextButton } from '@repo/design-system'
-import { useAuthentication } from '@src/providers/authentication-provider'
 import { type Svg } from '@src/types/svg'
 import { generateJwt } from '@src/utils/genericJwt'
 import { redirect } from 'next/navigation'
@@ -10,18 +10,21 @@ import { useEffect, type MouseEvent } from 'react'
 import { deleteCookie } from './deleteAuthCookie.action'
 
 const Page = () => {
-  const { clearAccessToken } = useAuthentication()
+  const { mutateAsync } = useAuthControllerLogout({
+    mutation: {
+      retry: false,
+    },
+  })
 
   useEffect(() => {
     const run = async () => {
-      await deleteCookie()
+      await mutateAsync()
     }
     run().catch((e: unknown) => console.error(e))
   }, [])
 
   const handleGoogleOAuth = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    clearAccessToken()
     if (!(process.env.NEXT_PUBLIC_ENABLE_MSW === 'true')) {
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
     } else {
@@ -43,7 +46,6 @@ const Page = () => {
 
   const handleGuest = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    clearAccessToken()
     await deleteCookie()
     // I want to trigger a refresh/reload
     window.location.href = '/recipes'

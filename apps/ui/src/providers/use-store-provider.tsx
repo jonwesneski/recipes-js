@@ -21,7 +21,6 @@ import {
   useState,
 } from 'react'
 import { useStore } from 'zustand'
-import { useAuthentication } from './authentication-provider'
 
 const getGuestState = (): Partial<UserState> => {
   return {
@@ -52,29 +51,24 @@ export const UserStoreProvider = ({
     ...initialState,
   })
 
-  const { accessToken } = useAuthentication()
   const [isInitialized, setIsInitialized] = useState<boolean>(false)
 
   useEffect(() => {
     const fetch = async () => {
       if (typeof window !== 'undefined' && storeRef.current) {
-        setIsInitialized(true)
-        if (accessToken) {
-          try {
-            // const decodedToken = jwtGoogleSchema.parse(jwtDecode(accessToken))
-            const user = await usersControllerUserAccountV1()
-            storeRef.current.setState(user)
-          } catch (error) {
-            console.error('Error decoding JWT:', error)
-          }
-        } else {
+        try {
+          const user = await usersControllerUserAccountV1()
+          storeRef.current.setState(user)
+        } catch (error: unknown) {
+          console.log(error, 'most likely 401; todo handle later')
           storeRef.current.setState(getGuestState())
         }
+        setIsInitialized(true)
       }
     }
 
     fetch().catch((e: unknown) => console.error(e))
-  }, [accessToken, setIsInitialized])
+  }, [setIsInitialized])
 
   return isInitialized ? (
     <UserStoreContext.Provider value={storeRef.current}>
