@@ -13,6 +13,7 @@
   --color-input-focus-background: var(--input-focus-background);
   --color-border: var(--border);
   --color-text: var(--text);
+  --color-text-error: var(--text-error);
   --color-muted: var(--muted);
 }
 
@@ -24,6 +25,7 @@
     --input-focus-background: #ffe9c9;
     --border: #000;
     --text: #000;
+    --text-error: theme('colors.red.900');
     --muted: #4444447b;
   }
 
@@ -34,6 +36,7 @@
     --input-focus-background: #242424;
     --border: #fff1dd;
     --text: #fff1dd;
+    --text-error: theme('colors.red.300');
     --muted: #bbbbbb7b;
   }
 }

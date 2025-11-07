@@ -33,7 +33,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           },
         )}
       >
-        <Navbar />
+        <Navbar className="z-2" />
         <SearchBar />
       </nav>
 
