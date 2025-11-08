@@ -37,7 +37,7 @@ export const SelectLabel = (props: SelectLabelProps) => {
           'px-2 py-2 align-text-bottom border-2 focus:border-[3px] focus:outline-none focus:transform focus:origin-left focus:scale-x-105 focus:scale-y-110',
           props.className,
         )}
-        value={props.value ? props.value : !props.isRequired ? '' : props.value}
+        value={props.value ?? (!props.isRequired ? '' : props.value)}
         id={props.id}
         onChange={handleOnChange}
         onBlur={() => setIsFocused(false)}

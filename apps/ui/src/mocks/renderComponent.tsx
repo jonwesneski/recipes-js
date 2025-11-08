@@ -8,7 +8,7 @@ import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared
 
 export const renderComponent = async (
   ui: React.ReactNode,
-  initialState?: { user: Partial<UserStore> },
+  initialState: { user: Partial<UserStore> } = { user: { id: '123' } },
 ) => {
   const routerMock = {
     back: jest.fn(),
@@ -20,7 +20,7 @@ export const renderComponent = async (
   }
   const result = render(
     <AppRouterContext.Provider value={routerMock}>
-      <AppProviders initialState={initialState?.user}>{ui}</AppProviders>
+      <AppProviders initialState={initialState.user}>{ui}</AppProviders>
     </AppRouterContext.Provider>,
   )
   await waitFor(

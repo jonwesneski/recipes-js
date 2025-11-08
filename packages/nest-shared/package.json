@@ -10,7 +10,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "nest build"
+    "build": "nest build",
+    "ci:lint": "eslint \"{src,test}/**/*.ts\"",
+    "lint": "pnpm ci:lint --fix"
   },
   "dependencies": {
     "@aws-sdk/client-rekognition": "^3.864.0",

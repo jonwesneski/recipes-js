@@ -96,7 +96,7 @@ export class ImageReviewProcessorService {
   }
 
   makeBucketKeyName(userId: string, id: string, stepIndex?: number) {
-    var s3BucketKeyName = `${userId}/${id}`;
+    let s3BucketKeyName = `${userId}/${id}`;
     if (stepIndex !== undefined) {
       s3BucketKeyName += `/step-${stepIndex}.jpg`;
     } else {

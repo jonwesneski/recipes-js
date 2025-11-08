@@ -10,8 +10,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "eslint src/",
-    "lint:fix": "pnpm lint --fix",
+    "ci:lint": "eslint src/",
+    "lint": "pnpm ci:lint --fix",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {

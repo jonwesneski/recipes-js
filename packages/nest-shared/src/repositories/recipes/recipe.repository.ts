@@ -212,6 +212,7 @@ export class RecipeRepository {
     id: string,
     data: RecipeUpdateType,
   ): Promise<RecipeType> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- todo will handle later
     const { tags, ...remainingData } = data;
 
     const recipe = await this.prisma.recipe.update({
