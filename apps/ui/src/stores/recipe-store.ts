@@ -272,8 +272,11 @@ export const createRecipeStore = (
                 i++
               ) {
                 if (state.steps[s].ingredients.items[i].keyId === keyId) {
-                  if (state.steps[s].ingredients.items.length <= 1) {
-                    return { state };
+                  if (state.steps[s].ingredients.items.length === 1) {
+                    state.steps[s].ingredients = createIngredientsItem([
+                      new IngredientItemType({ shouldBeFocused: true }),
+                    ]);
+                    return { steps: [...state.steps] };
                   }
                   if (state.steps[s].ingredients.items[i - 1]) {
                     state.steps[s].ingredients.items[i - 1].shouldBeFocused =
