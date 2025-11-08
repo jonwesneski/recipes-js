@@ -3,11 +3,11 @@ import InitProvider from '@src/providers/InitProvider'
 import { NotificationProvider } from '@src/providers/NotificationProvider'
 import { RecipesListStoreProvider } from '@src/providers/recipes-list-store-provider'
 import { UserStoreProvider } from '@src/providers/use-store-provider'
-import { type UserStore } from '@src/stores/user-store'
+import { type UserState } from '@src/stores/user-store'
 
 interface AppProvidersProps {
   children: React.ReactNode
-  initialState?: Partial<UserStore>
+  initialState?: Partial<UserState>
 }
 const AppProviders = (props: AppProvidersProps) => {
   return (

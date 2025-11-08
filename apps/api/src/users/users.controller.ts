@@ -62,8 +62,8 @@ export class UsersController {
   async user(
     // TODO: can't get this to work in jest
     //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
-    @Param('id') id: string,
     @Req() req: Request,
+    @Param('id') id: string,
   ): Promise<UserPublicResponse> {
     try {
       let requestedUser: string | undefined;
@@ -117,9 +117,11 @@ export class UsersController {
   })
   @UseGuards(JwtGuard)
   async followUser(
+    // TODO: can't get this to work in jest
+    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
+    @Req() req: Request,
     @Param('id') id: string,
     @Body() body: PutFollowUserDto,
-    @Req() req: Request,
   ) {
     const token = parseHelper(req);
     await this.usersService.followUser(id, token.sub, body.follow);

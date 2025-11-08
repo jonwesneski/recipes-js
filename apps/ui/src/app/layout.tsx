@@ -1,7 +1,10 @@
+import type { UserAccountResponse } from '@repo/codegen/model'
+import { usersControllerUserAccountV1 } from '@repo/codegen/users'
 import '@repo/design-system/styles.css'
 import Loading from '@src/components/LoadingComponent'
 import { MainLayout } from '@src/components/MainLayout'
 import { type Metadata, type Viewport } from 'next'
+import { cookies } from 'next/headers'
 import AppProviders from './_providers'
 import './globals.css'
 
@@ -17,7 +20,27 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+  let user: Partial<UserAccountResponse> = {}
+  // Cookies are not automatically added in SSR from what I understand,
+  // so doing it manually
+  const cookieStore = await cookies()
+  const cookieHeader =
+    typeof cookieStore.toString === 'function'
+      ? cookieStore.toString()
+      : cookieStore
+          .getAll()
+          .map((c) => `${c.name}=${c.value}`)
+          .join('; ')
+  try {
+    user = await usersControllerUserAccountV1({
+      headers: {
+        cookie: cookieHeader,
+      },
+    })
+  } catch {
+    // ignore
+  }
   return (
     <html lang="en">
       <body>
@@ -28,7 +51,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           }}
         >
           <div id="root" className="px-2">
-            <AppProviders>
+            <AppProviders initialState={{ ...user }}>
               <Loading>
                 <MainLayout>{children}</MainLayout>
               </Loading>
