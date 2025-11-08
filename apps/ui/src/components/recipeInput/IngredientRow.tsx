@@ -58,6 +58,7 @@ export const IngredientRow = forwardRef<
       textareaRef.current.selectionStart = textareaRef.current.value.length
       textareaRef.current.selectionEnd = textareaRef.current.value.length
       textareaRef.current.focus()
+      setIsFocused(true)
     }
   }, [])
 
@@ -206,21 +207,44 @@ export const IngredientRow = forwardRef<
 
   return (
     <>
-      <textarea
-        data-testid="ingredient-row"
-        rows={1}
-        ref={textareaRef}
-        id={props.htmlFor}
-        className="block focus:outline-none bg-transparent resize-none w-full"
-        name="ingredient-row"
-        placeholder={isFocused && !props.value ? props.placeholder : undefined}
-        value={props.value}
-        onSelect={handleFocused}
-        onBlur={() => setIsFocused(false)}
-        onInput={handleInput}
-        onPaste={handleOnPaste}
-        onKeyDown={handleKeyDown}
-      />
+      <div className="flex">
+        {isFocused || props.value ? (
+          <svg className="w-3 h-3 mr-2 mt-1 fill-current" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8" />
+          </svg>
+        ) : null}
+
+        {/**
+         * I'm using another textarea here because copy & paste keeps the linebreaks where as
+         * other elements don't. Max rows is set to 1 to make it seem like an <input />
+         */}
+        <textarea
+          data-testid="ingredient-row"
+          rows={1}
+          ref={textareaRef}
+          id={props.htmlFor}
+          className="block focus:outline-none bg-transparent resize-none w-full"
+          name="ingredient-row"
+          placeholder={
+            isFocused && !props.value ? props.placeholder : undefined
+          }
+          value={props.value}
+          onSelect={handleFocused}
+          onBlur={() => setIsFocused(false)}
+          onInput={handleInput}
+          onPaste={handleOnPaste}
+          onKeyDown={handleKeyDown}
+        />
+        {props.value ? (
+          <button
+            className="border border-dashed px-1.5 cursor-pointer"
+            type="button"
+            onClick={() => props.onRemove(props.keyId)}
+          >
+            x
+          </button>
+        ) : null}
+      </div>
       {props.value && props.error && props.error.length > 0 ? (
         <div className="text-text-error text-sm mt-1 bg-transparent">
           {props.error}
