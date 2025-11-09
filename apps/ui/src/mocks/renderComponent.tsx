@@ -8,7 +8,7 @@ import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared
 
 export const renderComponent = async (
   ui: React.ReactNode,
-  initialState?: { user: Partial<UserStore> },
+  initialState: Partial<UserStore> = { id: '123' },
 ) => {
   const routerMock = {
     back: jest.fn(),
@@ -20,7 +20,7 @@ export const renderComponent = async (
   }
   const result = render(
     <AppRouterContext.Provider value={routerMock}>
-      <AppProviders initialState={initialState?.user}>{ui}</AppProviders>
+      <AppProviders initialState={initialState}>{ui}</AppProviders>
     </AppRouterContext.Provider>,
   )
   await waitFor(
@@ -34,7 +34,10 @@ export const renderComponent = async (
 
 export const renderRecipeComponent = async (
   ui: React.ReactNode,
-  initialState?: { recipe: Partial<RecipeResponse>; user: Partial<UserStore> },
+  initialState?: Partial<{
+    recipe: Partial<RecipeResponse>
+    user: Partial<UserStore>
+  }>,
 ) => {
   const useCameraMock = { takePhoto: jest.fn().mockResolvedValue('123') }
   jest.spyOn(CameraContext, 'useCamera').mockImplementation(() => useCameraMock)
@@ -44,7 +47,7 @@ export const renderRecipeComponent = async (
       <RecipeStoreProvider initialState={initialState?.recipe}>
         {ui}
       </RecipeStoreProvider>,
-      { user: initialState?.user ?? {} },
+      initialState?.user,
     )),
     useCameraMock,
   }
