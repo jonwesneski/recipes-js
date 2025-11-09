@@ -24,6 +24,14 @@ import { UsersModule } from './users';
             singleLine: true,
           },
         },
+        redact: {
+          paths: [
+            'req.headers.authorization',
+            'req.headers.cookie',
+            'req.cookies.access_token',
+          ],
+          censor: '******',
+        },
       },
     }),
     AiModule,
