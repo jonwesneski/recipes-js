@@ -53,7 +53,7 @@ jobs:
         run: pnpm install
 
       # - name: Lint
-      #   run: pnpm lint
+      #   run: pnpm ci:lint
 
       - name: Build
         run: pnpm build

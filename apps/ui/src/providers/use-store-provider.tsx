@@ -64,6 +64,7 @@ export const UserStoreProvider = ({
     // }
     // todo: I may get rid of this logic,useEffect,useState altogether
     //fetch().catch((e: unknown) => console.error(e))
+    setIsInitialized(true)
   }, [isInitialized, setIsInitialized])
 
   return isInitialized ? (

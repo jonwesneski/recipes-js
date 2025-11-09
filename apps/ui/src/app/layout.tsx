@@ -25,6 +25,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   // Cookies are not automatically added in SSR from what I understand,
   // so doing it manually
   const cookieStore = await cookies()
+  const token = cookieStore.get('access_token')?.value
   const cookieHeader =
     typeof cookieStore.toString === 'function'
       ? cookieStore.toString()
@@ -35,7 +36,10 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   try {
     user = await usersControllerUserAccountV1({
       headers: {
-        cookie: cookieHeader,
+        // Sometimes cookie doesn't send; like if cross-site domains
+        // so sending auth header as well
+        Authorization: `Bearer ${token}`,
+        //cookie: cookieHeader,
       },
     })
   } catch {
