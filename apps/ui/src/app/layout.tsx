@@ -26,13 +26,13 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   // so doing it manually
   const cookieStore = await cookies()
   const token = cookieStore.get('access_token')?.value
-  const cookieHeader =
-    typeof cookieStore.toString === 'function'
-      ? cookieStore.toString()
-      : cookieStore
-          .getAll()
-          .map((c) => `${c.name}=${c.value}`)
-          .join('; ')
+  // const cookieHeader =
+  //   typeof cookieStore.toString === 'function'
+  //     ? cookieStore.toString()
+  //     : cookieStore
+  //         .getAll()
+  //         .map((c) => `${c.name}=${c.value}`)
+  //         .join('; ')
   try {
     user = await usersControllerUserAccountV1({
       headers: {
