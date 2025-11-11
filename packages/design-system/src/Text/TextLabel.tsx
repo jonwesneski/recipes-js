@@ -21,7 +21,7 @@ export const TextLabel = ({
   const localRef = useRef<HTMLInputElement>(null)
   const ref = props.ref ?? localRef
   const [isFocused, setIsFocused] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
+  const [isLabelHovered, setIsLabelHovered] = useState(false)
 
   return (
     <div className="relative bg-transparent flex flex-col">
@@ -41,7 +41,7 @@ export const TextLabel = ({
         onBlur={() => setIsFocused(false)}
         className={mergeCss(
           {
-            'transform origin-left scale-x-105 scale-y-105': isHovered,
+            'transform origin-left scale-x-105 scale-y-105': isLabelHovered,
             'border-red-900': error,
           },
           props.className,
@@ -60,8 +60,8 @@ export const TextLabel = ({
           setIsFocused(true)
           ref.current?.focus()
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={() => setIsLabelHovered(true)}
+        onMouseLeave={() => setIsLabelHovered(false)}
       />
       <Label htmlFor={name} text={error ?? ''} className="text-red-900 block" />
     </div>

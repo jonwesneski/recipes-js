@@ -32,8 +32,11 @@ export const Text = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={mergeCss(
-        'px-2 py-2 align-text-bottom border-2 focus:border-[3px] focus:outline-none focus:transform focus:origin-left focus:scale-x-105 focus:scale-y-110',
-        { 'transform origin-left scale-x-105 scale-y-110': isHovered },
+        'px-2 py-2 align-text-bottom border-2 focus:border-[3px] focus:outline-none focus:origin-left focus:scale-x-105 focus:scale-y-110 transition-transform duration-300 ease-in-out transform',
+        {
+          'transform origin-left scale-x-105 scale-y-110 transition-transform duration-300 ease-in-out':
+            isHovered,
+        },
         props.className,
       )}
       placeholder={placeHolder}

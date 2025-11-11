@@ -28,8 +28,8 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         className={mergeCss(
           'fixed w-screen left-0 right-0 z-50 flex flex-col-reverse md:flex-col',
           {
-            'bottom-0': width < breakpointPxs.md,
-            'top-0': width >= breakpointPxs.md,
+            'bottom-0 shadow-[0_-5px_15px_-5px]': width < breakpointPxs.md,
+            'top-0 shadow-[0_5px_15px_-5px]': width >= breakpointPxs.md,
           },
         )}
       >
@@ -37,7 +37,14 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <SearchBar />
       </nav>
 
-      <main className="pt-10 pb-40">{children}</main>
+      <main
+        className={mergeCss('pb-20 pt-20', {
+          'pb-40': width < breakpointPxs.md,
+          'pt-30': width >= breakpointPxs.md,
+        })}
+      >
+        {children}
+      </main>
     </>
   ) : (
     <>{children}</>

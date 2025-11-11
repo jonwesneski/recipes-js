@@ -1,6 +1,7 @@
 import { type RecipeResponse } from '@repo/codegen/model'
 import { recipesControllerRecipeV1 } from '@repo/codegen/recipes'
 import '@repo/design-system/styles.css'
+import { CameraProvider } from '@src/providers/CameraProvider'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
@@ -33,7 +34,9 @@ const Layout = async ({
   }
 
   return (
-    <RecipeStoreProvider initialState={data}>{children}</RecipeStoreProvider>
+    <RecipeStoreProvider initialState={data}>
+      <CameraProvider>{children}</CameraProvider>
+    </RecipeStoreProvider>
   )
 }
 export default Layout
