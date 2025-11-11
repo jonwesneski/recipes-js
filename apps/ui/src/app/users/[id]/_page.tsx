@@ -32,7 +32,7 @@ const UserPublic = ({ user, recipes }: IUserPublicProps) => {
   }
   return (
     <>
-      <div className="fixed md:top-10 left-1/2 -translate-x-1/2 z-10 w-full flex justify-center gap-7 mt-5 border-b-2 pb-5">
+      <div className="fixed top-0 left-1/2 md:pt-30 -translate-x-1/2 z-10 w-full flex justify-center gap-7 border-b-2 pb-5">
         <div>
           <ProfilePic
             className="inline-block mr-2"

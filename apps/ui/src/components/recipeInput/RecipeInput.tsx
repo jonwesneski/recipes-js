@@ -80,7 +80,7 @@ export const RecipeInput = () => {
   }
 
   return (
-    <div ref={divRef} className="flex flex-col gap-10 pt-10">
+    <div ref={divRef} className="flex flex-col gap-10">
       <section>
         <TextLabel
           className="w-5/6 md:max-w-3xl"

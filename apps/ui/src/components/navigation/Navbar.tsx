@@ -56,8 +56,9 @@ export const Navbar = (props: INavbarProps) => {
     setNumberFormat,
     id,
   } = useUserStore((state) => state)
-  const [isOpen, setIsOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const toggleMenuRef = useRef<HTMLButtonElement>(null)
   const pathname = usePathname()
   const { width, breakpointPxs } = useMediaQuery()
 
@@ -76,30 +77,37 @@ export const Navbar = (props: INavbarProps) => {
 
   const handleUiThemeChange = async (value: UiTheme) => {
     await setUiTheme(value)
-    setIsOpen(false)
+    setIsMenuOpen(false)
   }
 
   const handleMeasurementFormatChange = async (value: MeasurementFormat) => {
     await setMeasurementFormat(value)
-    setIsOpen(false)
+    setIsMenuOpen(false)
   }
 
   const handleNumberFormatChange = async (value: NumberFormat) => {
     await setNumberFormat(value)
-    setIsOpen(false)
+    setIsMenuOpen(false)
   }
 
   const handleClick = (e: MouseEvent) => {
-    if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-      setIsOpen(false)
+    const target = e.target as Node
+    const clickedOutsideMenu =
+      menuRef.current && !menuRef.current.contains(target)
+    const clickedOutsideButton =
+      toggleMenuRef.current && !toggleMenuRef.current.contains(target)
+
+    if (clickedOutsideMenu && clickedOutsideButton) {
+      setIsMenuOpen(false)
     }
   }
+
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClick)
+    if (isMenuOpen) {
+      document.addEventListener('pointerdown', handleClick)
     }
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [isOpen])
+    return () => document.removeEventListener('pointerdown', handleClick)
+  }, [isMenuOpen])
 
   return (
     <div
@@ -114,11 +122,10 @@ export const Navbar = (props: INavbarProps) => {
       </div>
       <div className="flex-1 ml-auto flex justify-end">
         <button
+          ref={toggleMenuRef}
           type="button"
           className="mr-3"
-          onClick={() => {
-            setIsOpen((v) => !v)
-          }}
+          onClick={() => setIsMenuOpen((prev) => !prev)}
         >
           <ProfilePic
             className="mx-4 grow-0 cursor-pointer"
@@ -130,10 +137,10 @@ export const Navbar = (props: INavbarProps) => {
         <div
           ref={menuRef}
           className={mergeCss(
-            `absolute flex flex-col-reverse -z-1 md:translate-y-5 md:flex-col border-2 transition-transform duration-300 ease-in`,
+            `absolute flex flex-col-reverse -z-1 md:translate-y-6 md:flex-col border-2 transition-transform duration-300 ease-in`,
             {
-              'scale-y-100': isOpen,
-              'scale-y-0': !isOpen,
+              'scale-y-100': isMenuOpen,
+              'scale-y-0': !isMenuOpen,
               // Update -translate-y-* anytime you add a new NavItem to the dropdown
               '-translate-y-[12rem]': !id,
               '-translate-y-[13.5rem]': id,
