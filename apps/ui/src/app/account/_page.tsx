@@ -9,6 +9,7 @@ import type {
 import { useUsersControllerFollowUserV1 } from '@repo/codegen/users'
 import { RadioGroup, TextButton, TextLabel, Toggle } from '@repo/design-system'
 import { ProfilePic } from '@src/components'
+import { Tab, Tabs } from '@src/components/tabs'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { useCallback, useState } from 'react'
 
@@ -47,7 +48,7 @@ const Account = (props: IAccountProps) => {
           onClick={() => void handleUpdateHandle()}
         />
       </div>
-      <div className="my-6 border-b-2">
+      <div className="my-6">
         <h6 className="text-center">Theme</h6>
         <RadioGroup
           selectedValue={settings.uiTheme}
@@ -85,38 +86,43 @@ const Account = (props: IAccountProps) => {
           ]}
         />
       </div>
-
-      <h2 className="font-bold text-center">Followers</h2>
-      {props.followers.data.map((follower, i) => (
-        <div key={follower.id} className="p-2 border-b">
-          <div className="flex justify-between">
-            <div className="flex">
-              <ProfilePic
-                className="mr-2"
-                handle={follower.handle}
-                imageUrl={follower.imageUrl}
-              />
-              <span>{follower.handle}</span>
-            </div>
-            <Toggle
-              initialIsOn
-              onClickAsync={async () => {
-                const expected = !toggleFollowers[i]
-                await mutateAsync({
-                  id: follower.id,
-                  data: { follow: expected },
-                })
-                setToggleFollowers((prev) => {
-                  const newToggles = [...prev]
-                  newToggles[i] = expected
-                  return newToggles
-                })
-                return expected
-              }}
-            />
-          </div>
-        </div>
-      ))}
+      <Tabs>
+        <Tab label="Followers">
+          <>
+            {props.followers.data.map((follower, i) => (
+              <div key={follower.id} className="p-2 border-b">
+                <div className="flex justify-between">
+                  <div className="flex">
+                    <ProfilePic
+                      className="mr-2"
+                      handle={follower.handle}
+                      imageUrl={follower.imageUrl}
+                    />
+                    <span>{follower.handle}</span>
+                  </div>
+                  <Toggle
+                    initialIsOn
+                    onClickAsync={async () => {
+                      const expected = !toggleFollowers[i]
+                      await mutateAsync({
+                        id: follower.id,
+                        data: { follow: expected },
+                      })
+                      setToggleFollowers((prev) => {
+                        const newToggles = [...prev]
+                        newToggles[i] = expected
+                        return newToggles
+                      })
+                      return expected
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </>
+        </Tab>
+        <Tab label="Daily Nutrition">hi</Tab>
+      </Tabs>
     </div>
   )
 }
