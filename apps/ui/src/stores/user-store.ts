@@ -32,7 +32,9 @@ export const defaultInitState: UserState = {
   measurementFormat: 'default',
   uiTheme: 'system',
   imageUrl: '',
-  // diet: null,
+  preferedDiets: [],
+  predefinedDailyNutrition: null,
+  customDailyNutrition: null,
 };
 
 export const createUserStore = (initState: UserState = defaultInitState) => {

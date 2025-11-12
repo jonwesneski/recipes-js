@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  DietaryType,
   MeasurementFormat,
   NumberFormat,
-  Prisma,
   UiTheme,
 } from '@repo/database';
 import { PaginationResponse } from '@src/common/common.responses';
 import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
 import { NutritionalFactsResponse } from '@src/recipes';
-import { type UserType } from '../users.service';
+import { UserAccountPrismaType, type UserType } from '../users.service';
 
 export class UserPublicResponse implements UserType {
   @ApiProperty({ type: String })
@@ -27,11 +27,23 @@ export class UserPublicResponse implements UserType {
   amIFollowing?: boolean;
 }
 
+export class PredefinedDailyNutritionResponse {
+  @ApiProperty({ type: String })
+  id: string;
+  @ApiProperty({ type: String })
+  name: string;
+  @ApiProperty({
+    type: NutritionalFactsResponse,
+  })
+  // should never be null, but doing it to make typescript happy
+  nutritionalFacts: NutritionalFactsResponse | null;
+}
+
 export class UserAccountResponse
   implements
     OmitPrismaFieldsEntity<
-      Prisma.UserCreateInput,
-      'Followers' | 'Followings' | 'recipes' | 'diet' | 'favorites'
+      UserAccountPrismaType,
+      'Followers' | 'Followings' | 'recipes' | 'favorites'
     >
 {
   @ApiProperty({ type: String })
@@ -46,8 +58,6 @@ export class UserAccountResponse
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
-  @ApiProperty({ type: NutritionalFactsResponse, nullable: true })
-  diet: NutritionalFactsResponse | null;
   @ApiProperty({ enum: UiTheme, enumName: 'UiTheme' })
   uiTheme: UiTheme;
   @ApiProperty({ enum: NumberFormat, enumName: 'NumberFormat' })
@@ -56,6 +66,12 @@ export class UserAccountResponse
   measurementFormat: MeasurementFormat;
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
+  @ApiProperty({ enum: DietaryType, enumName: 'DietaryType', isArray: true })
+  preferedDiets: DietaryType[];
+  @ApiProperty({ type: PredefinedDailyNutritionResponse, nullable: true })
+  predefinedDailyNutrition: PredefinedDailyNutritionResponse | null;
+  @ApiProperty({ type: PredefinedDailyNutritionResponse, nullable: true })
+  customDailyNutrition: NutritionalFactsResponse | null;
 }
 
 export class UserFollowersResponse {

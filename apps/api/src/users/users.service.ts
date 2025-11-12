@@ -18,11 +18,33 @@ export type UserType = Omit<UserPrismaType, '_count'> & {
   amIFollowing?: boolean;
 };
 
-export type UserAccountPrismaType = Prisma.UserGetPayload<{
+const NutritionalFactsInclude = {
+  omit: {
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    recipeId: true,
+  },
+} as const;
+const UserAccountInclude = {
   include: {
-    diet: true;
-  };
-}>;
+    predefinedDailyNutrition: {
+      select: {
+        id: true,
+        name: true,
+        nutritionalFacts: NutritionalFactsInclude,
+      },
+    },
+    customDailyNutrition: NutritionalFactsInclude,
+  },
+  omit: {
+    predefinedDailyNutritionId: true,
+    customDailyNutritionId: true,
+  },
+} as const;
+export type UserAccountPrismaType = Prisma.UserGetPayload<
+  typeof UserAccountInclude
+>;
 
 export type GetFollowersQueryParams = PrismaQueryParams & {
   id: string;
@@ -72,7 +94,7 @@ export class UsersService {
   async getUserAccount(id: string): Promise<UserAccountPrismaType> {
     return await this.prisma.user.findFirstOrThrow({
       where: { id },
-      include: { diet: true },
+      ...UserAccountInclude,
     });
   }
 
@@ -80,10 +102,27 @@ export class UsersService {
     id: string,
     user: PatchUserDto,
   ): Promise<UserAccountPrismaType> {
+    const { predefinedDailyNutritionId, customDailyNutrition, ...rest } = user;
     return await this.prisma.user.update({
       where: { id },
-      data: user,
-      include: { diet: true },
+      data: {
+        ...rest,
+        customDailyNutrition: customDailyNutrition
+          ? {
+              upsert: {
+                where: { id: customDailyNutrition.id },
+                update: customDailyNutrition,
+                create: customDailyNutrition,
+              },
+            }
+          : { delete: true },
+        predefinedDailyNutrition: predefinedDailyNutritionId
+          ? {
+              connect: { id: predefinedDailyNutritionId },
+            }
+          : undefined,
+      },
+      ...UserAccountInclude,
     });
   }
 
