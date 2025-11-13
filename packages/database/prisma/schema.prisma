@@ -270,8 +270,6 @@ model User {
   numberFormat      NumberFormat      @default(default)
   measurementFormat MeasurementFormat @default(default)
   uiTheme           UiTheme           @default(system)
-  // todo: change to dailyNutrition
-  diet              NutritionalFacts? @relation("UserNutritionalFacts")
   imageUrl          String?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
@@ -284,8 +282,12 @@ model User {
   followers  UserFollow[] @relation("UserFollowings")
   followings UserFollow[] @relation("UserFollows")
 
-  bookmarks     RecipeBookmark[]
-  preferedDiets DietaryType[]
+  bookmarks                  RecipeBookmark[]
+  preferedDiets              DietaryType[]
+  predefinedDailyNutritionId String?
+  predefinedDailyNutrition   PredefinedDailyNutrition? @relation("UserPredefinedDailyNutrition", fields: [predefinedDailyNutritionId], references: [id])
+  customDailyNutritionId     String?                   @unique
+  customDailyNutrition       NutritionalFacts?         @relation("UserCustomDailyNutrition", fields: [customDailyNutritionId], references: [id], onDelete: Cascade)
 
   @@map("users")
 }
@@ -379,41 +381,56 @@ model RecipeBookmark {
 }
 
 model NutritionalFacts {
-  id               String           @id @default(cuid())
-  servings         Int?
-  servingAmount    Int?
-  servingUnit      MeasurementUnit?
-  caloriesInKcal   Int?
-  totalFatInG      Int?
-  saturatedFatInG  Int?
-  transFatInG      Int?
-  cholesterolInMg  Int?
-  sodiumInMg       Int?
-  carbohydratesInG Int?
-  fiberInG         Int?
-  sugarInG         Int?
-  proteinInG       Int?
-  vitaminAInIU     Int?
-  vitaminCInMg     Int?
-  vitaminDInIU     Int?
-  vitaminB6InMg    Int?
-  vitaminB12InMg   Int?
-  calciumInMg      Int?
-  ironInMg         Int?
-  magnesiumInMg    Int?
-  potassiumInMg    Int?
-  folateInMcg      Int?
-  thiaminInMg      Int?
-  riboflavinInMg   Int?
-  niacinInMg       Int?
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  recipeId         String?          @unique
-  recipe           Recipe?          @relation("RecipeNutritionalFacts", fields: [recipeId], references: [id], onDelete: Cascade)
-  userId           String?          @unique
-  user             User?            @relation("UserNutritionalFacts", fields: [userId], references: [id], onDelete: Cascade)
+  id                       String                    @id @default(cuid())
+  // todo: move these servings fields to Recipe model
+  servings                 Int?
+  servingAmount            Int?
+  servingUnit              MeasurementUnit?
+  caloriesInKcal           Int?
+  totalFatInG              Int?
+  saturatedFatInG          Int?
+  transFatInG              Int?
+  cholesterolInMg          Int?
+  sodiumInMg               Int?
+  carbohydratesInG         Int?
+  fiberInG                 Int?
+  sugarInG                 Int?
+  proteinInG               Int?
+  vitaminAInIU             Int?
+  vitaminCInMg             Int?
+  vitaminDInIU             Int?
+  vitaminB6InMg            Int?
+  vitaminB12InMg           Int?
+  calciumInMg              Int?
+  ironInMg                 Int?
+  magnesiumInMg            Int?
+  potassiumInMg            Int?
+  folateInMcg              Int?
+  thiaminInMg              Int?
+  riboflavinInMg           Int?
+  niacinInMg               Int?
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  recipeId                 String?                   @unique
+  recipe                   Recipe?                   @relation("RecipeNutritionalFacts", fields: [recipeId], references: [id], onDelete: Cascade)
+  user                     User?                     @relation("UserCustomDailyNutrition")
+  predefinedDailyNutrition PredefinedDailyNutrition? @relation("DietNutritionalFacts")
 
   @@map("nutritional_facts")
+}
+
+model PredefinedDailyNutrition {
+  id                 String            @id @default(cuid())
+  name               String            @unique
+  description        String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  users              User[]            @relation("UserPredefinedDailyNutrition")
+  nutritionalFactsId String?           @unique
+  nutritionalFacts   NutritionalFacts? @relation("DietNutritionalFacts", fields: [nutritionalFactsId], references: [id], onDelete: Cascade)
+
+  @@index([name])
+  @@map("diets")
 }
 
 model Step {

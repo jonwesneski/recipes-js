@@ -7,6 +7,7 @@ import { App } from 'supertest/types';
 import { createTestingFixtures } from './utils';
 
 const basePath = '/v1/users';
+const accountPath = `${basePath}/account`;
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication<App>;
@@ -87,8 +88,6 @@ describe('UsersController (e2e)', () => {
   });
 
   describe(`GET ${basePath}/account`, () => {
-    const accountPath = `${basePath}/account`;
-
     it('valid', async () => {
       const response = await request(app.getHttpServer())
         .get(accountPath)
@@ -104,6 +103,36 @@ describe('UsersController (e2e)', () => {
       const response = await request(app.getHttpServer()).get(accountPath);
 
       expect(response.status).toBe(403);
+    });
+  });
+
+  describe(`PATCH ${basePath}/account`, () => {
+    it('valid', async () => {
+      const response = await request(app.getHttpServer())
+        .patch(accountPath)
+        .send({ preferedDiets: ['vegetarian'] })
+        .set('Authorization', `Bearer ${token1}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toBeDefined();
+    });
+
+    it('unauthorized', async () => {
+      mockJwtGuard.canActivate.mockImplementationOnce(() => false);
+
+      const response = await request(app.getHttpServer()).patch(accountPath);
+
+      expect(response.status).toBe(403);
+    });
+
+    it("can't do predefined nutrition and custom nutrition", async () => {
+      const response = await request(app.getHttpServer())
+        .patch(accountPath)
+        .send({ predefinedDailyNutritionId: '123', customDailyNutrition: {} })
+        .set('Authorization', `Bearer ${token1}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toBeDefined();
     });
   });
 

@@ -80,6 +80,24 @@ async function main() {
       }
     }
   }
+
+  for (const predefinedNutrition of data.predefinedDailyNutritions) {
+    try {
+      await prisma.predefinedDailyNutrition.create({
+        data: {
+          name: predefinedNutrition.name,
+          nutritionalFacts: { create: predefinedNutrition.nutritionalFacts },
+        },
+      });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code !== 'P2002') {
+          throw error; // Re-throw if it's not a unique constraint violation
+        }
+      }
+      throw error;
+    }
+  }
 }
 
 main()

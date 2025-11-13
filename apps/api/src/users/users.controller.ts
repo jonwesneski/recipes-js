@@ -10,6 +10,7 @@ import {
   Query,
   Req,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiNoContentResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { JwtGuard } from '@src/auth/guards';
@@ -23,6 +24,7 @@ import {
   UserFollowersPaginationResponse,
   UserPublicResponse,
 } from './contracts/users.response';
+import { PatchDtoValidationPipe } from './users.custom.pipes';
 import { UsersService } from './users.service';
 
 @Controller({
@@ -79,17 +81,19 @@ export class UsersController {
     }
   }
 
-  @Patch(':id/account')
+  @Patch('account')
   @ApiOkResponse({
     description: "user's info",
     type: UserAccountResponse,
   })
-  @ApiParam({ name: 'id', type: String, description: 'id of user' })
   @UseGuards(JwtGuard)
-  async updateUser(
-    @Param('id') id: string,
-    @Body() body: PatchUserDto,
+  async updateUserAccount(
+    // TODO: can't get this to work in jest
+    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
+    @Req() req: Request,
+    @Body(ValidationPipe, new PatchDtoValidationPipe()) body: PatchUserDto,
   ): Promise<UserAccountResponse> {
+    const id = parseHelper(req).sub;
     return await this.usersService.updateUserAccount(id, body);
   }
 

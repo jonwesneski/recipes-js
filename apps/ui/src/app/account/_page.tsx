@@ -6,9 +6,13 @@ import type {
   UiTheme,
   UserFollowersPaginationResponse,
 } from '@repo/codegen/model'
-import { useUsersControllerFollowUserV1 } from '@repo/codegen/users'
+import {
+  useUsersControllerFollowUserV1,
+  useUsersControllerUpdateUserAccountV1,
+} from '@repo/codegen/users'
 import { RadioGroup, TextButton, TextLabel, Toggle } from '@repo/design-system'
 import { ProfilePic } from '@src/components'
+import { NutritionalFactsInput } from '@src/components/NutritionalFactsInput'
 import { Tab, Tabs } from '@src/components/tabs'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { useCallback, useState } from 'react'
@@ -23,7 +27,11 @@ const Account = (props: IAccountProps) => {
     props.followers.data.map(() => true),
   )
 
-  const { mutateAsync } = useUsersControllerFollowUserV1({
+  const { mutateAsync: updateFollow } = useUsersControllerFollowUserV1({
+    mutation: { retry: false },
+  })
+
+  const { mutateAsync: updateAccount } = useUsersControllerUpdateUserAccountV1({
     mutation: { retry: false },
   })
 
@@ -104,7 +112,7 @@ const Account = (props: IAccountProps) => {
                     initialIsOn
                     onClickAsync={async () => {
                       const expected = !toggleFollowers[i]
-                      await mutateAsync({
+                      await updateFollow({
                         id: follower.id,
                         data: { follow: expected },
                       })
@@ -121,7 +129,9 @@ const Account = (props: IAccountProps) => {
             ))}
           </>
         </Tab>
-        <Tab label="Daily Nutrition">hi</Tab>
+        <Tab label="Daily Nutrition">
+          <NutritionalFactsInput />
+        </Tab>
       </Tabs>
     </div>
   )

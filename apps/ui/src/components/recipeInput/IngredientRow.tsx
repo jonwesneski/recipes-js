@@ -251,6 +251,10 @@ export const IngredientRow = forwardRef<
         </div>
       ) : null}
 
+      {/**
+       * TODO: lets move this to IngredientsTextArea so I am not rendering it so many times.
+       * I will need to figure out how to position and how to properly set the unit/measurement value
+       */}
       <IngredientsMeasurementPopUp
         top={popupPosition.y}
         left={popupPosition.x}
