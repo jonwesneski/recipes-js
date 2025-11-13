@@ -103,9 +103,9 @@ export class UsersService {
     user: PatchUserDto,
   ): Promise<UserAccountPrismaType> {
     const { predefinedDailyNutritionId, customDailyNutrition, ...rest } = user;
-    return await this.prisma.user.update({
-      where: { id },
-      data: {
+    const attempts = [{ delete: true }, undefined];
+    const buildData = (i: number) => {
+      return {
         ...rest,
         customDailyNutrition: customDailyNutrition
           ? {
@@ -115,15 +115,34 @@ export class UsersService {
                 create: customDailyNutrition,
               },
             }
-          : { delete: true },
+          : attempts[i],
         predefinedDailyNutrition: predefinedDailyNutritionId
           ? {
               connect: { id: predefinedDailyNutritionId },
             }
           : undefined,
-      },
-      ...UserAccountInclude,
-    });
+      };
+    };
+    for (let i = 0; i < attempts.length; i++) {
+      try {
+        return await this.prisma.user.update({
+          where: { id },
+          data: buildData(i),
+          ...UserAccountInclude,
+        });
+      } catch (error) {
+        if (
+          !(error instanceof PrismaClientKnownRequestError) ||
+          error.code !== 'P2025' ||
+          !(error.meta?.cause as string).includes("UserCustomDailyNutrition'.")
+        ) {
+          throw error;
+        } else if (i === attempts.length - 1) {
+          throw error;
+        }
+      }
+    }
+    throw new Error('Unreachable code');
   }
 
   async getFollowerIds(id: string) {

@@ -10,7 +10,7 @@
   "rootDir": "..",
   "preset": "ts-jest",
   "testEnvironment": "node",
-  "testRegex": "users.e2e-spec.ts$",
+  "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.ts$": [
       "ts-jest",

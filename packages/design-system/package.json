@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tailwindcss -i ./src/styles.css -o ./dist/styles.css",
     "ci:lint": "eslint src/",
-    "lint": "pnpm lint --fix",
+    "lint": "pnpm ci:lint --fix",
     "dev": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
     "type-check": "tsc --noEmit"
   },

@@ -21,7 +21,6 @@ export class ImageReviewProcessorService {
   ) {}
 
   async isValidFoodImage(imageBytes: Buffer<ArrayBuffer>): Promise<boolean> {
-    // todo: I may move this method into image-review-processor.service.ts
     const { labels, moderationLabels } =
       await this.recognitionService.detectAllLabels(imageBytes);
     this.logger.log(

@@ -10,6 +10,7 @@ import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
 import { NutritionalFactsDto } from '@src/recipes';
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -17,7 +18,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-class PatchUserCustomDailyNutritionDto extends NutritionalFactsDto {
+export class PatchUserCustomDailyNutritionDto extends NutritionalFactsDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ type: String })
@@ -66,7 +67,8 @@ export class PatchUserDto
   })
   measurementFormat?: MeasurementFormat;
   @IsOptional()
-  @IsEnum(DietaryType)
+  @IsArray()
+  @IsEnum(DietaryType, { each: true })
   @ApiProperty({
     enum: DietaryType,
     enumName: 'DietaryType',
