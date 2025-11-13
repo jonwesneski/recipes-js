@@ -29,11 +29,7 @@ export class PatchUserDto
   implements
     OmitPrismaFieldsDto<
       Partial<Prisma.UserCreateInput>,
-      | 'Followers'
-      | 'Followings'
-      | 'recipes'
-      | 'favorites'
-      | 'customDailyNutrition'
+      'Followers' | 'Followings' | 'recipes' | 'customDailyNutrition'
     >
 {
   @IsNotEmpty()

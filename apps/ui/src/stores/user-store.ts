@@ -4,7 +4,7 @@ import type {
   UiTheme,
   UserAccountResponse,
 } from '@repo/codegen/model';
-import { usersControllerUpdateUserV1 } from '@repo/codegen/users';
+import { usersControllerUpdateUserAccountV1 } from '@repo/codegen/users';
 import { createStore } from 'zustand/vanilla';
 
 export type UserState = Omit<
@@ -43,7 +43,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     setNumberFormat: async (numberFormat: NumberFormat) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(id, { numberFormat });
+        await usersControllerUpdateUserAccountV1({ numberFormat });
       } else {
         localStorage.setItem('numberFormat', numberFormat);
       }
@@ -52,7 +52,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     setMeasurementFormat: async (measurementFormat: MeasurementFormat) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(id, { measurementFormat });
+        await usersControllerUpdateUserAccountV1({ measurementFormat });
       } else {
         localStorage.setItem('measurementFormat', measurementFormat);
       }
@@ -61,7 +61,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     setUiTheme: async (uiTheme: UiTheme) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(id, { uiTheme });
+        await usersControllerUpdateUserAccountV1({ uiTheme });
       } else {
         localStorage.setItem('uiTheme', uiTheme);
       }
@@ -74,7 +74,7 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     setHandle: async (handle: string) => {
       const id = get().id;
       if (id) {
-        await usersControllerUpdateUserV1(id, { handle });
+        await usersControllerUpdateUserAccountV1({ handle });
       }
       set(() => ({ handle }));
     },

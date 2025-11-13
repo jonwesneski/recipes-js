@@ -87,7 +87,7 @@ export class UsersController {
     type: UserAccountResponse,
   })
   @UseGuards(JwtGuard)
-  async updateUser(
+  async updateUserAccount(
     // TODO: can't get this to work in jest
     //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
     @Req() req: Request,
