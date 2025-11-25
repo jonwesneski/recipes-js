@@ -3,6 +3,7 @@
 import type {
   MeasurementFormat,
   NumberFormat,
+  NutritionalFactsResponse,
   UiTheme,
   UserFollowersPaginationResponse,
 } from '@repo/codegen/model'
@@ -38,6 +39,17 @@ const Account = (props: IAccountProps) => {
   const handleUpdateHandle = useCallback(async () => {
     await settings.setHandle(handle)
   }, [handle, settings.setHandle])
+
+  const handleNutritionalFactChange = (
+    data: Partial<NutritionalFactsResponse>,
+  ) => {
+    settings.setPartialCustomNutritionalFacts(data)
+  }
+
+  const handleUpdateNutritionalFacts = async () => {
+    const data = settings.makeDailyNurtitionUserAccountDto()
+    await updateAccount({ data })
+  }
 
   return (
     <div>
@@ -130,7 +142,17 @@ const Account = (props: IAccountProps) => {
           </>
         </Tab>
         <Tab label="Daily Nutrition">
-          <NutritionalFactsInput />
+          <NutritionalFactsInput
+            nutritionalFacts={
+              settings.customDailyNutrition ??
+              settings.predefinedDailyNutrition?.nutritionalFacts
+            }
+            onNutritionalFactChange={handleNutritionalFactChange}
+          />
+          <TextButton
+            text="update nutritional facts"
+            onClick={() => void handleUpdateNutritionalFacts()}
+          />
         </Tab>
       </Tabs>
     </div>

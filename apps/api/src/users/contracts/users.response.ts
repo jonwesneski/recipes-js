@@ -39,6 +39,11 @@ export class PredefinedDailyNutritionResponse {
   nutritionalFacts: NutritionalFactsResponse | null;
 }
 
+export class CustomDailyNutritionResponse extends NutritionalFactsResponse {
+  @ApiProperty({ type: String, required: false })
+  id?: string;
+}
+
 export class UserAccountResponse
   implements
     OmitPrismaFieldsEntity<
@@ -70,8 +75,8 @@ export class UserAccountResponse
   preferedDiets: DietaryType[];
   @ApiProperty({ type: PredefinedDailyNutritionResponse, nullable: true })
   predefinedDailyNutrition: PredefinedDailyNutritionResponse | null;
-  @ApiProperty({ type: PredefinedDailyNutritionResponse, nullable: true })
-  customDailyNutrition: NutritionalFactsResponse | null;
+  @ApiProperty({ type: CustomDailyNutritionResponse, nullable: true })
+  customDailyNutrition: CustomDailyNutritionResponse | null;
 }
 
 export class UserFollowersResponse {

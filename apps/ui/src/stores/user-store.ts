@@ -2,6 +2,7 @@ import type {
   MeasurementFormat,
   NumberFormat,
   NutritionalFactsResponse,
+  PatchUserDto,
   UiTheme,
   UserAccountResponse,
 } from '@repo/codegen/model';
@@ -25,8 +26,8 @@ export type UserActions = {
     _value: Partial<UserAccountResponse['customDailyNutrition']>,
   ) => void;
   makeDailyNurtitionUserAccountDto: () => Pick<
-    UserAccountResponse,
-    'customDailyNutrition' | 'predefinedDailyNutrition'
+    PatchUserDto,
+    'customDailyNutrition' | 'predefinedDailyNutritionId'
   >;
 };
 
@@ -50,7 +51,7 @@ export const defaultInitState: UserState = {
 export const createUserStore = (initState: UserState = defaultInitState) => {
   return createStore<UserStore>()((set, get) => ({
     ...initState,
-    _isCustomDailyNutrition: !!initState.customDailyNutrition,
+    _isCustomDailyNutrition: Boolean(initState.customDailyNutrition?.id),
     setNumberFormat: async (numberFormat: NumberFormat) => {
       const id = get().id;
       if (id) {
@@ -115,9 +116,9 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
     makeDailyNurtitionUserAccountDto: () => {
       const isCustomDailyNutrition = get()._isCustomDailyNutrition;
       return {
-        predefinedDailyNutrition: !isCustomDailyNutrition
-          ? get().predefinedDailyNutrition
-          : null,
+        predefinedDailyNutritionId: !isCustomDailyNutrition
+          ? get().predefinedDailyNutrition?.id
+          : undefined,
         customDailyNutrition: isCustomDailyNutrition
           ? get().customDailyNutrition
           : null,

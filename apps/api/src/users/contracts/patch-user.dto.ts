@@ -19,10 +19,11 @@ import {
 } from 'class-validator';
 
 export class PatchUserCustomDailyNutritionDto extends NutritionalFactsDto {
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ type: String })
-  id: string;
+  @ApiProperty({ type: String, required: false })
+  id?: string;
 }
 
 export class PatchUserDto
