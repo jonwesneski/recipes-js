@@ -9,12 +9,23 @@ import {
 import { Fragment } from 'react'
 
 interface INutritionalFactsInputProps {
-  nutritionalFacts?: NutritionalFactsResponse
+  nutritionalFacts: NutritionalFactsResponse | null
   onNutritionalFactChange: (
     _updatedNutritionalFacts: Partial<NutritionalFactsResponse>,
   ) => void
 }
 export const NutritionalFactsInput = (props: INutritionalFactsInputProps) => {
+  const handleNutritionalFactChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    nf: string,
+  ) => {
+    const value =
+      event.target.value !== '' ? parseInt(event.target.value) : null
+    props.onNutritionalFactChange({
+      [nf]: value,
+    })
+  }
+
   return (
     <>
       {Object.keys(nutritionalFactsWithoutServingsConst).map((nf) => {
@@ -27,11 +38,7 @@ export const NutritionalFactsInput = (props: INutritionalFactsInputProps) => {
               label={`${name} (${unit})`}
               type="number"
               dir="rtl"
-              onChange={(e) =>
-                props.onNutritionalFactChange({
-                  [nf]: parseInt(e.target.value),
-                })
-              }
+              onChange={(e) => handleNutritionalFactChange(e, nf)}
               value={
                 props.nutritionalFacts?.[
                   nf as keyof NutritionalFactsResponse

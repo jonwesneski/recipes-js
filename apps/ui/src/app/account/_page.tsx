@@ -145,7 +145,8 @@ const Account = (props: IAccountProps) => {
           <NutritionalFactsInput
             nutritionalFacts={
               settings.customDailyNutrition ??
-              settings.predefinedDailyNutrition?.nutritionalFacts
+              settings.predefinedDailyNutrition?.nutritionalFacts ??
+              null
             }
             onNutritionalFactChange={handleNutritionalFactChange}
           />
