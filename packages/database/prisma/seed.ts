@@ -1,8 +1,6 @@
-import { MeasurementUnit, PrismaClient } from '../generated/prisma/client';
-import { PrismaClientKnownRequestError } from '../src/client';
+import { MeasurementUnit } from '../generated/prisma/client';
+import { prisma, PrismaClientKnownRequestError } from '../src/client';
 import data from './seedData.json';
-
-const prisma = new PrismaClient();
 
 async function main() {
   let user = await prisma.user.findUnique({

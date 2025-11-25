@@ -18,12 +18,6 @@ export class NutritionalFactsResponse
     OmitPrismaFieldsEntity<Prisma.NutritionalFactsCreateInput, 'recipe'>
 {
   @ApiProperty({ type: Number, nullable: true })
-  servings: number | null;
-  @ApiProperty({ type: Number, nullable: true })
-  servingAmount: number | null;
-  @ApiProperty({ enum: MeasurementUnit, nullable: true })
-  servingUnit: MeasurementUnit | null;
-  @ApiProperty({ type: Number, nullable: true })
   proteinInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
   totalFatInG: number | null;
@@ -152,6 +146,12 @@ export class RecipeResponse implements RecipeType {
   steps: StepResponse[];
   @ApiProperty({ type: NutritionalFactsResponse, nullable: true })
   nutritionalFacts: NutritionalFactsResponse | null;
+  @ApiProperty({ type: Number, nullable: true })
+  servings: number | null;
+  @ApiProperty({ type: Number, nullable: true })
+  servingAmount: number | null;
+  @ApiProperty({ enum: MeasurementUnit, nullable: true })
+  servingUnit: MeasurementUnit | null;
   @ApiProperty({ type: [String] })
   tags: string[];
   @ApiProperty({ enum: MealType, enumName: 'MealType', nullable: true })

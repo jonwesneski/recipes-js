@@ -125,6 +125,23 @@ export class PatchRecipeDto
   @ApiProperty({ type: NutritionalFactsDto, nullable: true, required: false })
   nutritionalFacts?: NutritionalFactsDto;
   @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @IsNullable()
+  @ApiProperty({ type: Number, nullable: true, required: false })
+  servings?: number | null;
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @IsNullable()
+  @ApiProperty({ type: Number, nullable: true, required: false })
+  servingAmount?: number | null;
+  @IsOptional()
+  @IsEnum(MeasurementUnit)
+  @IsNullable()
+  @ApiProperty({ enum: MeasurementUnit, nullable: true, required: false })
+  servingUnit?: MeasurementUnit | null;
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @ApiProperty({ type: [String], required: false })

@@ -19,6 +19,9 @@ export const RecipeMinimalPrismaInclude = {
     createdAt: true,
     updatedAt: true,
     isPublic: true,
+    servings: true,
+    servingAmount: true,
+    servingUnit: true,
   },
   orderBy: { updatedAt: 'desc' },
 } as const;

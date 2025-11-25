@@ -5,7 +5,7 @@ import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { roundToDecimal } from '@src/utils/measurements'
 import {
   getNameAndUnit,
-  nutritionalFactsWithoutServingsConst,
+  nutritionalFactsConst,
 } from '@src/utils/nutritionalFacts'
 
 interface INutritionalFactsProps {
@@ -19,7 +19,7 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
       <h3 className="font-bold text-center">Nutritional Facts:</h3>
       <table className="border border-collapse m-auto">
         <tbody>
-          {Object.keys(nutritionalFactsWithoutServingsConst).map((key) => {
+          {Object.keys(nutritionalFactsConst).map((key) => {
             const [name, unit] = getNameAndUnit(key)
             const _unit = unit === 'IU' ? unit : unit.toLowerCase()
             return (
@@ -27,7 +27,8 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
                 <td className="text-right pl-3">{name}</td>
                 <td className="text-left px-4">
                   {nutritionalFacts?.[key as keyof typeof nutritionalFacts]
-                    ? `${roundToDecimal((nutritionalFacts[key as keyof typeof nutritionalFacts] as number) * scaleFactor, 2)} ${_unit}`
+                    ? // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style -- I get more linting errors if I use a "!"
+                      `${roundToDecimal((nutritionalFacts[key as keyof typeof nutritionalFacts] as number) * scaleFactor, 2)} ${_unit}`
                     : `? ${_unit}`}
                 </td>
               </tr>

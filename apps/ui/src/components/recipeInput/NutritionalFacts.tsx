@@ -1,7 +1,7 @@
 'use client'
 
 import { useAiControllerNutritionalFactsV1 } from '@repo/codegen/ai'
-import { type NutritionalFactsResponseServingUnit } from '@repo/codegen/model'
+import type { RecipeResponseServingUnit } from '@repo/codegen/model'
 import { SelectLabel, TextButton, TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import {
@@ -11,11 +11,17 @@ import {
 import { type ChangeEvent } from 'react'
 import { NutritionalFactsInput } from '../NutritionalFactsInput'
 
-export const NutritionalFacts = () => {
+export const ServingsAndNutritionalFacts = () => {
   const {
     nutritionalFacts,
     setNutritionalFacts,
     setPartialNutritionalFacts,
+    servingUnit,
+    setServingUnit,
+    servingAmount,
+    setServingAmount,
+    servings,
+    setServings,
     makeGenerateNutritionalFactsDto,
   } = useRecipeStore((state) => state)
   const { mutate } = useAiControllerNutritionalFactsV1({
@@ -33,30 +39,35 @@ export const NutritionalFacts = () => {
     )
   }
 
-  function handleOnChange(
-    field: string,
+  const handleOnServingAmountChange = (
     event: ChangeEvent<HTMLInputElement>,
-  ): void {
-    setPartialNutritionalFacts({ [field]: parseInt(event.target.value) })
+  ) => {
+    if (event.target.value) {
+      setServingAmount(parseInt(event.target.value))
+    } else {
+      setServingAmount(null)
+    }
   }
 
-  function handleOnServingUnitChange(
-    event: ChangeEvent<HTMLSelectElement>,
-  ): void {
+  const handleOnServingUnitChange = (event: ChangeEvent<HTMLSelectElement>) => {
     if (event.target.value) {
-      setPartialNutritionalFacts({
-        servingUnit: event.target.value as NutritionalFactsResponseServingUnit,
-      })
+      setServingUnit(event.target.value as RecipeResponseServingUnit)
     } else {
-      setPartialNutritionalFacts({
-        servingUnit: null,
-      })
+      setServingUnit(null)
+    }
+  }
+
+  const handleOnServingsChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value) {
+      setServings(parseInt(event.target.value))
+    } else {
+      setServings(null)
     }
   }
 
   return (
     <section>
-      <h1 className="text-3xl font-bold mb-10">Nutritional Facts</h1>
+      <h1 className="text-3xl font-bold mb-10">Servings & Nutritional Facts</h1>
       <TextButton
         className="mb-5"
         text="auto generate facts"
@@ -78,11 +89,11 @@ export const NutritionalFacts = () => {
       <TextLabel
         name="servingAmount"
         isRequired={false}
-        label={`serving size ${nutritionalFacts?.servingUnit ? `(${measurementUnitsAbbreviated[nutritionalFacts.servingUnit]})` : ''}`}
+        label={`serving size ${servingUnit ? `(${measurementUnitsAbbreviated[servingUnit]})` : ''}`}
         type="number"
         dir="rtl"
-        onChange={(e) => handleOnChange('servingAmount', e)}
-        value={nutritionalFacts?.servingAmount?.toString() ?? ''}
+        onChange={handleOnServingAmountChange}
+        value={servingAmount?.toString() ?? ''}
       />
       <TextLabel
         className="mb-5"
@@ -91,8 +102,8 @@ export const NutritionalFacts = () => {
         label="total servings"
         type="number"
         dir="rtl"
-        onChange={(e) => handleOnChange('servings', e)}
-        value={nutritionalFacts?.servings?.toString() ?? ''}
+        onChange={handleOnServingsChange}
+        value={servings?.toString() ?? ''}
       />
       <NutritionalFactsInput
         nutritionalFacts={nutritionalFacts}

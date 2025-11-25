@@ -1,11 +1,7 @@
 import { type NutritionalFactsDto } from '@repo/codegen/model';
 import { camelCaseToSpaces } from './stringHelpers';
 
-type _CompileTimeType = Omit<
-  NutritionalFactsDto,
-  'servings' | 'servingAmount' | 'servingUnit'
->;
-export const nutritionalFactsWithoutServingsConst: _CompileTimeType = {
+export const nutritionalFactsConst: NutritionalFactsDto = {
   proteinInG: null,
   totalFatInG: null,
   carbohydratesInG: null,
@@ -30,13 +26,6 @@ export const nutritionalFactsWithoutServingsConst: _CompileTimeType = {
   niacinInMg: null,
   caloriesInKcal: null,
 } as const;
-
-export const nutritionalFactsConst: NutritionalFactsDto = {
-  servings: null,
-  servingAmount: null,
-  servingUnit: null,
-  ...nutritionalFactsWithoutServingsConst,
-};
 
 export const getNameAndUnit = (nutritionalFactName: string) => {
   const [name, unit] = nutritionalFactName.split('In');
