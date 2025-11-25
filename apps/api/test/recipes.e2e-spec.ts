@@ -102,6 +102,9 @@ describe('RecipesController (e2e)', () => {
       ],
       equipments: [],
       tags: [],
+      servingAmount: null,
+      servingUnit: null,
+      servings: null,
       nutritionalFacts: null,
       preparationTimeInMinutes: 30,
       cookingTimeInMinutes: 15,
@@ -117,8 +120,8 @@ describe('RecipesController (e2e)', () => {
       return { filters };
     };
 
-    it('no filters', () => {
-      return request(app.getHttpServer())
+    it('no filters', async () => {
+      await request(app.getHttpServer())
         .post(searchPath)
         .send(makeSearchRequest())
         .expect(200)
@@ -129,8 +132,8 @@ describe('RecipesController (e2e)', () => {
   });
 
   describe(`GET ${basePath}/:id`, () => {
-    it('existing recipe', () => {
-      return request(app.getHttpServer())
+    it('existing recipe', async () => {
+      await request(app.getHttpServer())
         .get(`${basePath}/${recipe1!.id}`)
         .expect(200)
         .expect((res) => {
@@ -148,8 +151,8 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    it('non-existing recipe', () => {
-      return request(app.getHttpServer())
+    it('non-existing recipe', async () => {
+      await request(app.getHttpServer())
         .get(`${basePath}/123`)
         .expect(404)
         .expect({ message: 'Not Found', statusCode: 404 });
@@ -157,17 +160,16 @@ describe('RecipesController (e2e)', () => {
   });
 
   describe(`POST ${basePath}`, () => {
-    it('create new recipe', () => {
+    it('create new recipe', async () => {
       const sampleRecipe = makeCreateDto();
-      return request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post(basePath)
         .set('Authorization', `Bearer ${token}`)
-        .send(sampleRecipe)
-        .expect(201)
-        .expect((res) => {
-          expect(res.body.name).toBe('Test Recipe');
-          expect(res.body.id).toBeDefined();
-        });
+        .send(sampleRecipe);
+
+      expect(response.statusCode).toBe(201);
+      expect(response.body.name).toBe(sampleRecipe.name);
+      expect(response.body.id).toBeDefined();
     });
 
     it('create existing recipe', async () => {
@@ -231,6 +233,12 @@ describe('RecipesController (e2e)', () => {
                 base64Image: 'base64Image must be a string',
               },
             },
+            servingAmount:
+              'servingAmount must not be less than 0, servingAmount must be a number conforming to the specified constraints',
+            servingUnit:
+              'servingUnit must be one of the following values: cups, fluidOunces, tablespoons, teaspoons, pints, quarts, gallons, pounds, ounces, liters, milliliters, kilograms, grams',
+            servings:
+              'servings must not be less than 0, servings must be a number conforming to the specified constraints',
             tags: 'each value in tags must be a string, tags must be an array',
             equipments:
               'each value in equipments must be a string, equipments must be an array',

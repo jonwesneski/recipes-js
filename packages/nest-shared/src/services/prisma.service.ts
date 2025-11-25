@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@repo/database';
 
 export type PrismaQueryParams = {
@@ -21,11 +20,12 @@ export type PrismaResults<T> = {
 @Injectable()
 export class PrismaService extends PrismaClient {
   constructor(config: ConfigService) {
-    const adapter = new PrismaPg({
-      connectionString: config.getOrThrow('DATABASE_URL'),
-    });
     super({
-      adapter,
+      datasources: {
+        db: {
+          url: config.getOrThrow('DATABASE_URL'),
+        },
+      },
     });
   }
 }
