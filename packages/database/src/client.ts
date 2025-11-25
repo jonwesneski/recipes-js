@@ -3,7 +3,7 @@ import { PrismaClient } from '../generated/prisma';
 export {
   PrismaClientKnownRequestError,
   skip,
-} from '../generated/prisma/runtime/library';
+} from '@prisma/client/runtime/client';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
