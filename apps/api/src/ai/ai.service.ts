@@ -3,8 +3,8 @@ import { RecipeRepository } from '@repo/nest-shared';
 import {
   GeneratedCategoriesSchema,
   GeneratedCategoriesType,
-  type GeneratedNutiritionalFactsType,
-  GeneratedNutritionalFactsSchema,
+  GeneratedServingsAndNutritionalFactsSchema,
+  type GeneratedServingsAndNutritionalFactsType,
 } from '@repo/zod-schemas';
 import { recipesDtoToQueryParams } from '@src/common/transforms';
 import { GetRecipesDto } from '@src/recipes';
@@ -78,7 +78,7 @@ ${step.instruction ? step.instruction : '- None'}
 
   async nutritionalFacts(
     steps: GenerateNutritionalFactsDto[],
-  ): Promise<GeneratedNutiritionalFactsType> {
+  ): Promise<GeneratedServingsAndNutritionalFactsType> {
     const response = await this.ai.models.generateContent({
       model: AI_MODEL,
       contents: this.nutritionalPrompt(steps),
@@ -89,7 +89,7 @@ ${step.instruction ? step.instruction : '- None'}
     });
 
     try {
-      return GeneratedNutritionalFactsSchema.parse(
+      return GeneratedServingsAndNutritionalFactsSchema.parse(
         JSON.parse(response.text ?? '{}'),
       );
     } catch (error) {

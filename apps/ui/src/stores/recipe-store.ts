@@ -11,6 +11,7 @@ import type {
   NutritionalFactsResponse,
   ProteinType,
   RecipeResponse,
+  RecipeResponseServingUnit,
 } from '@repo/codegen/model';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { roundToDecimal } from '@src/utils/measurements';
@@ -133,6 +134,9 @@ export type RecipeActions = {
   setPartialNutritionalFacts: (
     _value: Partial<NutritionalFactsResponse>,
   ) => void;
+  setServingAmount: (_value: number | null) => void;
+  setServingUnit: (_value: RecipeResponseServingUnit) => void;
+  setServings: (_value: number | null) => void;
   setCuisine: (_value: CuisineType | null) => void;
   setMeal: (_value: MealType | null) => void;
   setDish: (_value: DishType | null) => void;
@@ -186,6 +190,9 @@ export const defaultInitState: RecipeState = {
   equipments: [],
   steps: [createStepItem()],
   nutritionalFacts: null,
+  servingAmount: null,
+  servingUnit: null,
+  servings: null,
   isPublic: true,
   tags: [],
   cuisine: null,
@@ -445,6 +452,11 @@ export const createRecipeStore = (
 
             return { nutritionalFacts: merged };
           }),
+        setServingAmount: (servingAmount: number | null) =>
+          set(() => ({ servingAmount })),
+        setServingUnit: (servingUnit: RecipeResponseServingUnit) =>
+          set(() => ({ servingUnit })),
+        setServings: (servings: number | null) => set(() => ({ servings })),
         setCuisine: (cuisine: CuisineType | null) => set(() => ({ cuisine })),
         setMeal: (meal: MealType | null) => set(() => ({ meal })),
         setDish: (dish: DishType | null) => set(() => ({ dish })),

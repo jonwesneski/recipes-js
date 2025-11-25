@@ -37,7 +37,6 @@
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/websockets": "^11.1.6",
-    "@prisma/client": "^6.16.2",
     "@repo/database": "workspace:*",
     "@repo/nest-shared": "workspace:*",
     "@repo/zod-schemas": "workspace:*",

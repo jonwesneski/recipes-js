@@ -30,20 +30,6 @@ export class NutritionalFactsDto
   @Min(0)
   @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
-  servings: number | null;
-  @IsNumber()
-  @Min(0)
-  @IsNullable()
-  @ApiProperty({ type: Number, nullable: true })
-  servingAmount: number | null;
-  @IsEnum(MeasurementUnit)
-  @IsNullable()
-  @ApiProperty({ enum: MeasurementUnit, nullable: true })
-  servingUnit: MeasurementUnit | null;
-  @IsNumber()
-  @Min(0)
-  @IsNullable()
-  @ApiProperty({ type: Number, nullable: true })
   proteinInG: number | null;
   @IsNumber()
   @Min(0)
@@ -247,6 +233,20 @@ export class CreateRecipeDto
   @Type(() => NutritionalFactsDto)
   @ApiProperty({ type: NutritionalFactsDto, nullable: true })
   nutritionalFacts: NutritionalFactsDto | null;
+  @IsNumber()
+  @Min(0)
+  @IsNullable()
+  @ApiProperty({ type: Number, nullable: true })
+  servings: number | null;
+  @IsNumber()
+  @Min(0)
+  @IsNullable()
+  @ApiProperty({ type: Number, nullable: true })
+  servingAmount: number | null;
+  @IsEnum(MeasurementUnit)
+  @IsNullable()
+  @ApiProperty({ enum: MeasurementUnit, nullable: true })
+  servingUnit: MeasurementUnit | null;
   @IsArray()
   @IsString({ each: true })
   @ApiProperty({ type: [String] })

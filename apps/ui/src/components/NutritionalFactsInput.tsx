@@ -4,7 +4,7 @@ import { type NutritionalFactsResponse } from '@repo/codegen/model'
 import { TextLabel } from '@repo/design-system'
 import {
   getNameAndUnit,
-  nutritionalFactsWithoutServingsConst,
+  nutritionalFactsConst,
 } from '@src/utils/nutritionalFacts'
 import { Fragment } from 'react'
 
@@ -28,7 +28,7 @@ export const NutritionalFactsInput = (props: INutritionalFactsInputProps) => {
 
   return (
     <>
-      {Object.keys(nutritionalFactsWithoutServingsConst).map((nf) => {
+      {Object.keys(nutritionalFactsConst).map((nf) => {
         const [name, unit] = getNameAndUnit(nf)
         return (
           <Fragment key={nf}>

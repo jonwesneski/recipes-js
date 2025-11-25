@@ -11,7 +11,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum MeasurementUnit {
@@ -334,6 +333,10 @@ model Recipe {
   proteins        ProteinType[]
   difficultyLevel DifficultyLevelType?
 
+  servings      Int?
+  servingAmount Int?
+  servingUnit   MeasurementUnit?
+
   @@unique([userId, name])
   // Core query patterns
   @@index([isPublic])
@@ -382,10 +385,6 @@ model RecipeBookmark {
 
 model NutritionalFacts {
   id                       String                    @id @default(cuid())
-  // todo: move these servings fields to Recipe model
-  servings                 Int?
-  servingAmount            Int?
-  servingUnit              MeasurementUnit?
   caloriesInKcal           Int?
   totalFatInG              Int?
   saturatedFatInG          Int?

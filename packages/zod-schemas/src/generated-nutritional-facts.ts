@@ -1,6 +1,6 @@
 import { z } from 'zod/v4';
 
-export const GeneratedNutritionalFactsSchema = z.object({
+export const GeneratedServingsAndNutritionalFactsSchema = z.object({
   servings: z.number().positive().optional(),
   servingAmount: z.number().positive().optional(),
   servingUnit: z.string().optional(),
@@ -31,6 +31,6 @@ export const GeneratedNutritionalFactsSchema = z.object({
   vitaminDInIU: z.number().positive().optional(),
 });
 
-export type GeneratedNutiritionalFactsType = z.infer<
-  typeof GeneratedNutritionalFactsSchema
+export type GeneratedServingsAndNutritionalFactsType = z.infer<
+  typeof GeneratedServingsAndNutritionalFactsSchema
 >;
