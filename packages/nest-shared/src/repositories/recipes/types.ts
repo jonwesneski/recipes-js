@@ -53,7 +53,6 @@ export const RecipeInclude = {
         createdAt: true,
         updatedAt: true,
         recipeId: true,
-        userId: true,
       },
     },
     recipeTags: {
@@ -124,7 +123,6 @@ export type RecipeCreateType = Prisma.RecipeGetPayload<{
         createdAt: true;
         updatedAt: true;
         recipeId: true;
-        userId: true;
       };
     };
   };
@@ -167,7 +165,6 @@ type _RecipeUpdateType = Prisma.RecipeGetPayload<{
         createdAt: true;
         updatedAt: true;
         recipeId: true;
-        userId: true;
       };
     };
   };

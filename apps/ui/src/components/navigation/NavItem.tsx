@@ -17,7 +17,7 @@ export const NavItem = (props: INavItemProps) => {
           props.onClick?.()
         }
       }}
-      className=" hover:scale-105 cursor-pointer hover:shadow-[0px_1px_4px_theme(colors.text),0px_-1px_8px_theme(colors.text)]"
+      className="cursor-pointer hover:border-l-2 hover:border-r-2 hover:scale-105 hover:shadow-[0px_1px_4px_theme(colors.text),0px_-1px_8px_theme(colors.text)]"
     >
       {props.children}
     </div>

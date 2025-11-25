@@ -1,21 +1,15 @@
 'use client'
 
 import { useAiControllerNutritionalFactsV1 } from '@repo/codegen/ai'
-import {
-  type NutritionalFactsResponse,
-  type NutritionalFactsResponseServingUnit,
-} from '@repo/codegen/model'
+import { type NutritionalFactsResponseServingUnit } from '@repo/codegen/model'
 import { SelectLabel, TextButton, TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import {
   measurementUnitsAbbreviated,
   measurementUnitsPlural,
 } from '@src/utils/measurements'
-import {
-  getNameAndUnit,
-  nutritionalFactsWithoutServingsConst,
-} from '@src/utils/nutritionalFacts'
-import { Fragment, type ChangeEvent } from 'react'
+import { type ChangeEvent } from 'react'
+import { NutritionalFactsInput } from '../NutritionalFactsInput'
 
 export const NutritionalFacts = () => {
   const {
@@ -100,26 +94,10 @@ export const NutritionalFacts = () => {
         onChange={(e) => handleOnChange('servings', e)}
         value={nutritionalFacts?.servings?.toString() ?? ''}
       />
-      {Object.keys(nutritionalFactsWithoutServingsConst).map((nf) => {
-        const [name, unit] = getNameAndUnit(nf)
-        return (
-          <Fragment key={nf}>
-            <TextLabel
-              name={nf}
-              isRequired={false}
-              label={`${name} (${unit})`}
-              type="number"
-              dir="rtl"
-              onChange={(e) => handleOnChange(nf, e)}
-              value={
-                nutritionalFacts?.[
-                  nf as keyof NutritionalFactsResponse
-                ]?.toString() ?? ''
-              }
-            />
-          </Fragment>
-        )
-      })}
+      <NutritionalFactsInput
+        nutritionalFacts={nutritionalFacts}
+        onNutritionalFactChange={(data) => setPartialNutritionalFacts(data)}
+      />
     </section>
   )
 }

@@ -23,7 +23,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(204)
-  logout(@Res() res: Response) {
+  logout(@Res({ passthrough: true }) res: Response) {
     const isDev = this.configService.get('ENV') === 'dev';
     res.clearCookie('access_token', {
       httpOnly: true,

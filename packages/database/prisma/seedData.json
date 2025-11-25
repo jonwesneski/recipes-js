@@ -214,5 +214,88 @@
       },
       "tags": ["dessert", "cake", "bulk", "testing"]
     }
+  ],
+  "predefinedDailyNutritions": [
+    {
+      "name": "Standard American Daily Nutrition",
+      "nutritionalFacts": {
+        "caloriesInKcal": 2000,
+        "proteinInG": 75,
+        "carbohydratesInG": 250,
+        "totalFatInG": 80,
+        "fiberInG": 16,
+        "sugarInG": 80,
+        "cholesterolInMg": 250,
+        "sodiumInMg": 3400,
+        "saturatedFatInG": 25,
+        "transFatInG": 1,
+        "vitaminAInIU": 3000,
+        "vitaminCInMg": 75,
+        "calciumInMg": 1000,
+        "ironInMg": 12,
+        "vitaminDInIU": 600,
+        "vitaminB6InMg": 1.5,
+        "vitaminB12InMg": 2.4,
+        "magnesiumInMg": 300,
+        "folateInMcg": 300,
+        "thiaminInMg": 1.2,
+        "riboflavinInMg": 1.3,
+        "niacinInMg": 16
+      }
+    },
+    {
+      "name": "Low Carb Daily Nutrition",
+      "nutritionalFacts": {
+        "caloriesInKcal": 2000,
+        "proteinInG": 110,
+        "carbohydratesInG": 100,
+        "totalFatInG": 130,
+        "fiberInG": 25,
+        "sugarInG": 20,
+        "cholesterolInMg": 300,
+        "sodiumInMg": 2300,
+        "saturatedFatInG": 20,
+        "transFatInG": 0,
+        "vitaminAInIU": 3000,
+        "vitaminCInMg": 75,
+        "calciumInMg": 1000,
+        "ironInMg": 15,
+        "vitaminDInIU": 600,
+        "vitaminB6InMg": 1.5,
+        "vitaminB12InMg": 2.4,
+        "magnesiumInMg": 320,
+        "folateInMcg": 400,
+        "thiaminInMg": 1.2,
+        "riboflavinInMg": 1.3,
+        "niacinInMg": 16
+      }
+    },
+    {
+      "name": "Low Cholesterol Daily Nutrition",
+      "nutritionalFacts": {
+        "caloriesInKcal": 2000,
+        "proteinInG": 70,
+        "carbohydratesInG": 275,
+        "totalFatInG": 55,
+        "fiberInG": 30,
+        "sugarInG": 50,
+        "cholesterolInMg": 200,
+        "sodiumInMg": 2300,
+        "saturatedFatInG": 12,
+        "transFatInG": 0,
+        "vitaminAInIU": 3000,
+        "vitaminCInMg": 90,
+        "calciumInMg": 1000,
+        "ironInMg": 15,
+        "vitaminDInIU": 600,
+        "vitaminB6InMg": 1.5,
+        "vitaminB12InMg": 2.4,
+        "magnesiumInMg": 320,
+        "folateInMcg": 400,
+        "thiaminInMg": 1.2,
+        "riboflavinInMg": 1.3,
+        "niacinInMg": 16
+      }
+    }
   ]
 }

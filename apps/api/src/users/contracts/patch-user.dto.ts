@@ -1,24 +1,36 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  DietaryType,
   MeasurementFormat,
   NumberFormat,
   Prisma,
   UiTheme,
 } from '@repo/database';
 import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { NutritionalFactsDto } from '@src/recipes';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+
+export class PatchUserCustomDailyNutritionDto extends NutritionalFactsDto {
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ type: String, required: false })
+  id?: string;
+}
 
 export class PatchUserDto
   implements
     OmitPrismaFieldsDto<
-      Prisma.UserCreateInput,
-      | 'Followers'
-      | 'Followings'
-      | 'recipes'
-      | 'favorites'
-      | 'handle'
-      | 'name'
-      | 'email'
+      Partial<Prisma.UserCreateInput>,
+      'Followers' | 'Followings' | 'recipes' | 'customDailyNutrition'
     >
 {
   @IsNotEmpty()
@@ -51,4 +63,27 @@ export class PatchUserDto
     required: false,
   })
   measurementFormat?: MeasurementFormat;
+  @IsOptional()
+  @IsArray()
+  @IsEnum(DietaryType, { each: true })
+  @ApiProperty({
+    enum: DietaryType,
+    enumName: 'DietaryType',
+    required: false,
+    isArray: true,
+  })
+  preferedDiets?: DietaryType[];
+  @IsNotEmpty()
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, required: false })
+  predefinedDailyNutritionId?: string;
+  @ValidateNested()
+  @Type(() => PatchUserCustomDailyNutritionDto)
+  @ApiProperty({
+    type: PatchUserCustomDailyNutritionDto,
+    required: false,
+    nullable: true,
+  })
+  customDailyNutrition?: PatchUserCustomDailyNutritionDto | null;
 }
