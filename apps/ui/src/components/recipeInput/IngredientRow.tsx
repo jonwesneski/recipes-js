@@ -173,6 +173,8 @@ export const IngredientRow = forwardRef<
           y: yOffset,
         })
         setIsPopupVisible(true)
+      } else if (isPopupVisible) {
+        setIsPopupVisible(false)
       }
     }
   }
@@ -207,7 +209,7 @@ export const IngredientRow = forwardRef<
 
   return (
     <>
-      <div className="flex">
+      <div className="flex bg-[var(--bg-current)]">
         {isFocused || props.value ? (
           <svg className="w-3 h-3 mr-2 mt-1 fill-current" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="8" />
@@ -223,7 +225,7 @@ export const IngredientRow = forwardRef<
           rows={1}
           ref={textareaRef}
           id={props.htmlFor}
-          className="block focus:outline-none bg-transparent resize-none w-full"
+          className="block focus:outline-none resize-none flex-1"
           name="ingredient-row"
           placeholder={
             isFocused && !props.value ? props.placeholder : undefined
@@ -237,7 +239,7 @@ export const IngredientRow = forwardRef<
         />
         {props.value ? (
           <button
-            className="border border-dashed px-1.5 cursor-pointer"
+            className="border border-dashed px-1.5 cursor-pointer bg-[var(--bg-current)]"
             type="button"
             onClick={() => props.onRemove(props.keyId)}
           >

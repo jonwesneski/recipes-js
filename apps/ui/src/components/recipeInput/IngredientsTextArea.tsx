@@ -111,7 +111,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       ref={textAreaRef}
       data-testid="ingredients-text-area"
       className={mergeCss(
-        'relative focus-within:bg-input-focus-background min-h-32 w-full border-2 pl-2 pr-2 pb-2 pt-4 cursor-text',
+        'relative focus-within:bg-input-focus-background focus-within:[--bg-current:theme(colors.input-focus-background)] [--bg-current:theme(colors.background)] min-h-32 w-full border-2 pl-2 pr-2 pb-2 pt-4 cursor-text',
         props.className,
       )}
       role="textbox"
