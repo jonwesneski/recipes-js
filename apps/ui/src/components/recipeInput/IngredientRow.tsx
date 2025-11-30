@@ -1,10 +1,7 @@
 'use client'
 
 import { Label, mergeCss } from '@repo/design-system'
-import useMediaQuery from '@src/hooks/useMediaQuery'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import { type AllMeasurements } from '@src/utils/measurements'
-import { fractionRegex } from '@src/zod-schemas'
 import React, {
   forwardRef,
   useEffect,
@@ -12,7 +9,6 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 type PositionType = { row: number; column: number }
 
@@ -37,6 +33,11 @@ interface IIngriedientRowProps {
   error?: string
   focusOnMount: boolean
   onChange: (_keyId: string, _value: IngredientValidator) => void
+  onMeasurementInput: (
+    _keyId: string | null,
+    _element: HTMLTextAreaElement | null,
+    _startingY: number,
+  ) => void
   onPaste: (_keyId: string, _value: string) => void
   onEnterPressed: (_keyId: string) => void
   onArrowUp: (_keyId: string) => void
@@ -48,10 +49,7 @@ export const IngredientRow = forwardRef<
   IIngriedientRowProps
 >((props, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const [isPopupVisible, setIsPopupVisible] = useState(false)
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
   const [isFocused, setIsFocused] = useState(false)
-  const { width, breakpointPxs } = useMediaQuery()
 
   useEffect(() => {
     if (props.focusOnMount && textareaRef.current) {
@@ -161,45 +159,15 @@ export const IngredientRow = forwardRef<
     if (textareaRef.current) {
       const position = getCaretPosition(textareaRef.current)
       if (position.column === 1) {
-        let yOffset = -150
-        if (!(width < breakpointPxs.md)) {
-          const y = position.row + 1
-          const yMultipler = y * 10
-          yOffset = 40 + yMultipler
-        }
-        const rect = textareaRef.current.getBoundingClientRect()
-        setPopupPosition({
-          x: rect.x,
-          y: yOffset,
-        })
-        setIsPopupVisible(true)
-      } else if (isPopupVisible) {
-        setIsPopupVisible(false)
+        props.onMeasurementInput(
+          props.keyId,
+          textareaRef.current,
+          position.row + 1,
+        )
+      } else {
+        props.onMeasurementInput(null, null, 0)
       }
     }
-  }
-
-  const handleMeasurementInPopupClick = (value: AllMeasurements): void => {
-    const text = textareaRef.current?.textContent
-    if (!text) {
-      return
-    }
-
-    const items = text.split(' ')
-    if (fractionRegex.test(items[1])) {
-      items[2] = value
-    } else {
-      items[1] = value
-    }
-    props.onChange(
-      props.keyId,
-      new IngredientValidator({ stringValue: items.join(' ') }),
-    )
-    setIsPopupVisible(false)
-  }
-
-  const handleHideMeasurementPopUp = (): void => {
-    setIsPopupVisible(false)
   }
 
   const handleFocused = (): void => {
@@ -253,23 +221,6 @@ export const IngredientRow = forwardRef<
         </div>
       ) : null}
 
-      {/**
-       * TODO: lets move this to IngredientsTextArea so I am not rendering it so many times.
-       * I will need to figure out how to position and how to properly set the unit/measurement value
-       */}
-      <IngredientsMeasurementPopUp
-        top={popupPosition.y}
-        left={popupPosition.x}
-        onClick={handleMeasurementInPopupClick}
-        onBlur={handleHideMeasurementPopUp}
-        className={mergeCss(`transition-transform duration-300 ease-in`, {
-          'scale-y-100': isPopupVisible,
-          'scale-y-0': !isPopupVisible,
-        })}
-        style={{
-          transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',
-        }}
-      />
       {props.label ? (
         <Label
           htmlFor={props.htmlFor}

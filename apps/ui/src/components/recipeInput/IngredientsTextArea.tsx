@@ -1,10 +1,14 @@
 'use client'
 
 import { mergeCss, type ClassValue } from '@repo/design-system'
+import useMediaQuery from '@src/hooks/useMediaQuery'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import { useRef } from 'react'
+import { type MeasurementUnitType } from '@src/utils/measurements'
+import { fractionRegex } from '@src/zod-schemas'
+import { useRef, useState } from 'react'
 import { IngredientRow, type IngredientRowHandle } from './IngredientRow'
+import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 const placeholder = `0.5 cups fresh basil
 1 1/4 cups peanuts
@@ -21,6 +25,11 @@ interface IngredientsTextAreaProps {
 export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const textAreaRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<Map<string, IngredientRowHandle>>(new Map())
+  const [keyIdMeasurementPopup, setKeyIdMeasurementPopup] = useState<
+    string | null
+  >(null)
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
+  const { width, breakpointPxs } = useMediaQuery()
   const {
     ingredients,
     addIngredient,
@@ -29,8 +38,59 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     insertIngredientsSteps,
   } = useRecipeStepIngredientsStore(props.keyId)
 
+  const handleMeasurementInPopupClick = (value: MeasurementUnitType): void => {
+    if (!ingredients) {
+      return
+    }
+
+    const index = ingredients.items.findIndex(
+      (item) => item.keyId === keyIdMeasurementPopup,
+    )
+    const text = itemRefs.current
+      .get(ingredients.items[index].keyId)
+      ?.getValue()
+    if (!text) {
+      return
+    }
+
+    const items = text.split(' ')
+    if (fractionRegex.test(items[1])) {
+      items[2] = value
+    } else {
+      items[1] = value
+    }
+
+    if (keyIdMeasurementPopup) {
+      updateIngredient(
+        keyIdMeasurementPopup,
+        new IngredientValidator({ stringValue: items.join(' ') }),
+      )
+    }
+    setKeyIdMeasurementPopup(null)
+  }
+
   const handleChange = (keyId: string, ingredient: IngredientValidator) => {
     updateIngredient(keyId, ingredient)
+  }
+
+  const handleMeasurementInput = (
+    keyId: string | null,
+    element: HTMLTextAreaElement | null,
+    startingY: number,
+  ) => {
+    if (keyId && element) {
+      let yOffset = -150
+      if (!(width < breakpointPxs.md)) {
+        const yMultipler = startingY * 10
+        yOffset = 40 + yMultipler
+      }
+      const rect = element.getBoundingClientRect()
+      setPopupPosition({
+        x: rect.x,
+        y: yOffset,
+      })
+    }
+    setKeyIdMeasurementPopup(keyId)
   }
 
   const handleNewRow = (keyId: string) => {
@@ -140,6 +200,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
           }
           focusOnMount={item.shouldBeFocused}
           onChange={handleChange}
+          onMeasurementInput={handleMeasurementInput}
           onPaste={handleOnPaste}
           onEnterPressed={handleNewRow}
           onRemove={handleRemove}
@@ -147,6 +208,19 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
           onArrowUp={handleArrowUp}
         />
       ))}
+      <IngredientsMeasurementPopUp
+        top={popupPosition.y}
+        left={popupPosition.x}
+        onClick={handleMeasurementInPopupClick}
+        onBlur={() => setKeyIdMeasurementPopup(null)}
+        className={mergeCss('transition-transform duration-300 ease-in', {
+          'scale-y-100': keyIdMeasurementPopup,
+          'scale-y-0': !keyIdMeasurementPopup,
+        })}
+        style={{
+          transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',
+        }}
+      />
     </div>
   )
 }

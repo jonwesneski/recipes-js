@@ -3,14 +3,14 @@
 import { mergeCss, type ClassValue } from '@repo/design-system'
 import {
   measurementUnitsAbbreviated,
-  type AllMeasurements,
+  type MeasurementUnitType,
 } from '@src/utils/measurements'
 import { useEffect, useRef, type CSSProperties } from 'react'
 
 interface IIngredientsMeasurementPopUpProps {
   top: number
   left: number
-  onClick: (_value: AllMeasurements) => void
+  onClick: (_value: MeasurementUnitType) => void
   onBlur: () => void
   className?: ClassValue
   style?: CSSProperties
@@ -54,14 +54,14 @@ export const IngredientsMeasurementPopUp = (
               className="border px-1 bg-text text-background hover:underline"
               role="button"
               tabIndex={0}
-              onClick={() => props.onClick(m as AllMeasurements)}
+              onClick={() => props.onClick(m as MeasurementUnitType)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
-                  props.onClick(m as AllMeasurements)
+                  props.onClick(m as MeasurementUnitType)
                 }
               }}
             >
-              {measurementUnitsAbbreviated[m as AllMeasurements]}
+              {measurementUnitsAbbreviated[m as MeasurementUnitType]}
             </div>
           )
         })}
