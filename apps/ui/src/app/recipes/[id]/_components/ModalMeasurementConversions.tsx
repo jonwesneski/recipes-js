@@ -2,7 +2,7 @@
 
 import { ModalCentered } from '@repo/design-system'
 import {
-  type AllMeasurements,
+  type MeasurementUnitType,
   getConversions,
   roundToDecimal,
 } from '@src/utils/measurements'
@@ -30,7 +30,7 @@ const ConversionRows = (props: {
 }
 
 interface ModalMeasurementConversionsProps {
-  unitType: AllMeasurements
+  unitType: MeasurementUnitType
   amount: number
   name: string
 }

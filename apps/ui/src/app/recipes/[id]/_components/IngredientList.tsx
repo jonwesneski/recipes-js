@@ -4,7 +4,7 @@ import type { IngredientResponse } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
 import {
-  type AllMeasurements,
+  type MeasurementUnitType,
   determineAmountFormat,
   determineAmountUnit,
   roundToDecimal,
@@ -33,7 +33,7 @@ const IngredientList = (props: IngredientListProps) => {
         () => (
           <ModalMeasurementConversions
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it is not null
-            unitType={ingredient.unit! as AllMeasurements}
+            unitType={ingredient.unit! as MeasurementUnitType}
             amount={roundToDecimal(ingredient.amount * props.scaleFactor, 2)}
             name={ingredient.name}
           />

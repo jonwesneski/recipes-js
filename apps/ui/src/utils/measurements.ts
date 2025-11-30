@@ -5,24 +5,25 @@ import {
 } from '@repo/codegen/model';
 import { z } from 'zod/v4';
 
-export type AllMeasurements = NonNullable<IngredientResponseUnit>;
+export type MeasurementUnitType = NonNullable<IngredientResponseUnit>;
 export const measurementUnits = Object.keys(IngredientResponseUnit);
-export const measurementUnitsAbbreviated: Record<AllMeasurements, string> = {
-  cups: 'cups',
-  tablespoons: 'tbs',
-  teaspoons: 'tsp',
-  ounces: 'oz',
-  pounds: 'lbs',
-  fluidOunces: 'fl oz',
-  pints: 'pt',
-  quarts: 'qt',
-  gallons: 'gal',
-  grams: 'g',
-  kilograms: 'kg',
-  milliliters: 'ml',
-  liters: 'L',
-};
-export const measurementUnitsSingular: Record<AllMeasurements, string> = {
+export const measurementUnitsAbbreviated: Record<MeasurementUnitType, string> =
+  {
+    cups: 'cups',
+    tablespoons: 'tbs',
+    teaspoons: 'tsp',
+    ounces: 'oz',
+    pounds: 'lbs',
+    fluidOunces: 'fl oz',
+    pints: 'pt',
+    quarts: 'qt',
+    gallons: 'gal',
+    grams: 'g',
+    kilograms: 'kg',
+    milliliters: 'ml',
+    liters: 'L',
+  };
+export const measurementUnitsSingular: Record<MeasurementUnitType, string> = {
   cups: 'cup',
   tablespoons: 'tablespoon',
   teaspoons: 'teaspoon',
@@ -37,7 +38,7 @@ export const measurementUnitsSingular: Record<AllMeasurements, string> = {
   milliliters: 'millilter',
   liters: 'liter',
 };
-export const measurementUnitsPlural: Record<AllMeasurements, string> = {
+export const measurementUnitsPlural: Record<MeasurementUnitType, string> = {
   cups: 'cups',
   tablespoons: 'tablespoons',
   teaspoons: 'teaspoons',
@@ -137,7 +138,7 @@ export const isMetric = (unit: string) => {
   return metricUnitSchema.safeParse(unit).success;
 };
 
-export const getConversions = (amount: number, from: AllMeasurements) => {
+export const getConversions = (amount: number, from: MeasurementUnitType) => {
   if (isWeight(from)) {
     return {
       type: 'Weight',
