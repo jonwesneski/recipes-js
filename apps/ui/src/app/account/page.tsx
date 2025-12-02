@@ -1,10 +1,10 @@
 import { usersControllerFollowersV1 } from '@repo/codegen/users'
+import { getAccessToken } from '@src/utils/getAccessToken'
 import { jwtDecode } from 'jwt-decode'
-import { cookies } from 'next/headers'
 import Account from './_page'
 
 const Page = async () => {
-  const token = (await cookies()).get('access_token')?.value ?? ''
+  const token = await getAccessToken()
   const id = jwtDecode(token).sub ?? ''
   const followers = await usersControllerFollowersV1(id, undefined, {
     headers: {

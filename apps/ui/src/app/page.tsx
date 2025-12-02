@@ -4,6 +4,8 @@ import GoogleLogo from '@public/Google__G__logo.svg'
 import { useAuthControllerLogout } from '@repo/codegen/auth'
 import { IconTextButton, TextButton } from '@repo/design-system'
 import { type Svg } from '@src/types/svg'
+import { generateJwt } from '@src/utils/genericJwt'
+import { redirect } from 'next/navigation'
 import { useEffect, type MouseEvent } from 'react'
 import { deleteCookie } from './deleteAuthCookie.action'
 
@@ -26,7 +28,17 @@ const Page = () => {
     if (!(process.env.NEXT_PUBLIC_ENABLE_MSW === 'true')) {
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
     } else {
-      window.location.href = '/recipes'
+      void (async () => {
+        const formData = new FormData()
+        formData.append('access_token', await generateJwt())
+        await fetch('api/redirect', {
+          method: 'POST',
+          body: formData,
+        })
+      })()
+        .catch((e: unknown) => console.error(e))
+        // Does not work if then() is before catch() for some reason
+        .then(() => redirect('/recipes'))
     }
   }
 
