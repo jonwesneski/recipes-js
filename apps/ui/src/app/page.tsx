@@ -28,6 +28,12 @@ const Page = () => {
     if (!(process.env.NEXT_PUBLIC_ENABLE_MSW === 'true')) {
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
     } else {
+      /**
+       *  Once I have frontend and backend on same domains, I can get rid of this hack:
+       *  https://github.com/jonwesneski/recipes-js/pull/83
+       * This hack is basically doing a POST to frontend and then I am setting
+       * another cookie in the frontend just to be accessed in SSR only
+       *  */
       void (async () => {
         const formData = new FormData()
         formData.append('access_token', await generateJwt())
