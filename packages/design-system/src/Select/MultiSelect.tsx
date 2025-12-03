@@ -24,6 +24,7 @@ export const MultiSelect = (props: IMultiSelectProps) => {
     <div className="relative">
       <Select
         id={props.id}
+        inputId={props.id}
         isMulti
         onChange={props.onChange}
         isClearable

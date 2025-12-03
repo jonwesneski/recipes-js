@@ -128,8 +128,7 @@ export const Categories = () => {
   }
 
   return (
-    <section>
-      <h1 className="text-3xl font-bold mb-10">Categories</h1>
+    <>
       <TextButton
         className="mb-5"
         text="auto generate categories"
@@ -196,6 +195,6 @@ export const Categories = () => {
         onChange={handleTagsChange}
         onLoadOptions={handleLoadOptions}
       />
-    </section>
+    </>
   )
 }

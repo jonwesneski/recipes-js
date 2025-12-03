@@ -66,8 +66,7 @@ export const ServingsAndNutritionalFacts = () => {
   }
 
   return (
-    <section>
-      <h1 className="text-3xl font-bold mb-10">Servings & Nutritional Facts</h1>
+    <>
       <TextButton
         className="mb-5"
         text="auto generate facts"
@@ -109,6 +108,6 @@ export const ServingsAndNutritionalFacts = () => {
         nutritionalFacts={nutritionalFacts}
         onNutritionalFactChange={(data) => setPartialNutritionalFacts(data)}
       />
-    </section>
+    </>
   )
 }

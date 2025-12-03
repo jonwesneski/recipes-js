@@ -7,10 +7,7 @@ import { IngredientsTextArea } from './IngredientsTextArea'
 import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
-interface IStepsProps {
-  className?: string
-}
-export const Steps = (props: IStepsProps) => {
+export const Steps = () => {
   const { steps, addStep, setStepImage } = useRecipeStore((state) => state)
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const [isNewStep, setIsNewStep] = useState<boolean>(false)
@@ -48,8 +45,7 @@ export const Steps = (props: IStepsProps) => {
   }, [isNewStep, itemRefs])
 
   return (
-    <section className={props.className}>
-      <h1 className="text-3xl font-bold mb-10">Steps</h1>
+    <>
       {steps.map((s, index) => {
         const stepNumber = index + 1
         return (
@@ -99,6 +95,6 @@ export const Steps = (props: IStepsProps) => {
         text="add step"
         onClick={handleOnAddClick}
       />
-    </section>
+    </>
   )
 }
