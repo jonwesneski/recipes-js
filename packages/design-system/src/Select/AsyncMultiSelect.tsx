@@ -32,6 +32,8 @@ export const AsyncMultiSelect = (props: IAsyncMultiSelectProps) => {
   return (
     <div className="relative">
       <Select
+        id={props.id}
+        inputId={props.id}
         isMulti
         onChange={props.onChange}
         isClearable

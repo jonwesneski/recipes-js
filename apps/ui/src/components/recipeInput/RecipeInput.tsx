@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react'
 import { Categories } from './Categories'
 import { ServingsAndNutritionalFacts } from './NutritionalFacts'
 import { PhotoInput } from './PhotoInput'
+import { SectionLayout } from './SectionLayout'
 import { Steps } from './Steps'
 import { TimeTextLabel } from './TimeTextLabel'
 
@@ -81,7 +82,7 @@ export const RecipeInput = () => {
 
   return (
     <div ref={divRef} className="flex flex-col gap-10">
-      <section>
+      <SectionLayout title="basic info">
         <TextLabel
           className="w-5/6 md:max-w-3xl"
           ref={nameRef}
@@ -124,15 +125,17 @@ export const RecipeInput = () => {
           onUploadClick={handleOnUploadClick}
           onRemoveClick={handleOnRemoveClick}
         />
-      </section>
+      </SectionLayout>
 
-      <hr className="border-t border-dotted mt-10" />
-      <Steps />
-      <hr className="border-t border-dotted mt-10" />
-      <ServingsAndNutritionalFacts />
-      <hr className="border-t border-dotted mt-10" />
-      <Categories />
-      <hr className="border-t border-dotted my-10" />
+      <SectionLayout title="steps">
+        <Steps />
+      </SectionLayout>
+      <SectionLayout title="servings & nutritional facts">
+        <ServingsAndNutritionalFacts />
+      </SectionLayout>
+      <SectionLayout title="categories">
+        <Categories />
+      </SectionLayout>
     </div>
   )
 }
