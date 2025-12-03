@@ -3,7 +3,7 @@ import { recipesControllerRecipeV1 } from '@repo/codegen/recipes'
 import '@repo/design-system/styles.css'
 import { CameraProvider } from '@src/providers/CameraProvider'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
-import { cookies } from 'next/headers'
+import { getAccessToken } from '@src/utils/getAccessToken'
 import { notFound } from 'next/navigation'
 
 const Layout = async ({
@@ -13,7 +13,7 @@ const Layout = async ({
   children: React.ReactNode
   params: Promise<{ id: string }>
 }) => {
-  const token = (await cookies()).get('access_token')
+  const token = await getAccessToken()
   if (!token) {
     notFound()
   }
@@ -25,7 +25,7 @@ const Layout = async ({
     data = await recipesControllerRecipeV1(id, {
       params: { byOwner: true },
       headers: {
-        cookie: `${token.name}=${token.value}`,
+        Authorization: `Bearer ${token}`,
       },
     })
   } catch (error) {

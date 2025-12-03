@@ -60,20 +60,22 @@ export class AuthController {
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
-      res.redirect(`${frontendUrl}recipes`);
 
-      // res.send(`
-      //   <html>
-      //     <body>
-      //       <form id="tokenForm" action="${frontendUrl}api/redirect" method="POST">
-      //         <input type="hidden" name="access_token" value="${googleUser.tokens.accessToken}" />
-      //       </form>
-      //       <script>
-      //         document.getElementById('tokenForm').submit();
-      //       </script>
-      //     </body>
-      //   </html>
-      // `);
+      // res.redirect(`${frontendUrl}recipes`);
+      // Temporary workaround to pass token via form post to avoid CORS issues
+      // since my frontend and backend are on different domains
+      res.send(`
+        <html>
+          <body>
+            <form id="tokenForm" action="${frontendUrl}api/redirect" method="POST">
+              <input type="hidden" name="access_token" value="${googleUser.tokens.accessToken}" />
+            </form>
+            <script>
+              document.getElementById('tokenForm').submit();
+            </script>
+          </body>
+        </html>
+      `);
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });
     }

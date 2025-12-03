@@ -3,8 +3,8 @@ import { usersControllerUserAccountV1 } from '@repo/codegen/users'
 import '@repo/design-system/styles.css'
 import Loading from '@src/components/LoadingComponent'
 import { MainLayout } from '@src/components/MainLayout'
+import { getAccessToken } from '@src/utils/getAccessToken'
 import { type Metadata, type Viewport } from 'next'
-import { cookies } from 'next/headers'
 import AppProviders from './_providers'
 import './globals.css'
 
@@ -24,21 +24,12 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   let user: Partial<UserAccountResponse> = {}
   // Cookies are not automatically added in SSR from what I understand,
   // so doing it manually. Cookies will be empty with different domains however
-  const cookieStore = await cookies()
-  const token = cookieStore.get('access_token')?.value
-  const cookieHeader =
-    typeof cookieStore.toString === 'function'
-      ? cookieStore.toString()
-      : cookieStore
-          .getAll()
-          .map((c) => `${c.name}=${c.value}`)
-          .join('; ')
+  const token = await getAccessToken()
   if (token) {
     try {
       user = await usersControllerUserAccountV1({
         headers: {
           Authorization: `Bearer ${token}`,
-          cookie: cookieHeader,
         },
       })
     } catch {
