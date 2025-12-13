@@ -13,8 +13,8 @@ import type {
   RecipeResponse,
   RecipeResponseServingUnit,
 } from '@repo/codegen/model';
+import { roundToDecimal } from '@src/utils/calculate';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
-import { roundToDecimal } from '@src/utils/measurements';
 import { nutritionalFactsConst } from '@src/utils/nutritionalFacts';
 import { createStore } from 'zustand/vanilla';
 import { applyMiddleware } from './middleware';

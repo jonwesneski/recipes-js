@@ -3,11 +3,11 @@
 import type { IngredientResponse } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
 import { useUserStore } from '@src/providers/use-store-provider'
+import { roundToDecimal } from '@src/utils/calculate'
 import {
   type MeasurementUnitType,
   determineAmountFormat,
   determineAmountUnit,
-  roundToDecimal,
 } from '@src/utils/measurements'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
 

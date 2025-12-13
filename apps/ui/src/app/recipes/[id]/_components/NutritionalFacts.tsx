@@ -2,17 +2,24 @@
 
 import { type ClassValue, mergeCss } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import { roundToDecimal } from '@src/utils/measurements'
+import { useUserStore } from '@src/providers/use-store-provider'
+import { calculatePercentage, roundToDecimal } from '@src/utils/calculate'
 import {
   getNameAndUnit,
   nutritionalFactsConst,
 } from '@src/utils/nutritionalFacts'
+import React from 'react'
 
 interface INutritionalFactsProps {
   className?: ClassValue
 }
 export const NutritionalFacts = (props: INutritionalFactsProps) => {
   const { nutritionalFacts, scaleFactor } = useRecipeStore((state) => state)
+  const { customDailyNutrition, predefinedDailyNutrition } = useUserStore(
+    (state) => state,
+  )
+  const userNutritionalFacts =
+    customDailyNutrition ?? predefinedDailyNutrition?.nutritionalFacts
 
   return (
     <div className={mergeCss(undefined, props.className)}>
@@ -22,16 +29,30 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
           {Object.keys(nutritionalFactsConst).map((key) => {
             const [name, unit] = getNameAndUnit(key)
             const _unit = unit === 'IU' ? unit : unit.toLowerCase()
+            const recipeNutrionalFact =
+              nutritionalFacts?.[key as keyof typeof nutritionalFacts]
+            const userNutritionalFact =
+              userNutritionalFacts?.[key as keyof typeof nutritionalFacts]
             return (
-              <tr className="border" key={key}>
-                <td className="text-right pl-3">{name}</td>
-                <td className="text-left px-4">
-                  {nutritionalFacts?.[key as keyof typeof nutritionalFacts]
-                    ? // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style -- I get more linting errors if I use a "!"
-                      `${roundToDecimal((nutritionalFacts[key as keyof typeof nutritionalFacts] as number) * scaleFactor, 2)} ${_unit}`
-                    : `? ${_unit}`}
-                </td>
-              </tr>
+              <React.Fragment key={key}>
+                <tr className="border">
+                  <td className="text-right pl-3">{name}</td>
+                  <td className="text-left px-4">
+                    {typeof recipeNutrionalFact === 'number'
+                      ? `${roundToDecimal(recipeNutrionalFact * scaleFactor, 2)} ${_unit}`
+                      : `? ${_unit}`}
+                  </td>
+                  <td className="text-left px-4 border-l">
+                    {typeof recipeNutrionalFact === 'number' &&
+                    typeof userNutritionalFact === 'number'
+                      ? calculatePercentage(
+                          recipeNutrionalFact,
+                          userNutritionalFact,
+                        )
+                      : '?'}
+                  </td>
+                </tr>
+              </React.Fragment>
             )
           })}
         </tbody>

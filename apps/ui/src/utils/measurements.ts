@@ -4,6 +4,7 @@ import {
   type NumberFormat,
 } from '@repo/codegen/model';
 import { z } from 'zod/v4';
+import { roundToDecimal } from './calculate';
 
 export type MeasurementUnitType = NonNullable<IngredientResponseUnit>;
 export const measurementUnits = Object.keys(IngredientResponseUnit);
@@ -304,11 +305,6 @@ export const determineAmountFormat = (
     (isFraction && numberFormatPreference === 'default')
     ? numberToFraction(roundedNumber)
     : roundedNumber.toString();
-};
-
-export const roundToDecimal = (num: number, decimalPlaces: number): number => {
-  const factor = Math.pow(10, decimalPlaces);
-  return Math.round(num * factor) / factor;
 };
 
 export const determineAmountUnit = (
