@@ -21,7 +21,7 @@ import { PatchUserDto } from './contracts';
 import { PutFollowUserDto } from './contracts/follow-user.dto';
 import {
   UserAccountResponse,
-  UserFollowersPaginationResponse,
+  UserFollowingsPaginationResponse,
   UserPublicResponse,
 } from './contracts/users.response';
 import { PatchDtoValidationPipe } from './users.custom.pipes';
@@ -97,18 +97,22 @@ export class UsersController {
     return await this.usersService.updateUserAccount(id, body);
   }
 
-  @Get(':id/followers')
+  @Get(':id/followings')
   @ApiOkResponse({
-    description: "user's followers",
-    type: UserFollowersPaginationResponse,
+    description: "user's followings",
+    type: UserFollowingsPaginationResponse,
   })
-  @ApiParam({ name: 'id', type: String, description: "id of user's followers" })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: "id of user's followings",
+  })
   @UseGuards(JwtGuard)
-  async followers(
+  async followings(
     @Param('id') id: string,
     @Query() query: BaseQueryDto,
-  ): Promise<UserFollowersPaginationResponse> {
-    return await this.usersService.getFollowers({ id, ...query });
+  ): Promise<UserFollowingsPaginationResponse> {
+    return await this.usersService.getFollowings({ id, ...query });
   }
 
   @Put(':id/follow')

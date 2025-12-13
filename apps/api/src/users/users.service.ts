@@ -169,8 +169,8 @@ export class UsersService {
     });
   }
 
-  async getFollowers(params: GetFollowersQueryParams) {
-    const followers = await this.prisma.userFollow.findMany({
+  async getFollowings(params: GetFollowersQueryParams) {
+    const followings = await this.prisma.userFollow.findMany({
       where: { userId: params.id },
       cursor: params.cursorId ? { id: params.cursorId } : undefined,
       skip: params.cursorId ? 1 : params.skip,
@@ -180,15 +180,15 @@ export class UsersService {
       },
     });
     return {
-      data: followers.map((f) => f.following),
+      data: followings.map((f) => f.following),
       pagination: {
         totalRecords: await this.prisma.userFollow.count({
           where: { userId: params.id },
         }),
         currentCursor:
-          followers.length > 0 ? followers[0].id : params.cursorId || null,
+          followings.length > 0 ? followings[0].id : params.cursorId || null,
         nextCursor:
-          followers.length > 0 ? followers[followers.length - 1].id : null,
+          followings.length > 0 ? followings[followings.length - 1].id : null,
       },
     };
   }
