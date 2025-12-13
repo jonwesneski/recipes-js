@@ -44,7 +44,8 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
                   </td>
                   <td className="text-left px-4 border-l">
                     {typeof recipeNutrionalFact === 'number' &&
-                    typeof userNutritionalFact === 'number'
+                    typeof userNutritionalFact === 'number' &&
+                    userNutritionalFact > 0
                       ? calculatePercentage(
                           recipeNutrionalFact,
                           userNutritionalFact,
