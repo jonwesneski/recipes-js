@@ -1,16 +1,18 @@
 import { mergeCss } from '@repo/design-system'
 import React, { type ReactElement, useEffect, useRef, useState } from 'react'
-import { type TabProps } from './Tab'
+import { type ITabProps } from './Tab'
 
-interface ITabProps {
-  children: ReactElement<TabProps> | ReactElement<TabProps>[]
+interface ITabsProps {
+  children: ReactElement<ITabProps> | ReactElement<ITabProps>[]
 }
-const Tabs = ({ children }: ITabProps) => {
+const Tabs = ({ children }: ITabsProps) => {
   const [activeTab, setActiveTab] = useState(0)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
 
-  const _children = React.Children.toArray(children) as ReactElement<TabProps>[]
+  const _children = React.Children.toArray(
+    children,
+  ) as ReactElement<ITabProps>[]
 
   const handleScroll = () => {
     if (contentRef.current) {
@@ -45,7 +47,7 @@ const Tabs = ({ children }: ITabProps) => {
     <div>
       <div className="border-b border-solid flex">
         {React.Children.map(_children, (child, index) => {
-          if (!React.isValidElement<TabProps>(child)) return null
+          if (!React.isValidElement<ITabProps>(child)) return null
 
           return (
             <button

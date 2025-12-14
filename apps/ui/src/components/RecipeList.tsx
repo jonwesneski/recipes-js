@@ -6,7 +6,7 @@ import { useRecipesListStore } from '@src/providers/recipes-list-store-provider'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { RecipeTile } from './RecipeTile'
+import { RecipeCard } from './RecipeCard'
 
 interface IRecipesListProps {
   recipes: RecipeListResponse
@@ -50,7 +50,7 @@ export const RecipeList = (props: IRecipesListProps) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3">
       {recipes.map((recipe, index) => (
-        <RecipeTile
+        <RecipeCard
           innerRef={recipes.length - index < 3 && hasNextPage ? ref : undefined}
           key={recipe.id}
           recipe={recipe}

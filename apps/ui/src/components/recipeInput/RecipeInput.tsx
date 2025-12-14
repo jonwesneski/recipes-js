@@ -115,7 +115,12 @@ export const RecipeInput = () => {
             onChange={handleOnCookChange}
           />
         </div>
+      </SectionLayout>
 
+      <SectionLayout title="steps">
+        <Steps />
+      </SectionLayout>
+      <SectionLayout title="finished photo">
         <PhotoInput
           id="recipe-photo"
           label="recipe photo"
@@ -125,10 +130,6 @@ export const RecipeInput = () => {
           onUploadClick={handleOnUploadClick}
           onRemoveClick={handleOnRemoveClick}
         />
-      </SectionLayout>
-
-      <SectionLayout title="steps">
-        <Steps />
       </SectionLayout>
       <SectionLayout title="servings & nutritional facts">
         <ServingsAndNutritionalFacts />

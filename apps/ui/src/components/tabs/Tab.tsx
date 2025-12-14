@@ -1,11 +1,10 @@
 import React from 'react'
 
-export interface TabProps {
+export interface ITabProps {
   label: string
   children: React.ReactNode
 }
-
-const Tab = ({ children }: TabProps) => {
+const Tab = ({ children }: ITabProps) => {
   return <>{children}</>
 }
 

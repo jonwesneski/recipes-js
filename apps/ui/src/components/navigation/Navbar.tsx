@@ -26,6 +26,7 @@ regexRouteKeyMap.set(/^\/recipes\/\w+$/, 'recipe')
 regexRouteKeyMap.set(/^\/recipes\/.+\/\w\/edit$/, 'edit')
 regexRouteKeyMap.set(/^\/create-recipe$/, 'create')
 regexRouteKeyMap.set(/^\/users\/\w+$/, 'user')
+regexRouteKeyMap.set(/^\/account$/, 'user')
 
 const CreateRecipeLink = (
   <NavLink key="create" href="/create-recipe" svgIcon={AddIcon as Svg} />

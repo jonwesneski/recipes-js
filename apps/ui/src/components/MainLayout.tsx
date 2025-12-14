@@ -47,6 +47,6 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </main>
     </>
   ) : (
-    <>{children}</>
+    <main>{children}</main>
   )
 }
