@@ -16,6 +16,7 @@ const placeholder = `0.5 cups fresh basil
 1 ounce salt`
 const placeholderSplit = placeholder.split('\n')
 
+// TODO: rework file into a web component
 interface IngredientsTextAreaProps {
   keyId: string
   stepNumber: number

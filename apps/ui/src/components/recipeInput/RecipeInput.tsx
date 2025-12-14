@@ -4,10 +4,10 @@ import { TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useEffect, useRef } from 'react'
 import { Categories } from './Categories'
-import { ServingsAndNutritionalFacts } from './NutritionalFacts'
 import { PhotoInput } from './PhotoInput'
 import { SectionLayout } from './SectionLayout'
-import { Steps } from './Steps'
+import { ServingsAndNutritionalFacts } from './ServingsAndNutritionalFacts'
+import { StepList } from './StepList'
 import { TimeTextLabel } from './TimeTextLabel'
 
 export const RecipeInput = () => {
@@ -118,7 +118,7 @@ export const RecipeInput = () => {
       </SectionLayout>
 
       <SectionLayout title="steps">
-        <Steps />
+        <StepList />
       </SectionLayout>
       <SectionLayout title="finished photo">
         <PhotoInput

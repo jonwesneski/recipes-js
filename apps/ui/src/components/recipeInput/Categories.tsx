@@ -180,7 +180,7 @@ export const Categories = () => {
       />
       <MultiSelect
         id="proteins"
-        label="protien(s)"
+        label="protein(s)"
         className="w-64"
         options={proteinOptions}
         value={proteins.map((p) => ({ label: p, value: p }))}
