@@ -79,7 +79,7 @@ export class UserAccountResponse
   customDailyNutrition: CustomDailyNutritionResponse | null;
 }
 
-export class UserFollowersResponse {
+export class UserFollowingsResponse {
   @ApiProperty({ type: String })
   id: string;
   @ApiProperty({ type: String })
@@ -88,9 +88,9 @@ export class UserFollowersResponse {
   imageUrl: string | null;
 }
 
-export class UserFollowersPaginationResponse {
-  @ApiProperty({ type: [UserFollowersResponse] })
-  data: UserFollowersResponse[];
+export class UserFollowingsPaginationResponse {
+  @ApiProperty({ type: [UserFollowingsResponse] })
+  data: UserFollowingsResponse[];
   @ApiProperty({ type: PaginationResponse })
   pagination: PaginationResponse;
 }
