@@ -9,7 +9,8 @@ import AppProviders from './_providers'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Recipehall',
+  title: 'recipehall.',
+  applicationName: 'recipehall',
   description: 'A place to share recipes',
 }
 
@@ -36,6 +37,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
       // ignore
     }
   }
+
   return (
     <html lang="en">
       <body>
