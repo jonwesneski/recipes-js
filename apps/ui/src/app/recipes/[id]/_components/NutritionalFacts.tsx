@@ -26,6 +26,11 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
       <h3 className="font-bold text-center">Nutritional Facts:</h3>
       <table className="border border-collapse m-auto">
         <tbody>
+          <tr className="border">
+            <th className="text-right pl-3">Name</th>
+            <th className="text-left px-4">Amount</th>
+            <th className="text-left px-4 border-l">Daily %</th>
+          </tr>
           {Object.keys(nutritionalFactsConst).map((key) => {
             const [name, unit] = getNameAndUnit(key)
             const _unit = unit === 'IU' ? unit : unit.toLowerCase()

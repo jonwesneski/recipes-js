@@ -43,7 +43,7 @@ const IngredientList = (props: IngredientListProps) => {
     }
   }
 
-  return (
+  return props.ingredients.length ? (
     <ul className={mergeCss('list-disc', props.className)}>
       {props.ingredients.map((ingredient) => {
         const { amount, unit } = determineAmountUnit(
@@ -78,6 +78,6 @@ const IngredientList = (props: IngredientListProps) => {
         )
       })}
     </ul>
-  )
+  ) : null
 }
 export default IngredientList

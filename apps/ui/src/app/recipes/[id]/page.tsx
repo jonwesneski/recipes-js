@@ -7,7 +7,7 @@ import {
   RecipeDurations,
   RecipeIngredientsOverview,
   RecipeLayout,
-  RecipeSteps,
+  StepList,
 } from './_components'
 
 const getRecipe = cache(async (id: string) => {
@@ -54,7 +54,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
       <RecipeLayout>
         <RecipeIngredientsOverview className="my-5" />
         <RecipeDurations />
-        <RecipeSteps />
+        <StepList />
         <NutritionalFacts className="my-28" />
       </RecipeLayout>
     </RecipeStoreProvider>
