@@ -136,12 +136,12 @@ describe('UsersController (e2e)', () => {
     });
   });
 
-  describe(`GET ${basePath}/:id/followers`, () => {
-    const followersPath = () => `${basePath}/${user1.id}/followers`;
+  describe(`GET ${basePath}/:id/followings`, () => {
+    const followingsPath = () => `${basePath}/${user1.id}/followings`;
 
     it('valid', async () => {
       const response = await request(app.getHttpServer())
-        .get(followersPath())
+        .get(followingsPath())
         .set('Authorization', `Bearer ${token1}`);
 
       expect(response.status).toBe(200);
