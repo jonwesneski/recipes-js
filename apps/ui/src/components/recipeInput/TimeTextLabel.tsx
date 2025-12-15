@@ -1,19 +1,13 @@
 import { TextLabel } from '@repo/design-system'
-import {
-  useRef,
-  useState,
-  type DetailedHTMLProps,
-  type InputHTMLAttributes,
-} from 'react'
+import { useState } from 'react'
 
 export type TimeTextLabelProps = Omit<
-  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
+  React.ComponentPropsWithRef<'input'>,
   'style' | 'className' | 'type' | 'onChange'
 > & { label: string; onChange: (_value: string) => void }
 export const TimeTextLabel = (_props: TimeTextLabelProps) => {
   const { onChange, ...props } = _props
   const [time, setTime] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleOnInput = (event: React.InputEvent<HTMLInputElement>) => {
     if (
@@ -21,29 +15,24 @@ export const TimeTextLabel = (_props: TimeTextLabelProps) => {
       event.nativeEvent.data &&
       !isNaN(parseInt(event.nativeEvent.data))
     ) {
-      setTime((t) => {
-        const digitString =
-          `${t.replace(':', '').replace(/^0+/, '')}${event.nativeEvent.data}`.padStart(
-            4,
-            '0',
-          )
-        if (digitString.length <= 4) {
-          const result = transformResult(digitString)
-          onChange(result)
-          return result
-        }
-        return t
-      })
-    } else if (event.nativeEvent.inputType === 'deleteContentBackward') {
-      setTime((t) => {
-        const nonZeros = t.replace(':', '').replaceAll('0', '')
-        const digitString = nonZeros
-          .slice(0, nonZeros.length - 1)
-          .padStart(4, '0')
+      const digitString =
+        `${time.replace(':', '').replace(/^0+/, '')}${event.nativeEvent.data}`.padStart(
+          4,
+          '0',
+        )
+      if (digitString.length <= 4) {
         const result = transformResult(digitString)
+        setTime(result)
         onChange(result)
-        return result
-      })
+      }
+    } else if (event.nativeEvent.inputType === 'deleteContentBackward') {
+      const nonZeros = time.replace(':', '').replaceAll('0', '')
+      const digitString = nonZeros
+        .slice(0, nonZeros.length - 1)
+        .padStart(4, '0')
+      const result = transformResult(digitString)
+      setTime(result)
+      onChange(result)
     }
   }
 
@@ -57,7 +46,6 @@ export const TimeTextLabel = (_props: TimeTextLabelProps) => {
   return (
     <TextLabel
       {...props}
-      ref={inputRef}
       name={props.label}
       inputMode="numeric"
       pattern="[0-9]{2}:[0-9]{2}"

@@ -26,7 +26,7 @@ export const TextLabel = ({
   return (
     <div className="relative bg-transparent flex flex-col">
       {isRequired ? (
-        <span className="absolute -left-3 text-red-900">*</span>
+        <span className="absolute -left-3 text-text-error">*</span>
       ) : null}
       <Text
         {...props}
@@ -58,12 +58,18 @@ export const TextLabel = ({
         )}
         onClick={() => {
           setIsFocused(true)
-          ref.current?.focus()
+          if (typeof ref !== 'function' && ref.current) {
+            ref.current.focus()
+          }
         }}
         onMouseEnter={() => setIsLabelHovered(true)}
         onMouseLeave={() => setIsLabelHovered(false)}
       />
-      <Label htmlFor={name} text={error ?? ''} className="text-red-900 block" />
+      <Label
+        htmlFor={name}
+        text={error ?? ''}
+        className="text-text-error block"
+      />
     </div>
   )
 }

@@ -1,18 +1,10 @@
 'use client'
 
-import {
-  useState,
-  type DetailedHTMLProps,
-  type InputHTMLAttributes,
-} from 'react'
+import { useState } from 'react'
 import { mergeCss } from '../utils'
 
-export type TextProps = DetailedHTMLProps<
-  InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
-> & {
+export type TextProps = React.ComponentPropsWithRef<'input'> & {
   variant?: 'ellipses' | 'none'
-  ref?: React.RefObject<HTMLInputElement | null>
 }
 export const Text = ({
   variant = 'ellipses',
@@ -24,7 +16,6 @@ export const Text = ({
       ? `${props.placeholder}...`
       : props.placeholder
   const [isHovered, setIsHovered] = useState(false)
-
   return (
     <input
       {...props}
