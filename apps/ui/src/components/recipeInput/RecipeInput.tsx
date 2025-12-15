@@ -1,35 +1,21 @@
 'use client'
 
-import { TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useEffect, useRef } from 'react'
+import { BasicInfoInput } from './BasicInfoInput'
 import { Categories } from './Categories'
 import { PhotoInput } from './PhotoInput'
-import { SectionLayout } from './SectionLayout'
+import { SectionListLayout } from './SectionLayout'
 import { ServingsAndNutritionalFacts } from './ServingsAndNutritionalFacts'
 import { StepList } from './StepList'
-import { TimeTextLabel } from './TimeTextLabel'
 
 export const RecipeInput = () => {
   const divRef = useRef<HTMLDivElement>(null)
-  const nameRef = useRef<HTMLInputElement>(null)
   const {
-    name,
-    setName,
-    description,
-    setDescription,
-    setCookingTimeInMinutes,
-    setPreparationTimeInMinutes,
     setImage,
     imageSrc: base64Image,
     errors,
   } = useRecipeStore((state) => state)
-
-  useEffect(() => {
-    if (nameRef.current) {
-      nameRef.current.focus()
-    }
-  }, [])
 
   useEffect(() => {
     const firstError = Object.keys(errors)[0]
@@ -45,29 +31,6 @@ export const RecipeInput = () => {
     }
   }, [errors])
 
-  const handleOnNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value)
-  }
-
-  const handleOnDescriptionChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setDescription(event.target.value)
-  }
-
-  const handleOnPrepChange = (time: string) => {
-    setPreparationTimeInMinutes(_convertToMinutes(time))
-  }
-
-  const handleOnCookChange = (time: string) => {
-    setCookingTimeInMinutes(_convertToMinutes(time))
-  }
-
-  const _convertToMinutes = (time: string) => {
-    const [hours, minutes] = time.split(':')
-    return parseInt(hours) * 60 + parseInt(minutes)
-  }
-
   const handleOnCameraClick = (image: string) => {
     setImage(image)
   }
@@ -82,61 +45,40 @@ export const RecipeInput = () => {
 
   return (
     <div ref={divRef} className="flex flex-col gap-10">
-      <SectionLayout title="basic info">
-        <TextLabel
-          className="w-5/6 md:max-w-3xl"
-          ref={nameRef}
-          name="recipe-name"
-          value={name}
-          error={errors.name}
-          label="recipe name"
-          isRequired
-          onChange={handleOnNameChange}
-        />
-
-        <TextLabel
-          className="w-5/6 md:max-w-3xl"
-          name="description"
-          value={description ?? ''}
-          label="short description"
-          isRequired={false}
-          onChange={handleOnDescriptionChange}
-        />
-
-        <div className="flex gap-7">
-          <TimeTextLabel
-            name="prep-time"
-            label="prep time"
-            onChange={handleOnPrepChange}
-          />
-          <TimeTextLabel
-            name="cook-time"
-            label="cook time"
-            onChange={handleOnCookChange}
-          />
-        </div>
-      </SectionLayout>
-
-      <SectionLayout title="steps">
-        <StepList />
-      </SectionLayout>
-      <SectionLayout title="finished photo">
-        <PhotoInput
-          id="recipe-photo"
-          label="recipe photo"
-          base64Src={base64Image}
-          isRequired={false}
-          onCameraClick={handleOnCameraClick}
-          onUploadClick={handleOnUploadClick}
-          onRemoveClick={handleOnRemoveClick}
-        />
-      </SectionLayout>
-      <SectionLayout title="servings & nutritional facts">
-        <ServingsAndNutritionalFacts />
-      </SectionLayout>
-      <SectionLayout title="categories">
-        <Categories />
-      </SectionLayout>
+      <SectionListLayout
+        items={[
+          {
+            title: 'basic info',
+            children: <BasicInfoInput />,
+          },
+          {
+            title: 'steps',
+            children: <StepList />,
+          },
+          {
+            title: 'finished photo',
+            children: (
+              <PhotoInput
+                id="recipe-photo"
+                label="recipe photo"
+                base64Src={base64Image}
+                isRequired={false}
+                onCameraClick={handleOnCameraClick}
+                onUploadClick={handleOnUploadClick}
+                onRemoveClick={handleOnRemoveClick}
+              />
+            ),
+          },
+          {
+            title: 'servings & nutritional facts',
+            children: <ServingsAndNutritionalFacts />,
+          },
+          {
+            title: 'categories',
+            children: <Categories />,
+          },
+        ]}
+      />
     </div>
   )
 }
