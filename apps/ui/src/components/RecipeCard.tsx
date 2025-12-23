@@ -12,7 +12,7 @@ import { type Svg } from '@src/types/svg'
 import { timeInHourAndMinutes } from '@src/utils/timeHelper'
 import Image from 'next/image'
 import Link from 'next/link'
-import { type Ref, useState } from 'react'
+import { type Ref, useOptimistic, useState, useTransition } from 'react'
 
 interface IRecipeProps {
   recipe: RecipeMinimalResponse
@@ -21,14 +21,24 @@ interface IRecipeProps {
 export const RecipeCard = (props: IRecipeProps) => {
   const href = `/recipes/${props.recipe.id}`
   const [isBookmarked, setIsBookmarked] = useState(props.recipe.bookmarked)
+  const [_isPending, startTransition] = useTransition()
+  const [optimisticIsBookmarked, addOptimisticIsBookmarked] =
+    useOptimistic(isBookmarked)
   const { showToast } = useNotification()
   const userId = useUserStore((state) => state.id)
   const { mutateAsync } = useRecipesControllerBookmarkRecipeV1()
 
-  const handleBookmarkedClick = async () => {
-    const bookmark = !isBookmarked
-    await mutateAsync({ id: props.recipe.id, data: { bookmark } })
-    setIsBookmarked(bookmark)
+  const handleBookmarkedClick = () => {
+    startTransition(async () => {
+      const bookmark = !isBookmarked
+      addOptimisticIsBookmarked(bookmark)
+      try {
+        await mutateAsync({ id: props.recipe.id, data: { bookmark } })
+        setIsBookmarked(bookmark)
+      } catch (e) {
+        console.error('Failed to save', e)
+      }
+    })
   }
 
   const handleCopyClick = async () => {
@@ -88,8 +98,8 @@ export const RecipeCard = (props: IRecipeProps) => {
         {userId ? (
           <IconButton
             svgIcon={BookmarkIcon as Svg}
-            onClick={() => void handleBookmarkedClick()}
-            svgClassName={isBookmarked ? 'fill-text' : undefined}
+            onClick={() => handleBookmarkedClick()}
+            svgClassName={optimisticIsBookmarked ? 'fill-text' : undefined}
           />
         ) : (
           <div className="w-8 h-8" />
