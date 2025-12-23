@@ -12,7 +12,7 @@ const compat = new FlatCompat({
 });
 
 export default [
-  ...compat.extends('@repo/eslint-config/next'),
+  ...compat.extends('@repo/eslint-config/next'), // I can't get react eslint config to work, so using this for now
   {
     languageOptions: {
       //globals: globals.browser, // or node, etc.
@@ -30,7 +30,7 @@ export default [
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
       'import/order': 'off', // prettier orders how it feels like, and sometimes certain imports need to happen first
-      'next/no-html-link-for-pages': 'off',
+      '@next/next/no-html-link-for-pages': 'off',
       'no-console': 'off',
       'prefer-named-capture-group': 'off',
       'react/button-has-type': 'off',

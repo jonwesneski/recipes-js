@@ -12,7 +12,7 @@ import { RadioGroup, TextButton, TextLabel } from '@repo/design-system'
 import { NutritionalFactsInput } from '@src/components/NutritionalFactsInput'
 import { Tab, Tabs } from '@src/components/tabs'
 import { useUserStore } from '@src/providers/use-store-provider'
-import { useCallback, useState } from 'react'
+import { useOptimistic, useState, useTransition } from 'react'
 import Followings from './_components/Followings'
 
 interface IAccountProps {
@@ -21,14 +21,61 @@ interface IAccountProps {
 const Account = (props: IAccountProps) => {
   const settings = useUserStore((state) => state)
   const [handle, setHandle] = useState(settings.handle)
+  const [_isPending, startTransition] = useTransition()
+  const [optimisticUiTheme, addOptimisticUiTheme] = useOptimistic(
+    settings.uiTheme,
+    (_, uiTheme: UiTheme) => uiTheme,
+  )
+  const [optimisticMeasurementFormat, addOptimisticMeasurementFormat] =
+    useOptimistic(
+      settings.measurementFormat,
+      (_, measurementFormat: MeasurementFormat) => measurementFormat,
+    )
+  const [optimisticNumberFormat, addOptimisticNumberFormat] = useOptimistic(
+    settings.numberFormat,
+    (_, numberFormat: NumberFormat) => numberFormat,
+  )
 
   const { mutateAsync: updateAccount } = useUsersControllerUpdateUserAccountV1({
     mutation: { retry: false },
   })
 
-  const handleUpdateHandle = useCallback(async () => {
+  const handleUpdateHandle = async () => {
     await settings.setHandle(handle)
-  }, [handle, settings.setHandle])
+  }
+
+  const handleUpdateTheme = (uiTheme: UiTheme) => {
+    startTransition(async () => {
+      addOptimisticUiTheme(uiTheme)
+      try {
+        await settings.setUiTheme(uiTheme)
+      } catch (error) {
+        console.error('Update failed', error)
+      }
+    })
+  }
+
+  const handleMeasurementFormat = (measurementFormat: MeasurementFormat) => {
+    startTransition(async () => {
+      addOptimisticMeasurementFormat(measurementFormat)
+      try {
+        await settings.setMeasurementFormat(measurementFormat)
+      } catch (error) {
+        console.error('Update failed', error)
+      }
+    })
+  }
+
+  const handleNumberFormat = (numberFormat: NumberFormat) => {
+    startTransition(async () => {
+      addOptimisticNumberFormat(numberFormat)
+      try {
+        await settings.setNumberFormat(numberFormat)
+      } catch (error) {
+        console.error('Update failed', error)
+      }
+    })
+  }
 
   const handleNutritionalFactChange = (
     data: Partial<NutritionalFactsResponse>,
@@ -61,8 +108,8 @@ const Account = (props: IAccountProps) => {
       <div className="my-6">
         <h6 className="text-center">Theme</h6>
         <RadioGroup
-          selectedValue={settings.uiTheme}
-          onChange={(value) => void settings.setUiTheme(value as UiTheme)}
+          selectedValue={optimisticUiTheme}
+          onChange={(value) => handleUpdateTheme(value as UiTheme)}
           options={[
             { label: 'light', value: 'light' },
             { label: 'dark', value: 'dark' },
@@ -72,9 +119,9 @@ const Account = (props: IAccountProps) => {
 
         <h6 className="text-center">Unit Format</h6>
         <RadioGroup
-          selectedValue={settings.measurementFormat}
+          selectedValue={optimisticMeasurementFormat}
           onChange={(value) =>
-            void settings.setMeasurementFormat(value as MeasurementFormat)
+            handleMeasurementFormat(value as MeasurementFormat)
           }
           options={[
             { label: 'default', value: 'default' },
@@ -85,10 +132,8 @@ const Account = (props: IAccountProps) => {
 
         <h6 className="text-center">Number Format</h6>
         <RadioGroup
-          selectedValue={settings.numberFormat}
-          onChange={(value) =>
-            void settings.setNumberFormat(value as NumberFormat)
-          }
+          selectedValue={optimisticNumberFormat}
+          onChange={(value) => handleNumberFormat(value as NumberFormat)}
           options={[
             { label: 'default', value: 'default' },
             { label: 'decimal', value: 'decimal' },
