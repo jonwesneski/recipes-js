@@ -28,14 +28,9 @@ const Toast = (props: IToastProps) => {
   return (
     <div
       className={mergeCss(
-        'absolute top-5/6 md:top-1/6 mx-auto w-[85vw] bg-background border-2 border-text',
+        'absolute top-4/5 md:top-1/5 -translate-y-1/2 left-1/2 mx-auto w-[85vw] bg-background border-2 border-text',
         { 'toast-enter': isVisible },
       )}
-      style={{
-        position: 'inherit',
-        transform: 'translate(-50%, -50%)',
-        left: '50%',
-      }}
     >
       <div className="flex justify-end">
         <button

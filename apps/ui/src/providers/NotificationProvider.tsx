@@ -41,7 +41,8 @@ export const NotificationProvider = ({
     navigationUrl,
     durationMs = 5000,
   }: ToastParams) => {
-    showModal(toastId, Toast, {
+    const blocking = false
+    showModal(toastId, blocking, Toast, {
       title,
       message,
       type,

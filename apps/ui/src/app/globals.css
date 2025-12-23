@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 @import '@repo/design-system/theme.css';
 
+@theme {
+  --shadow-toast: 0 8px 24px -6px rgb(var(--text-rgb) / 0.25);
+}
+
 html,
 body {
   max-width: 100%;

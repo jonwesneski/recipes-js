@@ -4,6 +4,7 @@ import { createStore } from 'zustand/vanilla';
 type ModalType = {
   id: string;
   portal: ReactPortal;
+  blocking: boolean;
 };
 export type ModalsState = {
   modals: ModalType[];
