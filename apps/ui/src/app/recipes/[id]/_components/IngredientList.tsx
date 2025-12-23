@@ -28,8 +28,10 @@ const IngredientList = (props: IngredientListProps) => {
   ) => {
     e.preventDefault()
     if (ingredient.unit !== null) {
+      const blocking = true
       showModal(
         ModalMeasurementConversions.name,
+        blocking,
         () => (
           <ModalMeasurementConversions
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it is not null
