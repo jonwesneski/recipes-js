@@ -4,15 +4,15 @@ import BookmarkIcon from '@public/bookmark.svg'
 import ClockIcon from '@public/clockIcon.svg'
 import ShareIcon from '@public/shareIcon.svg'
 import type { RecipeMinimalResponse } from '@repo/codegen/model'
-import { useRecipesControllerBookmarkRecipeV1 } from '@repo/codegen/recipes'
 import { IconButton } from '@repo/design-system'
+import { useBookmark } from '@src/hooks/useBookmark'
 import { useNotification } from '@src/providers/NotificationProvider'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
 import { timeInHourAndMinutes } from '@src/utils/timeHelper'
 import Image from 'next/image'
 import Link from 'next/link'
-import { type Ref, useOptimistic, useState, useTransition } from 'react'
+import { type Ref } from 'react'
 
 interface IRecipeProps {
   recipe: RecipeMinimalResponse
@@ -20,26 +20,13 @@ interface IRecipeProps {
 }
 export const RecipeCard = (props: IRecipeProps) => {
   const href = `/recipes/${props.recipe.id}`
-  const [isBookmarked, setIsBookmarked] = useState(props.recipe.bookmarked)
-  const [_isPending, startTransition] = useTransition()
-  const [optimisticIsBookmarked, addOptimisticIsBookmarked] =
-    useOptimistic(isBookmarked)
+
+  const { optimisticIsBookmarked, toggleIsBookmarked } = useBookmark({
+    recipeId: props.recipe.id,
+    bookmarked: props.recipe.bookmarked ?? false,
+  })
   const { showToast } = useNotification()
   const userId = useUserStore((state) => state.id)
-  const { mutateAsync } = useRecipesControllerBookmarkRecipeV1()
-
-  const handleBookmarkedClick = () => {
-    startTransition(async () => {
-      const bookmark = !isBookmarked
-      addOptimisticIsBookmarked(bookmark)
-      try {
-        await mutateAsync({ id: props.recipe.id, data: { bookmark } })
-        setIsBookmarked(bookmark)
-      } catch (e) {
-        console.error('Failed to save', e)
-      }
-    })
-  }
 
   const handleCopyClick = async () => {
     try {
@@ -51,6 +38,13 @@ export const RecipeCard = (props: IRecipeProps) => {
         durationMs: 800,
       })
     } catch (err) {
+      showToast({
+        title: 'Error',
+        message: 'failed to copy',
+        toastId: 'error-copied-recipe-url',
+        durationMs: 800,
+        type: 'error',
+      })
       console.error('Failed to copy text:', err)
     }
   }
@@ -98,7 +92,7 @@ export const RecipeCard = (props: IRecipeProps) => {
         {userId ? (
           <IconButton
             svgIcon={BookmarkIcon as Svg}
-            onClick={() => handleBookmarkedClick()}
+            onClick={() => toggleIsBookmarked()}
             svgClassName={optimisticIsBookmarked ? 'fill-text' : undefined}
           />
         ) : (

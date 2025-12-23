@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const useWakeLock = () => {
+export const useWakeLock = () => {
   const [isWakeLockSupported, setIsWakeLockSupported] =
     useState<boolean>(false);
   const [isWakeLockOn, setIsWakeLockOn] = useState(false);
@@ -68,5 +68,3 @@ const useWakeLock = () => {
     toggleWakeLock,
   };
 };
-
-export default useWakeLock;
