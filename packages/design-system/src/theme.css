@@ -25,6 +25,7 @@
     --input-focus-background: #ffe9c9;
     --border: #000;
     --text: #000;
+    --text-rgb: 0 0 0;
     --text-error: theme('colors.red.900');
     --muted: #4444447b;
   }
@@ -36,6 +37,7 @@
     --input-focus-background: #242424;
     --border: #fff1dd;
     --text: #fff1dd;
+    --text-rgb: 255 241 221;
     --text-error: theme('colors.red.300');
     --muted: #bbbbbb7b;
   }
