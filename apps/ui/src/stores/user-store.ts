@@ -56,27 +56,27 @@ export const createUserStore = (initState: UserState = defaultInitState) => {
       const id = get().id;
       if (id) {
         await usersControllerUpdateUserAccountV1({ numberFormat });
-      } else {
-        localStorage.setItem('numberFormat', numberFormat);
       }
+      localStorage.setItem('numberFormat', numberFormat);
+
       set(() => ({ numberFormat }));
     },
     setMeasurementFormat: async (measurementFormat: MeasurementFormat) => {
       const id = get().id;
       if (id) {
         await usersControllerUpdateUserAccountV1({ measurementFormat });
-      } else {
-        localStorage.setItem('measurementFormat', measurementFormat);
       }
+      localStorage.setItem('measurementFormat', measurementFormat);
+
       set(() => ({ measurementFormat }));
     },
     setUiTheme: async (uiTheme: UiTheme) => {
       const id = get().id;
       if (id) {
         await usersControllerUpdateUserAccountV1({ uiTheme });
-      } else {
-        localStorage.setItem('uiTheme', uiTheme);
       }
+      localStorage.setItem('uiTheme', uiTheme);
+
       set(() => ({ uiTheme }));
     },
     setHandle: async (handle: string) => {

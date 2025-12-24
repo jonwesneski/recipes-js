@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 }
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
-  let user: Partial<UserAccountResponse> = {}
+  let user: UserAccountResponse = {} as UserAccountResponse
   // Cookies are not automatically added in SSR from what I understand,
   // so doing it manually. Cookies will be empty with different domains however
   const token = await getAccessToken()
@@ -39,7 +39,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <html lang="en">
+    <html lang="en" data-theme={user.uiTheme === 'dark' ? 'dark' : ''}>
       <body>
         <div
           className="md:mx-5"

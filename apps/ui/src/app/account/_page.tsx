@@ -20,7 +20,6 @@ interface IAccountProps {
 }
 const Account = (props: IAccountProps) => {
   const settings = useUserStore()
-  console.log({ settings })
   const [handle, setHandle] = useState(settings.handle)
 
   const { mutateAsync: updateAccount } = useUsersControllerUpdateUserAccountV1({

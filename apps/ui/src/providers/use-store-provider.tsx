@@ -23,13 +23,14 @@ import {
   useTransition,
 } from 'react'
 
-const getGuestState = (): Partial<UserState> => {
+const getLocalState = (): Partial<UserState> => {
   return {
     numberFormat: (localStorage.getItem('numberFormat') ??
-      'default') as NumberFormat,
+      defaultInitState.numberFormat) as NumberFormat,
     measurementFormat: (localStorage.getItem('measurementFormat') ??
-      'default') as MeasurementFormat,
-    uiTheme: (localStorage.getItem('uiTheme') ?? 'system') as UiTheme,
+      defaultInitState.measurementFormat) as MeasurementFormat,
+    uiTheme: (localStorage.getItem('uiTheme') ??
+      defaultInitState.uiTheme) as UiTheme,
   }
 }
 
@@ -59,6 +60,7 @@ export const UserStoreProvider = ({
   const storeRef = useRef(
     createUserStore({
       ...defaultInitState,
+      ...getLocalState(),
       ...(!isHome ? initialState : null),
     }),
   )
@@ -75,7 +77,6 @@ export const UserStoreProvider = ({
           storeRef.current.setState(user)
         } catch (error: unknown) {
           console.log(error, 'most likely 401; todo handle later')
-          storeRef.current.setState(getGuestState())
         }
         setIsInitialized(true)
       }
