@@ -5,7 +5,6 @@ import type {
   NumberFormat,
   UiTheme,
 } from '@repo/codegen/model'
-import { usersControllerUserAccountV1 } from '@repo/codegen/users'
 import {
   type UserState,
   createUserStore,
@@ -60,7 +59,6 @@ export const UserStoreProvider = ({
   const storeRef = useRef(
     createUserStore({
       ...defaultInitState,
-      ...getLocalState(),
       ...(!isHome ? initialState : null),
     }),
   )
@@ -70,19 +68,11 @@ export const UserStoreProvider = ({
   )
 
   useEffect(() => {
-    const fetch = async () => {
-      if (!isInitialized && typeof window !== 'undefined') {
-        try {
-          const user = await usersControllerUserAccountV1()
-          storeRef.current.setState(user)
-        } catch (error: unknown) {
-          console.log(error, 'most likely 401; todo handle later')
-        }
-        setIsInitialized(true)
-      }
+    if (!isInitialized) {
+      storeRef.current.setState(getLocalState())
+      setIsInitialized(true)
     }
-    fetch().catch((e: unknown) => console.error(e))
-  }, [isInitialized, setIsInitialized])
+  }, [])
 
   const [isPending, startTransition] = useTransition()
   const [optimisticUiTheme, addOptimisticUiTheme] = useOptimistic(
@@ -134,7 +124,7 @@ export const UserStoreProvider = ({
     })
   }
 
-  return isInitialized ? (
+  return (
     <UserStoreContext.Provider
       value={{
         ...storeRef.current,
@@ -149,7 +139,7 @@ export const UserStoreProvider = ({
     >
       {children}
     </UserStoreContext.Provider>
-  ) : null
+  )
 }
 
 export const useUserStore = () => {
