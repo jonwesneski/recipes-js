@@ -9,7 +9,7 @@ import type {
 } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, RadioGroup } from '@repo/design-system'
 import { ProfilePic } from '@src/components/ProfilePic'
-import { useMediaQuery, useUserAccountBasicSettings } from '@src/hooks'
+import { useMediaQuery } from '@src/hooks'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
 import Link from 'next/link'
@@ -47,15 +47,17 @@ interface INavbarProps {
   className?: ClassValue
 }
 export const Navbar = (props: INavbarProps) => {
-  const { imageUrl, id } = useUserStore((state) => state)
   const {
+    imageUrl,
+    id,
     optimisticUiTheme,
     updateUiTheme,
     optimisticMeasurementFormat,
     updateMeasurementFormat,
     optimisticNumberFormat,
     updateNumberFormat,
-  } = useUserAccountBasicSettings()
+  } = useUserStore()
+
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const toggleMenuRef = useRef<HTMLButtonElement>(null)

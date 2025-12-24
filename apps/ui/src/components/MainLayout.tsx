@@ -1,7 +1,8 @@
 'use client'
 
 import { mergeCss } from '@repo/design-system'
-import { useMediaQuery, useUserAccountBasicSettings } from '@src/hooks'
+import { useMediaQuery } from '@src/hooks'
+import { useUserStore } from '@src/providers/use-store-provider'
 import { usePathname } from 'next/navigation'
 import { useLayoutEffect } from 'react'
 import { Navbar } from './navigation'
@@ -10,7 +11,7 @@ import { SearchBar } from './SearchBar'
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { width, breakpointPxs } = useMediaQuery()
   const pathname = usePathname()
-  const { optimisticUiTheme } = useUserAccountBasicSettings()
+  const { optimisticUiTheme } = useUserStore()
 
   useLayoutEffect(() => {
     const isDark =

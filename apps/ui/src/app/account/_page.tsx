@@ -11,7 +11,6 @@ import { useUsersControllerUpdateUserAccountV1 } from '@repo/codegen/users'
 import { RadioGroup, TextButton, TextLabel } from '@repo/design-system'
 import { NutritionalFactsInput } from '@src/components/NutritionalFactsInput'
 import { Tab, Tabs } from '@src/components/tabs'
-import { useUserAccountBasicSettings } from '@src/hooks'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { useState } from 'react'
 import Followings from './_components/Followings'
@@ -20,17 +19,9 @@ interface IAccountProps {
   followings: UserFollowingsPaginationResponse
 }
 const Account = (props: IAccountProps) => {
-  const settings = useUserStore((state) => state)
+  const settings = useUserStore()
+  console.log({ settings })
   const [handle, setHandle] = useState(settings.handle)
-
-  const {
-    optimisticUiTheme,
-    updateUiTheme,
-    optimisticMeasurementFormat,
-    updateMeasurementFormat,
-    optimisticNumberFormat,
-    updateNumberFormat,
-  } = useUserAccountBasicSettings()
 
   const { mutateAsync: updateAccount } = useUsersControllerUpdateUserAccountV1({
     mutation: { retry: false },
@@ -71,8 +62,8 @@ const Account = (props: IAccountProps) => {
       <div className="my-6">
         <h6 className="text-center">Theme</h6>
         <RadioGroup
-          selectedValue={optimisticUiTheme}
-          onChange={(value) => updateUiTheme(value as UiTheme)}
+          selectedValue={settings.optimisticUiTheme}
+          onChange={(value) => settings.updateUiTheme(value as UiTheme)}
           options={[
             { label: 'system', value: 'system' },
             { label: 'light', value: 'light' },
@@ -82,9 +73,9 @@ const Account = (props: IAccountProps) => {
 
         <h6 className="text-center">Unit Format</h6>
         <RadioGroup
-          selectedValue={optimisticMeasurementFormat}
+          selectedValue={settings.optimisticMeasurementFormat}
           onChange={(value) =>
-            updateMeasurementFormat(value as MeasurementFormat)
+            settings.updateMeasurementFormat(value as MeasurementFormat)
           }
           options={[
             { label: 'default', value: 'default' },
@@ -95,8 +86,10 @@ const Account = (props: IAccountProps) => {
 
         <h6 className="text-center">Number Format</h6>
         <RadioGroup
-          selectedValue={optimisticNumberFormat}
-          onChange={(value) => updateNumberFormat(value as NumberFormat)}
+          selectedValue={settings.optimisticNumberFormat}
+          onChange={(value) =>
+            settings.updateNumberFormat(value as NumberFormat)
+          }
           options={[
             { label: 'default', value: 'default' },
             { label: 'decimal', value: 'decimal' },

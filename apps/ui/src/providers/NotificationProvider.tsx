@@ -27,7 +27,7 @@ export interface NotificationProviderProps {
 export const NotificationProvider = ({
   children,
 }: NotificationProviderProps) => {
-  const userId = useUserStore((state) => state.id)
+  const { id: userId } = useUserStore()
   const { showModal, closeModal } = useCustomModal()
   const router = useRouter()
   // eslint-disable-next-line no-undef-init -- it can be uninitialized

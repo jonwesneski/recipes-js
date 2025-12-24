@@ -56,7 +56,7 @@ export const RecipeIngredientsOverview = (
   props: RecipeIngredientsOverviewProps,
 ) => {
   const { steps, scaleFactor } = useRecipeStore((state) => state)
-  const { numberFormat, measurementFormat } = useUserStore((state) => state)
+  const { numberFormat, measurementFormat } = useUserStore()
   const uniqueIngredients = createUniqueIngredient(steps, measurementFormat)
 
   return (

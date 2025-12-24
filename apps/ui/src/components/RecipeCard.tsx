@@ -26,7 +26,7 @@ export const RecipeCard = (props: IRecipeProps) => {
     bookmarked: props.recipe.bookmarked ?? false,
   })
   const { showToast } = useNotification()
-  const userId = useUserStore((state) => state.id)
+  const { id: userId } = useUserStore()
 
   const handleCopyClick = async () => {
     try {

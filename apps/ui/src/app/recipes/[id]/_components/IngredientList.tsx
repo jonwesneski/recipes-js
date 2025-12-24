@@ -19,7 +19,7 @@ interface IngredientListProps {
   className?: ClassValue
 }
 const IngredientList = (props: IngredientListProps) => {
-  const { numberFormat, measurementFormat } = useUserStore((state) => state)
+  const { numberFormat, measurementFormat } = useUserStore()
   const { showModal } = useCustomModal()
 
   const handleOnShowConversions = (
