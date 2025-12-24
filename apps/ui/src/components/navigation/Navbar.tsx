@@ -9,7 +9,7 @@ import type {
 } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, RadioGroup } from '@repo/design-system'
 import { ProfilePic } from '@src/components/ProfilePic'
-import useMediaQuery from '@src/hooks/useMediaQuery'
+import { useMediaQuery } from '@src/hooks'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
 import Link from 'next/link'
@@ -49,14 +49,15 @@ interface INavbarProps {
 export const Navbar = (props: INavbarProps) => {
   const {
     imageUrl,
-    uiTheme,
-    setUiTheme,
-    measurementFormat,
-    setMeasurementFormat,
-    numberFormat,
-    setNumberFormat,
     id,
-  } = useUserStore((state) => state)
+    optimisticUiTheme,
+    updateUiTheme,
+    optimisticMeasurementFormat,
+    updateMeasurementFormat,
+    optimisticNumberFormat,
+    updateNumberFormat,
+  } = useUserStore()
+
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const toggleMenuRef = useRef<HTMLButtonElement>(null)
@@ -76,18 +77,18 @@ export const Navbar = (props: INavbarProps) => {
     return routeKeyLinksMap[getRouteKey()]
   }
 
-  const handleUiThemeChange = async (value: UiTheme) => {
-    await setUiTheme(value)
+  const handleUiThemeChange = (value: UiTheme) => {
+    updateUiTheme(value)
     setIsMenuOpen(false)
   }
 
-  const handleMeasurementFormatChange = async (value: MeasurementFormat) => {
-    await setMeasurementFormat(value)
+  const handleMeasurementFormatChange = (value: MeasurementFormat) => {
+    updateMeasurementFormat(value)
     setIsMenuOpen(false)
   }
 
-  const handleNumberFormatChange = async (value: NumberFormat) => {
-    await setNumberFormat(value)
+  const handleNumberFormatChange = (value: NumberFormat) => {
+    updateNumberFormat(value)
     setIsMenuOpen(false)
   }
 
@@ -154,8 +155,8 @@ export const Navbar = (props: INavbarProps) => {
           <NavItem>
             <h6 className="text-center">Theme</h6>
             <RadioGroup
-              selectedValue={uiTheme}
-              onChange={(value) => void handleUiThemeChange(value as UiTheme)}
+              selectedValue={optimisticUiTheme}
+              onChange={(value) => handleUiThemeChange(value as UiTheme)}
               options={[
                 { label: 'light', value: 'light' },
                 { label: 'dark', value: 'dark' },
@@ -166,9 +167,9 @@ export const Navbar = (props: INavbarProps) => {
           <NavItem>
             <h6 className="text-center">Unit Format</h6>
             <RadioGroup
-              selectedValue={measurementFormat}
+              selectedValue={optimisticMeasurementFormat}
               onChange={(value) =>
-                void handleMeasurementFormatChange(value as MeasurementFormat)
+                handleMeasurementFormatChange(value as MeasurementFormat)
               }
               options={[
                 { label: 'default', value: 'default' },
@@ -180,9 +181,9 @@ export const Navbar = (props: INavbarProps) => {
           <NavItem>
             <h6 className="text-center">Number Format</h6>
             <RadioGroup
-              selectedValue={numberFormat}
+              selectedValue={optimisticNumberFormat}
               onChange={(value) =>
-                void handleNumberFormatChange(value as NumberFormat)
+                handleNumberFormatChange(value as NumberFormat)
               }
               options={[
                 { label: 'default', value: 'default' },

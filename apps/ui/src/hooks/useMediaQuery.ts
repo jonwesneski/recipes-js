@@ -8,7 +8,7 @@ export const breakpointPxs = {
   '2xl': 1536,
 } as const;
 
-const useMediaQuery = () => {
+export const useMediaQuery = () => {
   const [width, setWidth] = useState<number>(window.innerWidth);
 
   useEffect(() => {
@@ -30,5 +30,3 @@ const useMediaQuery = () => {
     breakpointPxs,
   };
 };
-
-export default useMediaQuery;

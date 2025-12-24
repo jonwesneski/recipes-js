@@ -16,7 +16,14 @@ const Page = () => {
     },
   })
 
+  const clearLocalStorage = () => {
+    localStorage.removeItem('numberFormat')
+    localStorage.removeItem('measurementFormat')
+    localStorage.removeItem('uiTheme')
+  }
+
   useEffect(() => {
+    clearLocalStorage()
     const run = async () => {
       await mutateAsync()
     }

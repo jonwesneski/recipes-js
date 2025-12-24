@@ -15,9 +15,7 @@ interface INutritionalFactsProps {
 }
 export const NutritionalFacts = (props: INutritionalFactsProps) => {
   const { nutritionalFacts, scaleFactor } = useRecipeStore((state) => state)
-  const { customDailyNutrition, predefinedDailyNutrition } = useUserStore(
-    (state) => state,
-  )
+  const { customDailyNutrition, predefinedDailyNutrition } = useUserStore()
   const userNutritionalFacts =
     customDailyNutrition ?? predefinedDailyNutrition?.nutritionalFacts
 

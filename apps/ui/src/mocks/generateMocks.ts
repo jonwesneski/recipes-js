@@ -49,11 +49,12 @@ export default [
   // eslint-disable-next-line @typescript-eslint/no-empty-function -- I don't want to do anything here at the moment
   websocketMock.addEventListener('connection', (_connection) => {}),
   ...getHealthCheckMock(),
-  getUsersControllerUserV1MockHandler(
-    getUsersControllerUserV1ResponseMock({ imageUrl: null }),
-  ),
+  // UsersControllerUserAccount needs to be above UsersControllerUser because of route handling
   getUsersControllerUserAccountV1MockHandler(
     getUsersControllerUserAccountV1ResponseMock({ imageUrl: null }),
+  ),
+  getUsersControllerUserV1MockHandler(
+    getUsersControllerUserV1ResponseMock({ imageUrl: null }),
   ),
   getUsersControllerFollowingsV1MockHandler(followersList),
   ...getUsersMock(),

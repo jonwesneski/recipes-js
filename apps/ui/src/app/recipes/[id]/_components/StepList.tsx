@@ -1,7 +1,7 @@
 'use client'
 
 import { mergeCss, Toggle, type ClassValue } from '@repo/design-system'
-import useWakeLock from '@src/hooks/useWakeLock'
+import { useWakeLock } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import ScaleFactorSelect from './ScaleFactorSelect'
 import { Step } from './Step'

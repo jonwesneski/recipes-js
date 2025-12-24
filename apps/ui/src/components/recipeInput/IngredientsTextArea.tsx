@@ -1,7 +1,7 @@
 'use client'
 
 import { mergeCss, type ClassValue } from '@repo/design-system'
-import useMediaQuery from '@src/hooks/useMediaQuery'
+import { useMediaQuery } from '@src/hooks'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import { type MeasurementUnitType } from '@src/utils/measurements'

@@ -116,6 +116,7 @@ export type RecipeActions = {
   setPreparationTimeInMinutes: (_value: number) => void;
   setCookingTimeInMinutes: (_value: number) => void;
   setImage: (_value: string | null) => void;
+  setBookmarked: (_value: boolean) => void;
   addStep: () => void;
   insertIngredientsSteps: (
     _keyId: string,
@@ -236,6 +237,13 @@ export const createRecipeStore = (
         setCookingTimeInMinutes: (cookingTimeInMinutes: number) =>
           set(() => ({ cookingTimeInMinutes })),
         setImage: (imageSrc: string | null) => set(() => ({ imageSrc })),
+        setBookmarked: (bookmarked: boolean) =>
+          set((state) => {
+            if (typeof state.bookmarked === 'boolean') {
+              return { bookmarked };
+            }
+            return { bookmarked: state.bookmarked };
+          }),
         setSteps: (steps: StepItemType[]) => set(() => ({ steps })),
         addStep: () => {
           set((state) => ({ steps: [...state.steps, createStepItem()] }));

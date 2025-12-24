@@ -16,7 +16,7 @@ import {
   SelectLabel,
   TextButton,
 } from '@repo/design-system'
-import useTags from '@src/hooks/useTags'
+import { useTags } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { type ChangeEvent, useState } from 'react'
 import type { GroupBase, MultiValue, OptionsOrGroups } from 'react-select'

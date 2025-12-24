@@ -1,7 +1,7 @@
 import { tagsControllerTagNameListV1 } from '@repo/codegen/tags';
 import { useState } from 'react';
 
-export default () => {
+export const useTags = () => {
   const [tags, setTags] = useState<string[]>([]);
 
   const fetchTags = async (nextCursor?: string, includes?: string) => {

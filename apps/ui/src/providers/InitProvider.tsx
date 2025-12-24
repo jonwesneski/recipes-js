@@ -12,10 +12,12 @@ interface IInitProviderProps {
   children: React.ReactNode
 }
 const InitProvider = (props: IInitProviderProps) => {
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(
+    process.env.NEXT_PUBLIC_ENABLE_MSW !== 'true',
+  )
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_ENABLE_MSW) {
+    if (!isInitialized) {
       import('@src/mocks/mswBrowser')
         .then((mod: { worker: SetupWorker }) => {
           mod.worker
@@ -41,7 +43,7 @@ const InitProvider = (props: IInitProviderProps) => {
     } else {
       setIsInitialized(true)
     }
-  }, [setIsInitialized])
+  }, [])
 
   return isInitialized ? (
     <QueryClientProvider client={queryClient}>

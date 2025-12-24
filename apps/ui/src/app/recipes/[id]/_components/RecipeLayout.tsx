@@ -1,17 +1,31 @@
 'use client'
 
+import BookmarkIcon from '@public/bookmark.svg'
+import { IconButton } from '@repo/design-system'
 import { ProfilePic } from '@src/components'
+import { useBookmark } from '@src/hooks/useBookmark'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { type Svg } from '@src/types/svg'
 import { isoDateToLocale } from '@src/utils/stringHelpers'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 export interface IRecipeLayoutProps {
   children: React.ReactNode
 }
 export const RecipeLayout = (props: IRecipeLayoutProps) => {
-  const { name, description, user, createdAt } = useRecipeStore(
-    (state) => state,
-  )
+  const { id, name, description, user, createdAt, bookmarked, setBookmarked } =
+    useRecipeStore((state) => state)
+  const { optimisticIsBookmarked, toggleIsBookmarked } = useBookmark({
+    recipeId: id,
+    bookmarked: bookmarked ?? false,
+  })
+
+  useEffect(() => {
+    if (typeof bookmarked === 'boolean') {
+      setBookmarked(optimisticIsBookmarked)
+    }
+  }, [optimisticIsBookmarked])
 
   return (
     <>
@@ -35,6 +49,11 @@ export const RecipeLayout = (props: IRecipeLayoutProps) => {
             </div>
             <h1>on: {isoDateToLocale(createdAt)}</h1>
           </div>
+          <IconButton
+            svgIcon={BookmarkIcon as Svg}
+            onClick={() => toggleIsBookmarked()}
+            svgClassName={optimisticIsBookmarked ? 'fill-text' : undefined}
+          />
         </div>
         <p className="my-12 text-center">{description}</p>
       </div>

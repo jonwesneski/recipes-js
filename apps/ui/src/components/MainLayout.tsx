@@ -1,25 +1,26 @@
 'use client'
 
 import { mergeCss } from '@repo/design-system'
-import useMediaQuery from '@src/hooks/useMediaQuery'
+import { useMediaQuery } from '@src/hooks'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Navbar } from './navigation'
 import { SearchBar } from './SearchBar'
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { width, breakpointPxs } = useMediaQuery()
   const pathname = usePathname()
-  const uiTheme = useUserStore((state) => state.uiTheme)
+  const { optimisticUiTheme } = useUserStore()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const isDark =
-      uiTheme === 'dark' ||
-      (uiTheme === 'system' &&
+      optimisticUiTheme === 'dark' ||
+      (optimisticUiTheme === 'system' &&
         window.matchMedia('(prefers-color-scheme: dark)').matches)
+
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : '')
-  }, [uiTheme])
+  }, [optimisticUiTheme])
 
   // Don't show navbar on login page
   return pathname !== '/' ? (
