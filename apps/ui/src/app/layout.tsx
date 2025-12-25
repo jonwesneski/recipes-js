@@ -46,7 +46,6 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
       )
       clearTimeout(timeout)
     } catch {
-      // assume
       assumeServiceIsProvisioning = true
     }
   }
