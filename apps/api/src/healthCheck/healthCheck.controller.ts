@@ -21,8 +21,7 @@ export class HealthCheckController {
   ) {}
 
   @Get('status')
-  async status(@Res() res: Response) {
-    await new Promise((resolve) => setTimeout(resolve, 20000));
+  status(@Res() res: Response) {
     res.status(200).end();
   }
 

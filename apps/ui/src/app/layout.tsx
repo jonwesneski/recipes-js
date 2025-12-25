@@ -22,8 +22,14 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
-export default async ({ children }: { children: React.ReactNode }) => {
-  let serverHealthy = true
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+  /**
+   * Since I am free plan, I am just cancelling request after short time
+   * to try again with a suspense.
+   *  - I don't want to start with suspense because I want to try to get
+   *    the theme first and only to show loading message if provisioning
+   */
+  let assumeServiceIsProvisioning = false
   const token = await getAccessToken()
   let user: UserAccountResponse = {} as UserAccountResponse
   if (token) {
@@ -40,7 +46,8 @@ export default async ({ children }: { children: React.ReactNode }) => {
       )
       clearTimeout(timeout)
     } catch {
-      serverHealthy = false
+      // assume
+      assumeServiceIsProvisioning = true
     }
   }
 
@@ -54,7 +61,7 @@ export default async ({ children }: { children: React.ReactNode }) => {
           }}
         >
           <div id="root" className="px-2">
-            {serverHealthy ? (
+            {!assumeServiceIsProvisioning ? (
               <Layout>{children}</Layout>
             ) : (
               <Suspense fallback={<Loading />}>
@@ -67,6 +74,8 @@ export default async ({ children }: { children: React.ReactNode }) => {
     </html>
   )
 }
+
+export default RootLayout
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   let user: UserAccountResponse = {} as UserAccountResponse
