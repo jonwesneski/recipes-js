@@ -5,6 +5,7 @@ import Loading from '@src/components/LoadingComponent'
 import { MainLayout } from '@src/components/MainLayout'
 import { getAccessToken } from '@src/utils/getAccessToken'
 import { type Metadata, type Viewport } from 'next'
+import { Suspense } from 'react'
 import AppProviders from './_providers'
 import './globals.css'
 
@@ -22,6 +23,60 @@ export const viewport: Viewport = {
 }
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+  /**
+   * Since I am free plan, I am just cancelling request after short time
+   * to try again with a suspense.
+   *  - I don't want to start with suspense because I want to try to get
+   *    the theme first and only to show loading message if provisioning
+   */
+  let assumeServiceIsProvisioning = false
+  const token = await getAccessToken()
+  let user: UserAccountResponse = {} as UserAccountResponse
+  if (token) {
+    try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 2000)
+      user = await usersControllerUserAccountV1(
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+        controller.signal,
+      )
+      clearTimeout(timeout)
+    } catch {
+      assumeServiceIsProvisioning = true
+    }
+  }
+
+  return (
+    <html lang="en" data-theme={user.uiTheme === 'dark' ? 'dark' : ''}>
+      <body>
+        <div
+          className="md:mx-5"
+          style={{
+            height: '100vh',
+          }}
+        >
+          <div id="root" className="px-2">
+            {!assumeServiceIsProvisioning ? (
+              <Layout>{children}</Layout>
+            ) : (
+              <Suspense fallback={<Loading />}>
+                <Layout>{children}</Layout>
+              </Suspense>
+            )}
+          </div>
+        </div>
+      </body>
+    </html>
+  )
+}
+
+export default RootLayout
+
+const Layout = async ({ children }: { children: React.ReactNode }) => {
   let user: UserAccountResponse = {} as UserAccountResponse
   // Cookies are not automatically added in SSR from what I understand,
   // so doing it manually. Cookies will be empty with different domains however
@@ -39,24 +94,8 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <html lang="en" data-theme={user.uiTheme === 'dark' ? 'dark' : ''}>
-      <body>
-        <div
-          className="md:mx-5"
-          style={{
-            height: '100vh',
-          }}
-        >
-          <div id="root" className="px-2">
-            <AppProviders initialState={{ ...user }}>
-              <Loading>
-                <MainLayout>{children}</MainLayout>
-              </Loading>
-            </AppProviders>
-          </div>
-        </div>
-      </body>
-    </html>
+    <AppProviders initialState={{ ...user }}>
+      <MainLayout>{children}</MainLayout>
+    </AppProviders>
   )
 }
-export default RootLayout

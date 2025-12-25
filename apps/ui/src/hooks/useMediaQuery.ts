@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 
 export const breakpointPxs = {
@@ -9,9 +11,13 @@ export const breakpointPxs = {
 } as const;
 
 export const useMediaQuery = () => {
-  const [width, setWidth] = useState<number>(window.innerWidth);
+  const [width, setWidth] = useState<number>(() =>
+    typeof window !== 'undefined' ? window.innerWidth : breakpointPxs.md,
+  );
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const updateMediaQueries = () => {
       setWidth(window.innerWidth);
     };
