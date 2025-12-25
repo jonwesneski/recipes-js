@@ -5,6 +5,7 @@ import Loading from '@src/components/LoadingComponent'
 import { MainLayout } from '@src/components/MainLayout'
 import { getAccessToken } from '@src/utils/getAccessToken'
 import { type Metadata, type Viewport } from 'next'
+import { Suspense } from 'react'
 import AppProviders from './_providers'
 import './globals.css'
 
@@ -21,7 +22,7 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
-const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+const LoadProfile = async ({ children }: { children: React.ReactNode }) => {
   let user: UserAccountResponse = {} as UserAccountResponse
   // Cookies are not automatically added in SSR from what I understand,
   // so doing it manually. Cookies will be empty with different domains however
@@ -39,7 +40,17 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <html lang="en" data-theme={user.uiTheme === 'dark' ? 'dark' : ''}>
+    <AppProviders initialState={{ ...user }}>
+      {/* <Loading> */}
+      <MainLayout>{children}</MainLayout>
+      {/* </Loading> */}
+    </AppProviders>
+  )
+}
+
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+  return (
+    <html lang="en">
       <body>
         <div
           className="md:mx-5"
@@ -48,11 +59,9 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
           }}
         >
           <div id="root" className="px-2">
-            <AppProviders initialState={{ ...user }}>
-              <Loading>
-                <MainLayout>{children}</MainLayout>
-              </Loading>
-            </AppProviders>
+            <Suspense fallback={<Loading />}>
+              <LoadProfile>{children}</LoadProfile>
+            </Suspense>
           </div>
         </div>
       </body>
