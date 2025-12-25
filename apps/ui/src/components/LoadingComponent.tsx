@@ -6,32 +6,16 @@ const CenterDiv = ({ children }: { children: React.ReactNode }) => (
 
 const Loading = () => {
   return (
-    <CenterDiv>
-      <h2 className="font-bold">Loading...</h2>
-    </CenterDiv>
+    <>
+      <CenterDiv>
+        <h2 className="font-bold">Loading...</h2>
+        <h2 className="font-bold">
+          The server may be getting ready, it can take up to 5 minutes. Thank
+          you for your patience!
+        </h2>
+      </CenterDiv>
+    </>
   )
 }
 
 export default Loading
-
-// export async function Loading2() {
-//   let serverHealthy = true
-//   try {
-//     // do a short server fetch/health-check with timeout (use fetch with signal)
-//     const controller = new AbortController()
-//     const timeout = setTimeout(() => controller.abort(), 3000)
-//     await healthCheckControllerStatus({}, controller.signal)
-//     clearTimeout(timeout)
-//   } catch {
-//     serverHealthy = false
-//   }
-
-//   return (
-//     <div className="flex flex-col items-center justify-center w-full h-screen">
-//       <h2 className="font-bold">
-//         {serverHealthy ? 'Loading...' : 'Having trouble connecting to server.'}
-//       </h2>
-//       <ProvisioningTimer /> {/* client-only timer will show after 5min */}
-//     </div>
-//   )
-// }

@@ -47,6 +47,7 @@ export class UsersController {
     @Req() req: Request,
   ): Promise<UserAccountResponse> {
     try {
+      await new Promise((resolve) => setTimeout(resolve, 20000));
       const token = parseHelper(req);
       return await this.usersService.getUserAccount(token.sub);
     } catch (error) {
