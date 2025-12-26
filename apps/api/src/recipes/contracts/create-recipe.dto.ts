@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MeasurementUnit, Prisma } from '@repo/database';
+import {
+  CuisineType,
+  DietaryType,
+  DifficultyLevelType,
+  DishType,
+  MealType,
+  MeasurementUnit,
+  Prisma,
+  ProteinType,
+} from '@repo/database';
 import { IsNullable } from '@src/common/custom.class-validators';
 import { OmitPrismaFieldsDto } from '@src/common/utilityTypes';
 import { Type } from 'class-transformer';
@@ -255,6 +264,30 @@ export class CreateRecipeDto
   @IsString({ each: true })
   @ApiProperty({ type: [String] })
   equipments: string[];
+  @IsNullable()
+  @IsEnum(CuisineType)
+  @ApiProperty({ enum: CuisineType, nullable: true })
+  cuisine?: CuisineType | null;
+  @IsNullable()
+  @IsEnum(MealType)
+  @ApiProperty({ enum: MealType, nullable: true })
+  meal?: MealType | null;
+  @IsNullable()
+  @IsEnum(DishType)
+  @ApiProperty({ enum: DishType, nullable: true })
+  dish?: DishType | null;
+  @IsArray()
+  @IsEnum(DietaryType, { each: true })
+  @ApiProperty({ enum: DietaryType, isArray: true })
+  diets?: DietaryType[];
+  @IsArray()
+  @IsEnum(ProteinType, { each: true })
+  @ApiProperty({ enum: ProteinType, isArray: true })
+  proteins?: ProteinType[];
+  @IsNullable()
+  @IsEnum(DifficultyLevelType)
+  @ApiProperty({ enum: DifficultyLevelType, nullable: true })
+  difficultyLevel?: DifficultyLevelType | null;
   @IsBoolean()
   @ApiProperty({ type: Boolean })
   isPublic: boolean;

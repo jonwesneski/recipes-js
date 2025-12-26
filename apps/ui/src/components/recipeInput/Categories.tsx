@@ -3,7 +3,7 @@
 import { useAiControllerCategoriesV1 } from '@repo/codegen/ai'
 import {
   CuisineType,
-  type DietaryType,
+  DietaryType,
   DifficultyLevelType,
   DishType,
   MealType,
@@ -32,7 +32,7 @@ const dishOptions: OptionType<DishType>[] = Object.keys(DishType).map((k) => ({
   value: k as DishType,
   label: k,
 }))
-const dietOptions: OptionType<DietaryType>[] = Object.keys(CuisineType).map(
+const dietOptions: OptionType<DietaryType>[] = Object.keys(DietaryType).map(
   (k) => ({ value: k as DietaryType, label: k }),
 )
 const proteinOptions: OptionType<ProteinType>[] = Object.keys(ProteinType).map(

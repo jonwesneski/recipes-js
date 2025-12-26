@@ -24,7 +24,7 @@ export const TextLabel = ({
   const [isLabelHovered, setIsLabelHovered] = useState(false)
 
   return (
-    <div className="relative bg-transparent flex flex-col">
+    <div className="relative bg-transparent">
       {isRequired ? (
         <span className="absolute -left-3 text-text-error">*</span>
       ) : null}
@@ -42,7 +42,7 @@ export const TextLabel = ({
         className={mergeCss(
           {
             'transform origin-left scale-x-105 scale-y-105': isLabelHovered,
-            'border-red-900': error,
+            'border-text-error': error,
           },
           props.className,
         )}

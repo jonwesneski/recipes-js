@@ -1,6 +1,7 @@
 'use client'
 
 import GoogleLogo from '@public/Google__G__logo.svg'
+import Logo from '@public/logo.svg'
 import { useAuthControllerLogout } from '@repo/codegen/auth'
 import { IconTextButton, TextButton } from '@repo/design-system'
 import { type Svg } from '@src/types/svg'
@@ -64,12 +65,13 @@ const Page = () => {
 
   return (
     <div className="flex flex-col min-h-screen justify-center items-center">
-      <h1 className="mb-36">recipehall.</h1>
+      <Logo width="150px" height="150px" />
+      <h1 className="mb-24">recipehall.</h1>
+
       <div className="w-60">
         <div className="border-b mb-4">
           <h1 className="font-extrabold">Login with:</h1>
         </div>
-
         <div
           className="mx-auto flex flex-col items-center w-5/6 gap-4"
           id="doodle"

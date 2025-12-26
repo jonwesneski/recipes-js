@@ -34,7 +34,7 @@ export async function generateMetadata({
         ? {
             url: recipe.imageUrl,
             secureUrl: recipe.imageUrl,
-            width: 1200, // Recommended width (e.g., 1200x630 pixels)
+            width: 1200, // Recommended width
             height: 630, // Recommended height
             alt: recipe.name,
           }
