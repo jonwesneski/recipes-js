@@ -27,15 +27,15 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <nav
         className={mergeCss(
-          'fixed w-screen left-0 right-0 z-50 flex flex-col-reverse md:flex-col',
+          'fixed w-screen left-0 right-0 z-50 md:flex md:flex-col-reverse',
           {
             'bottom-0 shadow-[0_-5px_15px_-5px]': width < breakpointPxs.md,
             'top-0 shadow-[0_5px_15px_-5px]': width >= breakpointPxs.md,
           },
         )}
       >
-        <Navbar className="z-2" />
         <SearchBar />
+        <Navbar className="z-2" />
       </nav>
 
       <main
