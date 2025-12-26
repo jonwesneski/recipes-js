@@ -108,6 +108,12 @@ describe('RecipesController (e2e)', () => {
       nutritionalFacts: null,
       preparationTimeInMinutes: 30,
       cookingTimeInMinutes: 15,
+      cuisine: null,
+      dish: null,
+      meal: null,
+      diets: [],
+      proteins: [],
+      difficultyLevel: null,
       ...overrides,
     };
   };
@@ -242,6 +248,16 @@ describe('RecipesController (e2e)', () => {
             tags: 'each value in tags must be a string, tags must be an array',
             equipments:
               'each value in equipments must be a string, equipments must be an array',
+            cuisine:
+              'cuisine must be one of the following values: thai, indian, chinese, japanese, korean, vietnamese, filipino, indonesian, malaysian, singaporean, taiwanese, burmese, mongolian, spanish, french, italian, british, german, irish, polish, russian, portuguese, turkish, scandinavian, dutch, belgian, austrian, swiss, hungarian, czech, middleEastern, greek, lebanese, moroccan, egyptian, tunisian, israeli, mexican, american, caribbean, brazilian, peruvian, argentinian, colombian, cuban, jamaican, ethiopian, nigerian, southAfrican, kenyan, ghanaian, fusion, contemporary, cajunCreole, texMex, mediterranean, latinAmerican, southeastAsian, eastAsian, northAfrican, westAfrican, centralAmerican, southAmerican, pacificIslander',
+            diets:
+              'each value in diets must be one of the following values: vegetarian, vegan, glutenFree, dairyFree, nutFree, lowCarb, diets must be an array',
+            difficultyLevel:
+              'difficultyLevel must be one of the following values: easy, medium, hard',
+            dish: 'dish must be one of the following values: soup, stew, chili, broth, bisque, salad, slaw, casserole, stirFry, roast, grill, pasta, pizza, sandwich, burger, tacos, curry, rice, noodles, side, appetizer, dimSum, mezes, bread, pastry, pie, cake, cookies, beverage, smoothie, cocktail, sauce, condiment, dip, chutney, salsa',
+            meal: 'meal must be one of the following values: breakfast, lunch, dinner, snack, dessert',
+            proteins:
+              'each value in proteins must be one of the following values: chicken, turkey, duck, quail, beef, pork, lamb, veal, venison, bison, goat, salmon, tuna, cod, halibut, tilapia, trout, mahi, swordfish, seaBass, snapper, shrimp, crab, lobster, scallops, clams, mussels, oysters, squid, octopus, tofu, tempeh, seitan, legumes, nuts, seeds, eggs, cheese, yogurt, bacon, sausage, deli, plantBasedMeat, proteins must be an array',
             isPublic: 'isPublic must be a boolean value',
           });
         });
