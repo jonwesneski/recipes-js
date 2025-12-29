@@ -77,13 +77,17 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const handleMeasurementInput = (
     keyId: string | null,
     element: HTMLTextAreaElement | null,
-    startingY: number,
   ) => {
-    if (keyId && element) {
-      let yOffset = -150
-      if (!(width < breakpointPxs.md)) {
-        const yMultipler = startingY * 10
+    const rowIndex =
+      ingredients?.items.findIndex((item) => item.keyId === keyId) ?? -1
+    if (keyId && element && rowIndex >= 0) {
+      let yOffset = NaN
+      if (width >= breakpointPxs.md) {
+        const yMultipler = rowIndex * 10
         yOffset = 40 + yMultipler
+      } else {
+        const yMultipler = rowIndex * 25
+        yOffset = -170 + yMultipler
       }
       const rect = element.getBoundingClientRect()
       setPopupPosition({

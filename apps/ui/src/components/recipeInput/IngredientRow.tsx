@@ -36,7 +36,6 @@ interface IIngriedientRowProps {
   onMeasurementInput: (
     _keyId: string | null,
     _element: HTMLTextAreaElement | null,
-    _startingY: number,
   ) => void
   onPaste: (_keyId: string, _value: string) => void
   onEnterPressed: (_keyId: string) => void
@@ -159,13 +158,9 @@ export const IngredientRow = forwardRef<
     if (textareaRef.current) {
       const position = getCaretPosition(textareaRef.current)
       if (position.column === 1) {
-        props.onMeasurementInput(
-          props.keyId,
-          textareaRef.current,
-          position.row + 1,
-        )
+        props.onMeasurementInput(props.keyId, textareaRef.current)
       } else {
-        props.onMeasurementInput(null, null, 0)
+        props.onMeasurementInput(null, null)
       }
     }
   }
