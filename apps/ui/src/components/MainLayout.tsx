@@ -1,7 +1,6 @@
 'use client'
 
 import { mergeCss } from '@repo/design-system'
-import { useMediaQuery } from '@src/hooks'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { usePathname } from 'next/navigation'
 import { useLayoutEffect } from 'react'
@@ -9,7 +8,6 @@ import { Navbar } from './navigation'
 import { SearchBar } from './SearchBar'
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
-  const { width, breakpointPxs } = useMediaQuery()
   const pathname = usePathname()
   const { optimisticUiTheme } = useUserStore()
 
@@ -30,12 +28,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <Navbar className="z-2" />
       </nav>
 
-      <main
-        className={mergeCss('pb-20 pt-10', {
-          'pb-40': width < breakpointPxs.md,
-          'pt-30': width >= breakpointPxs.md,
-        })}
-      >
+      <main className={mergeCss('pb-40 pt-10 md:pb-20 md:pt-30')}>
         {children}
       </main>
     </>

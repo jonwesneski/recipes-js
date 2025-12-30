@@ -153,7 +153,7 @@ export const Navbar = (props: INavbarProps) => {
           }}
         >
           <NavItem>
-            <h6 className="text-center">Theme</h6>
+            <h6 className="text-center">Theme {width}px</h6>
             <RadioGroup
               selectedValue={optimisticUiTheme}
               onChange={(value) => handleUiThemeChange(value as UiTheme)}
