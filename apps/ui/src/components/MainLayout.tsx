@@ -26,14 +26,15 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return pathname !== '/' ? (
     <>
       <nav
-        className={mergeCss(
-          'fixed w-screen left-0 right-0 z-50 md:flex md:flex-col-reverse',
-          {
-            'bottom-0 shadow-[0_-5px_15px_-5px] top-auto':
-              width < breakpointPxs.md,
-            'top-0 shadow-[0_5px_15px_-5px]': width >= breakpointPxs.md,
-          },
-        )}
+        // className={mergeCss(
+        //   'fixed w-screen left-0 right-0 z-50 md:flex md:flex-col-reverse',
+        //   {
+        //     'bottom-0 shadow-[0_-5px_15px_-5px] top-auto':
+        //       width < breakpointPxs.md,
+        //     'top-0 shadow-[0_5px_15px_-5px]': width >= breakpointPxs.md,
+        //   },
+        // )}
+        className="fixed w-screen left-0 right-0 z-50 bottom-0 shadow-[0_-5px_15px_-5px] top-auto md:flex md:flex-col-reverse md:top-0 md:bottom-auto md:shadow-[0_5px_15px_-5px]"
       >
         <SearchBar />
         <Navbar className="z-2" />
