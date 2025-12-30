@@ -31,7 +31,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </nav>
 
       <main
-        className={mergeCss('pb-20 pt-20', {
+        className={mergeCss('pb-20 pt-10', {
           'pb-40': width < breakpointPxs.md,
           'pt-30': width >= breakpointPxs.md,
         })}

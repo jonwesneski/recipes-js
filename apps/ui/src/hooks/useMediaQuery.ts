@@ -11,23 +11,36 @@ export const breakpointPxs = {
 } as const;
 
 export const useMediaQuery = () => {
-  const [width, setWidth] = useState<number>(() =>
-    typeof window !== 'undefined' ? window.innerWidth : breakpointPxs.md,
-  );
+  const getCurrentWidth = () =>
+    typeof window !== 'undefined'
+      ? (window.visualViewport?.width ?? window.innerWidth)
+      : breakpointPxs.md;
+
+  const [width, setWidth] = useState<number>(getCurrentWidth);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const updateMediaQueries = () => {
-      setWidth(window.innerWidth);
+      setWidth(getCurrentWidth());
     };
 
     updateMediaQueries();
 
     window.addEventListener('resize', updateMediaQueries);
+    window.addEventListener('orientationchange', updateMediaQueries);
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateMediaQueries);
+    }
 
     return () => {
       window.removeEventListener('resize', updateMediaQueries);
+      window.removeEventListener('orientationchange', updateMediaQueries);
+
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateMediaQueries);
+      }
     };
   }, []);
 
