@@ -5,6 +5,7 @@ import { IconButton } from '@repo/design-system'
 import { ProfilePic } from '@src/components'
 import { useBookmark } from '@src/hooks/useBookmark'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { useUserStore } from '@src/providers/use-store-provider'
 import { type Svg } from '@src/types/svg'
 import { isoDateToLocale } from '@src/utils/stringHelpers'
 import Link from 'next/link'
@@ -14,6 +15,7 @@ export interface IRecipeLayoutProps {
   children: React.ReactNode
 }
 export const RecipeLayout = (props: IRecipeLayoutProps) => {
+  const { id: userId } = useUserStore()
   const { id, name, description, user, createdAt, bookmarked, setBookmarked } =
     useRecipeStore((state) => state)
   const { optimisticIsBookmarked, toggleIsBookmarked } = useBookmark({
@@ -49,11 +51,13 @@ export const RecipeLayout = (props: IRecipeLayoutProps) => {
             </div>
             <h1>on: {isoDateToLocale(createdAt)}</h1>
           </div>
-          <IconButton
-            svgIcon={BookmarkIcon as Svg}
-            onClick={() => toggleIsBookmarked()}
-            svgClassName={optimisticIsBookmarked ? 'fill-text' : undefined}
-          />
+          {userId ? (
+            <IconButton
+              svgIcon={BookmarkIcon as Svg}
+              onClick={() => toggleIsBookmarked()}
+              svgClassName={optimisticIsBookmarked ? 'fill-text' : undefined}
+            />
+          ) : null}
         </div>
         <p className="my-12 text-center">{description}</p>
       </div>

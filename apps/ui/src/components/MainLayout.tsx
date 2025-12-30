@@ -29,7 +29,8 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         className={mergeCss(
           'fixed w-screen left-0 right-0 z-50 md:flex md:flex-col-reverse',
           {
-            'bottom-0 shadow-[0_-5px_15px_-5px]': width < breakpointPxs.md,
+            'bottom-0 shadow-[0_-5px_15px_-5px] top-auto':
+              width < breakpointPxs.md,
             'top-0 shadow-[0_5px_15px_-5px]': width >= breakpointPxs.md,
           },
         )}

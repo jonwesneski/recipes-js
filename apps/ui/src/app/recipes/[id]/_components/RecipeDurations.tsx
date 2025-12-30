@@ -13,26 +13,30 @@ export const RecipeDurations = (props: IRecipeDurations) => {
   )
 
   return (
-    <table className={mergeCss('mx-auto min-w-96', props.className)}>
-      <tbody>
-        <tr>
-          <td className="border p-4">
-            prep time: {timeInHourAndMinutes(preparationTimeInMinutes) ?? '?'}
-          </td>
-          <td className="border p-4">
-            cook time: {timeInHourAndMinutes(cookingTimeInMinutes) ?? '?'}
-          </td>
-        </tr>
-        <tr>
-          <td className="border p-4 text-center" colSpan={2}>
-            total time:{' '}
-            {timeInHourAndMinutes(
-              preparationTimeInMinutes,
-              cookingTimeInMinutes,
-            ) ?? '?'}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div
+      className={mergeCss(
+        'mx-auto max-w-72 table border-collapse',
+        props.className,
+      )}
+    >
+      <div className="flex">
+        <p className="border p-4 break-all">
+          <b>prep time:</b>{' '}
+          {timeInHourAndMinutes(preparationTimeInMinutes) ?? '?'}
+        </p>
+        <p className="border p-4 break-all">
+          <b>cook time:</b> {timeInHourAndMinutes(cookingTimeInMinutes) ?? '?'}
+        </p>
+      </div>
+      <div>
+        <p className="border p-4 break-all">
+          <b>total time:</b>{' '}
+          {timeInHourAndMinutes(
+            preparationTimeInMinutes,
+            cookingTimeInMinutes,
+          ) ?? '?'}
+        </p>
+      </div>
+    </div>
   )
 }
