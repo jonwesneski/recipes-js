@@ -46,7 +46,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
-      const frontendUrl = req.headers.referer!;
+      const frontendUrl = this.configService.getOrThrow('FRONTEND_URL');
       const googleUser = await this.authService.validateGoogleUser(
         req.user as GoogleAuthDto,
       );
@@ -61,13 +61,13 @@ export class AuthController {
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
 
-      // res.redirect(`${frontendUrl}recipes`);
+      // res.redirect(`${frontendUrl}/recipes`);
       // Temporary workaround to pass token via form post to avoid CORS issues
       // since my frontend and backend are on different domains
       res.send(`
         <html>
           <body>
-            <form id="tokenForm" action="${frontendUrl}api/redirect" method="POST">
+            <form id="tokenForm" action="${frontendUrl}/api/redirect" method="POST">
               <input type="hidden" name="access_token" value="${googleUser.tokens.accessToken}" />
             </form>
             <script>

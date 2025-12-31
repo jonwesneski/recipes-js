@@ -71,15 +71,17 @@ export class RecipesController {
     @Query() query: GetRecipeDto,
   ): Promise<RecipeResponse> {
     let userId: string | undefined;
+    const byOwner = query.byOwner;
     try {
-      if (query.byOwner) {
-        // TODO: Remove when this works in jest: JwtDecodedHeader.
-        userId = parseHelper(request).sub;
-        if (!userId) {
-          throw new NotFoundException();
-        }
+      userId = parseHelper(request).sub;
+    } catch {
+      if (byOwner) {
+        throw new NotFoundException();
       }
-      return await this.recipesService.getRecipe(id, userId);
+    }
+
+    try {
+      return await this.recipesService.getRecipe(id, byOwner, userId);
     } catch (error) {
       throwIfNotFound(error);
       throw error;

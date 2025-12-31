@@ -39,15 +39,19 @@ export class RecipesService {
     );
   }
 
-  async getPublicRecipe(id: string): Promise<RecipeType> {
-    return await this.recipeRepository.getPublicRecipe(id);
+  async getPublicRecipe(id: string, userId?: string): Promise<RecipeType> {
+    return await this.recipeRepository.getPublicRecipe(id, userId);
   }
 
-  async getRecipe(id: string, userId?: string): Promise<RecipeType> {
-    if (userId) {
+  async getRecipe(
+    id: string,
+    byOwner: boolean,
+    userId?: string,
+  ): Promise<RecipeType> {
+    if (byOwner && userId) {
       return await this.recipeRepository.getRecipe(id, userId);
     }
-    return await this.recipeRepository.getPublicRecipe(id);
+    return await this.recipeRepository.getPublicRecipe(id, userId);
   }
 
   async createRecipe(

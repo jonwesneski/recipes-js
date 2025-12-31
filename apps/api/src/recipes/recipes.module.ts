@@ -7,6 +7,7 @@ import {
   RecipeRepositoryModule,
   RekognitionService,
   S3Service,
+  UserRepositoryModule,
 } from '@repo/nest-shared';
 import { KafkaProducerService } from '@src/common';
 import { NotificationsModule } from '@src/notifications/notifications.module';
@@ -23,6 +24,7 @@ import { RecipesService } from './recipes.service';
     KafkaProducerModule,
     NotificationsModule,
     RecipeRepositoryModule,
+    UserRepositoryModule,
   ],
   controllers: [RecipesController],
   providers: [

@@ -121,6 +121,8 @@ export class RecipeUserResponse {
   @ApiProperty()
   @ApiProperty({ type: String, nullable: true })
   imageUrl: string | null;
+  @ApiProperty({ type: Boolean, required: false })
+  amIFollowing?: boolean;
 }
 
 export class RecipeResponse implements RecipeType {

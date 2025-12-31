@@ -75,6 +75,7 @@ export type RecipeUserType = {
   id: string;
   handle: string;
   imageUrl: string | null;
+  amIFollowing?: boolean;
 };
 export type RecipeType = Omit<
   RecipePrismaType,

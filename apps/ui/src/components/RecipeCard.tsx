@@ -1,18 +1,14 @@
 'use client'
 
-import BookmarkIcon from '@public/bookmark.svg'
 import ClockIcon from '@public/clockIcon.svg'
-import ShareIcon from '@public/shareIcon.svg'
 import type { RecipeMinimalResponse } from '@repo/codegen/model'
-import { IconButton } from '@repo/design-system'
-import { useBookmark } from '@src/hooks/useBookmark'
-import { useNotification } from '@src/providers/NotificationProvider'
 import { useUserStore } from '@src/providers/use-store-provider'
-import { type Svg } from '@src/types/svg'
 import { timeInHourAndMinutes } from '@src/utils/timeHelper'
 import Image from 'next/image'
 import Link from 'next/link'
 import { type Ref } from 'react'
+import { BookmarkButton } from './BookmarkButton'
+import { CopyUrlButton } from './CopyUrlButton'
 
 interface IRecipeProps {
   recipe: RecipeMinimalResponse
@@ -21,33 +17,7 @@ interface IRecipeProps {
 export const RecipeCard = (props: IRecipeProps) => {
   const href = `/recipes/${props.recipe.id}`
 
-  const { optimisticIsBookmarked, toggleIsBookmarked } = useBookmark({
-    recipeId: props.recipe.id,
-    bookmarked: props.recipe.bookmarked ?? false,
-  })
-  const { showToast } = useNotification()
   const { id: userId } = useUserStore()
-
-  const handleCopyClick = async () => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}${href}`)
-      showToast({
-        title: 'copied!',
-        message: '',
-        toastId: 'copied-recipe-url',
-        durationMs: 800,
-      })
-    } catch (err) {
-      showToast({
-        title: 'Error',
-        message: 'failed to copy',
-        toastId: 'error-copied-recipe-url',
-        durationMs: 800,
-        type: 'error',
-      })
-      console.error('Failed to copy text:', err)
-    }
-  }
 
   return (
     <div ref={props.innerRef} className="border p-1">
@@ -90,20 +60,16 @@ export const RecipeCard = (props: IRecipeProps) => {
 
       <div className="flex justify-around items-center">
         {userId ? (
-          <IconButton
-            svgIcon={BookmarkIcon as Svg}
-            onClick={() => toggleIsBookmarked()}
-            svgClassName={optimisticIsBookmarked ? 'fill-text' : undefined}
+          <BookmarkButton
+            recipeId={props.recipe.id}
+            bookmarked={props.recipe.bookmarked ?? false}
           />
         ) : (
           <div className="w-8 h-8" />
         )}
 
         <div className="w-[2px] h-[25px] bg-text" />
-        <IconButton
-          svgIcon={ShareIcon as Svg}
-          onClick={() => void handleCopyClick()}
-        />
+        <CopyUrlButton recipeId={props.recipe.id} />
       </div>
     </div>
   )

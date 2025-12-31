@@ -163,6 +163,47 @@ describe('RecipesController (e2e)', () => {
         .expect(404)
         .expect({ message: 'Not Found', statusCode: 404 });
     });
+
+    it('amIFollowing is present', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`${basePath}/${recipe1!.id}`)
+        .set('Authorization', `Bearer ${token2}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.user.amIFollowing).toBeDefined();
+    });
+
+    it('amIFollowing is not present if same user', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`${basePath}/${recipe1!.id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.user.amIFollowing).toBeUndefined();
+    });
+
+    it('amIFollowing is not present if guest', async () => {
+      const response = await request(app.getHttpServer()).get(
+        `${basePath}/${recipe1!.id}`,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body.user.amIFollowing).toBeUndefined();
+    });
+
+    it('amIFollowing is true', async () => {
+      await request(app.getHttpServer())
+        .put(`/v1/users/${user1.id}/follow`)
+        .send({ follow: true })
+        .set('Authorization', `Bearer ${token2}`);
+
+      const response = await request(app.getHttpServer())
+        .get(`${basePath}/${recipe1!.id}`)
+        .set('Authorization', `Bearer ${token2}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.user.amIFollowing).toBeTruthy();
+    });
   });
 
   describe(`POST ${basePath}`, () => {
