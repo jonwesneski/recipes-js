@@ -39,7 +39,12 @@ export const RecipeLayout = (props: IRecipeLayoutProps) => {
                   <span className="absolute inset-0" />
                   {user.handle}
                 </Link>
-                <FollowButton userFollowId={user.id} amIFollowing />
+                {typeof user.amIFollowing === 'boolean' ? (
+                  <FollowButton
+                    userFollowId={user.id}
+                    amIFollowing={user.amIFollowing}
+                  />
+                ) : null}
               </div>
               <h1>on: {isoDateToLocale(createdAt)}</h1>
             </div>

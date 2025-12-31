@@ -106,15 +106,43 @@ export class RecipeRepository {
     };
   }
 
-  async getPublicRecipe(id: string): Promise<RecipeType> {
+  async getPublicRecipe(
+    id: string,
+    requestedUserId?: string,
+  ): Promise<RecipeType> {
     const recipe = await this.prisma.recipe.findFirstOrThrow({
       where: {
         id,
         isPublic: true,
       },
-      ...RecipeInclude,
+      include: {
+        ...RecipeInclude.include,
+        user: {
+          select: {
+            ...RecipeInclude.include.user.select,
+            _count: {
+              select: { followers: { where: { userId: requestedUserId } } },
+            },
+          },
+        },
+      },
+      omit: {
+        ...RecipeInclude.omit,
+      },
     });
-    return this.transformRecipe(recipe);
+
+    const { user, ...restRecipe } = recipe;
+    const { _count, ...restUser } = user;
+    const transformedRecipe = this.transformRecipe({
+      ...restRecipe,
+      user: restUser,
+    });
+    let amIFollowing: boolean | undefined =
+      requestedUserId && requestedUserId !== recipe.user.id
+        ? _count.followers > 0
+        : undefined;
+    transformedRecipe.user.amIFollowing = amIFollowing;
+    return transformedRecipe;
   }
 
   async getRecipe(id: string, userId: string): Promise<RecipeType> {
@@ -137,10 +165,12 @@ export class RecipeRepository {
     if (requestedUserId && requestedUserId !== recipe.user.id) {
       bookmarked = _count.bookmarkedBy > 0;
     }
+
     let isRecipePublic: boolean | undefined = undefined;
     if (requestedUserId && requestedUserId === recipe.user.id) {
       isRecipePublic = isPublic;
     }
+
     return {
       ...rest,
       isPublic: isRecipePublic,

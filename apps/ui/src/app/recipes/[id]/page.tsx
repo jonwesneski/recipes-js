@@ -1,5 +1,6 @@
 import { recipesControllerRecipeV1 } from '@repo/codegen/recipes'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
+import { getAccessToken } from '@src/utils/getAccessToken'
 import { type Metadata } from 'next'
 import { cache } from 'react'
 import {
@@ -11,8 +12,16 @@ import {
 } from './_components'
 
 const getRecipe = cache(async (id: string) => {
+  const token = await getAccessToken()
+  let headers
+  if (token) {
+    headers = {
+      Authorization: `Bearer ${token}`,
+    }
+  }
   return recipesControllerRecipeV1(id, {
     params: { byOwner: false },
+    headers,
   })
 })
 
