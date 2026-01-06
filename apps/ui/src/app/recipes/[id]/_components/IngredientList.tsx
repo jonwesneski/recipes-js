@@ -7,7 +7,7 @@ import { roundToDecimal } from '@src/utils/calculate'
 import {
   type MeasurementUnitType,
   determineAmountFormat,
-  determineAmountUnit,
+  determineUsersAmountUnit,
 } from '@src/utils/measurements'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
 
@@ -48,7 +48,7 @@ const IngredientList = (props: IngredientListProps) => {
   return props.ingredients.length ? (
     <ul className={mergeCss('list-disc', props.className)}>
       {props.ingredients.map((ingredient) => {
-        const { amount, unit } = determineAmountUnit(
+        const { amount, unit } = determineUsersAmountUnit(
           ingredient.amount,
           ingredient.unit,
           measurementFormat,
