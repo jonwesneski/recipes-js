@@ -23,10 +23,10 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   // Don't show navbar on login page
   return pathname !== '/' ? (
     <>
-      <nav className="fixed w-screen left-0 right-0 z-50 bottom-0 shadow-[0_-5px_15px_-5px] top-auto md:flex md:flex-col-reverse md:top-0 md:bottom-auto md:shadow-[0_5px_15px_-5px]">
+      <header className="fixed w-screen left-0 right-0 z-50 bottom-0 shadow-[0_-5px_15px_-5px] top-auto md:flex md:flex-col-reverse md:top-0 md:bottom-auto md:shadow-[0_5px_15px_-5px]">
         <SearchBar />
         <Navbar className="z-2" />
-      </nav>
+      </header>
 
       <main className={mergeCss('pb-40 pt-10 md:pb-20 md:pt-30')}>
         {children}

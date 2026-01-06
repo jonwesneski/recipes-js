@@ -112,7 +112,7 @@ export const Navbar = (props: INavbarProps) => {
   }, [isMenuOpen])
 
   return (
-    <div
+    <nav
       className={mergeCss(
         'flex justify-between relative border-2',
         props.className,
@@ -206,6 +206,6 @@ export const Navbar = (props: INavbarProps) => {
           </NavItem>
         </div>
       </div>
-    </div>
+    </nav>
   )
 }
