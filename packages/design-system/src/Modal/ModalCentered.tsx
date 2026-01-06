@@ -28,7 +28,7 @@ export const ModalCentered = (props: ModalCenteredProps) => {
   return (
     <div
       ref={divRef}
-      className="shadow-2xl border-2 p-5 pointer-events-auto top-1/2 left-1/2"
+      className="shadow-2xl border-2 p-5 pointer-events-auto top-1/2 left-1/2 outline-hidden"
       style={{
         position: 'inherit',
         transform: 'translate(-50%, -50%)',

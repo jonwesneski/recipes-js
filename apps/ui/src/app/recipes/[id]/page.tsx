@@ -3,13 +3,7 @@ import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { getAccessToken } from '@src/utils/getAccessToken'
 import { type Metadata } from 'next'
 import { cache } from 'react'
-import {
-  NutritionalFacts,
-  RecipeDurations,
-  RecipeIngredientsOverview,
-  RecipeLayout,
-  StepList,
-} from './_components'
+import { RecipePage } from './_components/RecipePage'
 
 const getRecipe = cache(async (id: string) => {
   const token = await getAccessToken()
@@ -60,12 +54,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <RecipeStoreProvider initialState={recipe}>
-      <RecipeLayout>
-        <RecipeIngredientsOverview className="my-5" />
-        <RecipeDurations />
-        <StepList />
-        <NutritionalFacts className="my-28" />
-      </RecipeLayout>
+      <RecipePage />
     </RecipeStoreProvider>
   )
 }

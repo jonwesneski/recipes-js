@@ -1,41 +1,39 @@
-'use client'
-
-import type { PatchRecipeDto } from '@repo/codegen/model'
-import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
-import { TextButton } from '@repo/design-system'
-import { RecipeInput } from '@src/components/recipeInput'
+import { type RecipeResponse } from '@repo/codegen/model'
+import { recipesControllerRecipeV1 } from '@repo/codegen/recipes'
+import '@repo/design-system/styles.css'
 import { CameraProvider } from '@src/providers/CameraProvider'
+import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
+import { getAccessToken } from '@src/utils/getAccessToken'
+import { notFound } from 'next/navigation'
+import EditPage from './_page'
 
-const Page = () => {
-  const { mutate } = useRecipesControllerUpdateRecipeV1({
-    mutation: { retry: false },
-  })
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const token = await getAccessToken()
+  if (!token) {
+    notFound()
+  }
 
-  const handleSubmit = () => {
-    mutate(
-      { id: '', data: {} as PatchRecipeDto },
-      {
-        onSuccess: () => undefined,
-        onError: () => undefined,
+  const id = (await params).id
+
+  let data: RecipeResponse
+  try {
+    data = await recipesControllerRecipeV1(id, {
+      params: { byOwner: true },
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    )
-
-    window.history.replaceState(null, '', '/recipes')
+    })
+  } catch (error) {
+    console.error(error)
+    notFound()
   }
 
   return (
-    <CameraProvider>
-      <div className="flex justify-center">
-        <div className="block mx-5">
-          <RecipeInput />
-          <TextButton
-            className="mt-3 mx-auto block"
-            text="submit"
-            onClick={() => handleSubmit()}
-          />
-        </div>
-      </div>
-    </CameraProvider>
+    <RecipeStoreProvider initialState={data}>
+      <CameraProvider>
+        <EditPage />
+      </CameraProvider>
+    </RecipeStoreProvider>
   )
 }
 export default Page
