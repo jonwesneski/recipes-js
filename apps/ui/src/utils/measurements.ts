@@ -204,7 +204,7 @@ const convertVolume = (
 };
 
 export const getWeightConversions = (amount: number, from: WeightUnit) => {
-  const imperial = [] as ConversionOption<ImperialWeightUnit>[]; //{} as Record<ImperialVolumeUnit, number>;
+  const imperial = [] as ConversionOption<ImperialWeightUnit>[];
   const metric = [] as ConversionOption<MetricWeightUnit>[];
 
   (Object.keys(IMPERIAL_WEIGHT_CONVERSIONS) as ImperialWeightUnit[]).forEach(
