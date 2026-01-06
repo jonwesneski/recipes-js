@@ -6,7 +6,7 @@ import { useUserStore } from '@src/providers/use-store-provider'
 import { type StepItemType } from '@src/stores/recipe-store'
 import {
   determineAmountFormat,
-  determineAmountUnit,
+  determineUsersAmountUnit,
 } from '@src/utils/measurements'
 import type { DetailedHTMLProps, HTMLAttributes } from 'react'
 
@@ -29,7 +29,7 @@ const createUniqueIngredient = (
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- not true
       if (!uniqueIngredients[i.ingredient.dto.name]) {
         uniqueIngredients[i.ingredient.dto.name] = {
-          ...determineAmountUnit(
+          ...determineUsersAmountUnit(
             i.ingredient.dto.amount,
             i.ingredient.dto.unit,
             measurementFormat,
@@ -37,11 +37,12 @@ const createUniqueIngredient = (
           isFraction: i.ingredient.dto.isFraction,
         }
       } else {
-        uniqueIngredients[i.ingredient.dto.name].amount += determineAmountUnit(
-          i.ingredient.dto.amount,
-          i.ingredient.dto.unit,
-          measurementFormat,
-        ).amount
+        uniqueIngredients[i.ingredient.dto.name].amount +=
+          determineUsersAmountUnit(
+            i.ingredient.dto.amount,
+            i.ingredient.dto.unit,
+            measurementFormat,
+          ).amount
       }
     })
   })

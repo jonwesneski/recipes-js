@@ -3,14 +3,17 @@
 import { ModalCentered } from '@repo/design-system'
 import { roundToDecimal } from '@src/utils/calculate'
 import {
+  type ConversionOption,
   type MeasurementUnitType,
+  type VolumeUnit,
+  type WeightUnit,
   getConversions,
 } from '@src/utils/measurements'
 import { useEffect, useRef } from 'react'
 
 const ConversionRows = (props: {
   unitSystem: string
-  conversions: [string, number][]
+  conversions: (ConversionOption<VolumeUnit> | ConversionOption<WeightUnit>)[]
 }) => {
   return (
     <>
@@ -19,10 +22,10 @@ const ConversionRows = (props: {
           {props.unitSystem}
         </th>
       </tr>
-      {props.conversions.map(([unit, amount]) => (
-        <tr key={unit}>
-          <td className="text-right pr-2 border-r">{unit}</td>
-          <td className="pl-2">{roundToDecimal(amount, 2)}</td>
+      {props.conversions.map((c) => (
+        <tr key={c.id}>
+          <td className="text-right pr-2 border-r">{c.label}</td>
+          <td className="pl-2">{roundToDecimal(c.value, 2)}</td>
         </tr>
       ))}
     </>
@@ -60,11 +63,11 @@ export const ModalMeasurementConversions = (
         <tbody>
           <ConversionRows
             unitSystem="Imperial"
-            conversions={Object.entries(conversions.values.imperial)}
+            conversions={conversions.imperial}
           />
           <ConversionRows
             unitSystem="Metric"
-            conversions={Object.entries(conversions.values.metric)}
+            conversions={conversions.metric}
           />
         </tbody>
       </table>

@@ -143,34 +143,49 @@ export const getConversions = (amount: number, from: MeasurementUnitType) => {
   if (isWeight(from)) {
     return {
       type: 'Weight',
-      values: getWeightConversions(amount, from as WeightUnit),
+      ...getWeightConversions(amount, from as WeightUnit),
     };
   }
 
   return {
     type: 'Volume',
-    values: getVolumeConversions(amount, from as VolumeUnit),
+    ...getVolumeConversions(amount, from as VolumeUnit),
   };
 };
 
+export type ConversionOption<T extends VolumeUnit | WeightUnit> = {
+  id: T;
+  label: string;
+  value: number;
+};
+
 export const getVolumeConversions = (amount: number, from: VolumeUnit) => {
-  const imperial = {} as Record<ImperialVolumeUnit, number>;
-  const metric = {} as Record<MetricVolumeUnit, number>;
+  const imperial = [] as ConversionOption<ImperialVolumeUnit>[];
+  const metric = [] as ConversionOption<MetricVolumeUnit>[];
 
   (Object.keys(IMPERIAL_VOLUME_CONVERSIONS) as ImperialVolumeUnit[]).forEach(
     (unit) => {
-      imperial[unit] = convertVolume(amount, from, unit);
+      if (from !== unit) {
+        imperial.push({
+          id: unit,
+          label: getLabel(unit, amount),
+          value: convertVolume(amount, from, unit),
+        });
+      }
     },
   );
   (Object.keys(METRIC_VOLUME_CONVERSIONS) as MetricVolumeUnit[]).forEach(
     (unit) => {
-      metric[unit] = convertVolume(amount, from, unit);
+      if (from !== unit) {
+        metric.push({
+          id: unit,
+          label: getLabel(unit, amount),
+          value: convertVolume(amount, from, unit),
+        });
+      }
     },
   );
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- Remove the original unit from the conversions
-  delete imperial[from as ImperialVolumeUnit];
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- Remove the original unit from the conversions
-  delete metric[from as MetricVolumeUnit];
+
   return {
     imperial,
     metric,
@@ -189,23 +204,34 @@ const convertVolume = (
 };
 
 export const getWeightConversions = (amount: number, from: WeightUnit) => {
-  const imperial = {} as Record<ImperialWeightUnit, number>;
-  const metric = {} as Record<MetricWeightUnit, number>;
+  const imperial = [] as ConversionOption<ImperialWeightUnit>[]; //{} as Record<ImperialVolumeUnit, number>;
+  const metric = [] as ConversionOption<MetricWeightUnit>[];
 
   (Object.keys(IMPERIAL_WEIGHT_CONVERSIONS) as ImperialWeightUnit[]).forEach(
     (unit) => {
-      imperial[unit] = convertWeight(amount, from, unit);
+      if (from !== unit) {
+        const value = convertWeight(amount, from, unit);
+        imperial.push({
+          id: unit,
+          label: getLabel(unit, value),
+          value,
+        });
+      }
     },
   );
   (Object.keys(METRIC_WEIGHT_CONVERSIONS) as MetricWeightUnit[]).forEach(
     (unit) => {
-      metric[unit] = convertWeight(amount, from, unit);
+      if (from !== unit) {
+        const value = convertWeight(amount, from, unit);
+        metric.push({
+          id: unit,
+          label: getLabel(unit, value),
+          value,
+        });
+      }
     },
   );
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- Remove the original unit from the conversions
-  delete imperial[from as ImperialWeightUnit];
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- Remove the original unit from the conversions
-  delete metric[from as MetricWeightUnit];
+
   return {
     imperial,
     metric,
@@ -275,6 +301,13 @@ export const numberToFraction = (
   return result.trim();
 };
 
+const getLabel = (unit: MeasurementUnitType, amount: number) => {
+  if (amount <= 1) {
+    return measurementUnitsSingular[unit];
+  }
+  return measurementUnitsPlural[unit];
+};
+
 export const fractionToNumber = (fractionString: string): number => {
   const parts = fractionString.split(' ');
   let whole = 0;
@@ -307,48 +340,59 @@ export const determineAmountFormat = (
     : roundedNumber.toString();
 };
 
-export const determineAmountUnit = (
+/**
+ * Gets the preference for the user if they want only imperial, only metric, or mixed
+ * @param amount - the amount
+ * @param unit - the current unit
+ * @param userPreference - the users measurement preference
+ * @returns the amount and unit that the user prefers
+ */
+export const determineUsersAmountUnit = (
   amount: number,
   unit: IngredientResponseUnit,
-  convertTo: MeasurementFormat,
+  userPreference: MeasurementFormat,
 ) => {
   if (!unit) {
     return { amount, unit };
   }
 
   const _isMetric = isMetric(unit);
-  if (convertTo === MeasurementFormat.imperial && _isMetric) {
+  if (userPreference === MeasurementFormat.imperial && _isMetric) {
     // Get the amount that is closest to 1 in imperial units
-    const imperialConversions = getConversions(amount, unit).values.imperial;
-    let closestUnit = 'cups' as keyof typeof imperialConversions;
+    const imperialConversions = getConversions(amount, unit).imperial;
+    let nextClosest = Infinity;
+    let closestUnit = 'cups';
     let closestAmount = Infinity;
-    for (const [key, value] of Object.entries(imperialConversions)) {
-      const absValue = Math.abs(value - 1);
-      if (absValue < closestAmount) {
-        closestAmount = absValue;
-        closestUnit = key as keyof typeof imperialConversions;
+    for (const conversion of imperialConversions) {
+      const absValue = Math.abs(conversion.value - 1);
+      if (absValue < nextClosest) {
+        nextClosest = absValue;
+        closestAmount = conversion.value;
+        closestUnit = conversion.label;
       }
     }
     return {
-      amount: imperialConversions[closestUnit],
+      amount: closestAmount,
       unit: closestUnit,
     };
-  } else if (convertTo === MeasurementFormat.metric && !_isMetric) {
+  } else if (userPreference === MeasurementFormat.metric && !_isMetric) {
     // Get the amount that is closest to 1 in metric units
-    const metricConversions = getConversions(amount, unit).values.metric;
-    let closestUnit = 'grams' as keyof typeof metricConversions;
+    const metricConversions = getConversions(amount, unit).metric;
+    let nextClosest = Infinity;
+    let closestUnit = 'grams';
     let closestAmount = Infinity;
-    for (const [key, value] of Object.entries(metricConversions)) {
-      const absValue = Math.abs(value - 1);
-      if (absValue < closestAmount) {
-        closestAmount = absValue;
-        closestUnit = key as keyof typeof metricConversions;
+    for (const conversion of metricConversions) {
+      const absValue = Math.abs(conversion.value - 1);
+      if (absValue < nextClosest) {
+        nextClosest = absValue;
+        closestAmount = conversion.value;
+        closestUnit = conversion.label;
       }
     }
     return {
-      amount: metricConversions[closestUnit],
+      amount: closestAmount,
       unit: closestUnit,
     };
   }
-  return { amount, unit };
+  return { amount, unit: getLabel(unit, amount) };
 };
