@@ -1,13 +1,11 @@
 'use client'
 
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import {
-  NutritionalFacts,
-  RecipeDurations,
-  RecipeIngredientsOverview,
-  StepList,
-} from '.'
+import { NutritionalFacts } from './NutritionalFacts'
+import { RecipeDurations } from './RecipeDurations'
+import { RecipeIngredientsOverview } from './RecipeIngredientsOverview'
 import { RecipeUserBanner } from './RecipeUserBanner'
+import { StepList } from './StepList'
 
 export const RecipePage = () => {
   const { name, description } = useRecipeStore((state) => state)

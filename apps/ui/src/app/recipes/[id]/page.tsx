@@ -3,7 +3,7 @@ import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { getAccessToken } from '@src/utils/getAccessToken'
 import { type Metadata } from 'next'
 import { cache } from 'react'
-import { RecipePage } from './_components'
+import { RecipePage } from './_components/RecipePage'
 
 const getRecipe = cache(async (id: string) => {
   const token = await getAccessToken()
