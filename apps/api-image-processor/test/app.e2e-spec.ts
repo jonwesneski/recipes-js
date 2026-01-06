@@ -14,7 +14,7 @@ import {
 import { KafkaConsumerService } from '@src/kafka-consumer.service';
 import { Kafka, logLevel, Producer } from 'kafkajs';
 import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 import { waitFor } from './utils';
 
 describe('App', () => {
