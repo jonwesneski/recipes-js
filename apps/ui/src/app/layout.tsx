@@ -32,33 +32,19 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   let assumeServiceIsProvisioning = false
   const token = await getAccessToken()
   let user: UserAccountResponse = {} as UserAccountResponse
-  // If AbortSignal.timeout(2000) doesn't work try below
-  // const timeoutPromise = new Promise((_, reject) =>
-  //   setTimeout(() => reject(new Error('Timeout')), 2000),
-  // )
 
-  // try {
-  //   // Promise.race returns as soon as the FIRST promise settles
-  //   user = await Promise.race([
-  //     usersControllerUserAccountV1({
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     }),
-  //     timeoutPromise,
-  //   ])
-  // } catch (err) {
-  //   // If the timeoutPromise rejects first, we land here
-  //   assumeServiceIsProvisioning = true
-  // }
+  const timeoutPromise = new Promise<UserAccountResponse>((_, reject) => {
+    setTimeout(() => reject(new Error('Timeout')), 2000)
+  })
+
   if (token) {
     try {
-      user = await usersControllerUserAccountV1(
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-        AbortSignal.timeout(2000),
-      )
+      user = await Promise.race([
+        usersControllerUserAccountV1({
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        timeoutPromise,
+      ])
     } catch {
       assumeServiceIsProvisioning = true
     }
