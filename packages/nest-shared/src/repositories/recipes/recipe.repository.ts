@@ -137,7 +137,7 @@ export class RecipeRepository {
       ...restRecipe,
       user: restUser,
     });
-    let amIFollowing: boolean | undefined =
+    const amIFollowing: boolean | undefined =
       requestedUserId && requestedUserId !== recipe.user.id
         ? _count.followers > 0
         : undefined;

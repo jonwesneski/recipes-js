@@ -21,14 +21,22 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
 
   return (
     <div className={mergeCss(undefined, props.className)}>
-      <h3 className="font-bold text-center">Nutritional Facts:</h3>
       <table className="border border-collapse m-auto">
-        <tbody>
+        <caption className="font-bold">Nutritional Facts</caption>
+        <thead>
           <tr className="border">
-            <th className="text-right pl-3">Name</th>
-            <th className="text-left px-4">Amount</th>
-            <th className="text-left px-4 border-l">Daily %</th>
+            <th className="text-right pl-3" scope="col">
+              Name
+            </th>
+            <th className="text-left px-4" scope="col">
+              Amount
+            </th>
+            <th className="text-left px-4 border-l" scope="col">
+              Daily %
+            </th>
           </tr>
+        </thead>
+        <tbody>
           {Object.keys(nutritionalFactsConst).map((key) => {
             const [name, unit] = getNameAndUnit(key)
             const _unit = unit === 'IU' ? unit : unit.toLowerCase()
@@ -39,7 +47,9 @@ export const NutritionalFacts = (props: INutritionalFactsProps) => {
             return (
               <React.Fragment key={key}>
                 <tr className="border">
-                  <td className="text-right pl-3">{name}</td>
+                  <th className="text-right pl-3" scope="row">
+                    {name}
+                  </th>
                   <td className="text-left px-4">
                     {typeof recipeNutrionalFact === 'number'
                       ? `${roundToDecimal(recipeNutrionalFact * scaleFactor, 2)} ${_unit}`
