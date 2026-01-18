@@ -70,7 +70,7 @@ const Page = () => {
 
       <div className="w-60">
         <div className="border-b mb-4">
-          <h1 className="font-extrabold">Login with:</h1>
+          <h2 className="font-extrabold">Login with:</h2>
         </div>
         <div
           className="mx-auto flex flex-col items-center w-5/6 gap-4"

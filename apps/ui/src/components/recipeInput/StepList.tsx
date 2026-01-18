@@ -50,7 +50,7 @@ export const StepList = () => {
         const stepNumber = index + 1
         return (
           <div key={s.keyId} data-testid="step-row" className="mb-5">
-            <h1 className="font-bold">step {stepNumber}.</h1>
+            <h3 className="font-bold">step {stepNumber}.</h3>
             <div
               ref={(element) => {
                 if (element) {

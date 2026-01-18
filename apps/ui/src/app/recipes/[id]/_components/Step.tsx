@@ -11,8 +11,8 @@ interface IStepProps {
 export const Step = (props: IStepProps) => {
   return (
     <>
-      <h1 className="font-bold">step {props.stepNumber}:</h1>
-      <div className="md:flex gap-8 ml-2 mt-2">
+      <h2 className="font-bold">step {props.stepNumber}:</h2>
+      <article className="md:flex gap-8 ml-2 mt-2">
         <IngredientList
           className="ml-4"
           ingredients={props.step.ingredients.items.map((i) => ({
@@ -23,7 +23,7 @@ export const Step = (props: IStepProps) => {
         />
 
         <p className="mt-4 md:mt-0">{props.step.instructions.value}</p>
-      </div>
+      </article>
     </>
   )
 }

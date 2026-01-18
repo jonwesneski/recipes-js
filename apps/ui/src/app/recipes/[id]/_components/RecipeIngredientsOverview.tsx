@@ -62,7 +62,7 @@ export const RecipeIngredientsOverview = (
 
   return (
     <div {...props}>
-      <h1 className="font-semibold">total ingredients:</h1>
+      <h2 className="font-semibold">total ingredients:</h2>
       <ul className="ml-2">
         {Object.keys(uniqueIngredients).map((name) => (
           <li key={name} style={{ listStyleType: 'none' }}>

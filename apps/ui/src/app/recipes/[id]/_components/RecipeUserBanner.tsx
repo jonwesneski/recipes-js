@@ -20,7 +20,7 @@ export const RecipeUserBanner = () => {
   return (
     <div className="border p-2 flex justify-between items-center">
       <div>
-        <h1 className="font-bold">created</h1>
+        <p className="font-bold">created</p>
         <div className="px-3">
           <span className="mr-2 font-bold">by:</span>
           <div className="relative inline">

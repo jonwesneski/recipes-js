@@ -21,7 +21,7 @@ const ScaleFactorSelect = (props: IScaleFactorSelectProps) => {
 
   return (
     <div className="border-2">
-      <h1 className="text-center font-bold">Scale Factor</h1>
+      <p className="text-center font-bold">Scale Factor</p>
       <div className="flex divide-x divide-text">
         {factorsTuple.map((f) => {
           return (

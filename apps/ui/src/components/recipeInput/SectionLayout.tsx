@@ -18,7 +18,7 @@ export const SectionListLayout = ({
       {items.map((section) => (
         <Fragment key={section.title}>
           <section className={className}>
-            <h1 className="text-3xl font-bold mb-10">{section.title}</h1>
+            <h2 className="text-3xl font-bold mb-10">{section.title}</h2>
             {section.children}
           </section>
           <hr className="border-t border-dotted mt-10" />
