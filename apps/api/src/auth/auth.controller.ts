@@ -8,9 +8,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtGoogleType } from '@repo/zod-schemas';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { GoogleAuthDto, GoogleOauthGuard } from './guards';
+import { GoogleAuthDto, GoogleOauthGuard, JwtRefreshGuard } from './guards';
 
 @Controller({
   path: 'auth',
@@ -30,6 +31,41 @@ export class AuthController {
       sameSite: isDev ? 'lax' : 'none',
       secure: !isDev,
       path: '/',
+    });
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      sameSite: isDev ? 'lax' : 'none',
+      secure: !isDev,
+      path: '/auth/refresh',
+    });
+  }
+
+  @Post('refresh')
+  @UseGuards(JwtRefreshGuard)
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const user = req.user as JwtGoogleType;
+    const googleUser = await this.authService.generateTokens(user);
+
+    const isDev = this.configService.get('ENV') === 'dev';
+    res.cookie('access_token', googleUser.accessToken, {
+      maxAge: 2592000000,
+      sameSite: isDev ? 'lax' : 'none',
+      secure: !isDev,
+      //domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
+      httpOnly: true,
+      //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
+    });
+    res.cookie('refresh_token', googleUser.refreshToken, {
+      maxAge: 2592000000,
+      sameSite: isDev ? 'lax' : 'none',
+      secure: !isDev,
+      //domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
+      path: '/auth/refresh',
+      httpOnly: true,
+      //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
     });
   }
 
@@ -60,6 +96,15 @@ export class AuthController {
         httpOnly: true,
         //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
       });
+      res.cookie('refresh_token', googleUser.tokens.refreshToken, {
+        maxAge: 2592000000,
+        sameSite: isDev ? 'lax' : 'none',
+        secure: !isDev,
+        //domain: isDev ? undefined : 'recipes-ui-tau.vercel.app',
+        path: '/auth/refresh',
+        httpOnly: true,
+        //expires: new Date(jwtDecode(googleUser.tokens.accessToken).exp)
+      });
 
       // res.redirect(`${frontendUrl}/recipes`);
       // Temporary workaround to pass token via form post to avoid CORS issues
@@ -69,6 +114,7 @@ export class AuthController {
           <body>
             <form id="tokenForm" action="${frontendUrl}/api/redirect" method="POST">
               <input type="hidden" name="access_token" value="${googleUser.tokens.accessToken}" />
+              <input type="hidden" name="refresh_token" value="${googleUser.tokens.refreshToken}" />
             </form>
             <script>
               document.getElementById('tokenForm').submit();

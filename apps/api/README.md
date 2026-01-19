@@ -7,9 +7,10 @@ NestJs backend for recipes app
 To run locally:
 
 1. create your .env files
-2. run `pnpm i`
-3. run `pnpm build`
-4. run `pnpm dev`
+2. generate secret keys with: `openssl rand -hex 32`
+3. run `pnpm i`
+4. run `pnpm build`
+5. run `pnpm dev`
 
 Run tests:
 
