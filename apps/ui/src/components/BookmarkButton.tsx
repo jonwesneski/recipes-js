@@ -26,6 +26,7 @@ export const BookmarkButton = (props: IBookmarkButtonProps) => {
       svgIcon={BookmarkIcon as Svg}
       onClick={() => toggleIsBookmarked()}
       svgClassName={optimisticIsBookmarked ? 'fill-text' : undefined}
+      aria-label="Bookmark"
     />
   )
 }

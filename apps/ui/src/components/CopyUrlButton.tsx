@@ -38,6 +38,7 @@ export const CopyUrlButton = (props: ICopyUrlButtonProps) => {
     <IconButton
       svgIcon={ShareIcon as Svg}
       onClick={() => void handleCopyClick()}
+      aria-label="Copy recipe URL"
     />
   )
 }

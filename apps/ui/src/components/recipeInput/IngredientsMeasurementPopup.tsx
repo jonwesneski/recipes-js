@@ -61,7 +61,9 @@ export const IngredientsMeasurementPopUp = (
                 }
               }}
             >
-              {measurementUnitsAbbreviated[m as MeasurementUnitType]}
+              <abbr title={m}>
+                {measurementUnitsAbbreviated[m as MeasurementUnitType]}
+              </abbr>
             </div>
           )
         })}
