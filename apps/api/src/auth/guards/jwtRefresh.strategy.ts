@@ -4,23 +4,28 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
-export class JwtGuardStrategy extends PassportStrategy(Strategy) {
+export class JwtRefreshGuardStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          return req.cookies['access_token'] as string;
+          return req.cookies['refresh_token'] as string;
         },
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET!,
+      secretOrKey: process.env.REFRESH_JWT_SECRET!,
       //expiresIn: '3d'
     });
   }
 
-  validate(payload: any) {
+  validate(req: Request, payload: any) {
+    const refreshToken = (req.cookies['refresh_token'] ??
+      req.get('Authorization')?.replace('Bearer', '').trim()) as string;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return payload;
+    return { ...payload, refreshToken };
   }
 }

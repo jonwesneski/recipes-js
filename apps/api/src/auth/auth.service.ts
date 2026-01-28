@@ -60,4 +60,8 @@ export class AuthService {
 
     return { userRecord, tokens };
   }
+
+  async refreshToken(token: string) {
+    await this.jwtService.verifyAsync(token, {});
+  }
 }

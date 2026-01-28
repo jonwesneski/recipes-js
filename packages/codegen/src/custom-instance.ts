@@ -17,6 +17,30 @@ export const customInstance = <T>(
     cancelToken: source.token,
   }).then(({ data }) => data);
 
+  // Handle refresh token logic
+  AXIOS_INSTANCE.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
+      if (error.response?.status === 401 && !originalRequest._retried) {
+        originalRequest._retried = true;
+        try {
+          await AXIOS_INSTANCE.post(
+            '/auth/refresh',
+            {},
+            {
+              withCredentials: true,
+            },
+          );
+          return AXIOS_INSTANCE(originalRequest);
+        } catch (refreshError) {
+          return Promise.reject(refreshError);
+        }
+      }
+      return Promise.reject(error);
+    },
+  );
+
   // @ts-ignore
   promise.cancel = () => {
     source.cancel('Query was cancelled');
