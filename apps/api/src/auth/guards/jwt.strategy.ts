@@ -20,7 +20,6 @@ export class JwtGuardStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: any) {
-    // console.log('payload', payload);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return payload;
   }

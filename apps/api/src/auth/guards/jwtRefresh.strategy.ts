@@ -23,10 +23,9 @@ export class JwtRefreshGuardStrategy extends PassportStrategy(
   }
 
   validate(req: Request, payload: any) {
-    // console.log('payload', payload);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const refreshToken = (req.cookies['refresh_token'] ??
       req.get('Authorization')?.replace('Bearer', '').trim()) as string;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return { ...payload, refreshToken };
   }
 }
