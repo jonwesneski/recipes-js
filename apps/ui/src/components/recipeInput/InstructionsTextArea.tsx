@@ -18,6 +18,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
     useRecipeStepInstructionsStore(props.keyId)
 
   useEffect(() => {
+    // todo: move shouldBeFocused logic into StepList when adding a new step
     if (textAreaRef.current && instructions?.shouldBeFocused) {
       textAreaRef.current.focus()
       textAreaRef.current.setSelectionRange(
