@@ -13,6 +13,7 @@ import type {
   RecipeResponseServingUnit,
 } from '@repo/codegen/model';
 import { roundToDecimal } from '@src/utils/calculate';
+import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { nutritionalFactsConst } from '@src/utils/nutritionalFacts';
 import { NormalizedRecipe } from '@src/zod-schemas/recipeNormalized';
 import { createStore } from 'zustand/vanilla';
@@ -20,7 +21,7 @@ import { applyMiddleware } from './middleware';
 
 export type FactorType = 0.5 | 1 | 1.5 | 2 | 4;
 export type RecipeState = Omit<NormalizedRecipe, 'imageUrl'> & {
-  // This can be bas64 (new/editable) or a URL (view)
+  // This can be base64 (new/edited) or a URL (view)
   imageSrc: string | null;
 
   metadata: {
@@ -38,17 +39,18 @@ export type RecipeActions = {
   setImage: (_value: string | null) => void;
   setBookmarked: (_value: boolean) => void;
   addStep: () => void;
-  //   insertIngredientsSteps: (
-  //     _keyId: string,
-  //     _ingredients: IngredientValidator[], // Changed to 1D array, caller will have to call this in a loop now when copy-pasting multiple step-ingredients
-  //   ) => void;
+  insertIngredientsSteps: (
+    _stepId: string,
+    _ingredientId: string,
+    _ingredients: string[][], // Changed to 1D array, caller will have to call this in a loop now when copy-pasting multiple step-ingredients
+  ) => void;
   scaleIngredient: (_amount: number) => number;
   setScaleFactor: (_value: FactorType) => void;
   insertInstructionsSteps: (_keyId: string, _instructions: string[]) => void;
   removeStep: (_stepId: string) => void;
-  addIngredient: (_keyId: string) => void;
-  removeIngredient: (_keyId: string) => void;
-  //   updateIngredient: (_keyId: string, _ingredient: IngredientValidator) => void;
+  addIngredient: (_stepId: string) => void;
+  removeIngredient: (_stepId: string, _ingredientId: string) => void;
+  updateIngredient: (_keyId: string, _ingredient: string) => void;
   setInstructions: (_keyId: string, _instructions: string) => void;
   setStepImage: (_keyId: string, _image: string | null) => void;
   setNutritionalFacts: (_value: NutritionalFactsResponse) => void;
@@ -73,7 +75,7 @@ export type RecipeActions = {
 
 export type RecipeStore = RecipeState & RecipeActions;
 
-export const defaultInitState: RecipeState = {
+export const defaultInitState: NormalizedRecipe = {
   name: '',
   createdAt: '',
   updatedAt: '',
@@ -83,7 +85,7 @@ export const defaultInitState: RecipeState = {
     imageUrl: '',
   },
   description: null,
-  imageSrc: null,
+  imageUrl: null,
   preparationTimeInMinutes: null,
   cookingTimeInMinutes: null,
   equipments: [],
@@ -103,16 +105,12 @@ export const defaultInitState: RecipeState = {
   dish: null,
   meal: null,
   proteins: [],
-  metadata: {
-    isValid: false,
-    errors: {},
-    scaleFactor: 1,
-  },
 };
 
 export const createRecipeStore = (
-  initState: RecipeState = defaultInitState,
+  initState: NormalizedRecipe = defaultInitState,
 ) => {
+  const { imageUrl, ...rest } = initState;
   return createStore<RecipeStore>()(
     applyMiddleware<RecipeStore>({
       afterMiddlware: (_, set) => {
@@ -135,7 +133,13 @@ export const createRecipeStore = (
          * check intialState (loop through Object.keys()) against state
          * Then I will only send what fields actually changed during an update/edit
          */
-        ...initState,
+        ...rest,
+        imageSrc: imageUrl ?? null,
+        metadata: {
+          isValid: false,
+          errors: {},
+          scaleFactor: 1,
+        },
         setName: (name: string) => set(() => ({ name })),
         setDescription: (description: string) => set(() => ({ description })),
         setPreparationTimeInMinutes: (preparationTimeInMinutes: number) =>
@@ -167,55 +171,89 @@ export const createRecipeStore = (
             return { stepIds, steps: { ...state.steps } };
           });
         },
-        addIngredient: (id: string) => {
+        addIngredient: (stepId: string) => {
+          const id = crypto.randomUUID();
           set((state) => {
-            // for (let s = 0; s < state.steps.length; s++) {
-            //   for (
-            //     let i = 0;
-            //     i < state.steps[s].ingredients.items.length;
-            //     i++
-            //   ) {
-            //     if (state.steps[s].ingredients.items[i].keyId === keyId) {
-            //       state.steps[s].ingredients.items = [
-            //         ...state.steps[s].ingredients.items.slice(0, i + 1),
-            //         new IngredientItemType({ shouldBeFocused: true }),
-            //         ...state.steps[s].ingredients.items.slice(i + 1),
-            //       ];
-            //       return { steps: state.steps };
-            //     }
-            //   }
-            // }
-            return state;
+            const ingredient = new IngredientValidator({
+              stringValue: '',
+            });
+            state.ingredients[id] = {
+              dto: ingredient.dto,
+              stringValue: ingredient.stringValue,
+              error: ingredient.error,
+            };
+            state.steps[stepId].ingredientIds.push(id);
+            return {
+              ingredients: { ...state.ingredients },
+              steps: { ...state.steps },
+            };
           });
         },
-        removeIngredient: (id: string) => {
+        insertIngredientsSteps: (
+          stepId: string,
+          ingredientId: string,
+          ingredients: string[][],
+        ) => {
           set((state) => {
-            // for (let s = 0; s < state.steps.length; s++) {
-            //   for (
-            //     let i = 0;
-            //     i < state.steps[s].ingredients.items.length;
-            //     i++
-            //   ) {
-            //     if (state.steps[s].ingredients.items[i].keyId === keyId) {
-            //       if (state.steps[s].ingredients.items.length === 1) {
-            //         state.steps[s].ingredients = createIngredientsItem([
-            //           new IngredientItemType({ shouldBeFocused: true }),
-            //         ]);
-            //         return { steps: [...state.steps] };
-            //       }
-            //       if (state.steps[s].ingredients.items[i - 1]) {
-            //         state.steps[s].ingredients.items[i - 1].shouldBeFocused =
-            //           true;
-            //       }
-            //       state.steps[s].ingredients.items.splice(i, 1);
-            //       return { steps: [...state.steps] };
-            //     }
-            //   }
-            // }
-            return state;
-          });
-        },
+            const newIngredients = ingredients.map((dl) =>
+              dl.map((d) => new IngredientValidator({ stringValue: d })),
+            );
 
+            const newIngredientIds: string[] = [];
+            newIngredients.forEach((ingredientList) => {
+              ingredientList.forEach((ingredient) => {
+                const id = crypto.randomUUID();
+                state.ingredients[id] = {
+                  dto: ingredient.dto,
+                  stringValue: ingredient.stringValue,
+                  error: ingredient.error,
+                };
+                newIngredientIds.push(id);
+              });
+            });
+
+            // Find the index of ingredientId and insert after it
+            const insertIndex =
+              state.steps[stepId].ingredientIds.indexOf(ingredientId);
+            if (insertIndex !== -1) {
+              state.steps[stepId].ingredientIds.splice(
+                insertIndex + 1,
+                0,
+                ...newIngredientIds,
+              );
+            } else {
+              state.steps[stepId].ingredientIds.push(...newIngredientIds);
+            }
+
+            return {
+              ingredients: { ...state.ingredients },
+              steps: { ...state.steps },
+            };
+          });
+        },
+        removeIngredient: (stepId: string, id: string) => {
+          set((state) => {
+            delete state.ingredients[id];
+            state.steps[stepId].ingredientIds = state.steps[
+              stepId
+            ].ingredientIds.filter((ingredientId) => ingredientId !== id);
+            return {
+              ingredients: { ...state.ingredients },
+              steps: { ...state.steps },
+            };
+          });
+        },
+        updateIngredient: (id: string, _ingredient: string) => {
+          set((state) => {
+            const ingredient = new IngredientValidator({
+              stringValue: _ingredient,
+            });
+            state.ingredients[id].stringValue = ingredient.stringValue;
+            state.ingredients[id].dto = ingredient.dto;
+            state.ingredients[id].error = ingredient.error;
+            return { ingredients: { ...state.ingredients } };
+          });
+        },
         setScaleFactor(scaleFactor: FactorType) {
           set((state) => ({ metadata: { ...state.metadata, scaleFactor } }));
         },

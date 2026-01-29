@@ -106,7 +106,18 @@ const NormalizedNutritionalFactsSchema = NutritionalFactsInputSchema;
 const NormalizedIngredientSchema = z.object({
   dto: IngredientInputSchema,
   stringValue: z.string().optional(),
-  error: z.string().optional(),
+  // $ZodFlattenedError<CreateIngredientDto>
+  error: z
+    .object({
+      formErrors: z.array(z.string()),
+      fieldErrors: z.object({
+        name: z.array(z.string()).optional(),
+        amount: z.array(z.string()).optional(),
+        isFraction: z.array(z.string()).optional(),
+        unit: z.array(z.string()).optional(),
+      }),
+    })
+    .optional(),
 });
 
 const NormalizedStepSchema = z.object({
@@ -209,6 +220,83 @@ export const transformRecipeToNormalized = (
     ingredients: ingredientsRecord,
     user: validated.user,
     nutritionalFacts: validated.nutritionalFacts,
+  };
+
+  return NormalizedRecipeSchema.parse(normalized);
+};
+
+export const transformPartialRecipeToNormalized = (
+  data: Partial<z.infer<typeof RecipeInputSchema>>,
+) => {
+  const id = data.id ?? '';
+  const createdAt = data.createdAt ?? new Date().toISOString();
+  const updatedAt = data.updatedAt ?? createdAt;
+
+  const stepsRecord: Record<string, z.infer<typeof NormalizedStepSchema>> = {};
+  const ingredientsRecord: Record<
+    string,
+    z.infer<typeof NormalizedIngredientSchema>
+  > = {};
+
+  (data.steps ?? []).forEach((step, stepIndex) => {
+    const stepId = `step-${id}-${step.id ?? stepIndex}`;
+
+    const ingredientIds = (step.ingredients ?? []).map((ing, ingIndex) => {
+      const ingredientId = `ing-${stepId}-${ingIndex}`;
+      ingredientsRecord[ingredientId] = {
+        dto: {
+          id: ingredientId,
+          amount: ing.amount ?? 0,
+          isFraction: ing.isFraction ?? false,
+          unit: ing.unit ?? null,
+          name: ing.name ?? '',
+        },
+        stringValue:
+          `${ing.amount ?? 0} ${ing.unit ?? ''} ${ing.name ?? ''}`.trim(),
+      };
+      return ingredientId;
+    });
+
+    stepsRecord[stepId] = {
+      id: stepId,
+      instruction: step.instruction ?? null,
+      imageUrl: step.imageUrl ?? null,
+      ingredientIds,
+    };
+  });
+
+  const normalized: z.infer<typeof NormalizedRecipeSchema> = {
+    id,
+    createdAt,
+    updatedAt,
+    name: data.name ?? '',
+    description: data.description ?? null,
+    preparationTimeInMinutes: data.preparationTimeInMinutes ?? null,
+    cookingTimeInMinutes: data.cookingTimeInMinutes ?? null,
+    imageUrl: data.imageUrl ?? null,
+    equipments: data.equipments ?? [],
+    stepIds: Object.keys(stepsRecord),
+    servings: data.servings ?? null,
+    servingAmount: data.servingAmount ?? null,
+    servingUnit: data.servingUnit ?? null,
+    tags: data.tags ?? [],
+    cuisine: data.cuisine ?? null,
+    meal: data.meal ?? null,
+    dish: data.dish ?? null,
+    diets: data.diets ?? [],
+    difficultyLevel: data.difficultyLevel ?? null,
+    proteins: data.proteins ?? [],
+    isPublic: data.isPublic ?? true,
+    bookmarked: data.bookmarked ?? undefined,
+    user: data.user ?? {
+      id: '',
+      handle: '',
+      imageUrl: null,
+      amIFollowing: undefined,
+    },
+    nutritionalFacts: data.nutritionalFacts ?? null,
+    steps: stepsRecord,
+    ingredients: ingredientsRecord,
   };
 
   return NormalizedRecipeSchema.parse(normalized);

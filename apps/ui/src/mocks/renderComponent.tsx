@@ -3,6 +3,7 @@ import AppProviders from '@src/app/_providers'
 import * as CameraContext from '@src/providers/CameraProvider'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { type UserStore } from '@src/stores/user-store'
+import { transformPartialRecipeToNormalized } from '@src/zod-schemas/recipeNormalized'
 import { render, waitFor } from '@testing-library/react'
 import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
@@ -44,7 +45,11 @@ export const renderRecipeComponent = async (
 
   return {
     ...(await renderComponent(
-      <RecipeStoreProvider initialState={initialState?.recipe}>
+      <RecipeStoreProvider
+        initialState={transformPartialRecipeToNormalized(
+          initialState?.recipe ?? {},
+        )}
+      >
         {ui}
       </RecipeStoreProvider>,
       initialState?.user,
