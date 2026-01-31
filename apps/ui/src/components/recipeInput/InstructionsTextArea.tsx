@@ -2,7 +2,7 @@
 
 import { type ClassValue, mergeCss, TextAreaLabel } from '@repo/design-system'
 import { useRecipeStepInstructionsStore } from '@src/providers/recipe-store-provider'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 
 const placeholder = `The instructions for this step`
 
@@ -17,16 +17,16 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
   const { instructions, setInstructions, insertInstructionsSteps } =
     useRecipeStepInstructionsStore(props.keyId)
 
-  useEffect(() => {
-    // todo: move shouldBeFocused logic into StepList when adding a new step
-    if (textAreaRef.current && instructions?.shouldBeFocused) {
-      textAreaRef.current.focus()
-      textAreaRef.current.setSelectionRange(
-        textAreaRef.current.value.length,
-        textAreaRef.current.value.length,
-      )
-    }
-  }, [])
+  // useEffect(() => {
+  //   // todo: move shouldBeFocused logic into StepList when adding a new step
+  //   if (textAreaRef.current && instructions?.shouldBeFocused) {
+  //     textAreaRef.current.focus()
+  //     textAreaRef.current.setSelectionRange(
+  //       textAreaRef.current.value.length,
+  //       textAreaRef.current.value.length,
+  //     )
+  //   }
+  // }, [])
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInstructions(props.keyId, event.target.value)
@@ -59,7 +59,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
       id={`step ${props.stepNumber} instructions`}
       label="instructions"
       isRequired={false}
-      value={instructions?.value}
+      value={instructions ?? undefined}
       placeholder={placeholder}
       onChange={handleInputChange}
       onResize={handleOnResize}

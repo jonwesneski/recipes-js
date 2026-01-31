@@ -1,9 +1,8 @@
-import { type RecipeResponse } from '@repo/codegen/model'
 import AppProviders from '@src/app/_providers'
 import * as CameraContext from '@src/providers/CameraProvider'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { type UserStore } from '@src/stores/user-store'
-import { transformPartialRecipeToNormalized } from '@src/zod-schemas/recipeNormalized'
+import { NormalizedRecipe } from '@src/zod-schemas/recipeNormalized'
 import { render, waitFor } from '@testing-library/react'
 import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
@@ -36,7 +35,7 @@ export const renderComponent = async (
 export const renderRecipeComponent = async (
   ui: React.ReactNode,
   initialState?: Partial<{
-    recipe: Partial<RecipeResponse>
+    recipe: Partial<NormalizedRecipe>
     user: Partial<UserStore>
   }>,
 ) => {
@@ -45,11 +44,7 @@ export const renderRecipeComponent = async (
 
   return {
     ...(await renderComponent(
-      <RecipeStoreProvider
-        initialState={transformPartialRecipeToNormalized(
-          initialState?.recipe ?? {},
-        )}
-      >
+      <RecipeStoreProvider initialState={initialState?.recipe ?? {}}>
         {ui}
       </RecipeStoreProvider>,
       initialState?.user,

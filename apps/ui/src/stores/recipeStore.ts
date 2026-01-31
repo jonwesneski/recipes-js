@@ -15,7 +15,7 @@ import type {
 import { roundToDecimal } from '@src/utils/calculate';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { nutritionalFactsConst } from '@src/utils/nutritionalFacts';
-import { NormalizedRecipe } from '@src/zod-schemas/recipeNormalized';
+import type { NormalizedRecipe } from '@src/zod-schemas/recipeNormalized';
 import { createStore } from 'zustand/vanilla';
 import { applyMiddleware } from './middleware';
 
@@ -76,6 +76,7 @@ export type RecipeActions = {
 export type RecipeStore = RecipeState & RecipeActions;
 
 export const defaultInitState: NormalizedRecipe = {
+  id: '',
   name: '',
   createdAt: '',
   updatedAt: '',
@@ -89,10 +90,24 @@ export const defaultInitState: NormalizedRecipe = {
   preparationTimeInMinutes: null,
   cookingTimeInMinutes: null,
   equipments: [],
-  ingredients: {},
+  ingredients: {
+    '': {
+      stringValue: '',
+      error: {
+        formErrors: [],
+        fieldErrors: {},
+      },
+      dto: {
+        name: '',
+        amount: -1,
+        isFraction: false,
+        unit: null,
+      },
+    },
+  },
   bookmarked: undefined,
-  steps: {},
-  stepIds: [],
+  steps: { '': { imageUrl: null, ingredientIds: [''], instruction: null } },
+  stepIds: [''],
   nutritionalFacts: null,
   servingAmount: null,
   servingUnit: null,
@@ -121,7 +136,7 @@ export const createRecipeStore = (
               state.name !== '' &&
               state.stepIds.every((s) =>
                 state.steps[s].ingredientIds.every(
-                  (i) => state.ingredients[i].error === undefined,
+                  (i) => !Object.hasOwn(state.ingredients[i], 'error'),
                 ),
               ),
           },
@@ -167,6 +182,7 @@ export const createRecipeStore = (
         removeStep: (stepId: string) => {
           set((state) => {
             const stepIds = state.stepIds.filter((id) => id !== stepId);
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
             delete state.steps[stepId];
             return { stepIds, steps: { ...state.steps } };
           });
@@ -195,12 +211,69 @@ export const createRecipeStore = (
           ingredients: string[][],
         ) => {
           set((state) => {
-            const newIngredients = ingredients.map((dl) =>
-              dl.map((d) => new IngredientValidator({ stringValue: d })),
-            );
+            // Existing ingredient
+            const existing = new IngredientValidator({
+              stringValue:
+                state.ingredients[ingredientId].stringValue + ingredients[0][0],
+            });
+            state.ingredients[ingredientId] = {
+              dto: existing.dto,
+              stringValue: existing.stringValue,
+              error: existing.error,
+            };
 
-            const newIngredientIds: string[] = [];
+            // Existing step, new ingredients
+            const existingStepNewIngredientIds: string[] = [];
+            for (let i = 1; i < ingredients[0].length; i++) {
+              const id = crypto.randomUUID();
+              const newIngredientValidator = new IngredientValidator({
+                stringValue: ingredients[0][i],
+              });
+              state.ingredients[id] = {
+                dto: newIngredientValidator.dto,
+                stringValue: newIngredientValidator.stringValue,
+                error: newIngredientValidator.error,
+              };
+              existingStepNewIngredientIds.push(id);
+            }
+            const insertExistingStepIngredientsIndex =
+              state.steps[stepId].ingredientIds.indexOf(ingredientId);
+            state.steps[stepId].ingredientIds.splice(
+              insertExistingStepIngredientsIndex + 1,
+              0,
+              ...existingStepNewIngredientIds,
+            );
+            // state.steps[stepId].instruction += instructionsList[0];
+            // const newStepIds: string[] = [];
+            // for (let i = 1; i < instructionsList.length; i++) {
+            //   const id = crypto.randomUUID();
+            //   state.steps[id] = {
+            //     id,
+            //     instruction: instructionsList[i],
+            //     ingredientIds: [],
+            //     imageUrl: null,
+            //   };
+            //   newStepIds.push(id);
+            // }
+
+            const newIngredients = ingredients
+              .filter((_, i) => i > 0)
+              .map((dl) =>
+                dl.map((d) => new IngredientValidator({ stringValue: d })),
+              );
+
+            // const newSteps: Record<string, string[]>[] = [];
+            const newStepIds: string[] = [];
             newIngredients.forEach((ingredientList) => {
+              const newStepId = crypto.randomUUID();
+              state.steps[newStepId] = {
+                id: newStepId,
+                instruction: null,
+                ingredientIds: [],
+                imageUrl: null,
+              };
+              //newSteps.push({ [stepId]: [] });
+              newStepIds.push(newStepId);
               ingredientList.forEach((ingredient) => {
                 const id = crypto.randomUUID();
                 state.ingredients[id] = {
@@ -208,22 +281,36 @@ export const createRecipeStore = (
                   stringValue: ingredient.stringValue,
                   error: ingredient.error,
                 };
-                newIngredientIds.push(id);
+                //newSteps[newSteps.length - 1][stepId].push(id);
+                state.steps[newStepId].ingredientIds.push(id);
               });
             });
 
-            // Find the index of ingredientId and insert after it
-            const insertIndex =
-              state.steps[stepId].ingredientIds.indexOf(ingredientId);
-            if (insertIndex !== -1) {
-              state.steps[stepId].ingredientIds.splice(
-                insertIndex + 1,
+            // Find the index of stepId and insert after it
+            const insertStepIndex = state.stepIds.indexOf(stepId);
+            if (insertStepIndex !== -1) {
+              state.stepIds.splice(
+                insertStepIndex + 1,
                 0,
-                ...newIngredientIds,
+                // ...Object.keys(newSteps),
+                ...newStepIds,
               );
             } else {
-              state.steps[stepId].ingredientIds.push(...newIngredientIds);
+              //state.stepIds.push(...Object.keys(newSteps));
+              state.stepIds.push(...newStepIds);
             }
+            // Find the index of ingredientId and insert after it
+            // const insertIngredientIndex =
+            //   state.steps[stepId].ingredientIds.indexOf(ingredientId);
+            // if (insertIngredientIndex !== -1) {
+            //   state.steps[stepId].ingredientIds.splice(
+            //     insertIngredientIndex + 1,
+            //     0,
+            //     ...newIngredientIds,
+            //   );
+            // } else {
+            //   state.steps[stepId].ingredientIds.push(...newIngredientIds);
+            // }
 
             return {
               ingredients: { ...state.ingredients },
@@ -233,6 +320,7 @@ export const createRecipeStore = (
         },
         removeIngredient: (stepId: string, id: string) => {
           set((state) => {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
             delete state.ingredients[id];
             state.steps[stepId].ingredientIds = state.steps[
               stepId
@@ -266,9 +354,53 @@ export const createRecipeStore = (
 
             return { steps: { ...state.steps } };
           }),
-        insertInstructionsSteps: (stepId: string, instructions: string[]) =>
+        insertInstructionsSteps: (stepId: string, instructionsList: string[]) =>
           set((state) => {
-            return state;
+            if (state.steps[stepId].instruction) {
+              state.steps[stepId].instruction += instructionsList[0];
+            } else {
+              state.steps[stepId].instruction = instructionsList[0];
+            }
+            debugger;
+            let stepIdIndex = state.stepIds.indexOf(stepId);
+            const newStepIds: string[] = [];
+            for (let i = 1; i < instructionsList.length; i++) {
+              const existingStepId = state.stepIds[stepIdIndex + i];
+              if (state.steps[existingStepId]) {
+                state.steps[existingStepId].instruction = instructionsList[i];
+              } else {
+                const newStepId = crypto.randomUUID();
+                const newIngredientId = crypto.randomUUID();
+                state.steps[newStepId] = {
+                  instruction: instructionsList[i],
+                  ingredientIds: [newIngredientId],
+                  imageUrl: null,
+                };
+                state.ingredients[newIngredientId] = {
+                  stringValue: '',
+                  dto: {
+                    name: '',
+                    amount: -1,
+                    isFraction: false,
+                    unit: null,
+                  },
+                  error: {
+                    formErrors: [],
+                    fieldErrors: {},
+                  },
+                };
+                newStepIds.push(newStepId);
+              }
+            }
+
+            // Find the index of stepId and insert after it
+            const insertIndex = state.stepIds.indexOf(stepId);
+            if (insertIndex !== -1) {
+              state.stepIds.splice(insertIndex + 1, 0, ...newStepIds);
+            } else {
+              state.stepIds.push(...newStepIds);
+            }
+            return { steps: { ...state.steps }, stepIds: [...state.stepIds] };
           }),
         setStepImage: (stepId: string, image: string | null) =>
           set((state) => {

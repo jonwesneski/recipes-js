@@ -14,7 +14,7 @@ export const BasicInfoInput = () => {
     setDescription,
     setCookingTimeInMinutes,
     setPreparationTimeInMinutes,
-    errors,
+    metadata: { errors },
   } = useRecipeStore((state) => state)
 
   useEffect(() => {

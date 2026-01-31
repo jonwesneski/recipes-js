@@ -3,7 +3,6 @@
 import { mergeCss, type ClassValue } from '@repo/design-system'
 import { useMediaQuery } from '@src/hooks'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
-import { IngredientValidator } from '@src/utils/ingredientsValidator'
 import { type MeasurementUnitType } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import { useRef, useState } from 'react'
@@ -18,7 +17,7 @@ const placeholderSplit = placeholder.split('\n')
 
 // TODO: rework file into a web component
 interface IngredientsTextAreaProps {
-  keyId: string
+  stepId: string
   stepNumber: number
   className?: ClassValue
   onResize: (_height: number) => void
@@ -33,23 +32,20 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   const { width, breakpointPxs } = useMediaQuery()
   const {
     ingredients,
+    ingredientIds,
     addIngredient,
     removeIngredient,
     updateIngredient,
     insertIngredientsSteps,
-  } = useRecipeStepIngredientsStore(props.keyId)
+  } = useRecipeStepIngredientsStore(props.stepId)
 
   const handleMeasurementInPopupClick = (value: MeasurementUnitType): void => {
-    if (!ingredients) {
-      return
-    }
+    // if (!ingredients) {
+    //   return
+    // }
 
-    const index = ingredients.items.findIndex(
-      (item) => item.keyId === keyIdMeasurementPopup,
-    )
-    const text = itemRefs.current
-      .get(ingredients.items[index].keyId)
-      ?.getValue()
+    const index = ingredientIds.findIndex((id) => id === keyIdMeasurementPopup)
+    const text = itemRefs.current.get(ingredientIds[index])?.getValue()
     if (!text) {
       return
     }
@@ -62,25 +58,21 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     }
 
     if (keyIdMeasurementPopup) {
-      updateIngredient(
-        keyIdMeasurementPopup,
-        new IngredientValidator({ stringValue: items.join(' ') }),
-      )
+      updateIngredient(keyIdMeasurementPopup, items.join(' '))
     }
     setKeyIdMeasurementPopup(null)
   }
 
-  const handleChange = (keyId: string, ingredient: IngredientValidator) => {
+  const handleChange = (keyId: string, ingredient: string) => {
     updateIngredient(keyId, ingredient)
   }
 
   const handleMeasurementInput = (
-    keyId: string | null,
+    ingredientId: string | null,
     element: HTMLTextAreaElement | null,
   ) => {
-    const rowIndex =
-      ingredients?.items.findIndex((item) => item.keyId === keyId) ?? -1
-    if (keyId && element && rowIndex >= 0) {
+    const rowIndex = ingredientIds.findIndex((id) => id === ingredientId)
+    if (ingredientId && element && rowIndex >= 0) {
       let yOffset = NaN
       if (width >= breakpointPxs.md) {
         const yMultipler = rowIndex * 10
@@ -95,31 +87,31 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
         y: yOffset,
       })
     }
-    setKeyIdMeasurementPopup(keyId)
+    setKeyIdMeasurementPopup(ingredientId)
   }
 
-  const handleNewRow = (keyId: string) => {
-    addIngredient(keyId)
+  const handleNewRow = (ingredientId: string) => {
+    addIngredient(ingredientId)
   }
 
-  const handleRemove = (keyId: string) => {
-    handleArrowUp(keyId)
-    removeIngredient(keyId)
+  const handleRemove = (ingredientId: string) => {
+    handleArrowUp(ingredientId)
+    removeIngredient(props.stepId, ingredientId)
   }
 
-  const handleArrowUp = (keyId: string) => {
-    if (!ingredients) {
-      return
-    }
-    const index = ingredients.items.findIndex((item) => item.keyId === keyId)
+  const handleArrowUp = (ingredientId: string) => {
+    // if (!ingredients) {
+    //   return
+    // }
+    const index = ingredientIds.findIndex((id) => id === ingredientId)
     if (index > 0) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it won't be null
-      const row = itemRefs.current.get(ingredients.items[index - 1].keyId)!
+      const row = itemRefs.current.get(ingredientIds[index - 1])!
       row.focus()
       const rangeValue = Math.min(
         row.getValue()?.length ?? 0,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it won't be null
-        itemRefs.current.get(keyId)!.getSelectionStart() ?? 0,
+        itemRefs.current.get(ingredientId)!.getSelectionStart() ?? 0,
       )
 
       // This is not working for some reason; but should
@@ -127,19 +119,19 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     }
   }
 
-  const handleArrowDown = (keyId: string) => {
-    if (!ingredients) {
-      return
-    }
-    const index = ingredients.items.findIndex((item) => item.keyId === keyId)
-    if (index < ingredients.items.length - 1) {
+  const handleArrowDown = (ingredientId: string) => {
+    // if (!ingredients) {
+    //   return
+    // }
+    const index = ingredientIds.findIndex((id) => id === ingredientId)
+    if (index < ingredientIds.length - 1) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it won't be null
-      const row = itemRefs.current.get(ingredients.items[index + 1].keyId)!
+      const row = itemRefs.current.get(ingredientIds[index + 1])!
       row.focus()
       const rangeValue = Math.min(
         row.getValue()?.length ?? 0,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it won't be null
-        itemRefs.current.get(keyId)!.getSelectionStart() ?? 0,
+        itemRefs.current.get(ingredientId)!.getSelectionStart() ?? 0,
       )
 
       row.setSelectionRange(rangeValue, rangeValue)
@@ -159,16 +151,11 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   /* When some pastes in recipes that are already separated by linebreaks
    * we will add new steps for them
    */
-  const handleOnPaste = (keyId: string, value: string) => {
+  const handleOnPaste = (ingredientId: string, value: string) => {
     const dataListofList = value.includes('\r')
       ? value.split('\r\n\r\n').map((v) => v.split('\r\n'))
       : value.split('\n\n').map((v) => v.split('\n'))
-    insertIngredientsSteps(
-      keyId,
-      dataListofList.map((dl) =>
-        dl.map((d) => new IngredientValidator({ stringValue: d })),
-      ),
-    )
+    insertIngredientsSteps(props.stepId, ingredientId, dataListofList)
   }
 
   return (
@@ -184,26 +171,26 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       tabIndex={0}
       onKeyDown={() => undefined}
     >
-      {ingredients?.items.map((item, i) => (
+      {ingredientIds.map((id, i) => (
         <IngredientRow
-          key={item.keyId}
-          keyId={item.keyId}
+          key={id}
+          ingredientId={id}
           htmlFor={`step ${props.stepNumber} ingredients`}
           label={i === 0 ? 'ingredients' : undefined}
           ref={(element) => {
             if (element) {
-              itemRefs.current.set(item.keyId, element)
+              itemRefs.current.set(id, element)
             } else {
-              itemRefs.current.delete(item.keyId)
+              itemRefs.current.delete(id)
             }
           }}
           placeholder={placeholderSplit[i]}
-          value={item.ingredient.stringValue}
+          value={ingredients[id].stringValue ?? ''}
           error={
-            item.ingredient.error?.fieldErrors.amount?.[0] ??
-            item.ingredient.error?.fieldErrors.name?.[0]
+            ingredients[id].error?.fieldErrors.amount?.[0] ??
+            ingredients[id].error?.fieldErrors.name?.[0]
           }
-          focusOnMount={item.shouldBeFocused}
+          // focusOnMount move this logic to step list component pass ref in callback?
           onChange={handleChange}
           onMeasurementInput={handleMeasurementInput}
           onPaste={handleOnPaste}

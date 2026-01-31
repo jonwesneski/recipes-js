@@ -14,7 +14,7 @@ export const RecipeInput = () => {
   const {
     setImage,
     imageSrc: base64Image,
-    errors,
+    metadata: { errors },
   } = useRecipeStore((state) => state)
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export const RecipeInput = () => {
               <PhotoInput
                 id="recipe-photo"
                 label="recipe photo"
-                base64Src={base64Image}
+                imageSrc={base64Image}
                 isRequired={false}
                 onCameraClick={handleOnCameraClick}
                 onUploadClick={handleOnUploadClick}

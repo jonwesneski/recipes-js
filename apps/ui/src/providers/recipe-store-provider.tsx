@@ -5,7 +5,10 @@ import {
   createRecipeStore,
   defaultInitState,
 } from '@src/stores/recipeStore'
-import { NormalizedRecipe } from '@src/zod-schemas/recipeNormalized'
+import type {
+  NormalizedIngredient,
+  NormalizedRecipe,
+} from '@src/zod-schemas/recipeNormalized'
 import { type ReactNode, createContext, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
 
@@ -14,7 +17,7 @@ export const RecipeStoreContext = createContext<RecipeStoreApi | null>(null)
 
 export interface RecipeStoreProviderProps {
   children: ReactNode
-  initialState?: NormalizedRecipe
+  initialState?: Partial<NormalizedRecipe>
 }
 export const RecipeStoreProvider = ({
   children,
@@ -23,8 +26,8 @@ export const RecipeStoreProvider = ({
   const storeRef = useRef<RecipeStoreApi | null>(null)
 
   storeRef.current ??= createRecipeStore({
-    ...defaultInitState,
-    ...initialState,
+    ...structuredClone(defaultInitState),
+    ...structuredClone(initialState),
   })
 
   return (
@@ -54,7 +57,13 @@ export const useRecipeStepIngredientsStore = (stepId: string) => {
     updateIngredient,
   } = useRecipeStore((state) => state)
   return {
-    ingredients: steps[stepId].ingredientIds.map((id) => ingredients[id]),
+    ingredients: steps[stepId].ingredientIds.reduce<
+      Record<string, NormalizedIngredient>
+    >((acc, id) => {
+      acc[id] = ingredients[id]
+      return acc
+    }, {}),
+    ingredientIds: steps[stepId].ingredientIds,
     insertIngredientsSteps,
     addIngredient,
     removeIngredient,

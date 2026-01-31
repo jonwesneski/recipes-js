@@ -8,7 +8,9 @@ import { InstructionsTextArea } from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
 export const StepList = () => {
-  const { steps, addStep, setStepImage } = useRecipeStore((state) => state)
+  const { steps, stepIds, addStep, setStepImage } = useRecipeStore(
+    (state) => state,
+  )
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const [isNewStep, setIsNewStep] = useState<boolean>(false)
 
@@ -43,49 +45,49 @@ export const StepList = () => {
       newStepRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [isNewStep, itemRefs])
-
+  console.log('cccccc', { count: stepIds.length })
   return (
     <>
-      {steps.map((s, index) => {
+      {stepIds.map((stepId, index) => {
         const stepNumber = index + 1
         return (
-          <div key={s.keyId} data-testid="step-row" className="mb-5">
+          <div key={stepId} data-testid="step-row" className="mb-5">
             <h3 className="font-bold">step {stepNumber}.</h3>
             <div
               ref={(element) => {
                 if (element) {
-                  itemRefs.current.set(s.keyId, element)
+                  itemRefs.current.set(stepId, element)
                 } else {
-                  itemRefs.current.delete(s.keyId)
+                  itemRefs.current.delete(stepId)
                 }
               }}
               className="step-container"
             >
               <IngredientsTextArea
                 className="flex-1"
-                keyId={s.ingredients.keyId}
+                stepId={stepId}
                 stepNumber={stepNumber}
-                onResize={(height: number) => handleOnResize(s.keyId, height)}
+                onResize={(height: number) => handleOnResize(stepId, height)}
               />
               <InstructionsTextArea
                 className="flex-1"
-                keyId={s.instructions.keyId}
+                keyId={stepId}
                 stepNumber={stepNumber}
-                onResize={(height: number) => handleOnResize(s.keyId, height)}
+                onResize={(height: number) => handleOnResize(stepId, height)}
               />
             </div>
             <div className="mx-auto">
               <PhotoInput
                 id={`step-photo-${index}`}
-                base64Src={s.image}
+                imageSrc={steps[stepId].imageUrl}
                 label="step photo"
                 isRequired={false}
-                onCameraClick={(image) => handleOnCameraClick(s.keyId, image)}
-                onUploadClick={(image) => handleOnUploadClick(s.keyId, image)}
-                onRemoveClick={() => handleOnRemoveImageClick(s.keyId)}
+                onCameraClick={(image) => handleOnCameraClick(stepId, image)}
+                onUploadClick={(image) => handleOnUploadClick(stepId, image)}
+                onRemoveClick={() => handleOnRemoveImageClick(stepId)}
               />
             </div>
-            {index < steps.length - 1 && <hr className="mt-5" />}
+            {index < stepIds.length - 1 && <hr className="mt-5" />}
           </div>
         )
       })}
