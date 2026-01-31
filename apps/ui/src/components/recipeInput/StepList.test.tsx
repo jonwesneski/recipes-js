@@ -141,8 +141,10 @@ describe('StepList', () => {
     })
 
     it('Pasting uneven steps', async () => {
+      // Uneven means different number of ingredients vs instructions
       const ingredientsList = ingredientsString.split('\n\n')
       const instructionsList = instructionsString.split('\n\n')
+      const unevenStepCount = instructionsList.length + 1 // shifting down by one
       const { findAllByTestId } = await renderRecipeComponent(<StepList />)
       let ingredients = await findAllByTestId(INGREDIENT_ID)
 
@@ -157,7 +159,7 @@ describe('StepList', () => {
       await userEvent.paste(instructionsString)
 
       const steps = await findAllByTestId(STEP_ID)
-      expect(steps.length).toBe(4)
+      expect(steps.length).toBe(unevenStepCount)
       ingredients = await findAllByTestId(INGREDIENT_ID)
       ingredients.forEach((i, index) => {
         if (index === 3) {
@@ -168,7 +170,7 @@ describe('StepList', () => {
       })
 
       instructions = await findAllByTestId(INSTRUCTIONS_ID)
-      expect(instructions.length).toBe(4)
+      expect(instructions.length).toBe(unevenStepCount)
       instructions.forEach((i, index) => {
         if (index === 0) {
           expect(i.textContent).toBe('')

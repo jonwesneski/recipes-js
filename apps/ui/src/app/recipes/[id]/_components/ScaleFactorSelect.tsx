@@ -2,7 +2,7 @@
 
 import { mergeCss, type ClassValue } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import { type FactorType } from '@src/stores/recipe-store'
+import { type FactorType } from '@src/stores/recipeStore'
 
 // JS doesn't guarantee order of object keys, so using a tuple instead of a Map
 const factorsTuple: [string, FactorType][] = [
@@ -17,7 +17,10 @@ interface IScaleFactorSelectProps {
   className?: ClassValue
 }
 const ScaleFactorSelect = (props: IScaleFactorSelectProps) => {
-  const { scaleFactor, setScaleFactor } = useRecipeStore((state) => state)
+  const {
+    metadata: { scaleFactor },
+    setScaleFactor,
+  } = useRecipeStore((state) => state)
 
   return (
     <div className="border-2">

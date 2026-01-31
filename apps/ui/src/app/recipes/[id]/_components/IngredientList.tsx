@@ -1,7 +1,7 @@
 'use client'
 
-import type { IngredientResponse } from '@repo/codegen/model'
 import { type ClassValue, mergeCss, useCustomModal } from '@repo/design-system'
+import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { useUserStore } from '@src/providers/use-store-provider'
 import { roundToDecimal } from '@src/utils/calculate'
 import {
@@ -9,22 +9,24 @@ import {
   determineAmountFormat,
   determineUsersAmountUnit,
 } from '@src/utils/measurements'
+import type { NormalizedIngredient } from '@src/zod-schemas/recipeNormalized'
 import { ModalMeasurementConversions } from './ModalMeasurementConversions'
 
-type IngredientParams = Omit<IngredientResponse, 'createdAt' | 'updatedAt'>
-
 interface IngredientListProps {
-  ingredients: IngredientParams[]
+  stepId: string
   scaleFactor: number
   className?: ClassValue
 }
 const IngredientList = (props: IngredientListProps) => {
   const { numberFormat, measurementFormat } = useUserStore()
   const { showModal } = useCustomModal()
+  const { ingredientIds, ingredients } = useRecipeStepIngredientsStore(
+    props.stepId,
+  ) // subscribe to ingredient changes
 
   const handleOnShowConversions = (
     e: React.MouseEvent,
-    ingredient: IngredientParams,
+    ingredient: NormalizedIngredient['dto'],
   ) => {
     e.preventDefault()
     if (ingredient.unit !== null) {
@@ -45,21 +47,21 @@ const IngredientList = (props: IngredientListProps) => {
     }
   }
 
-  return props.ingredients.length ? (
+  return ingredientIds.length ? (
     <ul className={mergeCss('list-disc', props.className)}>
-      {props.ingredients.map((ingredient) => {
+      {ingredientIds.map((id) => {
         const { amount, unit } = determineUsersAmountUnit(
-          ingredient.amount,
-          ingredient.unit,
+          ingredients[id].dto.amount,
+          ingredients[id].dto.unit,
           measurementFormat,
         )
         return (
-          <li key={ingredient.id} className="text-left">
+          <li key={id} className="text-left">
             <span>
               {determineAmountFormat(
                 amount,
                 props.scaleFactor,
-                ingredient.isFraction,
+                ingredients[id].dto.isFraction,
                 numberFormat,
               )}
             </span>{' '}
@@ -70,12 +72,12 @@ const IngredientList = (props: IngredientListProps) => {
                 className={
                   'inline-block mr-2 underline decoration-dotted underline-offset-4'
                 }
-                onClick={(e) => handleOnShowConversions(e, ingredient)}
+                onClick={(e) => handleOnShowConversions(e, ingredients[id].dto)}
               >
                 {unit}
               </a>
             ) : null}
-            {ingredient.name}
+            {ingredients[id].dto.name}
           </li>
         )
       })}

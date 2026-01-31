@@ -1,6 +1,7 @@
 import { recipesControllerRecipeV1 } from '@repo/codegen/recipes'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { getAccessToken } from '@src/utils/getAccessToken'
+import { transformRecipeToNormalized } from '@src/zod-schemas/recipeNormalized'
 import { type Metadata } from 'next'
 import { cache } from 'react'
 import { RecipePage } from './_components/RecipePage'
@@ -51,9 +52,8 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
 
   const recipe = await getRecipe(id)
-
   return (
-    <RecipeStoreProvider initialState={recipe}>
+    <RecipeStoreProvider initialState={transformRecipeToNormalized(recipe)}>
       <RecipePage />
     </RecipeStoreProvider>
   )
