@@ -40,10 +40,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   } = useRecipeStepIngredientsStore(props.stepId)
 
   const handleMeasurementInPopupClick = (value: MeasurementUnitType): void => {
-    // if (!ingredients) {
-    //   return
-    // }
-
     const index = ingredientIds.findIndex((id) => id === keyIdMeasurementPopup)
     const text = itemRefs.current.get(ingredientIds[index])?.getValue()
     if (!text) {
@@ -100,9 +96,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleArrowUp = (ingredientId: string) => {
-    // if (!ingredients) {
-    //   return
-    // }
     const index = ingredientIds.findIndex((id) => id === ingredientId)
     if (index > 0) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it won't be null
@@ -120,9 +113,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
   }
 
   const handleArrowDown = (ingredientId: string) => {
-    // if (!ingredients) {
-    //   return
-    // }
     const index = ingredientIds.findIndex((id) => id === ingredientId)
     if (index < ingredientIds.length - 1) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it won't be null
