@@ -75,6 +75,32 @@ export type RecipeActions = {
 
 export type RecipeStore = RecipeState & RecipeActions;
 
+const createStep = (options?: { instruction?: string }) => {
+  const stepId = crypto.randomUUID();
+  const ingredientId = crypto.randomUUID();
+  return {
+    stepId,
+    ingredientId,
+    imageUrl: null,
+    instruction: options?.instruction ?? null,
+    ingredientIds: [ingredientId],
+    ingredient: {
+      stringValue: '',
+      dto: {
+        name: '',
+        amount: -1,
+        isFraction: false,
+        unit: null,
+      },
+      error: {
+        formErrors: [],
+        fieldErrors: {},
+      },
+    },
+  };
+};
+
+const defaultStep = createStep();
 export const defaultInitState: NormalizedRecipe = {
   id: '',
   name: '',
@@ -91,23 +117,17 @@ export const defaultInitState: NormalizedRecipe = {
   cookingTimeInMinutes: null,
   equipments: [],
   ingredients: {
-    '': {
-      stringValue: '',
-      error: {
-        formErrors: [],
-        fieldErrors: {},
-      },
-      dto: {
-        name: '',
-        amount: -1,
-        isFraction: false,
-        unit: null,
-      },
-    },
+    [defaultStep.ingredientId]: defaultStep.ingredient,
   },
   bookmarked: undefined,
-  steps: { '': { imageUrl: null, ingredientIds: [''], instruction: null } },
-  stepIds: [''],
+  steps: {
+    [defaultStep.stepId]: {
+      imageUrl: defaultStep.imageUrl,
+      ingredientIds: defaultStep.ingredientIds,
+      instruction: defaultStep.instruction,
+    },
+  },
+  stepIds: [defaultStep.stepId],
   nutritionalFacts: null,
   servingAmount: null,
   servingUnit: null,
@@ -356,50 +376,49 @@ export const createRecipeStore = (
           }),
         insertInstructionsSteps: (stepId: string, instructionsList: string[]) =>
           set((state) => {
+            let stepIdIndex = state.stepIds.indexOf(stepId);
+            if (stepIdIndex === -1) {
+              return state;
+            }
+
             if (state.steps[stepId].instruction) {
               state.steps[stepId].instruction += instructionsList[0];
             } else {
               state.steps[stepId].instruction = instructionsList[0];
             }
-            debugger;
-            let stepIdIndex = state.stepIds.indexOf(stepId);
+
             const newStepIds: string[] = [];
+            let insertAtIndex = NaN;
             for (let i = 1; i < instructionsList.length; i++) {
               const existingStepId = state.stepIds[stepIdIndex + i];
-              if (state.steps[existingStepId]) {
-                state.steps[existingStepId].instruction = instructionsList[i];
-              } else {
-                const newStepId = crypto.randomUUID();
-                const newIngredientId = crypto.randomUUID();
-                state.steps[newStepId] = {
+              if (
+                state.steps[existingStepId]?.instruction ||
+                !state.steps[existingStepId]
+              ) {
+                const newStep = createStep({
                   instruction: instructionsList[i],
-                  ingredientIds: [newIngredientId],
-                  imageUrl: null,
+                });
+                state.steps[newStep.stepId] = {
+                  instruction: newStep.instruction,
+                  ingredientIds: newStep.ingredientIds,
+                  imageUrl: newStep.imageUrl,
                 };
-                state.ingredients[newIngredientId] = {
-                  stringValue: '',
-                  dto: {
-                    name: '',
-                    amount: -1,
-                    isFraction: false,
-                    unit: null,
-                  },
-                  error: {
-                    formErrors: [],
-                    fieldErrors: {},
-                  },
-                };
-                newStepIds.push(newStepId);
+                state.ingredients[newStep.ingredientId] = newStep.ingredient;
+                newStepIds.push(newStep.stepId);
+              } else {
+                if (Number.isNaN(insertAtIndex)) {
+                  insertAtIndex = stepIdIndex + i;
+                }
+                state.steps[existingStepId].instruction = instructionsList[i];
               }
             }
 
-            // Find the index of stepId and insert after it
-            const insertIndex = state.stepIds.indexOf(stepId);
-            if (insertIndex !== -1) {
-              state.stepIds.splice(insertIndex + 1, 0, ...newStepIds);
-            } else {
-              state.stepIds.push(...newStepIds);
-            }
+            // Insert new stepIds after the current stepId
+            insertAtIndex = Number.isNaN(insertAtIndex)
+              ? state.stepIds.length - 1
+              : insertAtIndex;
+            state.stepIds.splice(insertAtIndex + 1, 0, ...newStepIds);
+
             return { steps: { ...state.steps }, stepIds: [...state.stepIds] };
           }),
         setStepImage: (stepId: string, image: string | null) =>

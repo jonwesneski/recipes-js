@@ -45,7 +45,7 @@ export const StepList = () => {
       newStepRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [isNewStep, itemRefs])
-  console.log('cccccc', { count: stepIds.length })
+
   return (
     <>
       {stepIds.map((stepId, index) => {
