@@ -1,5 +1,4 @@
 import { renderRecipeComponent } from '@src/mocks/renderComponent'
-import { defaultInitState } from '@src/stores/recipeStore'
 import type { NormalizedRecipe } from '@src/zod-schemas/recipeNormalized'
 import IngredientList from './IngredientList'
 
@@ -25,7 +24,6 @@ describe('IngredientList', () => {
     },
   } as NormalizedRecipe['ingredients']
   it('Lists created', async () => {
-    defaultInitState.stepIds[0]
     const { findByText } = await renderRecipeComponent(
       <IngredientList scaleFactor={1} stepId={'1'} />,
       {
