@@ -15,7 +15,10 @@ import type {
 import { roundToDecimal } from '@src/utils/calculate';
 import { IngredientValidator } from '@src/utils/ingredientsValidator';
 import { nutritionalFactsConst } from '@src/utils/nutritionalFacts';
-import type { NormalizedRecipe } from '@src/zod-schemas/recipeNormalized';
+import type {
+  NormalizedIngredient,
+  NormalizedRecipe,
+} from '@src/zod-schemas/recipeNormalized';
 import { createStore } from 'zustand/vanilla';
 import { applyMiddleware } from './middleware';
 
@@ -75,28 +78,39 @@ export type RecipeActions = {
 
 export type RecipeStore = RecipeState & RecipeActions;
 
-const createStep = (options?: { instruction?: string }) => {
+const createStep = (options?: {
+  instruction?: string;
+  ingredients?: IngredientValidator[];
+}) => {
+  const ingredientValidators = options?.ingredients ?? [
+    new IngredientValidator({ stringValue: '' }),
+  ];
   const stepId = crypto.randomUUID();
-  const ingredientId = crypto.randomUUID();
+  const ingredientIds: string[] = Array.from(
+    { length: ingredientValidators.length },
+    () => crypto.randomUUID(),
+  );
+  const ingredients: Record<string, NormalizedIngredient> =
+    ingredientIds.reduce<Record<string, NormalizedIngredient>>((acc, id, i) => {
+      acc[id] = {
+        stringValue: ingredientValidators[i].stringValue,
+        dto: {
+          amount: ingredientValidators[i].dto.amount,
+          unit: ingredientValidators[i].dto.unit,
+          name: ingredientValidators[i].dto.name,
+          isFraction: ingredientValidators[i].dto.isFraction,
+        },
+        error: ingredientValidators[i].error,
+      };
+      return acc;
+    }, {});
+
   return {
     stepId,
-    ingredientId,
     imageUrl: null,
     instruction: options?.instruction ?? null,
-    ingredientIds: [ingredientId],
-    ingredient: {
-      stringValue: '',
-      dto: {
-        name: '',
-        amount: -1,
-        isFraction: false,
-        unit: null,
-      },
-      error: {
-        formErrors: [],
-        fieldErrors: {},
-      },
-    },
+    ingredientIds: ingredientIds,
+    ingredients,
   };
 };
 
@@ -116,9 +130,7 @@ export const defaultInitState: NormalizedRecipe = {
   preparationTimeInMinutes: null,
   cookingTimeInMinutes: null,
   equipments: [],
-  ingredients: {
-    [defaultStep.ingredientId]: defaultStep.ingredient,
-  },
+  ingredients: defaultStep.ingredients,
   bookmarked: undefined,
   steps: {
     [defaultStep.stepId]: {
@@ -231,110 +243,88 @@ export const createRecipeStore = (
           ingredients: string[][],
         ) => {
           set((state) => {
-            // Existing ingredient
-            const existing = new IngredientValidator({
+            let stepIdIndex = state.stepIds.indexOf(stepId);
+            if (stepIdIndex === -1) {
+              return state;
+            }
+
+            const existingStepExistingIngredient = new IngredientValidator({
               stringValue:
                 state.ingredients[ingredientId].stringValue + ingredients[0][0],
             });
             state.ingredients[ingredientId] = {
-              dto: existing.dto,
-              stringValue: existing.stringValue,
-              error: existing.error,
+              dto: existingStepExistingIngredient.dto,
+              stringValue: existingStepExistingIngredient.stringValue,
+              error: existingStepExistingIngredient.error,
             };
 
-            // Existing step, new ingredients
-            const existingStepNewIngredientIds: string[] = [];
-            for (let i = 1; i < ingredients[0].length; i++) {
-              const id = crypto.randomUUID();
-              const newIngredientValidator = new IngredientValidator({
-                stringValue: ingredients[0][i],
-              });
-              state.ingredients[id] = {
-                dto: newIngredientValidator.dto,
-                stringValue: newIngredientValidator.stringValue,
-                error: newIngredientValidator.error,
-              };
-              existingStepNewIngredientIds.push(id);
-            }
-            const insertExistingStepIngredientsIndex =
-              state.steps[stepId].ingredientIds.indexOf(ingredientId);
-            state.steps[stepId].ingredientIds.splice(
-              insertExistingStepIngredientsIndex + 1,
-              0,
-              ...existingStepNewIngredientIds,
-            );
-            // state.steps[stepId].instruction += instructionsList[0];
-            // const newStepIds: string[] = [];
-            // for (let i = 1; i < instructionsList.length; i++) {
-            //   const id = crypto.randomUUID();
-            //   state.steps[id] = {
-            //     id,
-            //     instruction: instructionsList[i],
-            //     ingredientIds: [],
-            //     imageUrl: null,
-            //   };
-            //   newStepIds.push(id);
-            // }
-
-            const newIngredients = ingredients
+            const existingStepNewIngredients = ingredients[0]
               .filter((_, i) => i > 0)
-              .map((dl) =>
-                dl.map((d) => new IngredientValidator({ stringValue: d })),
+              .map(
+                (ing) =>
+                  new IngredientValidator({
+                    stringValue: ing,
+                  }),
               );
-
-            // const newSteps: Record<string, string[]>[] = [];
-            const newStepIds: string[] = [];
-            newIngredients.forEach((ingredientList) => {
-              const newStepId = crypto.randomUUID();
-              state.steps[newStepId] = {
-                id: newStepId,
-                instruction: null,
-                ingredientIds: [],
-                imageUrl: null,
+            existingStepNewIngredients.forEach((ing) => {
+              const newId = crypto.randomUUID();
+              state.ingredients[newId] = {
+                dto: ing.dto,
+                stringValue: ing.stringValue,
+                error: ing.error,
               };
-              //newSteps.push({ [stepId]: [] });
-              newStepIds.push(newStepId);
-              ingredientList.forEach((ingredient) => {
-                const id = crypto.randomUUID();
-                state.ingredients[id] = {
-                  dto: ingredient.dto,
-                  stringValue: ingredient.stringValue,
-                  error: ingredient.error,
-                };
-                //newSteps[newSteps.length - 1][stepId].push(id);
-                state.steps[newStepId].ingredientIds.push(id);
-              });
+              state.steps[stepId].ingredientIds.push(newId);
             });
 
-            // Find the index of stepId and insert after it
-            const insertStepIndex = state.stepIds.indexOf(stepId);
-            if (insertStepIndex !== -1) {
-              state.stepIds.splice(
-                insertStepIndex + 1,
-                0,
-                // ...Object.keys(newSteps),
-                ...newStepIds,
+            const newStepIds: string[] = [];
+            let insertAtIndex = NaN;
+            debugger;
+            for (let i = 1; i < ingredients.length; i++) {
+              const newIngredients = ingredients[i].map(
+                (ing) =>
+                  new IngredientValidator({
+                    stringValue: ing,
+                  }),
               );
-            } else {
-              //state.stepIds.push(...Object.keys(newSteps));
-              state.stepIds.push(...newStepIds);
+              const existingStepId = state.stepIds[stepIdIndex + i];
+              if (
+                state.steps[existingStepId]?.ingredientIds.length ||
+                !state.steps[existingStepId]
+              ) {
+                // Create/Insert New
+                const newStep = createStep({
+                  ingredients: newIngredients,
+                });
+                state.steps[newStep.stepId] = {
+                  instruction: newStep.instruction,
+                  ingredientIds: newStep.ingredientIds,
+                  imageUrl: newStep.imageUrl,
+                };
+                newStep.ingredientIds.forEach((id) => {
+                  state.ingredients[id] = newStep.ingredients[id];
+                });
+                newStepIds.push(newStep.stepId);
+              } else {
+                // First empty/existing
+                if (Number.isNaN(insertAtIndex)) {
+                  insertAtIndex = stepIdIndex + i;
+                }
+                newIngredients.forEach((ing) => {
+                  const newId = crypto.randomUUID();
+                  state.ingredients[newId] = {
+                    dto: ing.dto,
+                    stringValue: ing.stringValue,
+                    error: ing.error,
+                  };
+                  state.steps[existingStepId].ingredientIds.push(newId);
+                });
+              }
             }
-            // Find the index of ingredientId and insert after it
-            // const insertIngredientIndex =
-            //   state.steps[stepId].ingredientIds.indexOf(ingredientId);
-            // if (insertIngredientIndex !== -1) {
-            //   state.steps[stepId].ingredientIds.splice(
-            //     insertIngredientIndex + 1,
-            //     0,
-            //     ...newIngredientIds,
-            //   );
-            // } else {
-            //   state.steps[stepId].ingredientIds.push(...newIngredientIds);
-            // }
 
             return {
               ingredients: { ...state.ingredients },
               steps: { ...state.steps },
+              stepIds: [...state.stepIds],
             };
           });
         },
@@ -381,6 +371,7 @@ export const createRecipeStore = (
               return state;
             }
 
+            // Existing instruction
             if (state.steps[stepId].instruction) {
               state.steps[stepId].instruction += instructionsList[0];
             } else {
@@ -395,6 +386,7 @@ export const createRecipeStore = (
                 state.steps[existingStepId]?.instruction ||
                 !state.steps[existingStepId]
               ) {
+                // Create/Insert New
                 const newStep = createStep({
                   instruction: instructionsList[i],
                 });
@@ -403,9 +395,12 @@ export const createRecipeStore = (
                   ingredientIds: newStep.ingredientIds,
                   imageUrl: newStep.imageUrl,
                 };
-                state.ingredients[newStep.ingredientId] = newStep.ingredient;
+                const defaultIngredientId = Object.keys(newStep.ingredients)[0];
+                state.ingredients[defaultIngredientId] =
+                  newStep.ingredients[defaultIngredientId];
                 newStepIds.push(newStep.stepId);
               } else {
+                // First empty/existing
                 if (Number.isNaN(insertAtIndex)) {
                   insertAtIndex = stepIdIndex + i;
                 }
