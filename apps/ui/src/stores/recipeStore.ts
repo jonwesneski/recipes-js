@@ -109,7 +109,7 @@ const createStep = (options?: {
     stepId,
     imageUrl: null,
     instruction: options?.instruction ?? null,
-    ingredientIds: ingredientIds,
+    ingredientIds,
     ingredients,
   };
 };
@@ -180,7 +180,7 @@ export const createRecipeStore = (
          * check intialState (loop through Object.keys()) against state
          * Then I will only send what fields actually changed during an update/edit
          */
-        ...rest,
+        ...structuredClone(rest),
         imageSrc: imageUrl ?? null,
         metadata: {
           isValid: false,
@@ -243,7 +243,7 @@ export const createRecipeStore = (
           ingredients: string[][],
         ) => {
           set((state) => {
-            let stepIdIndex = state.stepIds.indexOf(stepId);
+            const stepIdIndex = state.stepIds.indexOf(stepId);
             if (stepIdIndex === -1) {
               return state;
             }
@@ -278,7 +278,6 @@ export const createRecipeStore = (
 
             const newStepIds: string[] = [];
             let insertAtIndex = NaN;
-            debugger;
             for (let i = 1; i < ingredients.length; i++) {
               const newIngredients = ingredients[i].map(
                 (ing) =>
@@ -288,7 +287,9 @@ export const createRecipeStore = (
               );
               const existingStepId = state.stepIds[stepIdIndex + i];
               if (
-                state.steps[existingStepId]?.ingredientIds.length ||
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- existingStepId can be undefined
+                state.steps[existingStepId]?.ingredientIds.length > 1 ||
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- existingStepId can be undefined
                 !state.steps[existingStepId]
               ) {
                 // Create/Insert New
@@ -304,8 +305,29 @@ export const createRecipeStore = (
                   state.ingredients[id] = newStep.ingredients[id];
                 });
                 newStepIds.push(newStep.stepId);
+              } else if (
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- existingStepId can be undefined
+                state.steps[existingStepId]?.ingredientIds.length === 1
+              ) {
+                // Empty ingredients
+                state.ingredients[
+                  state.steps[existingStepId].ingredientIds[0]
+                ] = {
+                  dto: newIngredients[0].dto,
+                  stringValue: newIngredients[0].stringValue,
+                  error: newIngredients[0].error,
+                };
+                for (let j = 1; j < newIngredients.length; i++) {
+                  const newId = crypto.randomUUID();
+                  state.ingredients[newId] = {
+                    dto: newIngredients[j].dto,
+                    stringValue: newIngredients[j].stringValue,
+                    error: newIngredients[j].error,
+                  };
+                  state.steps[existingStepId].ingredientIds.push(newId);
+                }
               } else {
-                // First empty/existing
+                // First empty/existing Step
                 if (Number.isNaN(insertAtIndex)) {
                   insertAtIndex = stepIdIndex + i;
                 }
@@ -320,6 +342,12 @@ export const createRecipeStore = (
                 });
               }
             }
+
+            // Insert new stepIds after the current stepId
+            insertAtIndex = Number.isNaN(insertAtIndex)
+              ? state.stepIds.length - 1
+              : insertAtIndex;
+            state.stepIds.splice(insertAtIndex + 1, 0, ...newStepIds);
 
             return {
               ingredients: { ...state.ingredients },
@@ -366,7 +394,7 @@ export const createRecipeStore = (
           }),
         insertInstructionsSteps: (stepId: string, instructionsList: string[]) =>
           set((state) => {
-            let stepIdIndex = state.stepIds.indexOf(stepId);
+            const stepIdIndex = state.stepIds.indexOf(stepId);
             if (stepIdIndex === -1) {
               return state;
             }
@@ -383,7 +411,9 @@ export const createRecipeStore = (
             for (let i = 1; i < instructionsList.length; i++) {
               const existingStepId = state.stepIds[stepIdIndex + i];
               if (
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- existingStepId can be undefined
                 state.steps[existingStepId]?.instruction ||
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- existingStepId can be undefined
                 !state.steps[existingStepId]
               ) {
                 // Create/Insert New

@@ -26,8 +26,8 @@ export const RecipeStoreProvider = ({
   const storeRef = useRef<RecipeStoreApi | null>(null)
 
   storeRef.current ??= createRecipeStore({
-    ...structuredClone(defaultInitState),
-    ...structuredClone(initialState),
+    ...defaultInitState,
+    ...initialState,
   })
 
   return (

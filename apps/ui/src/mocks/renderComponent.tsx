@@ -2,7 +2,7 @@ import AppProviders from '@src/app/_providers'
 import * as CameraContext from '@src/providers/CameraProvider'
 import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { type UserStore } from '@src/stores/user-store'
-import { NormalizedRecipe } from '@src/zod-schemas/recipeNormalized'
+import { type NormalizedRecipe } from '@src/zod-schemas/recipeNormalized'
 import { render, waitFor } from '@testing-library/react'
 import { AppRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 

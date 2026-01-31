@@ -185,7 +185,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
             }
           }}
           placeholder={placeholderSplit[i]}
-          value={ingredients[id].stringValue ?? ''}
+          value={ingredients[id].stringValue}
           error={
             ingredients[id].error?.fieldErrors.amount?.[0] ??
             ingredients[id].error?.fieldErrors.name?.[0]
