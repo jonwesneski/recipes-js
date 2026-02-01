@@ -13,9 +13,11 @@ import Link from 'next/link'
 
 export const RecipeUserBanner = () => {
   const { id: userId } = useUserStore()
-  const { id, user, createdAt, bookmarked, setBookmarked } = useRecipeStore(
-    (state) => state,
-  )
+  const id = useRecipeStore((state) => state.id)
+  const user = useRecipeStore((state) => state.user)
+  const createdAt = useRecipeStore((state) => state.createdAt)
+  const bookmarked = useRecipeStore((state) => state.bookmarked)
+  const setBookmarked = useRecipeStore((state) => state.setBookmarked)
 
   return (
     <div className="border p-2 flex justify-between items-center">

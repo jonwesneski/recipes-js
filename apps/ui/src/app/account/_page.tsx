@@ -20,14 +20,14 @@ interface IAccountProps {
 }
 const Account = (props: IAccountProps) => {
   const settings = useUserStore()
-  const [handle, setHandle] = useState(settings.handle)
+  const [inputHandle, setInputHandle] = useState(settings.handle)
 
   const { mutateAsync: updateAccount } = useUsersControllerUpdateUserAccountV1({
     mutation: { retry: false },
   })
 
   const handleUpdateHandle = async () => {
-    await settings.setHandle(handle)
+    await settings.setHandle(inputHandle)
   }
 
   const handleNutritionalFactChange = (
@@ -50,8 +50,8 @@ const Account = (props: IAccountProps) => {
           isRequired={false}
           label="handle"
           name="handle"
-          value={handle}
-          onChange={(e) => setHandle(e.target.value)}
+          value={inputHandle}
+          onChange={(e) => setInputHandle(e.target.value)}
         />
         <TextButton
           text="Update handle"

@@ -8,7 +8,8 @@ import { RecipeUserBanner } from './RecipeUserBanner'
 import { StepList } from './StepList'
 
 export const RecipePage = () => {
-  const { name, description } = useRecipeStore((state) => state)
+  const name = useRecipeStore((state) => state.name)
+  const description = useRecipeStore((state) => state.description)
 
   return (
     <div className="m-auto max-w-[800px]">

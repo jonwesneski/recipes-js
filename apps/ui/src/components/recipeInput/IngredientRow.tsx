@@ -2,13 +2,7 @@
 
 import { Label, mergeCss } from '@repo/design-system'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react'
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 type PositionType = { row: number; column: number }
 
@@ -25,14 +19,13 @@ export interface IngredientRowHandle {
 }
 
 interface IIngriedientRowProps {
-  keyId: string
+  ingredientId: string
   label?: string
   htmlFor?: string
   placeholder?: string
   value: string
   error?: string
-  focusOnMount: boolean
-  onChange: (_keyId: string, _value: IngredientValidator) => void
+  onChange: (_keyId: string, _value: string) => void
   onMeasurementInput: (
     _keyId: string | null,
     _element: HTMLTextAreaElement | null,
@@ -49,15 +42,6 @@ export const IngredientRow = forwardRef<
 >((props, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
-
-  useEffect(() => {
-    if (props.focusOnMount && textareaRef.current) {
-      textareaRef.current.selectionStart = textareaRef.current.value.length
-      textareaRef.current.selectionEnd = textareaRef.current.value.length
-      textareaRef.current.focus()
-      setIsFocused(true)
-    }
-  }, [])
 
   useImperativeHandle(ref, () => ({
     getElement: () => textareaRef.current,
@@ -94,20 +78,20 @@ export const IngredientRow = forwardRef<
     switch (event.key) {
       case 'Enter':
         event.preventDefault()
-        props.onEnterPressed(props.keyId)
+        props.onEnterPressed(props.ingredientId)
         break
       case 'Backspace':
         if (event.currentTarget.value === '') {
-          props.onRemove(props.keyId)
+          props.onRemove(props.ingredientId)
         }
         break
       case 'ArrowUp':
         event.preventDefault()
-        props.onArrowUp(props.keyId)
+        props.onArrowUp(props.ingredientId)
         break
       case 'ArrowDown':
         event.preventDefault()
-        props.onArrowDown(props.keyId)
+        props.onArrowDown(props.ingredientId)
         break
       default:
         break
@@ -133,14 +117,14 @@ export const IngredientRow = forwardRef<
     switch (inputType) {
       case 'insertText':
         _handleShowPopUp(ingredientValidator)
-        props.onChange(props.keyId, ingredientValidator)
+        props.onChange(props.ingredientId, event.currentTarget.value)
         break
       case 'insertFromPaste':
-        props.onPaste(props.keyId, event.currentTarget.value)
+        props.onPaste(props.ingredientId, event.currentTarget.value)
         break
       case 'deleteContentBackward':
         _handleShowPopUp(ingredientValidator)
-        props.onChange(props.keyId, ingredientValidator)
+        props.onChange(props.ingredientId, event.currentTarget.value)
         break
       default:
         console.log(`Unsupported input type: ${inputType}`)
@@ -158,7 +142,7 @@ export const IngredientRow = forwardRef<
     if (textareaRef.current) {
       const position = getCaretPosition(textareaRef.current)
       if (position.column === 1) {
-        props.onMeasurementInput(props.keyId, textareaRef.current)
+        props.onMeasurementInput(props.ingredientId, textareaRef.current)
       } else {
         props.onMeasurementInput(null, null)
       }
@@ -204,7 +188,7 @@ export const IngredientRow = forwardRef<
           <button
             className="border border-dashed px-1.5 cursor-pointer bg-[var(--bg-current)]"
             type="button"
-            onClick={() => props.onRemove(props.keyId)}
+            onClick={() => props.onRemove(props.ingredientId)}
           >
             x
           </button>

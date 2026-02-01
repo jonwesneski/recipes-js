@@ -12,18 +12,22 @@ import { type ChangeEvent } from 'react'
 import { NutritionalFactsInput } from '../NutritionalFactsInput'
 
 export const ServingsAndNutritionalFacts = () => {
-  const {
-    nutritionalFacts,
-    setNutritionalFacts,
-    setPartialNutritionalFacts,
-    servingUnit,
-    setServingUnit,
-    servingAmount,
-    setServingAmount,
-    servings,
-    setServings,
-    makeGenerateNutritionalFactsDto,
-  } = useRecipeStore((state) => state)
+  const nutritionalFacts = useRecipeStore((state) => state.nutritionalFacts)
+  const setNutritionalFacts = useRecipeStore(
+    (state) => state.setNutritionalFacts,
+  )
+  const setPartialNutritionalFacts = useRecipeStore(
+    (state) => state.setPartialNutritionalFacts,
+  )
+  const servingUnit = useRecipeStore((state) => state.servingUnit)
+  const setServingUnit = useRecipeStore((state) => state.setServingUnit)
+  const servingAmount = useRecipeStore((state) => state.servingAmount)
+  const setServingAmount = useRecipeStore((state) => state.setServingAmount)
+  const servings = useRecipeStore((state) => state.servings)
+  const setServings = useRecipeStore((state) => state.setServings)
+  const makeGenerateNutritionalFactsDto = useRecipeStore(
+    (state) => state.makeGenerateNutritionalFactsDto,
+  )
   const { mutate } = useAiControllerNutritionalFactsV1({
     mutation: { retry: false },
   })

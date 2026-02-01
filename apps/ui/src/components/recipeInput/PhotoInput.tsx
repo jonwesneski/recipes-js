@@ -10,7 +10,7 @@ interface PhotoInputProps {
   id: string
   label: string
   isRequired: boolean
-  base64Src: string | null
+  imageSrc: string | null
   onCameraClick: (_value: string) => void
   onUploadClick: (_value: string) => void
   onRemoveClick: () => void
@@ -77,10 +77,10 @@ export const PhotoInput = (props: PhotoInputProps) => {
         'border-red-900': errorText,
       })}
     >
-      {props.base64Src ? (
+      {props.imageSrc ? (
         <div className="flex flex-col justify-end h-full">
           <Image
-            src={props.base64Src}
+            src={props.imageSrc}
             className="w-full h-[85%] mx-auto object-contain"
             width={0}
             height={0}
@@ -98,7 +98,7 @@ export const PhotoInput = (props: PhotoInputProps) => {
         className={mergeCss(
           'absolute left-3 top-2 transition-all cursor-text text-text/35',
           {
-            'text-xs top-0 text-text': props.base64Src,
+            'text-xs top-0 text-text': props.imageSrc,
           },
         )}
       />
@@ -122,7 +122,7 @@ export const PhotoInput = (props: PhotoInputProps) => {
           onChange={(event) => void handleOnFileUpload(event)}
         />
       </div>
-      {props.base64Src ? (
+      {props.imageSrc ? (
         <TextButton
           className="absolute right-2 top-12"
           text="X"

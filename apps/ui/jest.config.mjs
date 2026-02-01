@@ -21,6 +21,7 @@ export default {
     ],
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
+  testRegex: '.test.(ts|tsx)$',
   transform: {
     '^.+\\.(ts|tsx|js|mjs)$': [
       'ts-jest',

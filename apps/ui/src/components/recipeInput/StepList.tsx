@@ -2,14 +2,44 @@
 
 import { TextButton } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { withRetry } from '@src/utils/withRetry'
 import { useEffect, useRef, useState } from 'react'
-import { IngredientsTextArea } from './IngredientsTextArea'
-import { InstructionsTextArea } from './InstructionsTextArea'
+import {
+  IngredientsTextArea,
+  type IngredientsTextAreaHandle,
+} from './IngredientsTextArea'
+import {
+  InstructionsTextArea,
+  type InstructionsTextAreaHandle,
+} from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
 export const StepList = () => {
-  const { steps, addStep, setStepImage } = useRecipeStore((state) => state)
+  const steps = useRecipeStore((state) => state.steps)
+  const stepIds = useRecipeStore((state) => state.stepIds)
+  const addStep = useRecipeStore((state) => state.addStep)
+  const setStepImage = useRecipeStore((state) => state.setStepImage)
+  const insertIngredientsSteps = useRecipeStore(
+    (state) => state.insertIngredientsSteps,
+  )
+  const insertInstructionsSteps = useRecipeStore(
+    (state) => state.insertInstructionsSteps,
+  )
+
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const focusAfterPasteIngredientsRef =
+    useRef<IngredientsTextAreaHandle | null>(null)
+  const [
+    focusAfterPasteIngredientsStepId,
+    setFocusAfterPasteIngredientsStepId,
+  ] = useState<string | null>(null)
+  const focusAfterPasteInstructionsRef =
+    useRef<InstructionsTextAreaHandle | null>(null)
+  const [
+    focusAfterPasteInstructionsStepId,
+    setFocusAfterPasteInstructionsStepId,
+  ] = useState<string | null>(null)
+
   const [isNewStep, setIsNewStep] = useState<boolean>(false)
 
   const handleOnResize = (keyId: string, height: number) => {
@@ -36,6 +66,26 @@ export const StepList = () => {
     addStep()
   }
 
+  /* When some pastes in recipes that are already separated by linebreaks
+   * we will add new steps for them
+   */
+  const handleOnIngredientsPaste = (
+    stepId: string,
+    ingredientId: string,
+    value: string[][],
+  ) => {
+    const lastStepId = insertIngredientsSteps(stepId, ingredientId, value)
+    setFocusAfterPasteIngredientsStepId(lastStepId)
+  }
+
+  /* When some pastes in recipes that are already separated by linebreaks
+   * we will add new steps for them
+   */
+  const handleOnInstructionsPaste = (stepId: string, value: string[]) => {
+    const lastStepId = insertInstructionsSteps(stepId, value)
+    setFocusAfterPasteInstructionsStepId(lastStepId)
+  }
+
   useEffect(() => {
     const newStepRef = [...itemRefs.current.values()].at(-1)
     if (isNewStep && newStepRef) {
@@ -44,48 +94,84 @@ export const StepList = () => {
     }
   }, [isNewStep, itemRefs])
 
+  useEffect(() => {
+    if (!focusAfterPasteIngredientsStepId) return
+
+    withRetry(() => {
+      if (focusAfterPasteIngredientsRef.current) {
+        focusAfterPasteIngredientsRef.current.focusLast()
+        setFocusAfterPasteIngredientsStepId(null)
+      }
+      return !focusAfterPasteIngredientsRef.current
+    }, 8)
+  }, [focusAfterPasteIngredientsStepId])
+
+  useEffect(() => {
+    if (!focusAfterPasteInstructionsStepId) return
+
+    withRetry(() => {
+      if (focusAfterPasteInstructionsRef.current) {
+        focusAfterPasteInstructionsRef.current.focus()
+        setFocusAfterPasteInstructionsStepId(null)
+      }
+      return !focusAfterPasteInstructionsRef.current
+    }, 8)
+  }, [focusAfterPasteInstructionsStepId])
+
   return (
     <>
-      {steps.map((s, index) => {
+      {stepIds.map((stepId, index) => {
         const stepNumber = index + 1
         return (
-          <div key={s.keyId} data-testid="step-row" className="mb-5">
+          <div key={stepId} data-testid="step-row" className="mb-5">
             <h3 className="font-bold">step {stepNumber}.</h3>
             <div
               ref={(element) => {
                 if (element) {
-                  itemRefs.current.set(s.keyId, element)
+                  itemRefs.current.set(stepId, element)
                 } else {
-                  itemRefs.current.delete(s.keyId)
+                  itemRefs.current.delete(stepId)
                 }
               }}
               className="step-container"
             >
               <IngredientsTextArea
+                ref={
+                  focusAfterPasteIngredientsStepId === stepId
+                    ? focusAfterPasteIngredientsRef
+                    : undefined
+                }
                 className="flex-1"
-                keyId={s.ingredients.keyId}
+                stepId={stepId}
                 stepNumber={stepNumber}
-                onResize={(height: number) => handleOnResize(s.keyId, height)}
+                onResize={(height: number) => handleOnResize(stepId, height)}
+                onPaste={handleOnIngredientsPaste}
               />
               <InstructionsTextArea
+                ref={
+                  focusAfterPasteInstructionsStepId === stepId
+                    ? focusAfterPasteInstructionsRef
+                    : undefined
+                }
                 className="flex-1"
-                keyId={s.instructions.keyId}
+                stepId={stepId}
                 stepNumber={stepNumber}
-                onResize={(height: number) => handleOnResize(s.keyId, height)}
+                onResize={(height: number) => handleOnResize(stepId, height)}
+                onPaste={handleOnInstructionsPaste}
               />
             </div>
             <div className="mx-auto">
               <PhotoInput
                 id={`step-photo-${index}`}
-                base64Src={s.image}
+                imageSrc={steps[stepId].imageUrl}
                 label="step photo"
                 isRequired={false}
-                onCameraClick={(image) => handleOnCameraClick(s.keyId, image)}
-                onUploadClick={(image) => handleOnUploadClick(s.keyId, image)}
-                onRemoveClick={() => handleOnRemoveImageClick(s.keyId)}
+                onCameraClick={(image) => handleOnCameraClick(stepId, image)}
+                onUploadClick={(image) => handleOnUploadClick(stepId, image)}
+                onRemoveClick={() => handleOnRemoveImageClick(stepId)}
               />
             </div>
-            {index < steps.length - 1 && <hr className="mt-5" />}
+            {index < stepIds.length - 1 && <hr className="mt-5" />}
           </div>
         )
       })}

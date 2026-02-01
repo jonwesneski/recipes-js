@@ -10,7 +10,9 @@ interface IStepListProps {
   className?: ClassValue
 }
 export const StepList = (props: IStepListProps) => {
-  const { steps, scaleFactor } = useRecipeStore((state) => state)
+  const steps = useRecipeStore((state) => state.steps)
+  const stepIds = useRecipeStore((state) => state.stepIds)
+  const scaleFactor = useRecipeStore((state) => state.metadata.scaleFactor)
   const { isWakeLockSupported, isWakeLockOn, toggleWakeLock } = useWakeLock()
 
   return (
@@ -24,11 +26,16 @@ export const StepList = (props: IStepListProps) => {
         ) : null}
         <ScaleFactorSelect />
       </div>
-      {steps.map((s, index) => {
+      {stepIds.map((id, index) => {
         return (
-          <div key={s.keyId} className="mb-5">
-            <Step stepNumber={index + 1} step={s} scaleFactor={scaleFactor} />
-            {index < steps.length - 1 && <hr className="mt-5" />}
+          <div key={id} className="mb-5">
+            <Step
+              stepNumber={index + 1}
+              stepId={id}
+              instruction={steps[id].instruction}
+              scaleFactor={scaleFactor}
+            />
+            {index < stepIds.length - 1 && <hr className="mt-5" />}
           </div>
         )
       })}

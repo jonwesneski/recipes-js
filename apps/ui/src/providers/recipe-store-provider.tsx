@@ -1,77 +1,24 @@
 'use client'
 
-import { type RecipeResponse } from '@repo/codegen/model'
 import {
-  IngredientItemType,
-  InstructionsType,
-  type RecipeState,
   type RecipeStore,
-  createIngredientsItem,
   createRecipeStore,
-  createStepItem,
   defaultInitState,
-} from '@src/stores/recipe-store'
-import { IngredientValidator } from '@src/utils/ingredientsValidator'
+} from '@src/stores/recipeStore'
+import type {
+  NormalizedIngredient,
+  NormalizedRecipe,
+} from '@src/zod-schemas/recipeNormalized'
 import { type ReactNode, createContext, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
-
-const transformRecipe = (recipe?: Partial<RecipeResponse>): RecipeState => {
-  return {
-    ...defaultInitState,
-    ...recipe,
-    imageSrc: recipe?.imageUrl ?? null,
-    steps:
-      recipe?.steps?.map((s) => {
-        return createStepItem({
-          ingredients: createIngredientsItem(
-            s.ingredients.map(
-              (i) =>
-                new IngredientItemType({
-                  ingredient: new IngredientValidator({
-                    dto: {
-                      amount: i.amount,
-                      isFraction: i.isFraction,
-                      unit: i.unit,
-                      name: i.name,
-                    },
-                  }),
-                }),
-            ),
-          ),
-          instructions: new InstructionsType({
-            value: s.instruction ?? undefined,
-          }),
-        })
-      }) ??
-      // Need to re-create steps since it is an array and I don't want to update original.
-      // Also need to do a .map() instead of a spread here because ZodError doesn't get
-      // fully cloned in a spread of structuredClone()
-      defaultInitState.steps.map((s) =>
-        createStepItem({
-          ingredients: createIngredientsItem(
-            s.ingredients.items.map(
-              (i) =>
-                new IngredientItemType({
-                  ingredient: new IngredientValidator({
-                    stringValue: i.ingredient.stringValue,
-                  }),
-                }),
-            ),
-          ),
-          instructions: new InstructionsType({
-            value: s.instructions.value,
-          }),
-        }),
-      ),
-  }
-}
+import { useShallow } from 'zustand/shallow'
 
 export type RecipeStoreApi = ReturnType<typeof createRecipeStore>
 export const RecipeStoreContext = createContext<RecipeStoreApi | null>(null)
 
 export interface RecipeStoreProviderProps {
   children: ReactNode
-  initialState?: Partial<RecipeResponse>
+  initialState?: Partial<NormalizedRecipe>
 }
 export const RecipeStoreProvider = ({
   children,
@@ -79,7 +26,10 @@ export const RecipeStoreProvider = ({
 }: RecipeStoreProviderProps) => {
   const storeRef = useRef<RecipeStoreApi | null>(null)
 
-  storeRef.current ??= createRecipeStore(transformRecipe(initialState))
+  storeRef.current ??= createRecipeStore({
+    ...defaultInitState,
+    ...initialState,
+  })
 
   return (
     <RecipeStoreContext.Provider value={storeRef.current}>
@@ -95,20 +45,26 @@ export const useRecipeStore = <T,>(selector: (_store: RecipeStore) => T): T => {
       `${useRecipeStore.name} must be used within a ${RecipeStoreProvider.name}`,
     )
   }
-  return useStore(store, selector)
+  return useStore(store, useShallow(selector))
 }
 
-export const useRecipeStepIngredientsStore = (keyId: string) => {
+export const useRecipeStepIngredientsStore = (stepId: string) => {
   const {
     steps,
+    ingredients,
     insertIngredientsSteps,
     addIngredient,
     removeIngredient,
     updateIngredient,
   } = useRecipeStore((state) => state)
-  const step = steps.find((s) => s.ingredients.keyId === keyId)
   return {
-    ingredients: step?.ingredients,
+    ingredients: steps[stepId].ingredientIds.reduce<
+      Record<string, NormalizedIngredient>
+    >((acc, id) => {
+      acc[id] = ingredients[id]
+      return acc
+    }, {}),
+    ingredientIds: steps[stepId].ingredientIds,
     insertIngredientsSteps,
     addIngredient,
     removeIngredient,
@@ -116,13 +72,12 @@ export const useRecipeStepIngredientsStore = (keyId: string) => {
   }
 }
 
-export const useRecipeStepInstructionsStore = (keyId: string) => {
+export const useRecipeStepInstructionsStore = (stepId: string) => {
   const { steps, setInstructions, insertInstructionsSteps } = useRecipeStore(
     (state) => state,
   )
-  const step = steps.find((s) => s.instructions.keyId === keyId)
   return {
-    instructions: step?.instructions,
+    instructions: steps[stepId].instruction,
     setInstructions,
     insertInstructionsSteps,
   }

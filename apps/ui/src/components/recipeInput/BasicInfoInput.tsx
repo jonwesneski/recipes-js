@@ -7,15 +7,17 @@ import { TimeTextLabel } from './TimeTextLabel'
 
 export const BasicInfoInput = () => {
   const nameRef = useRef<HTMLInputElement>(null)
-  const {
-    name,
-    setName,
-    description,
-    setDescription,
-    setCookingTimeInMinutes,
-    setPreparationTimeInMinutes,
-    errors,
-  } = useRecipeStore((state) => state)
+  const name = useRecipeStore((state) => state.name)
+  const setName = useRecipeStore((state) => state.setName)
+  const description = useRecipeStore((state) => state.description)
+  const setDescription = useRecipeStore((state) => state.setDescription)
+  const setCookingTimeInMinutes = useRecipeStore(
+    (state) => state.setCookingTimeInMinutes,
+  )
+  const setPreparationTimeInMinutes = useRecipeStore(
+    (state) => state.setPreparationTimeInMinutes,
+  )
+  const errors = useRecipeStore((state) => state.metadata.errors)
 
   useEffect(() => {
     if (nameRef.current) {
