@@ -11,11 +11,10 @@ import { StepList } from './StepList'
 
 export const RecipeInput = () => {
   const divRef = useRef<HTMLDivElement>(null)
-  const {
-    setImage,
-    imageSrc: base64Image,
-    metadata: { errors },
-  } = useRecipeStore((state) => state)
+  const setImage = useRecipeStore((state) => state.setImage)
+  const base64Image = useRecipeStore((state) => state.imageSrc)
+  const errors = useRecipeStore((state) => state.metadata.errors)
+  console.log('gggg')
 
   useEffect(() => {
     const firstError = Object.keys(errors)[0]

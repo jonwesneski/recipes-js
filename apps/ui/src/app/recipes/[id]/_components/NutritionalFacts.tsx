@@ -14,10 +14,8 @@ interface INutritionalFactsProps {
   className?: ClassValue
 }
 export const NutritionalFacts = (props: INutritionalFactsProps) => {
-  const {
-    nutritionalFacts,
-    metadata: { scaleFactor },
-  } = useRecipeStore((state) => state)
+  const nutritionalFacts = useRecipeStore((state) => state.nutritionalFacts)
+  const scaleFactor = useRecipeStore((state) => state.metadata.scaleFactor)
   const { customDailyNutrition, predefinedDailyNutrition } = useUserStore()
   const userNutritionalFacts =
     customDailyNutrition ?? predefinedDailyNutrition?.nutritionalFacts

@@ -15,14 +15,17 @@ import {
 import { PhotoInput } from './PhotoInput'
 
 export const StepList = () => {
-  const {
-    steps,
-    stepIds,
-    addStep,
-    setStepImage,
-    insertIngredientsSteps,
-    insertInstructionsSteps,
-  } = useRecipeStore((state) => state)
+  const steps = useRecipeStore((state) => state.steps)
+  const stepIds = useRecipeStore((state) => state.stepIds)
+  const addStep = useRecipeStore((state) => state.addStep)
+  const setStepImage = useRecipeStore((state) => state.setStepImage)
+  const insertIngredientsSteps = useRecipeStore(
+    (state) => state.insertIngredientsSteps,
+  )
+  const insertInstructionsSteps = useRecipeStore(
+    (state) => state.insertInstructionsSteps,
+  )
+
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map())
   const focusAfterPasteIngredientsRef =
     useRef<IngredientsTextAreaHandle | null>(null)

@@ -45,23 +45,23 @@ const difficultyOptions: OptionType<DifficultyLevelType>[] = Object.keys(
 export const Categories = () => {
   const { tags: fetchedTags, fetchTags } = useTags()
   const [options, setOptions] = useState<OptionType[]>([])
-  const {
-    difficultyLevel,
-    setDifficultyLevel,
-    cuisine,
-    setCuisine,
-    meal,
-    setMeal,
-    dish,
-    setDish,
-    diets,
-    setDiets,
-    proteins,
-    setProteins,
-    tags,
-    setTags,
-    makeGenerateCategoriesDto,
-  } = useRecipeStore((state) => state)
+  const difficultyLevel = useRecipeStore((state) => state.difficultyLevel)
+  const setDifficultyLevel = useRecipeStore((state) => state.setDifficultyLevel)
+  const cuisine = useRecipeStore((state) => state.cuisine)
+  const setCuisine = useRecipeStore((state) => state.setCuisine)
+  const meal = useRecipeStore((state) => state.meal)
+  const setMeal = useRecipeStore((state) => state.setMeal)
+  const dish = useRecipeStore((state) => state.dish)
+  const setDish = useRecipeStore((state) => state.setDish)
+  const diets = useRecipeStore((state) => state.diets)
+  const setDiets = useRecipeStore((state) => state.setDiets)
+  const proteins = useRecipeStore((state) => state.proteins)
+  const setProteins = useRecipeStore((state) => state.setProteins)
+  const tags = useRecipeStore((state) => state.tags)
+  const setTags = useRecipeStore((state) => state.setTags)
+  const makeGenerateCategoriesDto = useRecipeStore(
+    (state) => state.makeGenerateCategoriesDto,
+  )
   const { mutate } = useAiControllerCategoriesV1({
     mutation: { retry: false },
   })

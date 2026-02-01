@@ -11,6 +11,7 @@ import type {
 } from '@src/zod-schemas/recipeNormalized'
 import { type ReactNode, createContext, useContext, useRef } from 'react'
 import { useStore } from 'zustand'
+import { useShallow } from 'zustand/shallow'
 
 export type RecipeStoreApi = ReturnType<typeof createRecipeStore>
 export const RecipeStoreContext = createContext<RecipeStoreApi | null>(null)
@@ -44,7 +45,7 @@ export const useRecipeStore = <T,>(selector: (_store: RecipeStore) => T): T => {
       `${useRecipeStore.name} must be used within a ${RecipeStoreProvider.name}`,
     )
   }
-  return useStore(store, selector)
+  return useStore(store, useShallow(selector))
 }
 
 export const useRecipeStepIngredientsStore = (stepId: string) => {

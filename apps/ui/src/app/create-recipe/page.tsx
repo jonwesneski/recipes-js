@@ -8,9 +8,9 @@ import { useRouter } from 'next/navigation'
 import { type FormEvent } from 'react'
 
 const Page = () => {
-  const { makeCreateDto, setErrors: setBadRequest } = useRecipeStore(
-    (state) => state,
-  )
+  const makeCreateDto = useRecipeStore((state) => state.makeCreateDto)
+  const setBadRequest = useRecipeStore((state) => state.setErrors)
+
   const { mutate } = useRecipesControllerCreateRecipeV1({
     mutation: { retry: false },
   })

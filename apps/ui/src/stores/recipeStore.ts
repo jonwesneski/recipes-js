@@ -154,25 +154,22 @@ export const defaultInitState: NormalizedRecipe = {
   proteins: [],
 };
 
+let isValid = true;
 export const createRecipeStore = (
   initState: NormalizedRecipe = defaultInitState,
 ) => {
   const { imageUrl, ...rest } = initState;
   return createStore<RecipeStore>()(
     applyMiddleware<RecipeStore>({
-      afterMiddlware: (_, set) => {
-        set((state) => ({
-          metadata: {
-            ...state.metadata,
-            isValid:
-              state.name !== '' &&
-              state.stepIds.every((s) =>
-                state.steps[s].ingredientIds.every(
-                  (i) => !Object.hasOwn(state.ingredients[i], 'error'),
-                ),
-              ),
-          },
-        }));
+      afterMiddlware: (_, _set, get) => {
+        const state = get();
+        isValid =
+          state.name !== '' &&
+          state.stepIds.every((s) =>
+            state.steps[s].ingredientIds.every(
+              (i) => !Object.hasOwn(state.ingredients[i], 'error'),
+            ),
+          );
       },
       store: (set, get) => ({
         /**
@@ -521,6 +518,8 @@ export const createRecipeStore = (
           };
         },
         makeGenerateNutritionalFactsDto: () => {
+          if (!isValid) throw new Error();
+
           const { steps, ingredients, stepIds } = get();
           return stepIds.map((s) => {
             return {

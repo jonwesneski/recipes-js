@@ -10,11 +10,9 @@ interface IStepListProps {
   className?: ClassValue
 }
 export const StepList = (props: IStepListProps) => {
-  const {
-    steps,
-    stepIds,
-    metadata: { scaleFactor },
-  } = useRecipeStore((state) => state)
+  const steps = useRecipeStore((state) => state.steps)
+  const stepIds = useRecipeStore((state) => state.stepIds)
+  const scaleFactor = useRecipeStore((state) => state.metadata.scaleFactor)
   const { isWakeLockSupported, isWakeLockOn, toggleWakeLock } = useWakeLock()
 
   return (

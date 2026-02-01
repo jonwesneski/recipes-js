@@ -8,8 +8,11 @@ interface IRecipeDurations {
   className?: ClassValue
 }
 export const RecipeDurations = (props: IRecipeDurations) => {
-  const { preparationTimeInMinutes, cookingTimeInMinutes } = useRecipeStore(
-    (state) => state,
+  const preparationTimeInMinutes = useRecipeStore(
+    (state) => state.preparationTimeInMinutes,
+  )
+  const cookingTimeInMinutes = useRecipeStore(
+    (state) => state.cookingTimeInMinutes,
   )
 
   return (

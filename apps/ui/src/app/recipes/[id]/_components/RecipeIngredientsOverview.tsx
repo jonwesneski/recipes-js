@@ -53,10 +53,8 @@ export type RecipeIngredientsOverviewProps = Omit<
 export const RecipeIngredientsOverview = (
   props: RecipeIngredientsOverviewProps,
 ) => {
-  const {
-    ingredients,
-    metadata: { scaleFactor },
-  } = useRecipeStore((state) => state)
+  const ingredients = useRecipeStore((state) => state.ingredients)
+  const scaleFactor = useRecipeStore((state) => state.metadata.scaleFactor)
   const { numberFormat, measurementFormat } = useUserStore()
   const uniqueIngredients = createUniqueIngredient(
     ingredients,

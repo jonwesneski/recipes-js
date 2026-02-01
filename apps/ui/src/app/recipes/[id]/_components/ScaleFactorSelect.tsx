@@ -17,10 +17,8 @@ interface IScaleFactorSelectProps {
   className?: ClassValue
 }
 const ScaleFactorSelect = (props: IScaleFactorSelectProps) => {
-  const {
-    metadata: { scaleFactor },
-    setScaleFactor,
-  } = useRecipeStore((state) => state)
+  const setScaleFactor = useRecipeStore((state) => state.setScaleFactor)
+  const scaleFactor = useRecipeStore((state) => state.metadata.scaleFactor)
 
   return (
     <div className="border-2">
