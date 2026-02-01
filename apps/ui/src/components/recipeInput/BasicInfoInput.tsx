@@ -7,24 +7,23 @@ import { TimeTextLabel } from './TimeTextLabel'
 
 export const BasicInfoInput = () => {
   const nameRef = useRef<HTMLInputElement>(null)
-  const name = useRecipeStore((s) => s.name)
-  const setName = useRecipeStore((s) => s.setName)
-  const description = useRecipeStore((s) => s.description)
-  const setDescription = useRecipeStore((s) => s.setDescription)
+  const name = useRecipeStore((state) => state.name)
+  const setName = useRecipeStore((state) => state.setName)
+  const description = useRecipeStore((state) => state.description)
+  const setDescription = useRecipeStore((state) => state.setDescription)
   const setCookingTimeInMinutes = useRecipeStore(
-    (s) => s.setCookingTimeInMinutes,
+    (state) => state.setCookingTimeInMinutes,
   )
   const setPreparationTimeInMinutes = useRecipeStore(
-    (s) => s.setPreparationTimeInMinutes,
+    (state) => state.setPreparationTimeInMinutes,
   )
-  const errors = useRecipeStore((s) => s.metadata.errors)
+  const errors = useRecipeStore((state) => state.metadata.errors)
 
   useEffect(() => {
     if (nameRef.current) {
       nameRef.current.focus()
     }
   }, [])
-  console.log('aaaa')
 
   const _convertToMinutes = (time: string) => {
     const [hours, minutes] = time.split(':')
