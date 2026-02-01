@@ -2,16 +2,41 @@
 
 import { TextButton } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { withRetry } from '@src/utils/withRetry'
 import { useEffect, useRef, useState } from 'react'
-import { IngredientsTextArea } from './IngredientsTextArea'
-import { InstructionsTextArea } from './InstructionsTextArea'
+import {
+  IngredientsTextArea,
+  type IngredientsTextAreaHandle,
+} from './IngredientsTextArea'
+import {
+  InstructionsTextArea,
+  type InstructionsTextAreaHandle,
+} from './InstructionsTextArea'
 import { PhotoInput } from './PhotoInput'
 
 export const StepList = () => {
-  const { steps, stepIds, addStep, setStepImage } = useRecipeStore(
-    (state) => state,
-  )
+  const {
+    steps,
+    stepIds,
+    addStep,
+    setStepImage,
+    insertIngredientsSteps,
+    insertInstructionsSteps,
+  } = useRecipeStore((state) => state)
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const focusAfterPasteIngredientsRef =
+    useRef<IngredientsTextAreaHandle | null>(null)
+  const [
+    focusAfterPasteIngredientsStepId,
+    setFocusAfterPasteIngredientsStepId,
+  ] = useState<string | null>(null)
+  const focusAfterPasteInstructionsRef =
+    useRef<InstructionsTextAreaHandle | null>(null)
+  const [
+    focusAfterPasteInstructionsStepId,
+    setFocusAfterPasteInstructionsStepId,
+  ] = useState<string | null>(null)
+
   const [isNewStep, setIsNewStep] = useState<boolean>(false)
 
   const handleOnResize = (keyId: string, height: number) => {
@@ -38,6 +63,26 @@ export const StepList = () => {
     addStep()
   }
 
+  /* When some pastes in recipes that are already separated by linebreaks
+   * we will add new steps for them
+   */
+  const handleOnIngredientsPaste = (
+    stepId: string,
+    ingredientId: string,
+    value: string[][],
+  ) => {
+    const lastStepId = insertIngredientsSteps(stepId, ingredientId, value)
+    setFocusAfterPasteIngredientsStepId(lastStepId)
+  }
+
+  /* When some pastes in recipes that are already separated by linebreaks
+   * we will add new steps for them
+   */
+  const handleOnInstructionsPaste = (stepId: string, value: string[]) => {
+    const lastStepId = insertInstructionsSteps(stepId, value)
+    setFocusAfterPasteInstructionsStepId(lastStepId)
+  }
+
   useEffect(() => {
     const newStepRef = [...itemRefs.current.values()].at(-1)
     if (isNewStep && newStepRef) {
@@ -45,6 +90,30 @@ export const StepList = () => {
       newStepRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [isNewStep, itemRefs])
+
+  useEffect(() => {
+    if (!focusAfterPasteIngredientsStepId) return
+
+    withRetry(() => {
+      if (focusAfterPasteIngredientsRef.current) {
+        focusAfterPasteIngredientsRef.current.focusLast()
+        setFocusAfterPasteIngredientsStepId(null)
+      }
+      return !focusAfterPasteIngredientsRef.current
+    }, 8)
+  }, [focusAfterPasteIngredientsStepId])
+
+  useEffect(() => {
+    if (!focusAfterPasteInstructionsStepId) return
+
+    withRetry(() => {
+      if (focusAfterPasteInstructionsRef.current) {
+        focusAfterPasteInstructionsRef.current.focus()
+        setFocusAfterPasteInstructionsStepId(null)
+      }
+      return !focusAfterPasteInstructionsRef.current
+    }, 8)
+  }, [focusAfterPasteInstructionsStepId])
 
   return (
     <>
@@ -64,16 +133,28 @@ export const StepList = () => {
               className="step-container"
             >
               <IngredientsTextArea
+                ref={
+                  focusAfterPasteIngredientsStepId === stepId
+                    ? focusAfterPasteIngredientsRef
+                    : undefined
+                }
                 className="flex-1"
                 stepId={stepId}
                 stepNumber={stepNumber}
                 onResize={(height: number) => handleOnResize(stepId, height)}
+                onPaste={handleOnIngredientsPaste}
               />
               <InstructionsTextArea
+                ref={
+                  focusAfterPasteInstructionsStepId === stepId
+                    ? focusAfterPasteInstructionsRef
+                    : undefined
+                }
                 className="flex-1"
-                keyId={stepId}
+                stepId={stepId}
                 stepNumber={stepNumber}
                 onResize={(height: number) => handleOnResize(stepId, height)}
+                onPaste={handleOnInstructionsPaste}
               />
             </div>
             <div className="mx-auto">

@@ -4,8 +4,9 @@ import { mergeCss, type ClassValue } from '@repo/design-system'
 import { useMediaQuery } from '@src/hooks'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
 import { type MeasurementUnitType } from '@src/utils/measurements'
+import { withRetry } from '@src/utils/withRetry'
 import { fractionRegex } from '@src/zod-schemas'
-import { useRef, useState } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { IngredientRow, type IngredientRowHandle } from './IngredientRow'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
@@ -15,19 +16,39 @@ const placeholder = `0.5 cups fresh basil
 1 ounce salt`
 const placeholderSplit = placeholder.split('\n')
 
-// TODO: rework file into a web component
+export interface IngredientsTextAreaHandle {
+  focusLast: () => void
+}
 interface IngredientsTextAreaProps {
   stepId: string
   stepNumber: number
   className?: ClassValue
   onResize: (_height: number) => void
+  onPaste: (_stepId: string, _ingredientId: string, _value: string[][]) => void
 }
-export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
+export const IngredientsTextArea = forwardRef<
+  IngredientsTextAreaHandle,
+  IngredientsTextAreaProps
+>((props: IngredientsTextAreaProps, ref) => {
   const textAreaRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<Map<string, IngredientRowHandle>>(new Map())
   const [keyIdMeasurementPopup, setKeyIdMeasurementPopup] = useState<
     string | null
   >(null)
+  useImperativeHandle(ref, () => ({
+    focusLast: () => {
+      withRetry(() => {
+        const item = [...itemRefs.current.values()].at(-1)
+        if (item) {
+          item.focus()
+          const length = item.getValue()?.length ?? 0
+          item.setSelectionRange(length, length)
+        }
+        return item === undefined
+      }, 8)
+    },
+  }))
+
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
   const { width, breakpointPxs } = useMediaQuery()
   const {
@@ -36,7 +57,6 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     addIngredient,
     removeIngredient,
     updateIngredient,
-    insertIngredientsSteps,
   } = useRecipeStepIngredientsStore(props.stepId)
 
   const handleMeasurementInPopupClick = (value: MeasurementUnitType): void => {
@@ -145,7 +165,7 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
     const dataListofList = value.includes('\r')
       ? value.split('\r\n\r\n').map((v) => v.split('\r\n'))
       : value.split('\n\n').map((v) => v.split('\n'))
-    insertIngredientsSteps(props.stepId, ingredientId, dataListofList)
+    props.onPaste(props.stepId, ingredientId, dataListofList)
   }
 
   return (
@@ -205,4 +225,5 @@ export const IngredientsTextArea = (props: IngredientsTextAreaProps) => {
       />
     </div>
   )
-}
+})
+IngredientsTextArea.displayName = 'IngredientsTextArea'

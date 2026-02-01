@@ -46,16 +46,16 @@ export type RecipeActions = {
     _stepId: string,
     _ingredientId: string,
     _ingredients: string[][], // Changed to 1D array, caller will have to call this in a loop now when copy-pasting multiple step-ingredients
-  ) => void;
+  ) => string;
   scaleIngredient: (_amount: number) => number;
   setScaleFactor: (_value: FactorType) => void;
-  insertInstructionsSteps: (_keyId: string, _instructions: string[]) => void;
+  insertInstructionsSteps: (_stepId: string, _instructions: string[]) => string;
   removeStep: (_stepId: string) => void;
   addIngredient: (_stepId: string) => void;
   removeIngredient: (_stepId: string, _ingredientId: string) => void;
   updateIngredient: (_keyId: string, _ingredient: string) => void;
   setInstructions: (_keyId: string, _instructions: string) => void;
-  setStepImage: (_keyId: string, _image: string | null) => void;
+  setStepImage: (_stepId: string, _image: string | null) => void;
   setNutritionalFacts: (_value: NutritionalFactsResponse) => void;
   setPartialNutritionalFacts: (
     _value: Partial<NutritionalFactsResponse>,
@@ -242,6 +242,7 @@ export const createRecipeStore = (
           ingredientId: string,
           ingredients: string[][],
         ) => {
+          let lastInsertStepId: string = stepId;
           set((state) => {
             const stepIdIndex = state.stepIds.indexOf(stepId);
             if (stepIdIndex === -1) {
@@ -349,12 +350,15 @@ export const createRecipeStore = (
               : insertAtIndex;
             state.stepIds.splice(insertAtIndex + 1, 0, ...newStepIds);
 
+            lastInsertStepId = newStepIds.at(-1) ?? lastInsertStepId;
+
             return {
               ingredients: { ...state.ingredients },
               steps: { ...state.steps },
               stepIds: [...state.stepIds],
             };
           });
+          return lastInsertStepId;
         },
         removeIngredient: (stepId: string, id: string) => {
           set((state) => {
@@ -392,7 +396,11 @@ export const createRecipeStore = (
 
             return { steps: { ...state.steps } };
           }),
-        insertInstructionsSteps: (stepId: string, instructionsList: string[]) =>
+        insertInstructionsSteps: (
+          stepId: string,
+          instructionsList: string[],
+        ) => {
+          let lastInsertStepId: string = stepId;
           set((state) => {
             const stepIdIndex = state.stepIds.indexOf(stepId);
             if (stepIdIndex === -1) {
@@ -444,8 +452,12 @@ export const createRecipeStore = (
               : insertAtIndex;
             state.stepIds.splice(insertAtIndex + 1, 0, ...newStepIds);
 
+            lastInsertStepId = newStepIds.at(-1) ?? lastInsertStepId;
+
             return { steps: { ...state.steps }, stepIds: [...state.stepIds] };
-          }),
+          });
+          return lastInsertStepId;
+        },
         setStepImage: (stepId: string, image: string | null) =>
           set((state) => {
             state.steps[stepId].imageUrl = image;

@@ -43,16 +43,6 @@ export const IngredientRow = forwardRef<
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
 
-  // todo: move to steplist
-  // useEffect(() => {
-  //   if (props.focusOnMount && textareaRef.current) {
-  //     textareaRef.current.selectionStart = textareaRef.current.value.length
-  //     textareaRef.current.selectionEnd = textareaRef.current.value.length
-  //     textareaRef.current.focus()
-  //     setIsFocused(true)
-  //   }
-  // }, [])
-
   useImperativeHandle(ref, () => ({
     getElement: () => textareaRef.current,
     getValue: () => textareaRef.current?.value,

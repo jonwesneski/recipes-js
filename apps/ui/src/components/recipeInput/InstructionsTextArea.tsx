@@ -2,34 +2,41 @@
 
 import { type ClassValue, mergeCss, TextAreaLabel } from '@repo/design-system'
 import { useRecipeStepInstructionsStore } from '@src/providers/recipe-store-provider'
-import { useRef } from 'react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 
 const placeholder = `The instructions for this step`
 
+export interface InstructionsTextAreaHandle {
+  focus: () => void
+}
 interface InstructionsTextAreaProps {
-  keyId: string
+  stepId: string
   stepNumber: number
   className?: ClassValue
   onResize: (_height: number) => void
+  onPaste: (_stepId: string, _value: string[]) => void
 }
-export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
+export const InstructionsTextArea = forwardRef<
+  InstructionsTextAreaHandle,
+  InstructionsTextAreaProps
+>((props: InstructionsTextAreaProps, ref) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const { instructions, setInstructions, insertInstructionsSteps } =
-    useRecipeStepInstructionsStore(props.keyId)
+  const { instructions, setInstructions } = useRecipeStepInstructionsStore(
+    props.stepId,
+  )
 
-  // useEffect(() => {
-  //   // todo: move shouldBeFocused logic into StepList when adding a new step
-  //   if (textAreaRef.current && instructions?.shouldBeFocused) {
-  //     textAreaRef.current.focus()
-  //     textAreaRef.current.setSelectionRange(
-  //       textAreaRef.current.value.length,
-  //       textAreaRef.current.value.length,
-  //     )
-  //   }
-  // }, [])
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      textAreaRef.current?.focus()
+      textAreaRef.current?.setSelectionRange(
+        textAreaRef.current.value.length,
+        textAreaRef.current.value.length,
+      )
+    },
+  }))
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInstructions(props.keyId, event.target.value)
+    setInstructions(props.stepId, event.target.value)
   }
 
   /* When some pastes in recipes that are already separated by '\r\n\r\n'
@@ -41,7 +48,7 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
     const data = stringData.includes('\r')
       ? stringData.split('\r\n\r\n')
       : stringData.split('\n\n')
-    insertInstructionsSteps(props.keyId, data)
+    props.onPaste(props.stepId, data)
   }
 
   const handleOnResize = (height: number) => {
@@ -67,4 +74,5 @@ export const InstructionsTextArea = (props: InstructionsTextAreaProps) => {
       data-testid="instructions-text-area"
     />
   )
-}
+})
+InstructionsTextArea.displayName = 'InstructionsTextArea'
