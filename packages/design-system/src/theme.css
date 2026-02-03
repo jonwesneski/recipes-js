@@ -102,3 +102,11 @@
     4px 4px 0px var(--text),
     4px 4px 0px 1px var(--background);
 }
+
+.custom-shadow-all {
+  box-shadow:
+    0 6px 16px -4px rgba(var(--text-rgb) / 0.2),
+    0 -6px 12px -6px rgba(var(--text-rgb) / 0.12),
+    6px 0 12px -6px rgba(var(--text-rgb) / 0.12),
+    -6px 0 12px -6px rgba(var(--text-rgb) / 0.12);
+}

@@ -20,7 +20,7 @@ export const RecipeCard = (props: IRecipeProps) => {
   const { id: userId } = useUserStore()
 
   return (
-    <div ref={props.innerRef} className="border p-1">
+    <div ref={props.innerRef} className="custom-shadow-all">
       <div className="relative">
         <div className="relative w-full h-[100px]">
           <Image
@@ -37,39 +37,41 @@ export const RecipeCard = (props: IRecipeProps) => {
             className="object-cover"
           />
         </div>
-        <Link href={href} className="font-bold text-xs">
+        <Link href={href} className="px-2 font-bold text-xs">
           <span className="absolute inset-0" />
           {props.recipe.name}
         </Link>
       </div>
 
-      <div className="h-6">
-        {props.recipe.preparationTimeInMinutes &&
-        props.recipe.cookingTimeInMinutes ? (
-          <>
-            <ClockIcon className="w-6 h-6 inline mr-1 fill-text" />
-            <p className="inline">
-              {timeInHourAndMinutes(
-                props.recipe.preparationTimeInMinutes,
-                props.recipe.cookingTimeInMinutes,
-              )}
-            </p>
-          </>
-        ) : null}
-      </div>
+      <div className="px-2">
+        <div className="h-6">
+          {props.recipe.preparationTimeInMinutes &&
+          props.recipe.cookingTimeInMinutes ? (
+            <>
+              <ClockIcon className="w-6 h-6 inline mr-1 fill-text" />
+              <p className="inline">
+                {timeInHourAndMinutes(
+                  props.recipe.preparationTimeInMinutes,
+                  props.recipe.cookingTimeInMinutes,
+                )}
+              </p>
+            </>
+          ) : null}
+        </div>
 
-      <div className="flex justify-around items-center">
-        {userId ? (
-          <BookmarkButton
-            recipeId={props.recipe.id}
-            bookmarked={props.recipe.bookmarked ?? false}
-          />
-        ) : (
-          <div className="w-8 h-8" />
-        )}
+        <div className="flex justify-around items-center">
+          {userId ? (
+            <BookmarkButton
+              recipeId={props.recipe.id}
+              bookmarked={props.recipe.bookmarked ?? false}
+            />
+          ) : (
+            <div className="w-8 h-8" />
+          )}
 
-        <div className="w-[2px] h-[25px] bg-text" />
-        <CopyUrlButton recipeId={props.recipe.id} />
+          <div className="w-[2px] h-[25px] bg-text" />
+          <CopyUrlButton recipeId={props.recipe.id} />
+        </div>
       </div>
     </div>
   )
