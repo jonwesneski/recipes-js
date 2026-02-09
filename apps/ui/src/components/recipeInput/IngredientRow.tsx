@@ -1,8 +1,13 @@
 'use client'
 
 import { Label, mergeCss } from '@repo/design-system'
+import { useMediaQuery } from '@src/hooks'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
+import { MeasurementUnitType } from '@src/utils/measurements'
+import { fractionRegex } from '@src/zod-schemas'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { IngredientsDropdown } from './IngredientsDropdown'
 
 type PositionType = { row: number; column: number }
 
@@ -42,6 +47,8 @@ export const IngredientRow = forwardRef<
 >((props, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
+  const { width, breakpointPxs } = useMediaQuery()
+  const updateIngredient = useRecipeStore((state) => state.updateIngredient)
 
   useImperativeHandle(ref, () => ({
     getElement: () => textareaRef.current,
@@ -72,6 +79,39 @@ export const IngredientRow = forwardRef<
     position.column = column - 1
 
     return position
+  }
+
+  const getXAndY = () => {
+    let result = { x: NaN, y: NaN }
+    if (textareaRef.current) {
+      let yOffset = NaN
+      const rowIndex = 0 // todo: i might be able to get rid of this
+      if (width >= breakpointPxs.md) {
+        const yMultipler = rowIndex * 10
+        yOffset = 40 + yMultipler
+      } else {
+        const yMultipler = rowIndex * 25
+        yOffset = -170 + yMultipler
+      }
+      const rect = textareaRef.current.getBoundingClientRect()
+      result.x = rect.x
+      result.y = yOffset
+    }
+    return result
+  }
+  const xAndY = getXAndY()
+
+  const handleMeasurementInPopupClick = (value: MeasurementUnitType): void => {
+    const items = props.value.split(' ')
+    if (fractionRegex.test(items[1])) {
+      items[2] = value
+    } else {
+      items[1] = value
+    }
+
+    updateIngredient(props.ingredientId, items.join(' '))
+
+    //setKeyIdMeasurementPopup(null)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -156,7 +196,7 @@ export const IngredientRow = forwardRef<
 
   return (
     <>
-      <div className="flex bg-[var(--bg-current)]">
+      <div className="relative flex bg-[var(--bg-current)]">
         {isFocused || props.value ? (
           <svg className="w-3 h-3 mr-2 mt-1 fill-current" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="8" />
@@ -199,6 +239,22 @@ export const IngredientRow = forwardRef<
           {props.error}
         </div>
       ) : null}
+      <IngredientsDropdown
+        value=""
+        cursorIndex={-1}
+        top={xAndY.y}
+        left={xAndY.x}
+        onBlur={() => setIsFocused(false)}
+        onAmountChange={() => console.log('todo')}
+        onMeasurementChange={handleMeasurementInPopupClick}
+        className={mergeCss('transition-transform duration-300 ease-in', {
+          'scale-y-100': isFocused,
+          'scale-y-0': !isFocused,
+        })}
+        style={{
+          transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',
+        }}
+      />
 
       {props.label ? (
         <Label

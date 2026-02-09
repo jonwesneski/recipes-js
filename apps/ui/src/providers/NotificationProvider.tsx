@@ -54,7 +54,9 @@ export const NotificationProvider = ({
 
   useEffect(() => {
     if (userId) {
-      socket = io(process.env.NEXT_PUBLIC_API_URL)
+      socket = io(process.env.NEXT_PUBLIC_API_URL, {
+        transports: ['websocket'],
+      })
       socket.emit('register', userId)
 
       socket.on('recipeAdded', (data) => {

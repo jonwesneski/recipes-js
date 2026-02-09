@@ -3,7 +3,7 @@
 import { TextLabel } from '@repo/design-system'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { useEffect, useRef } from 'react'
-import { IngredientsAmountPopup } from './IngredientsAmountPopup'
+import { IngredientsAmountDropdown } from './IngredientsAmountDropdown'
 import { TimeTextLabel } from './TimeTextLabel'
 
 export const BasicInfoInput = () => {
@@ -33,7 +33,7 @@ export const BasicInfoInput = () => {
 
   return (
     <>
-      <IngredientsAmountPopup onChange={(v) => console.log(v)} />
+      <IngredientsAmountDropdown value="" onChange={(v) => console.log(v)} />
       <TextLabel
         className="w-5/6 md:max-w-3xl"
         ref={nameRef}

@@ -3,15 +3,25 @@
 import { mergeCss } from '@repo/design-system'
 import { useState } from 'react'
 
-interface IngredientsAmountPopupProps {
+interface IngredientsAmountDropdownProps {
+  value: string
   onChange: (_value: string) => void
 }
-export const IngredientsAmountPopup = (props: IngredientsAmountPopupProps) => {
-  const [values, setValues] = useState<string[]>([])
-  const hasDecimal = '.' in values
-  const hasFraction = '/' in values
+export const IngredientsAmountDropdown = (
+  props: IngredientsAmountDropdownProps,
+) => {
+  console.log({ dd: ''.split('') })
+  const [values, setValues] = useState<string[]>(props.value.split(''))
+  const spaceIndex = values.findIndex((v) => v === ' ')
+  const decimalIndex = values.findIndex((v) => v === '.')
+  const fractionIndex = values.findIndex((v) => v === '/')
+  const hasSpace = spaceIndex !== -1
+  const hasDecimal = decimalIndex !== -1
+  const hasFraction = fractionIndex !== -1
   const isWhole = !hasDecimal && !hasFraction
   const startsWithNonZero = !!Number(values[0])
+  const enableDenominatorZero =
+    hasDecimal || (hasFraction && !!values[fractionIndex + 1])
 
   const handleOnNumber = (value: number) => {
     setValues((prev) => {
@@ -21,8 +31,26 @@ export const IngredientsAmountPopup = (props: IngredientsAmountPopupProps) => {
     })
   }
 
+  const handleOnSpace = () => {
+    if (!hasSpace && !hasDecimal && !hasFraction) {
+      setValues((prev) => [...prev, ' '])
+    }
+  }
+
+  const handleOnDecimal = () => {
+    if (!hasDecimal && !hasFraction) {
+      setValues((prev) => [...prev, '.'])
+    }
+  }
+
+  const handleOnFraction = () => {
+    if (!hasFraction && !hasDecimal) {
+      setValues((prev) => [...prev, '/'])
+    }
+  }
+
   return (
-    <div className="inline-grid grid-cols-6 gap-[1px] bg-gray-300 p-[1px]">
+    <div className="inline-grid grid-cols-6 gap-[2px] bg-text p-[2px]">
       {/* Row 1 */}
       <button
         aria-label="1"
@@ -65,9 +93,14 @@ export const IngredientsAmountPopup = (props: IngredientsAmountPopupProps) => {
         type="button"
         className={mergeCss(
           'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25 bg-text/5': !startsWithNonZero },
+          { 'bg-text/50 text-background/75': !startsWithNonZero },
         )}
-        onClick={() => values.pop()}
+        onClick={() =>
+          setValues((prev) => {
+            prev.pop()
+            return [...prev]
+          })
+        }
       >
         ⌫
       </button>
@@ -114,8 +147,9 @@ export const IngredientsAmountPopup = (props: IngredientsAmountPopupProps) => {
         type="button"
         className={mergeCss(
           'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-background/25 bg-text/5': !startsWithNonZero },
+          { 'bg-text/50 text-background/75': !startsWithNonZero },
         )}
+        onClick={handleOnSpace}
       >
         ␣
       </button>
@@ -167,8 +201,9 @@ export const IngredientsAmountPopup = (props: IngredientsAmountPopupProps) => {
         type="button"
         className={mergeCss(
           'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-background/25 bg-text/5': !startsWithNonZero },
+          { 'bg-text/50 text-background/75': !startsWithNonZero },
         )}
+        onClick={handleOnDecimal}
       >
         .
       </button>
@@ -225,8 +260,9 @@ export const IngredientsAmountPopup = (props: IngredientsAmountPopupProps) => {
         type="button"
         className={mergeCss(
           'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-background/25 bg-text/5': !startsWithNonZero },
+          { 'bg-text/50 text-background/75': !startsWithNonZero },
         )}
+        onClick={handleOnFraction}
       >
         /
       </button>
@@ -268,11 +304,11 @@ export const IngredientsAmountPopup = (props: IngredientsAmountPopupProps) => {
       </button>
       <button
         aria-label="0 denomitator"
-        disabled={isWhole}
+        disabled={!enableDenominatorZero}
         type="button"
         className={mergeCss(
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
+          { 'text-text/25': !enableDenominatorZero },
         )}
         onClick={() => handleOnNumber(0)}
       >

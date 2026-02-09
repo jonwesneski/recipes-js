@@ -21,9 +21,9 @@ import {
   getUsersControllerUserV1ResponseMock,
   getUsersMock,
 } from '@repo/codegen/mswUsers';
-import { http, ws } from 'msw';
+import { ws } from 'msw';
 
-const websocketMock = ws.link('http://localhost:3001/socket.io/*');
+const websocketMock = ws.link(new RegExp('^ws://localhost:3001/socket.io/.*'));
 
 const recipesList = getRecipesControllerRecipesListV1ResponseMock();
 recipesList.data.forEach((r) => {
@@ -45,9 +45,12 @@ followersList.data.forEach((f) => {
 
 export default [
   // eslint-disable-next-line @typescript-eslint/no-empty-function -- I don't want to do anything here at the moment
-  http.get('http://localhost:3001/socket.io/*', () => {}),
-  // eslint-disable-next-line @typescript-eslint/no-empty-function -- I don't want to do anything here at the moment
-  websocketMock.addEventListener('connection', (_connection) => {}),
+  websocketMock.addEventListener('connection', ({ client }) => {
+    client.send(
+      '0{"sid":"msw-mock-sid","upgrades":[],"pingInterval":25000,"pingTimeout":5000}',
+    );
+    client.send('40');
+  }),
   ...getHealthCheckMock(),
   // UsersControllerUserAccount needs to be above UsersControllerUser because of route handling
   getUsersControllerUserAccountV1MockHandler(
