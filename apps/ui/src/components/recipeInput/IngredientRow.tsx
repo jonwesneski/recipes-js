@@ -4,10 +4,10 @@ import { Label, mergeCss } from '@repo/design-system'
 import { useMediaQuery } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import { IngredientValidator } from '@src/utils/ingredientsValidator'
-import { MeasurementUnitType } from '@src/utils/measurements'
+import { type MeasurementUnitType } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
-import { IngredientsDropdown } from './IngredientsDropdown'
+import { IngredientsDropdown, type DropdownMode } from './IngredientsDropdown'
 
 type PositionType = { row: number; column: number }
 
@@ -31,10 +31,6 @@ interface IIngriedientRowProps {
   value: string
   error?: string
   onChange: (_keyId: string, _value: string) => void
-  onMeasurementInput: (
-    _keyId: string | null,
-    _element: HTMLTextAreaElement | null,
-  ) => void
   onPaste: (_keyId: string, _value: string) => void
   onEnterPressed: (_keyId: string) => void
   onArrowUp: (_keyId: string) => void
@@ -47,6 +43,7 @@ export const IngredientRow = forwardRef<
 >((props, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
+  const [dropdownMode, setDropdownMode] = useState<DropdownMode>(null)
   const { width, breakpointPxs } = useMediaQuery()
   const updateIngredient = useRecipeStore((state) => state.updateIngredient)
 
@@ -81,8 +78,8 @@ export const IngredientRow = forwardRef<
     return position
   }
 
-  const getXAndY = () => {
-    let result = { x: NaN, y: NaN }
+  const xAndY = (() => {
+    const result = { x: NaN, y: NaN }
     if (textareaRef.current) {
       let yOffset = NaN
       const rowIndex = 0 // todo: i might be able to get rid of this
@@ -98,10 +95,20 @@ export const IngredientRow = forwardRef<
       result.y = yOffset
     }
     return result
-  }
-  const xAndY = getXAndY()
+  })()
 
-  const handleMeasurementInPopupClick = (value: MeasurementUnitType): void => {
+  const handleAmountOnChange = (value: string): void => {
+    const items = props.value.split(' ')
+    if (fractionRegex.test(items[0])) {
+      items[0] = value
+    } else {
+      items[1] = value
+    }
+
+    updateIngredient(props.ingredientId, items.join(' '))
+  }
+
+  const handleMeasurementOnChange = (value: MeasurementUnitType): void => {
     const items = props.value.split(' ')
     if (fractionRegex.test(items[1])) {
       items[2] = value
@@ -110,8 +117,6 @@ export const IngredientRow = forwardRef<
     }
 
     updateIngredient(props.ingredientId, items.join(' '))
-
-    //setKeyIdMeasurementPopup(null)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -171,27 +176,30 @@ export const IngredientRow = forwardRef<
     }
   }
 
+  const _getDropdownMode = (): DropdownMode => {
+    if (!textareaRef.current) return null
+    const position = getCaretPosition(textareaRef.current)
+    const items = props.value.split(' ')
+    if (position.column === 0) return 'amount'
+    if (position.column === 1) {
+      return fractionRegex.test(items[1] || '') ? 'amount' : 'measurement'
+    }
+    if (position.column === 2 && fractionRegex.test(items[1] || '')) {
+      return 'measurement'
+    }
+    return null
+  }
+
   const _handleShowPopUp = (ingredientValidator: IngredientValidator) => {
     const fieldErrors = ingredientValidator.error?.fieldErrors
     if (!fieldErrors) {
-      _handleMeasurementPopUp()
-    }
-  }
-
-  const _handleMeasurementPopUp = () => {
-    if (textareaRef.current) {
-      const position = getCaretPosition(textareaRef.current)
-      if (position.column === 1) {
-        props.onMeasurementInput(props.ingredientId, textareaRef.current)
-      } else {
-        props.onMeasurementInput(null, null)
-      }
+      setDropdownMode(_getDropdownMode())
     }
   }
 
   const handleFocused = (): void => {
     setIsFocused(true)
-    _handleMeasurementPopUp()
+    setDropdownMode(_getDropdownMode())
   }
 
   return (
@@ -240,16 +248,16 @@ export const IngredientRow = forwardRef<
         </div>
       ) : null}
       <IngredientsDropdown
-        value=""
-        cursorIndex={-1}
+        mode={dropdownMode}
+        value={props.value.split(' ')[0] || ''}
         top={xAndY.y}
         left={xAndY.x}
         onBlur={() => setIsFocused(false)}
-        onAmountChange={() => console.log('todo')}
-        onMeasurementChange={handleMeasurementInPopupClick}
+        onAmountChange={handleAmountOnChange}
+        onMeasurementChange={handleMeasurementOnChange}
         className={mergeCss('transition-transform duration-300 ease-in', {
-          'scale-y-100': isFocused,
-          'scale-y-0': !isFocused,
+          'scale-y-100': isFocused && dropdownMode !== null,
+          'scale-y-0': !isFocused || dropdownMode === null,
         })}
         style={{
           transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',

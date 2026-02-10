@@ -10,7 +10,6 @@ interface IngredientsAmountDropdownProps {
 export const IngredientsAmountDropdown = (
   props: IngredientsAmountDropdownProps,
 ) => {
-  console.log({ dd: ''.split('') })
   const [values, setValues] = useState<string[]>(props.value.split(''))
   const spaceIndex = values.findIndex((v) => v === ' ')
   const decimalIndex = values.findIndex((v) => v === '.')
@@ -19,9 +18,9 @@ export const IngredientsAmountDropdown = (
   const hasDecimal = decimalIndex !== -1
   const hasFraction = fractionIndex !== -1
   const isWhole = !hasDecimal && !hasFraction
-  const startsWithNonZero = !!Number(values[0])
+  const startsWithNonZero = Boolean(Number(values[0]))
   const enableDenominatorZero =
-    hasDecimal || (hasFraction && !!values[fractionIndex + 1])
+    hasDecimal || (hasFraction && Boolean(values[fractionIndex + 1]))
 
   const handleOnNumber = (value: number) => {
     setValues((prev) => {

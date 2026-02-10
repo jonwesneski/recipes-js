@@ -1,14 +1,10 @@
 'use client'
 
 import { mergeCss, type ClassValue } from '@repo/design-system'
-import { useMediaQuery } from '@src/hooks'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
-import { type MeasurementUnitType } from '@src/utils/measurements'
 import { withRetry } from '@src/utils/withRetry'
-import { fractionRegex } from '@src/zod-schemas'
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { IngredientRow, type IngredientRowHandle } from './IngredientRow'
-import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
 const placeholder = `0.5 cups fresh basil
 1 1/4 cups peanuts
@@ -32,9 +28,6 @@ export const IngredientsTextArea = forwardRef<
 >((props: IngredientsTextAreaProps, ref) => {
   const textAreaRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<Map<string, IngredientRowHandle>>(new Map())
-  const [keyIdMeasurementPopup, setKeyIdMeasurementPopup] = useState<
-    string | null
-  >(null)
   useImperativeHandle(ref, () => ({
     focusLast: () => {
       withRetry(() => {
@@ -49,8 +42,6 @@ export const IngredientsTextArea = forwardRef<
     },
   }))
 
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
-  const { width, breakpointPxs } = useMediaQuery()
   const {
     ingredients,
     ingredientIds,
@@ -59,51 +50,8 @@ export const IngredientsTextArea = forwardRef<
     updateIngredient,
   } = useRecipeStepIngredientsStore(props.stepId)
 
-  const handleMeasurementInPopupClick = (value: MeasurementUnitType): void => {
-    const index = ingredientIds.findIndex((id) => id === keyIdMeasurementPopup)
-    const text = itemRefs.current.get(ingredientIds[index])?.getValue()
-    if (!text) {
-      return
-    }
-
-    const items = text.split(' ')
-    if (fractionRegex.test(items[1])) {
-      items[2] = value
-    } else {
-      items[1] = value
-    }
-
-    if (keyIdMeasurementPopup) {
-      updateIngredient(keyIdMeasurementPopup, items.join(' '))
-    }
-    setKeyIdMeasurementPopup(null)
-  }
-
   const handleChange = (keyId: string, ingredient: string) => {
     updateIngredient(keyId, ingredient)
-  }
-
-  const handleMeasurementInput = (
-    ingredientId: string | null,
-    element: HTMLTextAreaElement | null,
-  ) => {
-    const rowIndex = ingredientIds.findIndex((id) => id === ingredientId)
-    if (ingredientId && element && rowIndex >= 0) {
-      let yOffset = NaN
-      if (width >= breakpointPxs.md) {
-        const yMultipler = rowIndex * 10
-        yOffset = 40 + yMultipler
-      } else {
-        const yMultipler = rowIndex * 25
-        yOffset = -170 + yMultipler
-      }
-      const rect = element.getBoundingClientRect()
-      setPopupPosition({
-        x: rect.x,
-        y: yOffset,
-      })
-    }
-    setKeyIdMeasurementPopup(ingredientId)
   }
 
   const handleNewRow = (ingredientId: string) => {
@@ -202,7 +150,6 @@ export const IngredientsTextArea = forwardRef<
           }
           // focusOnMount move this logic to step list component pass ref in callback?
           onChange={handleChange}
-          onMeasurementInput={handleMeasurementInput}
           onPaste={handleOnPaste}
           onEnterPressed={handleNewRow}
           onRemove={handleRemove}
@@ -210,19 +157,6 @@ export const IngredientsTextArea = forwardRef<
           onArrowUp={handleArrowUp}
         />
       ))}
-      <IngredientsMeasurementPopUp
-        top={popupPosition.y}
-        left={popupPosition.x}
-        onClick={handleMeasurementInPopupClick}
-        onBlur={() => setKeyIdMeasurementPopup(null)}
-        className={mergeCss('transition-transform duration-300 ease-in', {
-          'scale-y-100': keyIdMeasurementPopup,
-          'scale-y-0': !keyIdMeasurementPopup,
-        })}
-        style={{
-          transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',
-        }}
-      />
     </div>
   )
 })

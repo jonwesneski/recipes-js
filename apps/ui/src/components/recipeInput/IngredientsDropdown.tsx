@@ -1,17 +1,19 @@
 'use client'
-import { ClassValue, mergeCss } from '@repo/design-system'
+import { type ClassValue, mergeCss } from '@repo/design-system'
 import { MeasurementUnitType } from '@src/utils/measurements'
-import { CSSProperties, useEffect, useRef } from 'react'
+import { type CSSProperties, useEffect, useRef } from 'react'
 import { IngredientsAmountDropdown } from './IngredientsAmountDropdown'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
+export type DropdownMode = 'amount' | 'measurement' | null
+
 interface IngredientsDropdownProps {
+  mode: DropdownMode
   value: string
-  cursorIndex: number
   top: number
   left: number
-  onAmountChange: (value: string) => void
-  onMeasurementChange: (value: MeasurementUnitType) => void
+  onAmountChange: (_value: string) => void
+  onMeasurementChange: (_value: MeasurementUnitType) => void
   onBlur: () => void
   className?: ClassValue
   style?: CSSProperties
@@ -42,22 +44,30 @@ export const IngredientsDropdown = (props: IngredientsDropdownProps) => {
         left: props.left,
         padding: '10px',
         zIndex: 1000,
+        overflow: 'hidden',
       }}
       className={mergeCss('border', props.className)}
     >
-      {props.cursorIndex === 0 ? (
-        <IngredientsAmountDropdown
-          value={props.value}
-          onChange={() => console.log()}
-        />
-      ) : (
-        <IngredientsMeasurementPopUp
-          top={props.top}
-          left={props.left}
-          onClick={props.onMeasurementChange}
-          onBlur={props.onBlur}
-        />
-      )}
+      <div
+        style={{
+          display: 'flex',
+          transform:
+            props.mode === 'measurement'
+              ? 'translateX(-100%)'
+              : 'translateX(0)',
+          transition: 'transform 300ms ease-in-out',
+        }}
+      >
+        <div style={{ minWidth: '100%', flexShrink: 0 }}>
+          <IngredientsAmountDropdown
+            value={props.value}
+            onChange={props.onAmountChange}
+          />
+        </div>
+        <div style={{ minWidth: '100%', flexShrink: 0 }}>
+          <IngredientsMeasurementPopUp onClick={props.onMeasurementChange} />
+        </div>
+      </div>
     </div>
   )
 }
