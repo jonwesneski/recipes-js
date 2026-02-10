@@ -3,7 +3,10 @@
 import { Label, mergeCss } from '@repo/design-system'
 import { useMediaQuery } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import { IngredientValidator } from '@src/utils/ingredientsValidator'
+import {
+  IngredientValidator,
+  splitAmountAndRest,
+} from '@src/utils/ingredientHelper'
 import { type MeasurementUnitType } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
@@ -79,7 +82,7 @@ export const IngredientRow = forwardRef<
   }
 
   const xAndY = (() => {
-    const result = { x: NaN, y: NaN }
+    const result: { x?: number; y?: number } = { x: undefined, y: undefined }
     if (textareaRef.current) {
       let yOffset = NaN
       const rowIndex = 0 // todo: i might be able to get rid of this
@@ -98,18 +101,22 @@ export const IngredientRow = forwardRef<
   })()
 
   const handleAmountOnChange = (value: string): void => {
-    const items = props.value.split(' ')
-    if (fractionRegex.test(items[0])) {
-      items[0] = value
-    } else {
-      items[1] = value
-    }
-
+    console.log({
+      test: splitAmountAndRest(props.value),
+      exec: splitAmountAndRest('1 1/2 cups taco'),
+      exec1: splitAmountAndRest('1/2 cups taco'),
+      exec2: splitAmountAndRest('1 cups taco'),
+      exec3: splitAmountAndRest('1.1 cups taco'),
+    })
+    const items = splitAmountAndRest(props.value)
+    // todo: still need to consider cursor position
+    items[0] += value
     updateIngredient(props.ingredientId, items.join(' '))
   }
 
   const handleMeasurementOnChange = (value: MeasurementUnitType): void => {
     const items = props.value.split(' ')
+    debugger
     if (fractionRegex.test(items[1])) {
       items[2] = value
     } else {

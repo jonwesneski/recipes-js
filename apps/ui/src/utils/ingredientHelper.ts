@@ -1,10 +1,19 @@
 import { type CreateIngredientDto } from '@repo/codegen/model';
 import {
+  fractionRegex,
   ingredientRowArraySchema,
   ingredientsListSchema,
 } from '@src/zod-schemas';
 import { type ZodError, z } from 'zod/v4';
 import { type $ZodFlattenedError } from 'zod/v4/core';
+
+export const splitAmountAndRest = (input: string): [string, string] => {
+  const parts = input.split(' ');
+  if (parts.length >= 2 && fractionRegex.test(parts[1])) {
+    return [parts.slice(0, 2).join(' '), parts.slice(2).join(' ')];
+  }
+  return [parts[0] || '', parts.slice(1).join(' ')];
+};
 
 export class IngredientsValidator {
   public stringValue: string;

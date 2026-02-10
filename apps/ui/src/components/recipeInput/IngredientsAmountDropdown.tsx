@@ -22,29 +22,33 @@ export const IngredientsAmountDropdown = (
   const enableDenominatorZero =
     hasDecimal || (hasFraction && Boolean(values[fractionIndex + 1]))
 
-  const handleOnNumber = (value: number) => {
+  const _addCharacter = (value: string) => {
     setValues((prev) => {
-      prev.push(value.toString())
+      prev.push(value)
       props.onChange(prev.join(''))
       return [...prev]
     })
   }
 
+  const handleOnNumber = (value: number) => {
+    _addCharacter(value.toString())
+  }
+
   const handleOnSpace = () => {
     if (!hasSpace && !hasDecimal && !hasFraction) {
-      setValues((prev) => [...prev, ' '])
+      _addCharacter(' ')
     }
   }
 
   const handleOnDecimal = () => {
     if (!hasDecimal && !hasFraction) {
-      setValues((prev) => [...prev, '.'])
+      _addCharacter('.')
     }
   }
 
   const handleOnFraction = () => {
     if (!hasFraction && !hasDecimal) {
-      setValues((prev) => [...prev, '/'])
+      _addCharacter('/')
     }
   }
 

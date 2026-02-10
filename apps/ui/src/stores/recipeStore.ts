@@ -13,7 +13,7 @@ import type {
   RecipeResponseServingUnit,
 } from '@repo/codegen/model';
 import { roundToDecimal } from '@src/utils/calculate';
-import { IngredientValidator } from '@src/utils/ingredientsValidator';
+import { IngredientValidator } from '@src/utils/ingredientHelper';
 import { nutritionalFactsConst } from '@src/utils/nutritionalFacts';
 import type {
   NormalizedIngredient,
@@ -359,15 +359,20 @@ export const createRecipeStore = (
         },
         removeIngredient: (stepId: string, id: string) => {
           set((state) => {
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
-            delete state.ingredients[id];
-            state.steps[stepId].ingredientIds = state.steps[
-              stepId
-            ].ingredientIds.filter((ingredientId) => ingredientId !== id);
-            return {
-              ingredients: { ...state.ingredients },
-              steps: { ...state.steps },
-            };
+            // Right now I want at least one indredientId even if it is empty
+            // I may try to handle this differently in the future though
+            if (state.steps[stepId].ingredientIds.length > 1) {
+              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
+              delete state.ingredients[id];
+              state.steps[stepId].ingredientIds = state.steps[
+                stepId
+              ].ingredientIds.filter((ingredientId) => ingredientId !== id);
+              return {
+                ingredients: { ...state.ingredients },
+                steps: { ...state.steps },
+              };
+            }
+            return state;
           });
         },
         updateIngredient: (id: string, _ingredient: string) => {

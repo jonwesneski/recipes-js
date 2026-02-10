@@ -10,8 +10,8 @@ export type DropdownMode = 'amount' | 'measurement' | null
 interface IngredientsDropdownProps {
   mode: DropdownMode
   value: string
-  top: number
-  left: number
+  top?: number
+  left?: number
   onAmountChange: (_value: string) => void
   onMeasurementChange: (_value: MeasurementUnitType) => void
   onBlur: () => void
