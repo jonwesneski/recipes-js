@@ -5,7 +5,8 @@ import { type CSSProperties, useEffect, useRef } from 'react'
 import { IngredientsAmountDropdown } from './IngredientsAmountDropdown'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
 
-export type DropdownMode = 'amount' | 'measurement' | null
+export const dropDownModes = ['amount', 'measurement'] as const
+export type DropdownMode = (typeof dropDownModes)[number] | null
 
 interface IngredientsDropdownProps {
   mode: DropdownMode
@@ -15,6 +16,7 @@ interface IngredientsDropdownProps {
   onAmountChange: (_value: string) => void
   onMeasurementChange: (_value: MeasurementUnitType) => void
   onBlur: () => void
+  onModeChange: (_mode: DropdownMode) => void
   className?: ClassValue
   style?: CSSProperties
 }
@@ -33,6 +35,13 @@ export const IngredientsDropdown = (props: IngredientsDropdownProps) => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  const moveIndex = (index: number) => {
+    const currentIndex = dropDownModes.indexOf(props.mode ?? 'amount')
+    const newIndex =
+      (currentIndex + index + dropDownModes.length) % dropDownModes.length
+    props.onModeChange(dropDownModes[newIndex])
+  }
 
   return (
     <div
@@ -67,6 +76,22 @@ export const IngredientsDropdown = (props: IngredientsDropdownProps) => {
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
           <IngredientsMeasurementPopUp onClick={props.onMeasurementChange} />
         </div>
+      </div>
+      <div className="flex gap-2 pt-2">
+        <button
+          className="block flex-1 bg-text text-background"
+          type="button"
+          onClick={() => moveIndex(-1)}
+        >
+          &lt;
+        </button>
+        <button
+          className="block flex-1 bg-text text-background"
+          type="button"
+          onClick={() => moveIndex(1)}
+        >
+          &gt;
+        </button>
       </div>
     </div>
   )

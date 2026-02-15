@@ -10,9 +10,43 @@ import {
 import { type MeasurementUnitType } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
-import { IngredientsDropdown, type DropdownMode } from './IngredientsDropdown'
+import {
+  dropDownModes,
+  IngredientsDropdown,
+  type DropdownMode,
+} from './IngredientsDropdown'
 
 type PositionType = { row: number; column: number }
+const getCaretPosition = (element: HTMLTextAreaElement) => {
+  const position: PositionType = {
+    row: 0,
+    column: 0,
+  }
+
+  // Calcuate row position
+  // // do we care about row position?
+  const cursorPosition = element.selectionStart || 0
+  const textBeforeCursor = element.value.substring(0, cursorPosition)
+  const row = textBeforeCursor.split('\n').length
+
+  // Calculate column position we have 3 "columns"(fields) in textarea
+  const currentRowText = textBeforeCursor.split('\n')[row - 1] || ''
+  const column = currentRowText.split(' ').length
+
+  position.row = row - 1
+  position.column = column - 1
+
+  return position
+}
+
+const setCaretColumn = (element: HTMLTextAreaElement, column: number) => {
+  const line = element.value
+    .split(' ')
+    .filter((_, i) => i <= column)
+    .join(' ')
+  const selectionIndex = element.value.indexOf(line) + line.length
+  element.setSelectionRange(selectionIndex, selectionIndex)
+}
 
 export interface IngredientRowHandle {
   getElement: () => HTMLTextAreaElement | null
@@ -59,28 +93,6 @@ export const IngredientRow = forwardRef<
       textareaRef.current?.setSelectionRange(start, end, direction),
   }))
 
-  const getCaretPosition = (element: HTMLTextAreaElement) => {
-    const position: PositionType = {
-      row: 0,
-      column: 0,
-    }
-
-    // Calcuate row position
-    // // do we care about row position?
-    const cursorPosition = element.selectionStart || 0
-    const textBeforeCursor = element.value.substring(0, cursorPosition)
-    const row = textBeforeCursor.split('\n').length
-
-    // Calculate column position we have 3 columns in textarea
-    const currentRowText = textBeforeCursor.split('\n')[row - 1] || ''
-    const column = currentRowText.split(' ').length
-
-    position.row = row - 1
-    position.column = column - 1
-
-    return position
-  }
-
   const xAndY = (() => {
     const result: { x?: number; y?: number } = { x: undefined, y: undefined }
     if (textareaRef.current) {
@@ -100,23 +112,26 @@ export const IngredientRow = forwardRef<
     return result
   })()
 
+  const handleOnModeChange = (mode: DropdownMode) => {
+    if (textareaRef.current) {
+      setCaretColumn(
+        textareaRef.current,
+        dropDownModes.findIndex((m) => m === mode),
+      )
+    }
+    setDropdownMode(mode)
+  }
+
   const handleAmountOnChange = (value: string): void => {
-    console.log({
-      test: splitAmountAndRest(props.value),
-      exec: splitAmountAndRest('1 1/2 cups taco'),
-      exec1: splitAmountAndRest('1/2 cups taco'),
-      exec2: splitAmountAndRest('1 cups taco'),
-      exec3: splitAmountAndRest('1.1 cups taco'),
-    })
     const items = splitAmountAndRest(props.value)
     // todo: still need to consider cursor position
-    items[0] += value
+    const cursorIndex = textareaRef?.current?.selectionStart ?? 0
+    items[0] = value
     updateIngredient(props.ingredientId, items.join(' '))
   }
 
   const handleMeasurementOnChange = (value: MeasurementUnitType): void => {
     const items = props.value.split(' ')
-    debugger
     if (fractionRegex.test(items[1])) {
       items[2] = value
     } else {
@@ -234,7 +249,12 @@ export const IngredientRow = forwardRef<
           }
           value={props.value}
           onSelect={handleFocused}
-          onBlur={() => setIsFocused(false)}
+          onBlur={() => {
+            console.log('000000')
+            if (dropdownMode === null) {
+              setIsFocused(false)
+            }
+          }}
           onInput={handleInput}
           onPaste={handleOnPaste}
           onKeyDown={handleKeyDown}
@@ -262,6 +282,7 @@ export const IngredientRow = forwardRef<
         onBlur={() => setIsFocused(false)}
         onAmountChange={handleAmountOnChange}
         onMeasurementChange={handleMeasurementOnChange}
+        onModeChange={handleOnModeChange}
         className={mergeCss('transition-transform duration-300 ease-in', {
           'scale-y-100': isFocused && dropdownMode !== null,
           'scale-y-0': !isFocused || dropdownMode === null,

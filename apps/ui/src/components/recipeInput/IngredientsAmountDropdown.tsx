@@ -30,8 +30,8 @@ export const IngredientsAmountDropdown = (
     })
   }
 
-  const handleOnNumber = (value: number) => {
-    _addCharacter(value.toString())
+  const handleOnNumber = (value: string) => {
+    _addCharacter(value)
   }
 
   const handleOnSpace = () => {
@@ -59,7 +59,7 @@ export const IngredientsAmountDropdown = (
         aria-label="1"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(1)}
+        onClick={() => handleOnNumber('1')}
       >
         1
       </button>
@@ -67,7 +67,7 @@ export const IngredientsAmountDropdown = (
         aria-label="3"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(3)}
+        onClick={() => handleOnNumber('3')}
       >
         3
       </button>
@@ -75,7 +75,7 @@ export const IngredientsAmountDropdown = (
         aria-label="6"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(6)}
+        onClick={() => handleOnNumber('6')}
       >
         6
       </button>
@@ -87,7 +87,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': !startsWithNonZero },
         )}
-        onClick={() => handleOnNumber(0)}
+        onClick={() => handleOnNumber('0')}
       >
         0
       </button>
@@ -115,7 +115,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(4)}
+        onClick={() => handleOnNumber('4')}
       >
         4
       </button>
@@ -125,7 +125,7 @@ export const IngredientsAmountDropdown = (
         aria-label="2"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(4)}
+        onClick={() => handleOnNumber('4')}
       >
         2
       </button>
@@ -133,7 +133,7 @@ export const IngredientsAmountDropdown = (
         aria-label="5"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(5)}
+        onClick={() => handleOnNumber('5')}
       >
         5
       </button>
@@ -141,7 +141,7 @@ export const IngredientsAmountDropdown = (
         aria-label="9"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(9)}
+        onClick={() => handleOnNumber('9')}
       >
         9
       </button>
@@ -164,7 +164,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(3)}
+        onClick={() => handleOnNumber('3')}
       >
         3
       </button>
@@ -176,7 +176,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(7)}
+        onClick={() => handleOnNumber('7')}
       >
         7
       </button>
@@ -186,7 +186,7 @@ export const IngredientsAmountDropdown = (
         aria-label="4"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(4)}
+        onClick={() => handleOnNumber('4')}
       >
         4
       </button>
@@ -194,7 +194,7 @@ export const IngredientsAmountDropdown = (
         aria-label="8"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(8)}
+        onClick={() => handleOnNumber('8')}
       >
         8
       </button>
@@ -218,7 +218,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(2)}
+        onClick={() => handleOnNumber('2')}
       >
         2
       </button>
@@ -230,7 +230,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(6)}
+        onClick={() => handleOnNumber('6')}
       >
         6
       </button>
@@ -242,7 +242,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(9)}
+        onClick={() => handleOnNumber('9')}
       >
         9
       </button>
@@ -252,7 +252,7 @@ export const IngredientsAmountDropdown = (
         aria-label="7"
         type="button"
         className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber(7)}
+        onClick={() => handleOnNumber('7')}
       >
         7
       </button>
@@ -277,7 +277,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(1)}
+        onClick={() => handleOnNumber('1')}
       >
         1
       </button>
@@ -289,7 +289,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(5)}
+        onClick={() => handleOnNumber('5')}
       >
         5
       </button>
@@ -301,7 +301,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
-        onClick={() => handleOnNumber(8)}
+        onClick={() => handleOnNumber('8')}
       >
         8
       </button>
@@ -313,7 +313,7 @@ export const IngredientsAmountDropdown = (
           'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': !enableDenominatorZero },
         )}
-        onClick={() => handleOnNumber(0)}
+        onClick={() => handleOnNumber('0')}
       >
         0
       </button>
