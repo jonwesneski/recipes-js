@@ -1,6 +1,6 @@
 'use client'
 import { type ClassValue, mergeCss } from '@repo/design-system'
-import { MeasurementUnitType } from '@src/utils/measurements'
+import { type MeasurementUnitType } from '@src/utils/measurements'
 import { type CSSProperties, useEffect, useRef } from 'react'
 import { IngredientsAmountDropdown } from './IngredientsAmountDropdown'
 import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'

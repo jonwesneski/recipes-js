@@ -42,17 +42,8 @@ export const IngredientsTextArea = forwardRef<
     },
   }))
 
-  const {
-    ingredients,
-    ingredientIds,
-    addIngredient,
-    removeIngredient,
-    updateIngredient,
-  } = useRecipeStepIngredientsStore(props.stepId)
-
-  const handleChange = (keyId: string, ingredient: string) => {
-    updateIngredient(keyId, ingredient)
-  }
+  const { ingredients, ingredientIds, addIngredient, removeIngredient } =
+    useRecipeStepIngredientsStore(props.stepId)
 
   const handleNewRow = (ingredientId: string) => {
     addIngredient(ingredientId)
@@ -149,7 +140,6 @@ export const IngredientsTextArea = forwardRef<
             ingredients[id].error?.fieldErrors.name?.[0]
           }
           // focusOnMount move this logic to step list component pass ref in callback?
-          onChange={handleChange}
           onPaste={handleOnPaste}
           onEnterPressed={handleNewRow}
           onRemove={handleRemove}

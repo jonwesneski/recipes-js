@@ -4,8 +4,10 @@ import {
   ingredientRowArraySchema,
   ingredientsListSchema,
 } from '@src/zod-schemas';
-import { type ZodError, z } from 'zod/v4';
+import { NormalizedIngredient } from '@src/zod-schemas/recipeNormalized';
+import { z, type ZodError } from 'zod/v4';
 import { type $ZodFlattenedError } from 'zod/v4/core';
+import { fractionToNumber, type MeasurementUnitType } from './measurements';
 
 export const splitAmountAndRest = (input: string): [string, string] => {
   const parts = input.split(' ');
@@ -58,3 +60,63 @@ export class IngredientValidator {
     }
   }
 }
+
+export const createIngredientDataHelper = (params: {
+  stringValue?: string;
+  dto?: CreateIngredientDto;
+}): NormalizedIngredient => {
+  if (typeof params.stringValue === 'string') {
+    const stringValue = params.stringValue;
+    const result = ingredientRowArraySchema.safeParse(
+      params.stringValue.trim().split(' '),
+    );
+    const error = result.error ? z.flattenError(result.error) : undefined;
+    const dto = result.data ?? ({} as CreateIngredientDto);
+    return { dto, stringValue, error };
+  } else if (params.dto) {
+    const dto = params.dto;
+    const stringValue = `${dto.amount} ${dto.unit} ${dto.name}`;
+    return { dto, stringValue, error: undefined };
+  }
+  throw new Error('Please use 1 of the params');
+};
+
+export const updateIngredientAmount = (
+  amount: string,
+  dto?: CreateIngredientDto,
+): NormalizedIngredient => {
+  let newAmount = fractionToNumber(amount);
+  const isFraction = !Number.isNaN(newAmount);
+  if (!isFraction) {
+    newAmount = parseInt(amount);
+  }
+
+  let newDto: NormalizedIngredient;
+  if (dto) {
+    newDto = {
+      dto: {
+        ...dto,
+        isFraction,
+        amount: newAmount,
+      },
+      stringValue: `${newAmount} ${dto.unit} ${dto.name}`,
+      error: undefined,
+    };
+  } else {
+    newDto = createIngredientDataHelper({ stringValue: amount });
+  }
+
+  return newDto;
+};
+
+export const updateIngredientMeasurementUnit = (
+  measurementUnit: MeasurementUnitType,
+  dto: CreateIngredientDto,
+): NormalizedIngredient => {
+  const newDto: CreateIngredientDto = {
+    ...dto,
+    unit: measurementUnit,
+  };
+  const stringValue = `${newDto.amount} ${newDto.unit} ${newDto.name}`;
+  return { dto: newDto, stringValue, error: undefined };
+};

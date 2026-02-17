@@ -120,6 +120,25 @@ const NormalizedIngredientSchema = z.object({
     .optional(),
 });
 
+// const NormalizedIngredientSchema = z.object({
+//   amount: z.object({
+//     display: z.string(),
+//     value: IngredientInputSchema.shape.amount,
+//     errors: z.array(z.string()).optional(),
+//   }),
+//   isFraction: IngredientInputSchema.shape.isFraction,
+//   unit: z.object({
+//     display: z.string(),
+//     value: IngredientInputSchema.shape.unit,
+//     errors: z.array(z.string()).optional(),
+//   }),
+//   name: z.object({
+//     display: z.string(),
+//     value: IngredientInputSchema.shape.name,
+//     errors: z.array(z.string()).optional(),
+//   }),
+// });
+
 const NormalizedStepSchema = z.object({
   id: z.string().optional(),
   instruction: z.string().nullable(),

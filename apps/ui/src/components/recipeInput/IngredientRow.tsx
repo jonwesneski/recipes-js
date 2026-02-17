@@ -3,10 +3,7 @@
 import { Label, mergeCss } from '@repo/design-system'
 import { useMediaQuery } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import {
-  IngredientValidator,
-  splitAmountAndRest,
-} from '@src/utils/ingredientHelper'
+import { IngredientValidator } from '@src/utils/ingredientHelper'
 import { type MeasurementUnitType } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
@@ -67,7 +64,6 @@ interface IIngriedientRowProps {
   placeholder?: string
   value: string
   error?: string
-  onChange: (_keyId: string, _value: string) => void
   onPaste: (_keyId: string, _value: string) => void
   onEnterPressed: (_keyId: string) => void
   onArrowUp: (_keyId: string) => void
@@ -82,7 +78,15 @@ export const IngredientRow = forwardRef<
   const [isFocused, setIsFocused] = useState(false)
   const [dropdownMode, setDropdownMode] = useState<DropdownMode>(null)
   const { width, breakpointPxs } = useMediaQuery()
-  const updateIngredient = useRecipeStore((state) => state.updateIngredient)
+  const {
+    updateIngredient,
+    updateIngredientAmount,
+    updateIngredientMeasurementUnit,
+  } = useRecipeStore((state) => ({
+    updateIngredient: state.updateIngredient,
+    updateIngredientAmount: state.updateIngredientAmount,
+    updateIngredientMeasurementUnit: state.updateIngredientMeasurementUnit,
+  }))
 
   useImperativeHandle(ref, () => ({
     getElement: () => textareaRef.current,
@@ -123,22 +127,16 @@ export const IngredientRow = forwardRef<
   }
 
   const handleAmountOnChange = (value: string): void => {
-    const items = splitAmountAndRest(props.value)
+    //const items = splitAmountAndRest(props.value)
     // todo: still need to consider cursor position
-    const cursorIndex = textareaRef?.current?.selectionStart ?? 0
-    items[0] = value
-    updateIngredient(props.ingredientId, items.join(' '))
+    const cursorIndex = textareaRef.current?.selectionStart ?? 0
+    console.log({ cursorIndex })
+    //items[0] = value
+    updateIngredientAmount(props.ingredientId, value)
   }
 
   const handleMeasurementOnChange = (value: MeasurementUnitType): void => {
-    const items = props.value.split(' ')
-    if (fractionRegex.test(items[1])) {
-      items[2] = value
-    } else {
-      items[1] = value
-    }
-
-    updateIngredient(props.ingredientId, items.join(' '))
+    updateIngredientMeasurementUnit(props.ingredientId, value)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -184,14 +182,14 @@ export const IngredientRow = forwardRef<
     switch (inputType) {
       case 'insertText':
         _handleShowPopUp(ingredientValidator)
-        props.onChange(props.ingredientId, event.currentTarget.value)
+        updateIngredient(props.ingredientId, event.currentTarget.value)
         break
       case 'insertFromPaste':
         props.onPaste(props.ingredientId, event.currentTarget.value)
         break
       case 'deleteContentBackward':
         _handleShowPopUp(ingredientValidator)
-        props.onChange(props.ingredientId, event.currentTarget.value)
+        updateIngredient(props.ingredientId, event.currentTarget.value)
         break
       default:
         console.log(`Unsupported input type: ${inputType}`)

@@ -13,7 +13,12 @@ import type {
   RecipeResponseServingUnit,
 } from '@repo/codegen/model';
 import { roundToDecimal } from '@src/utils/calculate';
-import { IngredientValidator } from '@src/utils/ingredientHelper';
+import {
+  IngredientValidator,
+  updateIngredientAmount,
+  updateIngredientMeasurementUnit,
+} from '@src/utils/ingredientHelper';
+import { type MeasurementUnitType } from '@src/utils/measurements';
 import { nutritionalFactsConst } from '@src/utils/nutritionalFacts';
 import type {
   NormalizedIngredient,
@@ -54,6 +59,11 @@ export type RecipeActions = {
   addIngredient: (_stepId: string) => void;
   removeIngredient: (_stepId: string, _ingredientId: string) => void;
   updateIngredient: (_keyId: string, _ingredient: string) => void;
+  updateIngredientAmount: (_keyId: string, _amount: string) => void;
+  updateIngredientMeasurementUnit: (
+    _keyId: string,
+    _measurementUnit: MeasurementUnitType,
+  ) => void;
   setInstructions: (_keyId: string, _instructions: string) => void;
   setStepImage: (_stepId: string, _image: string | null) => void;
   setNutritionalFacts: (_value: NutritionalFactsResponse) => void;
@@ -383,6 +393,29 @@ export const createRecipeStore = (
             state.ingredients[id].stringValue = ingredient.stringValue;
             state.ingredients[id].dto = ingredient.dto;
             state.ingredients[id].error = ingredient.error;
+            return { ingredients: { ...state.ingredients } };
+          });
+        },
+        updateIngredientAmount: (id: string, amount: string) => {
+          set((state) => {
+            const ingredient = updateIngredientAmount(
+              amount,
+              state.ingredients[id].dto,
+            );
+            state.ingredients[id] = ingredient;
+            return { ingredients: { ...state.ingredients } };
+          });
+        },
+        updateIngredientMeasurementUnit: (
+          id: string,
+          measurementUnit: MeasurementUnitType,
+        ) => {
+          set((state) => {
+            const ingredient = updateIngredientMeasurementUnit(
+              measurementUnit,
+              state.ingredients[id].dto,
+            );
+            state.ingredients[id] = ingredient;
             return { ingredients: { ...state.ingredients } };
           });
         },
