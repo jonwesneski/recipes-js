@@ -2,6 +2,7 @@
 
 import { mergeCss, type ClassValue } from '@repo/design-system'
 import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provider'
+import { ingredientDisplayString } from '@src/utils/ingredientHelper'
 import { withRetry } from '@src/utils/withRetry'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { IngredientRow, type IngredientRowHandle } from './IngredientRow'
@@ -134,10 +135,10 @@ export const IngredientsTextArea = forwardRef<
             }
           }}
           placeholder={placeholderSplit[i]}
-          value={ingredients[id].stringValue}
+          value={ingredientDisplayString(ingredients[id])}
           error={
-            ingredients[id].error?.fieldErrors.amount?.[0] ??
-            ingredients[id].error?.fieldErrors.name?.[0]
+            ingredients[id].amount.errors?.[0] ??
+            ingredients[id].name.errors?.[0]
           }
           // focusOnMount move this logic to step list component pass ref in callback?
           onPaste={handleOnPaste}

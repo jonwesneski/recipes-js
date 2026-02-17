@@ -26,19 +26,19 @@ const createUniqueIngredient = (
   const uniqueIngredients: UniqueIngredientsType = {}
   Object.values(ingredients).forEach((ing) => {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- not true
-    if (uniqueIngredients[ing.dto.name]) {
-      uniqueIngredients[ing.dto.name] = {
+    if (uniqueIngredients[ing.name.value]) {
+      uniqueIngredients[ing.name.value] = {
         ...determineUsersAmountUnit(
-          ing.dto.amount,
-          ing.dto.unit,
+          ing.amount.value,
+          ing.unit.value,
           measurementFormat,
         ),
-        isFraction: ing.dto.isFraction,
+        isFraction: ing.isFraction,
       }
     } else {
-      uniqueIngredients[ing.dto.name].amount += determineUsersAmountUnit(
-        ing.dto.amount,
-        ing.dto.unit,
+      uniqueIngredients[ing.name.value].amount += determineUsersAmountUnit(
+        ing.amount.value,
+        ing.unit.value,
         measurementFormat,
       ).amount
     }

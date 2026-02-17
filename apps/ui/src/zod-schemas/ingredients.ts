@@ -1,10 +1,8 @@
 import { z } from 'zod/v4';
 
-import type {
-  CreateIngredientDto,
-  IngredientResponseUnit,
-} from '@repo/codegen/model';
+import type { IngredientResponseUnit } from '@repo/codegen/model';
 import { fractionToNumber, measurementUnits } from '@src/utils/measurements';
+import { type NormalizedIngredient } from './recipeNormalized';
 
 // 1/222 or 1 1/222
 export const fractionRegex =
@@ -18,7 +16,7 @@ export const ingredientRowArraySchema = z
     let amount = '';
     let unitIndex = 1;
     // 1 or 1.5
-    const possibleNumber = parseInt(context.value[0]);
+    const possibleNumber = parseFloat(context.value[0]);
     // 1/2 or 1 1/2
     const possibleFraction = `${context.value[0]} ${context.value[1]}`;
     const isFraction = fractionRegex.test(possibleFraction);
@@ -74,11 +72,21 @@ export const ingredientRowArraySchema = z
     if (isFraction) {
       amount = fractionToNumber(arg[0]);
     }
-    const ingredient: CreateIngredientDto = {
-      amount,
+
+    const ingredient: NormalizedIngredient = {
+      amount: {
+        value: amount,
+        display: arg[0],
+      },
       isFraction,
-      unit: arg[1] ? (arg[1] as IngredientResponseUnit) : null,
-      name: arg[2],
+      unit: {
+        value: arg[1] as IngredientResponseUnit | null,
+        display: arg[1] ?? '',
+      },
+      name: {
+        value: arg[2],
+        display: arg[2],
+      },
     };
     return ingredient;
   });

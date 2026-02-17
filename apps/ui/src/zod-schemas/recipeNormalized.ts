@@ -6,6 +6,7 @@ import {
   MealTypeSchema,
   ProteinTypeSchema,
 } from '@repo/zod-schemas';
+import { determineAmountFormat } from '@src/utils/measurements';
 import { z } from 'zod/v4';
 
 const MeasurementUnitSchema = z.enum([
@@ -104,40 +105,23 @@ const RecipeInputSchema = z.object({
 const NormalizedNutritionalFactsSchema = NutritionalFactsInputSchema;
 
 const NormalizedIngredientSchema = z.object({
-  dto: IngredientInputSchema,
-  stringValue: z.string(),
-  // $ZodFlattenedError<CreateIngredientDto>
-  error: z
-    .object({
-      formErrors: z.array(z.string()),
-      fieldErrors: z.object({
-        name: z.array(z.string()).optional(),
-        amount: z.array(z.string()).optional(),
-        isFraction: z.array(z.string()).optional(),
-        unit: z.array(z.string()).optional(),
-      }),
-    })
-    .optional(),
+  amount: z.object({
+    display: z.string(),
+    value: IngredientInputSchema.shape.amount,
+    errors: z.array(z.string()).optional(),
+  }),
+  isFraction: IngredientInputSchema.shape.isFraction,
+  unit: z.object({
+    display: z.string(),
+    value: IngredientInputSchema.shape.unit,
+    errors: z.array(z.string()).optional(),
+  }),
+  name: z.object({
+    display: z.string(),
+    value: IngredientInputSchema.shape.name,
+    errors: z.array(z.string()).optional(),
+  }),
 });
-
-// const NormalizedIngredientSchema = z.object({
-//   amount: z.object({
-//     display: z.string(),
-//     value: IngredientInputSchema.shape.amount,
-//     errors: z.array(z.string()).optional(),
-//   }),
-//   isFraction: IngredientInputSchema.shape.isFraction,
-//   unit: z.object({
-//     display: z.string(),
-//     value: IngredientInputSchema.shape.unit,
-//     errors: z.array(z.string()).optional(),
-//   }),
-//   name: z.object({
-//     display: z.string(),
-//     value: IngredientInputSchema.shape.name,
-//     errors: z.array(z.string()).optional(),
-//   }),
-// });
 
 const NormalizedStepSchema = z.object({
   id: z.string().optional(),
@@ -195,11 +179,24 @@ export const transformRecipeToNormalized = (
     const ingredientIds = step.ingredients.map((ing, ingIndex) => {
       const ingredientId = `ing-${stepId}-${ingIndex}`;
       ingredientsRecord[ingredientId] = {
-        dto: {
-          ...ing,
-          id: ingredientId,
+        amount: {
+          value: ing.amount,
+          display: determineAmountFormat(
+            ing.amount,
+            1,
+            ing.isFraction,
+            'default',
+          ),
         },
-        stringValue: `${ing.amount} ${ing.unit ?? ''} ${ing.name}`.trim(),
+        isFraction: ing.isFraction,
+        unit: {
+          value: ing.unit,
+          display: ing.unit ?? '',
+        },
+        name: {
+          value: ing.name,
+          display: ing.name,
+        },
       };
       return ingredientId;
     });

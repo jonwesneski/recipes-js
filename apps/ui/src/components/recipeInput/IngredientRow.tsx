@@ -3,7 +3,7 @@
 import { Label, mergeCss } from '@repo/design-system'
 import { useMediaQuery } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import { IngredientValidator } from '@src/utils/ingredientHelper'
+import { hasIngredientErrors, parseIngredientString } from '@src/utils/ingredientHelper'
 import { type MeasurementUnitType } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
@@ -176,20 +176,18 @@ export const IngredientRow = forwardRef<
 
   const handleInput = (event: React.InputEvent<HTMLTextAreaElement>) => {
     const inputType = event.nativeEvent.inputType
-    const ingredientValidator = new IngredientValidator({
-      stringValue: event.currentTarget.value,
-    })
+    const value = event.currentTarget.value
     switch (inputType) {
       case 'insertText':
-        _handleShowPopUp(ingredientValidator)
-        updateIngredient(props.ingredientId, event.currentTarget.value)
+        _handleShowPopUp(value)
+        updateIngredient(props.ingredientId, value)
         break
       case 'insertFromPaste':
-        props.onPaste(props.ingredientId, event.currentTarget.value)
+        props.onPaste(props.ingredientId, value)
         break
       case 'deleteContentBackward':
-        _handleShowPopUp(ingredientValidator)
-        updateIngredient(props.ingredientId, event.currentTarget.value)
+        _handleShowPopUp(value)
+        updateIngredient(props.ingredientId, value)
         break
       default:
         console.log(`Unsupported input type: ${inputType}`)
@@ -210,9 +208,9 @@ export const IngredientRow = forwardRef<
     return null
   }
 
-  const _handleShowPopUp = (ingredientValidator: IngredientValidator) => {
-    const fieldErrors = ingredientValidator.error?.fieldErrors
-    if (!fieldErrors) {
+  const _handleShowPopUp = (value: string) => {
+    const parsed = parseIngredientString(value)
+    if (!hasIngredientErrors(parsed)) {
       setDropdownMode(_getDropdownMode())
     }
   }
