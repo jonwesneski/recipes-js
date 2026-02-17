@@ -2,13 +2,13 @@
 import { type ClassValue, mergeCss } from '@repo/design-system'
 import { type MeasurementUnitType } from '@src/utils/measurements'
 import { type CSSProperties, useEffect, useRef } from 'react'
-import { IngredientsAmountDropdown } from './IngredientsAmountDropdown'
-import { IngredientsMeasurementPopUp } from './IngredientsMeasurementPopup'
+import { IngredientAmountDropdown } from './IngredientAmountDropdown'
+import { IngredientMeasurementPopUp } from './IngredientMeasurementPopup'
 
 export const dropDownModes = ['amount', 'measurement'] as const
 export type DropdownMode = (typeof dropDownModes)[number] | null
 
-interface IngredientsDropdownProps {
+interface IngredientDropdownProps {
   mode: DropdownMode
   value: string
   top?: number
@@ -20,7 +20,7 @@ interface IngredientsDropdownProps {
   className?: ClassValue
   style?: CSSProperties
 }
-export const IngredientsDropdown = (props: IngredientsDropdownProps) => {
+export const IngredientDropdown = (props: IngredientDropdownProps) => {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -68,13 +68,13 @@ export const IngredientsDropdown = (props: IngredientsDropdownProps) => {
         }}
       >
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
-          <IngredientsAmountDropdown
+          <IngredientAmountDropdown
             value={props.value}
             onChange={props.onAmountChange}
           />
         </div>
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
-          <IngredientsMeasurementPopUp onClick={props.onMeasurementChange} />
+          <IngredientMeasurementPopUp onClick={props.onMeasurementChange} />
         </div>
       </div>
       <div className="flex gap-2 pt-2">

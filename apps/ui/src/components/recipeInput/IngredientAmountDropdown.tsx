@@ -3,12 +3,12 @@
 import { mergeCss } from '@repo/design-system'
 import { useState } from 'react'
 
-interface IngredientsAmountDropdownProps {
+interface IngredientAmountDropdownProps {
   value: string
   onChange: (_value: string) => void
 }
-export const IngredientsAmountDropdown = (
-  props: IngredientsAmountDropdownProps,
+export const IngredientAmountDropdown = (
+  props: IngredientAmountDropdownProps,
 ) => {
   const [values, setValues] = useState<string[]>(props.value.split(''))
   const spaceIndex = values.findIndex((v) => v === ' ')
@@ -24,6 +24,12 @@ export const IngredientsAmountDropdown = (
 
   const _addCharacter = (value: string) => {
     values.push(value)
+    setValues([...values])
+    props.onChange(values.join(''))
+  }
+
+  const _removeCharacter = () => {
+    values.pop()
     setValues([...values])
     props.onChange(values.join(''))
   }
@@ -96,12 +102,7 @@ export const IngredientsAmountDropdown = (
           'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'bg-text/50 text-background/75': !startsWithNonZero },
         )}
-        onClick={() =>
-          setValues((prev) => {
-            prev.pop()
-            return [...prev]
-          })
-        }
+        onClick={_removeCharacter}
       >
         ⌫
       </button>

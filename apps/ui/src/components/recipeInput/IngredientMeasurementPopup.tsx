@@ -5,11 +5,11 @@ import {
   type MeasurementUnitType,
 } from '@src/utils/measurements'
 
-interface IIngredientsMeasurementPopUpProps {
+interface IngredientMeasurementPopUpProps {
   onClick: (_value: MeasurementUnitType) => void
 }
-export const IngredientsMeasurementPopUp = (
-  props: IIngredientsMeasurementPopUpProps,
+export const IngredientMeasurementPopUp = (
+  props: IngredientMeasurementPopUpProps,
 ) => {
   return (
     <div className="grid grid-cols-4 gap-3">

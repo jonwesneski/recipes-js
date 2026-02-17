@@ -23,6 +23,7 @@ const splitIngredientDisplay = (
     pos += words[i].length;
     if (i < amountWordCount - 1) pos++; // space between fraction words
   }
+
   // Include the trailing space after amount (if the user typed one)
   if (input[pos] === ' ') pos++;
   const amountDisplay = input.slice(0, pos);
@@ -40,12 +41,10 @@ const splitIngredientDisplay = (
 };
 
 export const parseIngredientString = (input: string): NormalizedIngredient => {
-  // Validate with trimmed input (consistent behavior, no trailing-space errors)
   const trimmed = input.trim();
   const words = trimmed.split(' ');
   const result = ingredientRowArraySchema.safeParse(words);
 
-  // Always extract display from raw input (preserves trailing spaces)
   const { amountDisplay, unitDisplay, nameDisplay } = splitIngredientDisplay(
     input.trimStart(),
   );

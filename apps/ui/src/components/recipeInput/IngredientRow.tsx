@@ -12,9 +12,9 @@ import { fractionRegex } from '@src/zod-schemas'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import {
   dropDownModes,
-  IngredientsDropdown,
+  IngredientDropdown,
   type DropdownMode,
-} from './IngredientsDropdown'
+} from './IngredientDropdown'
 
 type PositionType = { row: number; column: number }
 const getCaretPosition = (element: HTMLTextAreaElement) => {
@@ -274,7 +274,7 @@ export const IngredientRow = forwardRef<
           {props.error}
         </div>
       ) : null}
-      <IngredientsDropdown
+      <IngredientDropdown
         mode={dropdownMode}
         value={props.value.split(' ')[0] || ''}
         top={xAndY.y}
