@@ -84,8 +84,8 @@ export const ingredientRowArraySchema = z
         display: arg[1] ?? '',
       },
       name: {
-        value: arg[2],
-        display: arg[2],
+        value: arg[2] ?? '',
+        display: arg[2] ?? '',
       },
     };
     return ingredient;

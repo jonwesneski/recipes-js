@@ -5,31 +5,60 @@ import { z } from 'zod/v4';
 import { fractionToNumber, type MeasurementUnitType } from './measurements';
 
 /**
- * Positionally splits ingredient words into amount, unit, and name display parts.
- * This always produces display values regardless of validation.
+ * Extracts display substrings directly from the raw input, preserving
+ * trailing spaces so the textarea value matches exactly what the user typed.
+ *
+ * Each section's display includes its trailing space (if present), so
+ * concatenating all three reproduces the original input.
  */
-const splitIngredientWords = (
-  words: string[],
-): { amountDisplay: string; unitIndex: number } => {
-  // If the second word contains '/' it's likely a fraction part (even invalid like "1/")
-  if (words.length >= 2 && words[1]?.includes('/')) {
-    return { amountDisplay: `${words[0]} ${words[1]}`, unitIndex: 2 };
+const splitIngredientDisplay = (
+  input: string,
+): { amountDisplay: string; unitDisplay: string; nameDisplay: string } => {
+  const words = input.split(' ');
+  const amountWordCount =
+    words.length >= 2 && words[1]?.includes('/') ? 2 : 1;
+
+  // Walk through the raw input using word lengths to find section boundaries
+  let pos = 0;
+  for (let i = 0; i < amountWordCount && i < words.length; i++) {
+    pos += words[i].length;
+    if (i < amountWordCount - 1) pos++; // space between fraction words
   }
-  return { amountDisplay: words[0] ?? '', unitIndex: 1 };
+  // Include the trailing space after amount (if the user typed one)
+  if (input[pos] === ' ') pos++;
+  const amountDisplay = input.slice(0, pos);
+
+  // Unit section
+  const unitStart = pos;
+  pos += (words[amountWordCount] ?? '').length;
+  if (input[pos] === ' ') pos++;
+  const unitDisplay = input.slice(unitStart, pos);
+
+  // Name section: everything remaining
+  const nameDisplay = input.slice(pos);
+
+  return { amountDisplay, unitDisplay, nameDisplay };
 };
 
 export const parseIngredientString = (input: string): NormalizedIngredient => {
-  const words = input.trim().split(' ');
+  // Validate with trimmed input (consistent behavior, no trailing-space errors)
+  const trimmed = input.trim();
+  const words = trimmed.split(' ');
   const result = ingredientRowArraySchema.safeParse(words);
 
-  if (result.success) {
-    return result.data;
-  }
+  // Always extract display from raw input (preserves trailing spaces)
+  const { amountDisplay, unitDisplay, nameDisplay } = splitIngredientDisplay(
+    input.trimStart(),
+  );
 
-  // Even on error, compute display values from the raw words
-  const { amountDisplay, unitIndex } = splitIngredientWords(words);
-  const unitDisplay = words[unitIndex] ?? '';
-  const nameDisplay = words.slice(unitIndex + 1).join(' ');
+  if (result.success) {
+    return {
+      amount: { value: result.data.amount.value, display: amountDisplay },
+      isFraction: result.data.isFraction,
+      unit: { value: result.data.unit.value, display: unitDisplay },
+      name: { value: result.data.name.value ?? '', display: nameDisplay },
+    };
+  }
 
   const errors = z.flattenError(result.error);
 
@@ -46,7 +75,7 @@ export const parseIngredientString = (input: string): NormalizedIngredient => {
       errors: errors.fieldErrors.unit,
     },
     name: {
-      value: nameDisplay,
+      value: nameDisplay.trim(),
       display: nameDisplay,
       errors: errors.fieldErrors.name,
     },
@@ -61,7 +90,7 @@ export const emptyIngredient = (): NormalizedIngredient => ({
 });
 
 export const ingredientDisplayString = (ing: NormalizedIngredient): string =>
-  `${ing.amount.display} ${ing.unit.display} ${ing.name.display}`.trim();
+  `${ing.amount.display}${ing.unit.display}${ing.name.display}`;
 
 export const toCreateIngredientDto = (
   ing: NormalizedIngredient,
@@ -90,7 +119,7 @@ export const updateIngredientAmountField = (
   }
   return {
     ...ing,
-    amount: { value: newAmount, display: amount },
+    amount: { value: newAmount, display: amount + ' ' },
     isFraction,
   };
 };
@@ -100,5 +129,6 @@ export const updateIngredientUnitField = (
   ing: NormalizedIngredient,
 ): NormalizedIngredient => ({
   ...ing,
-  unit: { value: unit, display: unit },
+  amount: { ...ing.amount, display: ing.amount.display.trimEnd() + ' ' },
+  unit: { value: unit, display: unit + ' ' },
 });
