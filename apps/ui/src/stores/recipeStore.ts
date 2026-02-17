@@ -498,8 +498,8 @@ export const createRecipeStore = (
             base64Image: imageSrc?.split(',')[1] ?? null,
             steps: recipe.stepIds.map((s) => {
               return {
-                ingredients: recipe.steps[s].ingredientIds.map(
-                  (i) => toCreateIngredientDto(recipe.ingredients[i]),
+                ingredients: recipe.steps[s].ingredientIds.map((i) =>
+                  toCreateIngredientDto(recipe.ingredients[i]),
                 ),
                 instruction: recipe.steps[s].instruction,
                 base64Image: recipe.steps[s].imageUrl?.split(',')[1] ?? null,
@@ -513,8 +513,8 @@ export const createRecipeStore = (
           const { steps, ingredients, stepIds } = get();
           return stepIds.map((s) => {
             return {
-              ingredients: steps[s].ingredientIds.map(
-                (i) => toCreateIngredientDto(ingredients[i]),
+              ingredients: steps[s].ingredientIds.map((i) =>
+                toCreateIngredientDto(ingredients[i]),
               ),
               instruction: steps[s].instruction,
             };
@@ -527,8 +527,8 @@ export const createRecipeStore = (
             description,
             steps: stepIds.map((s) => {
               return {
-                ingredients: steps[s].ingredientIds.map(
-                  (i) => toCreateIngredientDto(ingredients[i]),
+                ingredients: steps[s].ingredientIds.map((i) =>
+                  toCreateIngredientDto(ingredients[i]),
                 ),
                 instruction: steps[s].instruction,
               };

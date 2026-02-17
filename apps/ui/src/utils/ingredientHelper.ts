@@ -15,8 +15,7 @@ const splitIngredientDisplay = (
   input: string,
 ): { amountDisplay: string; unitDisplay: string; nameDisplay: string } => {
   const words = input.split(' ');
-  const amountWordCount =
-    words.length >= 2 && words[1]?.includes('/') ? 2 : 1;
+  const amountWordCount = words.length >= 2 && words[1]?.includes('/') ? 2 : 1;
 
   // Walk through the raw input using word lengths to find section boundaries
   let pos = 0;
@@ -56,7 +55,7 @@ export const parseIngredientString = (input: string): NormalizedIngredient => {
       amount: { value: result.data.amount.value, display: amountDisplay },
       isFraction: result.data.isFraction,
       unit: { value: result.data.unit.value, display: unitDisplay },
-      name: { value: result.data.name.value ?? '', display: nameDisplay },
+      name: { value: result.data.name.value, display: nameDisplay },
     };
   }
 
@@ -112,14 +111,14 @@ export const updateIngredientAmountField = (
   amount: string,
   ing: NormalizedIngredient,
 ): NormalizedIngredient => {
-  let newAmount = fractionToNumber(amount);
+  let newAmount = fractionToNumber(amount.trim());
   const isFraction = !Number.isNaN(newAmount);
   if (!isFraction) {
-    newAmount = parseFloat(amount);
+    newAmount = parseFloat(amount.trim());
   }
   return {
     ...ing,
-    amount: { value: newAmount, display: amount + ' ' },
+    amount: { value: newAmount, display: amount },
     isFraction,
   };
 };
@@ -129,6 +128,6 @@ export const updateIngredientUnitField = (
   ing: NormalizedIngredient,
 ): NormalizedIngredient => ({
   ...ing,
-  amount: { ...ing.amount, display: ing.amount.display.trimEnd() + ' ' },
-  unit: { value: unit, display: unit + ' ' },
+  amount: { ...ing.amount, display: `${ing.amount.display.trimEnd()} ` },
+  unit: { value: unit, display: `${unit} ` },
 });

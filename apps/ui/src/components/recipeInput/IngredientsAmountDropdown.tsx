@@ -23,11 +23,9 @@ export const IngredientsAmountDropdown = (
     hasDecimal || (hasFraction && Boolean(values[fractionIndex + 1]))
 
   const _addCharacter = (value: string) => {
-    setValues((prev) => {
-      prev.push(value)
-      props.onChange(prev.join(''))
-      return [...prev]
-    })
+    values.push(value)
+    setValues([...values])
+    props.onChange(values.join(''))
   }
 
   const handleOnNumber = (value: string) => {

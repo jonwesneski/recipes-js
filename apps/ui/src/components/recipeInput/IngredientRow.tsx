@@ -3,7 +3,10 @@
 import { Label, mergeCss } from '@repo/design-system'
 import { useMediaQuery } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
-import { hasIngredientErrors, parseIngredientString } from '@src/utils/ingredientHelper'
+import {
+  hasIngredientErrors,
+  parseIngredientString,
+} from '@src/utils/ingredientHelper'
 import { type MeasurementUnitType } from '@src/utils/measurements'
 import { fractionRegex } from '@src/zod-schemas'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
@@ -194,7 +197,7 @@ export const IngredientRow = forwardRef<
     }
   }
 
-  const _getDropdownMode = (): DropdownMode => {
+  const _determineDropdownMode = (): DropdownMode => {
     if (!textareaRef.current) return null
     const position = getCaretPosition(textareaRef.current)
     const items = props.value.split(' ')
@@ -211,13 +214,15 @@ export const IngredientRow = forwardRef<
   const _handleShowPopUp = (value: string) => {
     const parsed = parseIngredientString(value)
     if (!hasIngredientErrors(parsed)) {
-      setDropdownMode(_getDropdownMode())
+      setDropdownMode(_determineDropdownMode())
     }
   }
 
   const handleFocused = (): void => {
     setIsFocused(true)
-    setDropdownMode(_getDropdownMode())
+    if (!dropdownMode) {
+      setDropdownMode(_determineDropdownMode())
+    }
   }
 
   return (
@@ -246,7 +251,6 @@ export const IngredientRow = forwardRef<
           value={props.value}
           onSelect={handleFocused}
           onBlur={() => {
-            console.log('000000')
             if (dropdownMode === null) {
               setIsFocused(false)
             }
