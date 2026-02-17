@@ -21,9 +21,12 @@ import {
   getUsersControllerUserV1ResponseMock,
   getUsersMock,
 } from '@repo/codegen/mswUsers';
-import { ws } from 'msw';
+import { http, ws } from 'msw';
 
 const websocketMock = ws.link(/^ws:\/\/localhost:3001\/socket\.io\/.*/);
+
+// Handles warning message when testing in jest
+const socketIoHandshake = http.get(/\/socket\.io\/.*/, () => Response.json({}));
 
 const recipesList = getRecipesControllerRecipesListV1ResponseMock();
 recipesList.data.forEach((r) => {
@@ -44,6 +47,7 @@ followersList.data.forEach((f) => {
 });
 
 export default [
+  socketIoHandshake,
   websocketMock.addEventListener('connection', ({ client }) => {
     client.send(
       '0{"sid":"msw-mock-sid","upgrades":[],"pingInterval":25000,"pingTimeout":5000}',
