@@ -5,22 +5,16 @@ import IngredientList from './IngredientList'
 describe('IngredientList', () => {
   const sampleIngredients = {
     '1': {
-      dto: {
-        amount: 1,
-        name: 'apple',
-        unit: 'cups',
-        isFraction: false,
-      },
-      stringValue: '2 cups eggs',
+      amount: { value: 1, display: '1' },
+      isFraction: false,
+      unit: { value: 'cups', display: 'cups' },
+      name: { value: 'apple', display: 'apple' },
     },
     '2': {
-      dto: {
-        amount: 2,
-        name: 'eggs',
-        unit: 'cups',
-        isFraction: false,
-      },
-      stringValue: '2 cups eggs',
+      amount: { value: 2, display: '2' },
+      isFraction: false,
+      unit: { value: 'cups', display: 'cups' },
+      name: { value: 'eggs', display: 'eggs' },
     },
   } as NormalizedRecipe['ingredients']
   it('Lists created', async () => {
@@ -40,7 +34,7 @@ describe('IngredientList', () => {
         },
       },
     )
-    await findByText(sampleIngredients[1].dto.name)
-    await findByText(sampleIngredients[2].dto.name)
+    await findByText(sampleIngredients[1].name.value)
+    await findByText(sampleIngredients[2].name.value)
   })
 })

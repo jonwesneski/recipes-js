@@ -14,7 +14,6 @@ export const RecipeInput = () => {
   const setImage = useRecipeStore((state) => state.setImage)
   const base64Image = useRecipeStore((state) => state.imageSrc)
   const errors = useRecipeStore((state) => state.metadata.errors)
-  console.log('gggg')
 
   useEffect(() => {
     const firstError = Object.keys(errors)[0]

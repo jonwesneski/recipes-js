@@ -13,7 +13,16 @@ import type {
   RecipeResponseServingUnit,
 } from '@repo/codegen/model';
 import { roundToDecimal } from '@src/utils/calculate';
-import { IngredientValidator } from '@src/utils/ingredientsValidator';
+import {
+  emptyIngredient,
+  hasIngredientErrors,
+  ingredientDisplayString,
+  parseIngredientString,
+  toCreateIngredientDto,
+  updateIngredientAmountField,
+  updateIngredientUnitField,
+} from '@src/utils/ingredientHelper';
+import { type MeasurementUnitType } from '@src/utils/measurements';
 import { nutritionalFactsConst } from '@src/utils/nutritionalFacts';
 import type {
   NormalizedIngredient,
@@ -54,6 +63,11 @@ export type RecipeActions = {
   addIngredient: (_stepId: string) => void;
   removeIngredient: (_stepId: string, _ingredientId: string) => void;
   updateIngredient: (_keyId: string, _ingredient: string) => void;
+  updateIngredientAmount: (_keyId: string, _amount: string) => void;
+  updateIngredientMeasurementUnit: (
+    _keyId: string,
+    _measurementUnit: MeasurementUnitType,
+  ) => void;
   setInstructions: (_keyId: string, _instructions: string) => void;
   setStepImage: (_stepId: string, _image: string | null) => void;
   setNutritionalFacts: (_value: NutritionalFactsResponse) => void;
@@ -80,28 +94,17 @@ export type RecipeStore = RecipeState & RecipeActions;
 
 const createStep = (options?: {
   instruction?: string;
-  ingredients?: IngredientValidator[];
+  ingredients?: NormalizedIngredient[];
 }) => {
-  const ingredientValidators = options?.ingredients ?? [
-    new IngredientValidator({ stringValue: '' }),
-  ];
+  const parsedIngredients = options?.ingredients ?? [emptyIngredient()];
   const stepId = crypto.randomUUID();
   const ingredientIds: string[] = Array.from(
-    { length: ingredientValidators.length },
+    { length: parsedIngredients.length },
     () => crypto.randomUUID(),
   );
   const ingredients: Record<string, NormalizedIngredient> =
     ingredientIds.reduce<Record<string, NormalizedIngredient>>((acc, id, i) => {
-      acc[id] = {
-        stringValue: ingredientValidators[i].stringValue,
-        dto: {
-          amount: ingredientValidators[i].dto.amount,
-          unit: ingredientValidators[i].dto.unit,
-          name: ingredientValidators[i].dto.name,
-          isFraction: ingredientValidators[i].dto.isFraction,
-        },
-        error: ingredientValidators[i].error,
-      };
+      acc[id] = parsedIngredients[i];
       return acc;
     }, {});
 
@@ -167,7 +170,7 @@ export const createRecipeStore = (
           state.name !== '' &&
           state.stepIds.every((s) =>
             state.steps[s].ingredientIds.every(
-              (i) => !Object.hasOwn(state.ingredients[i], 'error'),
+              (i) => !hasIngredientErrors(state.ingredients[i]),
             ),
           );
       },
@@ -219,14 +222,7 @@ export const createRecipeStore = (
         addIngredient: (stepId: string) => {
           const id = crypto.randomUUID();
           set((state) => {
-            const ingredient = new IngredientValidator({
-              stringValue: '',
-            });
-            state.ingredients[id] = {
-              dto: ingredient.dto,
-              stringValue: ingredient.stringValue,
-              error: ingredient.error,
-            };
+            state.ingredients[id] = emptyIngredient();
             state.steps[stepId].ingredientIds.push(id);
             return {
               ingredients: { ...state.ingredients },
@@ -246,42 +242,27 @@ export const createRecipeStore = (
               return state;
             }
 
-            const existingStepExistingIngredient = new IngredientValidator({
-              stringValue:
-                state.ingredients[ingredientId].stringValue + ingredients[0][0],
-            });
-            state.ingredients[ingredientId] = {
-              dto: existingStepExistingIngredient.dto,
-              stringValue: existingStepExistingIngredient.stringValue,
-              error: existingStepExistingIngredient.error,
-            };
+            const existingDisplay = ingredientDisplayString(
+              state.ingredients[ingredientId],
+            );
+            state.ingredients[ingredientId] = parseIngredientString(
+              existingDisplay + ingredients[0][0],
+            );
 
             const existingStepNewIngredients = ingredients[0]
               .filter((_, i) => i > 0)
-              .map(
-                (ing) =>
-                  new IngredientValidator({
-                    stringValue: ing,
-                  }),
-              );
+              .map((ing) => parseIngredientString(ing));
             existingStepNewIngredients.forEach((ing) => {
               const newId = crypto.randomUUID();
-              state.ingredients[newId] = {
-                dto: ing.dto,
-                stringValue: ing.stringValue,
-                error: ing.error,
-              };
+              state.ingredients[newId] = ing;
               state.steps[stepId].ingredientIds.push(newId);
             });
 
             const newStepIds: string[] = [];
             let insertAtIndex = NaN;
             for (let i = 1; i < ingredients.length; i++) {
-              const newIngredients = ingredients[i].map(
-                (ing) =>
-                  new IngredientValidator({
-                    stringValue: ing,
-                  }),
+              const newIngredients = ingredients[i].map((ing) =>
+                parseIngredientString(ing),
               );
               const existingStepId = state.stepIds[stepIdIndex + i];
               if (
@@ -310,18 +291,10 @@ export const createRecipeStore = (
                 // Empty ingredients
                 state.ingredients[
                   state.steps[existingStepId].ingredientIds[0]
-                ] = {
-                  dto: newIngredients[0].dto,
-                  stringValue: newIngredients[0].stringValue,
-                  error: newIngredients[0].error,
-                };
+                ] = newIngredients[0];
                 for (let j = 1; j < newIngredients.length; i++) {
                   const newId = crypto.randomUUID();
-                  state.ingredients[newId] = {
-                    dto: newIngredients[j].dto,
-                    stringValue: newIngredients[j].stringValue,
-                    error: newIngredients[j].error,
-                  };
+                  state.ingredients[newId] = newIngredients[j];
                   state.steps[existingStepId].ingredientIds.push(newId);
                 }
               } else {
@@ -331,11 +304,7 @@ export const createRecipeStore = (
                 }
                 newIngredients.forEach((ing) => {
                   const newId = crypto.randomUUID();
-                  state.ingredients[newId] = {
-                    dto: ing.dto,
-                    stringValue: ing.stringValue,
-                    error: ing.error,
-                  };
+                  state.ingredients[newId] = ing;
                   state.steps[existingStepId].ingredientIds.push(newId);
                 });
               }
@@ -359,25 +328,49 @@ export const createRecipeStore = (
         },
         removeIngredient: (stepId: string, id: string) => {
           set((state) => {
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
-            delete state.ingredients[id];
-            state.steps[stepId].ingredientIds = state.steps[
-              stepId
-            ].ingredientIds.filter((ingredientId) => ingredientId !== id);
-            return {
-              ingredients: { ...state.ingredients },
-              steps: { ...state.steps },
-            };
+            // Right now I want at least one indredientId even if it is empty
+            // I may try to handle this differently in the future though
+            if (state.steps[stepId].ingredientIds.length > 1) {
+              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
+              delete state.ingredients[id];
+              state.steps[stepId].ingredientIds = state.steps[
+                stepId
+              ].ingredientIds.filter((ingredientId) => ingredientId !== id);
+              return {
+                ingredients: { ...state.ingredients },
+                steps: { ...state.steps },
+              };
+            }
+
+            // Else, only 1 ingredient, just start over
+            state.ingredients[id] = parseIngredientString('');
+            return { ingredients: { ...state.ingredients } };
           });
         },
         updateIngredient: (id: string, _ingredient: string) => {
           set((state) => {
-            const ingredient = new IngredientValidator({
-              stringValue: _ingredient,
-            });
-            state.ingredients[id].stringValue = ingredient.stringValue;
-            state.ingredients[id].dto = ingredient.dto;
-            state.ingredients[id].error = ingredient.error;
+            state.ingredients[id] = parseIngredientString(_ingredient);
+            return { ingredients: { ...state.ingredients } };
+          });
+        },
+        updateIngredientAmount: (id: string, amount: string) => {
+          set((state) => {
+            state.ingredients[id] = updateIngredientAmountField(
+              amount,
+              state.ingredients[id],
+            );
+            return { ingredients: { ...state.ingredients } };
+          });
+        },
+        updateIngredientMeasurementUnit: (
+          id: string,
+          measurementUnit: MeasurementUnitType,
+        ) => {
+          set((state) => {
+            state.ingredients[id] = updateIngredientUnitField(
+              measurementUnit,
+              state.ingredients[id],
+            );
             return { ingredients: { ...state.ingredients } };
           });
         },
@@ -508,8 +501,8 @@ export const createRecipeStore = (
             base64Image: imageSrc?.split(',')[1] ?? null,
             steps: recipe.stepIds.map((s) => {
               return {
-                ingredients: recipe.steps[s].ingredientIds.map(
-                  (i) => recipe.ingredients[i].dto,
+                ingredients: recipe.steps[s].ingredientIds.map((i) =>
+                  toCreateIngredientDto(recipe.ingredients[i]),
                 ),
                 instruction: recipe.steps[s].instruction,
                 base64Image: recipe.steps[s].imageUrl?.split(',')[1] ?? null,
@@ -523,8 +516,8 @@ export const createRecipeStore = (
           const { steps, ingredients, stepIds } = get();
           return stepIds.map((s) => {
             return {
-              ingredients: steps[s].ingredientIds.map(
-                (i) => ingredients[i].dto,
+              ingredients: steps[s].ingredientIds.map((i) =>
+                toCreateIngredientDto(ingredients[i]),
               ),
               instruction: steps[s].instruction,
             };
@@ -537,8 +530,8 @@ export const createRecipeStore = (
             description,
             steps: stepIds.map((s) => {
               return {
-                ingredients: steps[s].ingredientIds.map(
-                  (i) => ingredients[i].dto,
+                ingredients: steps[s].ingredientIds.map((i) =>
+                  toCreateIngredientDto(ingredients[i]),
                 ),
                 instruction: steps[s].instruction,
               };

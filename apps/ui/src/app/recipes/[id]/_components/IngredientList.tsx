@@ -26,10 +26,10 @@ const IngredientList = (props: IngredientListProps) => {
 
   const handleOnShowConversions = (
     e: React.MouseEvent,
-    ingredient: NormalizedIngredient['dto'],
+    ingredient: NormalizedIngredient,
   ) => {
     e.preventDefault()
-    if (ingredient.unit !== null) {
+    if (ingredient.unit.value !== null) {
       const blocking = true
       showModal(
         ModalMeasurementConversions.name,
@@ -37,9 +37,9 @@ const IngredientList = (props: IngredientListProps) => {
         () => (
           <ModalMeasurementConversions
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it is not null
-            unitType={ingredient.unit! as MeasurementUnitType}
-            amount={roundToDecimal(ingredient.amount * props.scaleFactor, 2)}
-            name={ingredient.name}
+            unitType={ingredient.unit.value! as MeasurementUnitType}
+            amount={roundToDecimal(ingredient.amount.value * props.scaleFactor, 2)}
+            name={ingredient.name.value}
           />
         ),
         {},
@@ -51,8 +51,8 @@ const IngredientList = (props: IngredientListProps) => {
     <ul className={mergeCss('list-disc', props.className)}>
       {ingredientIds.map((id) => {
         const { amount, unit } = determineUsersAmountUnit(
-          ingredients[id].dto.amount,
-          ingredients[id].dto.unit,
+          ingredients[id].amount.value,
+          ingredients[id].unit.value,
           measurementFormat,
         )
         return (
@@ -61,7 +61,7 @@ const IngredientList = (props: IngredientListProps) => {
               {determineAmountFormat(
                 amount,
                 props.scaleFactor,
-                ingredients[id].dto.isFraction,
+                ingredients[id].isFraction,
                 numberFormat,
               )}
             </span>{' '}
@@ -72,12 +72,12 @@ const IngredientList = (props: IngredientListProps) => {
                 className={
                   'inline-block mr-2 underline decoration-dotted underline-offset-4'
                 }
-                onClick={(e) => handleOnShowConversions(e, ingredients[id].dto)}
+                onClick={(e) => handleOnShowConversions(e, ingredients[id])}
               >
                 {unit}
               </a>
             ) : null}
-            {ingredients[id].dto.name}
+            {ingredients[id].name.value}
           </li>
         )
       })}
