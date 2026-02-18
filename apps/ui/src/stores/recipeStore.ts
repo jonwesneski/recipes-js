@@ -341,7 +341,10 @@ export const createRecipeStore = (
                 steps: { ...state.steps },
               };
             }
-            return state;
+
+            // Else, only 1 ingredient, just start over
+            state.ingredients[id] = parseIngredientString('');
+            return { ingredients: { ...state.ingredients } };
           });
         },
         updateIngredient: (id: string, _ingredient: string) => {

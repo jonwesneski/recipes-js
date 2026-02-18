@@ -63,9 +63,10 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
           display: 'flex',
           transform:
             props.mode === 'measurement'
-              ? 'translateX(-100%)'
+              ? 'translateX(calc(-100% - 10px))'
               : 'translateX(0)',
           transition: 'transform 300ms ease-in-out',
+          gap: '10px',
         }}
       >
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
