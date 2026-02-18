@@ -54,6 +54,11 @@ const setCaretColumn = (element: HTMLTextAreaElement, column: number) => {
   element.setSelectionRange(selectionIndex, selectionIndex)
 }
 
+const determineDropdownPosition = (isMd: boolean) => {
+  const result: { x?: number; y?: number } = { x: 0, y: isMd ? 30 : -260 }
+  return result
+}
+
 export interface IngredientRowHandle {
   getElement: () => HTMLTextAreaElement | null
   getValue: () => string | undefined
@@ -116,27 +121,9 @@ export const IngredientRow = forwardRef<
     }
   })
 
-  const xAndY = (() => {
-    const result: { x?: number; y?: number } = { x: undefined, y: undefined }
-    if (textareaRef.current) {
-      let yOffset = NaN
-      const rowIndex = 0 // todo: i might be able to get rid of this
-      if (width >= breakpointPxs.md) {
-        const yMultipler = rowIndex * 10
-        yOffset = 40 + yMultipler
-      } else {
-        const yMultipler = rowIndex * 25
-        yOffset = -170 + yMultipler
-      }
-      const rect = textareaRef.current.getBoundingClientRect()
-      result.x = rect.x
-      result.y = yOffset
-    }
-    return result
-  })()
+  const xAndY = determineDropdownPosition(width >= breakpointPxs.md)
 
   const handleOnModeChange = (mode: DropdownMode) => {
-    console.log('aaa')
     if (textareaRef.current) {
       setCaretColumn(
         textareaRef.current,
@@ -283,31 +270,36 @@ export const IngredientRow = forwardRef<
             x
           </button>
         ) : null}
+
+        {dropdownMode ? (
+          <IngredientDropdown
+            mode={dropdownMode}
+            // todo: I may want to pass more than just amount
+            value={props.value.split(' ')[0] || ''}
+            caretIndex={caretIndexRef.current}
+            top={xAndY.y}
+            left={xAndY.x}
+            onBlur={() => setIsFocused(false)}
+            onAmountChange={handleAmountOnChange}
+            onMeasurementChange={handleMeasurementOnChange}
+            onModeChange={handleOnModeChange}
+            className={mergeCss(
+              'transition-transform duration-300 ease-in scale-y-0',
+              {
+                'scale-y-100': isFocused && dropdownMode !== null,
+              },
+            )}
+            style={{
+              transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',
+            }}
+          />
+        ) : null}
       </div>
       {props.value && props.error && props.error.length > 0 ? (
         <div className="text-text-error text-sm mt-1 bg-transparent">
           {props.error}
         </div>
       ) : null}
-      <IngredientDropdown
-        mode={dropdownMode}
-        // todo: I may want to pass more than just amount
-        value={props.value.split(' ')[0] || ''}
-        caretIndex={caretIndexRef.current}
-        top={xAndY.y}
-        left={xAndY.x}
-        onBlur={() => setIsFocused(false)}
-        onAmountChange={handleAmountOnChange}
-        onMeasurementChange={handleMeasurementOnChange}
-        onModeChange={handleOnModeChange}
-        className={mergeCss('transition-transform duration-300 ease-in', {
-          'scale-y-100': isFocused && dropdownMode !== null,
-          'scale-y-0': !isFocused || dropdownMode === null,
-        })}
-        style={{
-          transformOrigin: width < breakpointPxs.md ? 'bottom' : 'top',
-        }}
-      />
 
       {props.label ? (
         <Label
