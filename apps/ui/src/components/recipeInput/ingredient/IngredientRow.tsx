@@ -286,7 +286,7 @@ export const IngredientRow = forwardRef<
             className={mergeCss(
               'transition-transform duration-300 ease-in scale-y-0',
               {
-                'scale-y-100': isFocused && dropdownMode !== null,
+                'scale-y-100': isFocused,
               },
             )}
             style={{
