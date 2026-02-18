@@ -5,7 +5,7 @@ import { useRecipeStepIngredientsStore } from '@src/providers/recipe-store-provi
 import { ingredientDisplayString } from '@src/utils/ingredientHelper'
 import { withRetry } from '@src/utils/withRetry'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { IngredientRow, type IngredientRowHandle } from './IngredientRow'
+import { IngredientRow, type IngredientRowHandle } from './ingredient'
 
 const placeholder = `0.5 cups fresh basil
 1 1/4 cups peanuts
