@@ -5,6 +5,7 @@ import { useMediaQuery } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import {
   hasIngredientErrors,
+  ingredientDisplayString,
   parseIngredientString,
 } from '@src/utils/ingredientHelper'
 import { type MeasurementUnitType } from '@src/utils/measurements'
@@ -142,6 +143,17 @@ export const IngredientRow = forwardRef<
     updateIngredientMeasurementUnit(props.ingredientId, value)
   }
 
+  const handleNameSelect = (name: string): void => {
+    const parsed = parseIngredientString(props.value)
+    updateIngredient(
+      props.ingredientId,
+      ingredientDisplayString({
+        ...parsed,
+        name: { ...parsed.name, value: name, display: name },
+      }),
+    )
+  }
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     switch (event.key) {
       case 'Enter':
@@ -274,14 +286,15 @@ export const IngredientRow = forwardRef<
         {dropdownMode ? (
           <IngredientDropdown
             mode={dropdownMode}
-            // todo: I may want to pass more than just amount
-            value={props.value.split(' ')[0] || ''}
+            amountValue={props.value.split(' ')[0] || ''}
+            nameValue={parseIngredientString(props.value).name.display.trim()}
             caretIndex={caretIndexRef.current}
             top={xAndY.y}
             left={xAndY.x}
             onBlur={() => setIsFocused(false)}
             onAmountChange={handleAmountOnChange}
             onMeasurementChange={handleMeasurementOnChange}
+            onNameClick={handleNameSelect}
             onModeChange={handleOnModeChange}
             className={mergeCss(
               'transition-transform duration-300 ease-in scale-y-0',
