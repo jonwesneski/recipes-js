@@ -59,12 +59,12 @@ export const IngredientAmountDropdown = (
   }
 
   return (
-    <div className="inline-grid grid-cols-6 gap-[2px] bg-text p-[2px]">
+    <div className="grid grid-cols-6 gap-[2px] bg-text p-[2px] w-full">
       {/* Row 1 */}
       <button
         aria-label="1"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('1')}
       >
         1
@@ -72,7 +72,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="3"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('3')}
       >
         3
@@ -80,7 +80,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="6"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('6')}
       >
         6
@@ -88,7 +88,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="0"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('0')}
       >
         0
@@ -97,7 +97,7 @@ export const IngredientAmountDropdown = (
         aria-label="backspace"
         type="button"
         className={mergeCss(
-          'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'bg-text/50 text-background/75': !atLeastOneDigit },
         )}
         onClick={_removeCharacter}
@@ -109,7 +109,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('4')}
@@ -121,7 +121,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="2"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('2')}
       >
         2
@@ -129,7 +129,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="5"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('5')}
       >
         5
@@ -137,7 +137,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="9"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('9')}
       >
         9
@@ -146,7 +146,7 @@ export const IngredientAmountDropdown = (
         aria-label="space"
         type="button"
         className={mergeCss(
-          'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'bg-text/50 text-background/75': !atLeastOneDigit },
         )}
         onClick={handleOnSpace}
@@ -158,7 +158,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('3')}
@@ -170,7 +170,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('7')}
@@ -182,7 +182,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="4"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('4')}
       >
         4
@@ -190,7 +190,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="8"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('8')}
       >
         8
@@ -200,7 +200,7 @@ export const IngredientAmountDropdown = (
         disabled={hasFraction}
         type="button"
         className={mergeCss(
-          'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'bg-text/50 text-background/75': hasFraction },
         )}
         onClick={handleOnDecimal}
@@ -212,7 +212,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('2')}
@@ -224,7 +224,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('6')}
@@ -236,7 +236,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('9')}
@@ -248,7 +248,7 @@ export const IngredientAmountDropdown = (
       <button
         aria-label="7"
         type="button"
-        className="w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         onClick={() => handleOnNumber('7')}
       >
         7
@@ -259,7 +259,7 @@ export const IngredientAmountDropdown = (
         disabled={hasDecimal}
         type="button"
         className={mergeCss(
-          'bg-text text-background w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'bg-text/50 text-background/75': !atLeastOneDigit },
         )}
         onClick={handleOnFraction}
@@ -271,7 +271,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('1')}
@@ -283,7 +283,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('5')}
@@ -295,7 +295,7 @@ export const IngredientAmountDropdown = (
         disabled={isWhole}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': isWhole },
         )}
         onClick={() => handleOnNumber('8')}
@@ -307,7 +307,7 @@ export const IngredientAmountDropdown = (
         disabled={!enableDenominatorZero}
         type="button"
         className={mergeCss(
-          'w-12 h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
           { 'text-text/25': !enableDenominatorZero },
         )}
         onClick={() => handleOnNumber('0')}
