@@ -19,12 +19,12 @@ export const IngredientNameDropdown = (props: IngredientNameDropdownProps) => {
 
   return (
     <div>
-      <ul className="absolute p-1.5 w-full border">
+      <ul className="absolute w-full border">
         {suggestions?.map((suggestion) => (
           <li key={suggestion}>
             <button
               type="button"
-              className="w-full text-left cursor-pointer hover:bg-text hover:text-background"
+              className="w-full p-1.5 text-left cursor-pointer hover:bg-text hover:text-background"
               onClick={() => props.onClick(suggestion)}
             >
               {suggestion}

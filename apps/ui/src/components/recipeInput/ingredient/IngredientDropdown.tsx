@@ -7,9 +7,9 @@ import { IngredientMeasurementDropdown } from './IngredientMeasurementDropdown'
 import { IngredientNameDropdown } from './IngredientNameDropdown'
 
 export const dropDownModes = ['amount', 'measurement', 'name'] as const
-export type DropdownMode = (typeof dropDownModes)[number] | null
+export type DropdownMode = (typeof dropDownModes)[number]
 
-const transformMap: Record<Exclude<DropdownMode, null>, string> = {
+const transformMap: Record<DropdownMode, string> = {
   amount: 'translateX(0)',
   measurement: 'translateX(calc(-100% - 10px))',
   name: 'translateX(calc(-200% - 20px))',
@@ -47,7 +47,7 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
   }, [])
 
   const moveIndex = (index: number) => {
-    const currentIndex = dropDownModes.indexOf(props.mode ?? 'amount')
+    const currentIndex = dropDownModes.indexOf(props.mode)
     const newIndex =
       (currentIndex + index + dropDownModes.length) % dropDownModes.length
     props.onModeChange(dropDownModes[newIndex])
@@ -70,7 +70,7 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
       <div
         style={{
           display: 'flex',
-          transform: transformMap[props.mode ?? 'amount'],
+          transform: transformMap[props.mode],
           transition: 'transform 300ms ease-in-out',
           gap: '10px',
         }}
