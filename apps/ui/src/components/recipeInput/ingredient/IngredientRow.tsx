@@ -5,7 +5,6 @@ import { useMediaQuery } from '@src/hooks'
 import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import {
   hasIngredientErrors,
-  ingredientDisplayString,
   parseIngredientString,
 } from '@src/utils/ingredientHelper'
 import { type MeasurementUnitType } from '@src/utils/measurements'
@@ -98,10 +97,12 @@ export const IngredientRow = forwardRef<
     updateIngredient,
     updateIngredientAmount,
     updateIngredientMeasurementUnit,
+    updateIngredientName,
   } = useRecipeStore((state) => ({
     updateIngredient: state.updateIngredient,
     updateIngredientAmount: state.updateIngredientAmount,
     updateIngredientMeasurementUnit: state.updateIngredientMeasurementUnit,
+    updateIngredientName: state.updateIngredientName,
   }))
   const currentIngredientString = parseIngredientString(props.value)
 
@@ -145,13 +146,7 @@ export const IngredientRow = forwardRef<
   }
 
   const handleNameSelect = (name: string): void => {
-    updateIngredient(
-      props.ingredientId,
-      ingredientDisplayString({
-        ...currentIngredientString,
-        name: { ...currentIngredientString.name, value: name, display: name },
-      }),
-    )
+    updateIngredientName(props.ingredientId, name)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {

@@ -127,6 +127,13 @@ export const updateIngredientUnitField = (
   ing: NormalizedIngredient,
 ): NormalizedIngredient => ({
   ...ing,
-  amount: { ...ing.amount, display: `${ing.amount.display.trimEnd()} ` },
   unit: { value: unit, display: `${unit} ` },
+});
+
+export const updateIngredientNameField = (
+  name: string,
+  ing: NormalizedIngredient,
+): NormalizedIngredient => ({
+  ...ing,
+  name: { value: name, display: name },
 });
