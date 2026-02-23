@@ -3,19 +3,28 @@ import { type ClassValue, mergeCss } from '@repo/design-system'
 import { type MeasurementUnitType } from '@src/utils/measurements'
 import { type CSSProperties, useEffect, useRef } from 'react'
 import { IngredientAmountDropdown } from './IngredientAmountDropdown'
-import { IngredientMeasurementPopUp } from './IngredientMeasurementPopup'
+import { IngredientMeasurementDropdown } from './IngredientMeasurementDropdown'
+import { IngredientNameDropdown } from './IngredientNameDropdown'
 
-export const dropDownModes = ['amount', 'measurement'] as const
-export type DropdownMode = (typeof dropDownModes)[number] | null
+export const dropDownModes = ['amount', 'measurement', 'name'] as const
+export type DropdownMode = (typeof dropDownModes)[number]
+
+const transformMap: Record<DropdownMode, string> = {
+  amount: 'translateX(0)',
+  measurement: 'translateX(calc(-100% - 10px))',
+  name: 'translateX(calc(-200% - 20px))',
+}
 
 interface IngredientDropdownProps {
   mode: DropdownMode
-  value: string
+  amountValue: string
+  nameValue: string
   caretIndex: number
   top?: number
   left?: number
   onAmountChange: (_value: string, _newCaretIndex: number) => void
   onMeasurementChange: (_value: MeasurementUnitType) => void
+  onNameClick: (_value: string) => void
   onBlur: () => void
   onModeChange: (_mode: DropdownMode) => void
   className?: ClassValue
@@ -38,7 +47,7 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
   }, [])
 
   const moveIndex = (index: number) => {
-    const currentIndex = dropDownModes.indexOf(props.mode ?? 'amount')
+    const currentIndex = dropDownModes.indexOf(props.mode)
     const newIndex =
       (currentIndex + index + dropDownModes.length) % dropDownModes.length
     props.onModeChange(dropDownModes[newIndex])
@@ -61,23 +70,26 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
       <div
         style={{
           display: 'flex',
-          transform:
-            props.mode === 'measurement'
-              ? 'translateX(calc(-100% - 10px))'
-              : 'translateX(0)',
+          transform: transformMap[props.mode],
           transition: 'transform 300ms ease-in-out',
           gap: '10px',
         }}
       >
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
           <IngredientAmountDropdown
-            value={props.value}
+            value={props.amountValue}
             caretIndex={props.caretIndex}
             onChange={props.onAmountChange}
           />
         </div>
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
-          <IngredientMeasurementPopUp onClick={props.onMeasurementChange} />
+          <IngredientMeasurementDropdown onClick={props.onMeasurementChange} />
+        </div>
+        <div style={{ minWidth: '100%', flexShrink: 0 }}>
+          <IngredientNameDropdown
+            value={props.nameValue}
+            onClick={props.onNameClick}
+          />
         </div>
       </div>
       <div className="flex gap-2 pt-2">

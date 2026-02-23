@@ -91,17 +91,20 @@ export const IngredientRow = forwardRef<
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const caretIndexRef = useRef(0)
   const [isFocused, setIsFocused] = useState(false)
-  const [dropdownMode, setDropdownMode] = useState<DropdownMode>(null)
+  const [dropdownMode, setDropdownMode] = useState<DropdownMode | null>(null)
   const { width, breakpointPxs } = useMediaQuery()
   const {
     updateIngredient,
     updateIngredientAmount,
     updateIngredientMeasurementUnit,
+    updateIngredientName,
   } = useRecipeStore((state) => ({
     updateIngredient: state.updateIngredient,
     updateIngredientAmount: state.updateIngredientAmount,
     updateIngredientMeasurementUnit: state.updateIngredientMeasurementUnit,
+    updateIngredientName: state.updateIngredientName,
   }))
+  const currentIngredientString = parseIngredientString(props.value)
 
   useImperativeHandle(ref, () => ({
     getElement: () => textareaRef.current,
@@ -140,6 +143,10 @@ export const IngredientRow = forwardRef<
 
   const handleMeasurementOnChange = (value: MeasurementUnitType): void => {
     updateIngredientMeasurementUnit(props.ingredientId, value)
+  }
+
+  const handleNameSelect = (name: string): void => {
+    updateIngredientName(props.ingredientId, name)
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -182,14 +189,14 @@ export const IngredientRow = forwardRef<
     const value = event.currentTarget.value
     switch (inputType) {
       case 'insertText':
-        _handleShowPopUp(value)
+        _handleShowDropdown(value)
         updateIngredient(props.ingredientId, value)
         break
       case 'insertFromPaste':
         props.onPaste(props.ingredientId, value)
         break
       case 'deleteContentBackward':
-        _handleShowPopUp(value)
+        _handleShowDropdown(value)
         updateIngredient(props.ingredientId, value)
         break
       default:
@@ -197,21 +204,25 @@ export const IngredientRow = forwardRef<
     }
   }
 
-  const _determineDropdownMode = (): DropdownMode => {
+  const _determineDropdownMode = (): DropdownMode | null => {
     if (!textareaRef.current) return null
     const position = getCaretPosition(textareaRef.current)
     const items = props.value.split(' ')
+    const hasFraction = fractionRegex.test(items[1] || '')
     if (position.column === 0) return 'amount'
     if (position.column === 1) {
-      return fractionRegex.test(items[1] || '') ? 'amount' : 'measurement'
+      return hasFraction ? 'amount' : 'measurement'
     }
-    if (position.column === 2 && fractionRegex.test(items[1] || '')) {
+    if (position.column === 2 && hasFraction) {
       return 'measurement'
+    }
+    if (position.column >= 2) {
+      return 'name'
     }
     return null
   }
 
-  const _handleShowPopUp = (value: string) => {
+  const _handleShowDropdown = (value: string) => {
     const parsed = parseIngredientString(value)
     if (!hasIngredientErrors(parsed)) {
       setDropdownMode(_determineDropdownMode())
@@ -222,9 +233,7 @@ export const IngredientRow = forwardRef<
     setIsFocused(true)
     caretIndexRef.current =
       textareaRef.current?.selectionStart ?? props.value.length
-    if (!dropdownMode) {
-      setDropdownMode(_determineDropdownMode())
-    }
+    setDropdownMode(_determineDropdownMode())
   }
 
   return (
@@ -274,14 +283,15 @@ export const IngredientRow = forwardRef<
         {dropdownMode ? (
           <IngredientDropdown
             mode={dropdownMode}
-            // todo: I may want to pass more than just amount
-            value={props.value.split(' ')[0] || ''}
+            amountValue={currentIngredientString.amount.display}
+            nameValue={currentIngredientString.name.display.trim()}
             caretIndex={caretIndexRef.current}
             top={xAndY.y}
             left={xAndY.x}
             onBlur={() => setIsFocused(false)}
             onAmountChange={handleAmountOnChange}
             onMeasurementChange={handleMeasurementOnChange}
+            onNameClick={handleNameSelect}
             onModeChange={handleOnModeChange}
             className={mergeCss(
               'transition-transform duration-300 ease-in scale-y-0',

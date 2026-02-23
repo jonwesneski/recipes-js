@@ -20,6 +20,7 @@ import {
   parseIngredientString,
   toCreateIngredientDto,
   updateIngredientAmountField,
+  updateIngredientNameField,
   updateIngredientUnitField,
 } from '@src/utils/ingredientHelper';
 import { type MeasurementUnitType } from '@src/utils/measurements';
@@ -68,6 +69,7 @@ export type RecipeActions = {
     _keyId: string,
     _measurementUnit: MeasurementUnitType,
   ) => void;
+  updateIngredientName: (_keyId: string, _name: string) => void;
   setInstructions: (_keyId: string, _instructions: string) => void;
   setStepImage: (_stepId: string, _image: string | null) => void;
   setNutritionalFacts: (_value: NutritionalFactsResponse) => void;
@@ -369,6 +371,15 @@ export const createRecipeStore = (
           set((state) => {
             state.ingredients[id] = updateIngredientUnitField(
               measurementUnit,
+              state.ingredients[id],
+            );
+            return { ingredients: { ...state.ingredients } };
+          });
+        },
+        updateIngredientName: (id: string, name: string) => {
+          set((state) => {
+            state.ingredients[id] = updateIngredientNameField(
+              name,
               state.ingredients[id],
             );
             return { ingredients: { ...state.ingredients } };
