@@ -21,6 +21,7 @@ import {
   IngredientDropdown,
   type DropdownMode,
 } from './IngredientDropdown'
+import { IngredientRowProvider } from './IngredientRowProvider'
 
 type PositionType = { row: number; column: number }
 const getCaretPosition = (element: HTMLTextAreaElement) => {
@@ -237,7 +238,18 @@ export const IngredientRow = forwardRef<
   }
 
   return (
-    <>
+    <IngredientRowProvider
+      value={{
+        ingredient: currentIngredientString,
+        caretIndex: caretIndexRef.current,
+        dropdownMode,
+        onAmountChange: handleAmountOnChange,
+        onMeasurementChange: handleMeasurementOnChange,
+        onNameClick: handleNameSelect,
+        onBlur: () => setIsFocused(false),
+        onModeChange: handleOnModeChange,
+      }}
+    >
       <div className="relative flex bg-[var(--bg-current)]">
         {isFocused || props.value ? (
           <svg className="w-3 h-3 mr-2 mt-1 fill-current" viewBox="0 0 24 24">
@@ -282,17 +294,8 @@ export const IngredientRow = forwardRef<
 
         {dropdownMode ? (
           <IngredientDropdown
-            mode={dropdownMode}
-            amountValue={currentIngredientString.amount.display}
-            nameValue={currentIngredientString.name.display.trim()}
-            caretIndex={caretIndexRef.current}
             top={xAndY.y}
             left={xAndY.x}
-            onBlur={() => setIsFocused(false)}
-            onAmountChange={handleAmountOnChange}
-            onMeasurementChange={handleMeasurementOnChange}
-            onNameClick={handleNameSelect}
-            onModeChange={handleOnModeChange}
             className={mergeCss(
               'transition-transform duration-300 ease-in scale-y-0',
               {
@@ -327,7 +330,7 @@ export const IngredientRow = forwardRef<
           }}
         />
       ) : null}
-    </>
+    </IngredientRowProvider>
   )
 })
 IngredientRow.displayName = 'IngredientRow'

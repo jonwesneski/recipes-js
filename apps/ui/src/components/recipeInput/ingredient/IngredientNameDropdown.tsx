@@ -3,19 +3,16 @@
 import { useAutocomplete } from '@src/hooks/useAutocomplete'
 import { useDebouncedApi } from '@src/hooks/useDebouncedApi'
 import { useEffect } from 'react'
+import { useIngredientRow } from './IngredientRowProvider'
 
-interface IngredientNameDropdownProps {
-  value: string
-  onClick: (_value: string) => void
-}
-
-export const IngredientNameDropdown = (props: IngredientNameDropdownProps) => {
+export const IngredientNameDropdown = () => {
+  const { ingredient, onNameClick } = useIngredientRow()
   const { mutateAsync } = useAutocomplete()
   const { data: suggestions, setQuery } = useDebouncedApi({ mutateAsync })
 
   useEffect(() => {
-    setQuery(props.value)
-  }, [props.value, setQuery])
+    setQuery(ingredient.name.display.trim())
+  }, [ingredient.name.display, setQuery])
 
   return (
     <div>
@@ -25,7 +22,7 @@ export const IngredientNameDropdown = (props: IngredientNameDropdownProps) => {
             <button
               type="button"
               className="w-full p-1.5 text-left cursor-pointer hover:bg-text hover:text-background"
-              onClick={() => props.onClick(suggestion)}
+              onClick={() => onNameClick(suggestion)}
             >
               {suggestion}
             </button>

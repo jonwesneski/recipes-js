@@ -1,10 +1,10 @@
 'use client'
 import { type ClassValue, mergeCss } from '@repo/design-system'
-import { type MeasurementUnitType } from '@src/utils/measurements'
 import { type CSSProperties, useEffect, useRef } from 'react'
 import { IngredientAmountDropdown } from './IngredientAmountDropdown'
 import { IngredientMeasurementDropdown } from './IngredientMeasurementDropdown'
 import { IngredientNameDropdown } from './IngredientNameDropdown'
+import { useIngredientRow } from './IngredientRowProvider'
 
 export const dropDownModes = ['amount', 'measurement', 'name'] as const
 export type DropdownMode = (typeof dropDownModes)[number]
@@ -16,27 +16,19 @@ const transformMap: Record<DropdownMode, string> = {
 }
 
 interface IngredientDropdownProps {
-  mode: DropdownMode
-  amountValue: string
-  nameValue: string
-  caretIndex: number
   top?: number
   left?: number
-  onAmountChange: (_value: string, _newCaretIndex: number) => void
-  onMeasurementChange: (_value: MeasurementUnitType) => void
-  onNameClick: (_value: string) => void
-  onBlur: () => void
-  onModeChange: (_mode: DropdownMode) => void
   className?: ClassValue
   style?: CSSProperties
 }
 export const IngredientDropdown = (props: IngredientDropdownProps) => {
+  const { dropdownMode, onBlur, onModeChange } = useIngredientRow()
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
-        props.onBlur()
+        onBlur()
       }
     }
 
@@ -47,10 +39,11 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
   }, [])
 
   const moveIndex = (index: number) => {
-    const currentIndex = dropDownModes.indexOf(props.mode)
+    if (!dropdownMode) return
+    const currentIndex = dropDownModes.indexOf(dropdownMode)
     const newIndex =
       (currentIndex + index + dropDownModes.length) % dropDownModes.length
-    props.onModeChange(dropDownModes[newIndex])
+    onModeChange(dropDownModes[newIndex])
   }
 
   return (
@@ -70,26 +63,21 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
       <div
         style={{
           display: 'flex',
-          transform: transformMap[props.mode],
+          transform: dropdownMode
+            ? transformMap[dropdownMode]
+            : transformMap.amount,
           transition: 'transform 300ms ease-in-out',
           gap: '10px',
         }}
       >
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
-          <IngredientAmountDropdown
-            value={props.amountValue}
-            caretIndex={props.caretIndex}
-            onChange={props.onAmountChange}
-          />
+          <IngredientAmountDropdown />
         </div>
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
-          <IngredientMeasurementDropdown onClick={props.onMeasurementChange} />
+          <IngredientMeasurementDropdown />
         </div>
         <div style={{ minWidth: '100%', flexShrink: 0 }}>
-          <IngredientNameDropdown
-            value={props.nameValue}
-            onClick={props.onNameClick}
-          />
+          <IngredientNameDropdown />
         </div>
       </div>
       <div className="flex gap-2 pt-2">

@@ -1,37 +1,34 @@
 'use client'
 
 import { mergeCss } from '@repo/design-system'
+import { useIngredientRow } from './IngredientRowProvider'
 
-interface IngredientAmountDropdownProps {
-  value: string
-  caretIndex: number
-  onChange: (_value: string, _newCaretIndex: number) => void
-}
-export const IngredientAmountDropdown = (
-  props: IngredientAmountDropdownProps,
-) => {
-  const spaceIndex = props.value.indexOf(' ')
-  const decimalIndex = props.value.indexOf('.')
-  const fractionIndex = props.value.indexOf('/')
+export const IngredientAmountDropdown = () => {
+  const { ingredient, caretIndex, onAmountChange } = useIngredientRow()
+  const amountDisplay = ingredient.amount.display
+
+  const spaceIndex = amountDisplay.indexOf(' ')
+  const decimalIndex = amountDisplay.indexOf('.')
+  const fractionIndex = amountDisplay.indexOf('/')
   const hasSpace = spaceIndex !== -1
   const hasDecimal = decimalIndex !== -1
   const hasFraction = fractionIndex !== -1
   const isWhole = !hasDecimal && !hasFraction
-  const atLeastOneDigit = !isNaN(Number(props.value[0]))
+  const atLeastOneDigit = !isNaN(Number(amountDisplay[0]))
   const enableDenominatorZero =
-    hasDecimal || (hasFraction && Boolean(props.value[fractionIndex + 1]))
+    hasDecimal || (hasFraction && Boolean(amountDisplay[fractionIndex + 1]))
 
-  const _addCharacter = (value: string) => {
-    props.onChange(
-      `${props.value.slice(0, props.caretIndex)}${value}${props.value.slice(props.caretIndex)}`,
-      props.caretIndex + 1,
+  const _addCharacter = (char: string) => {
+    onAmountChange(
+      `${amountDisplay.slice(0, caretIndex)}${char}${amountDisplay.slice(caretIndex)}`,
+      caretIndex + 1,
     )
   }
 
   const _removeCharacter = () => {
-    const possibleCaretIndex = props.caretIndex - 1
-    props.onChange(
-      `${props.value.slice(0, props.caretIndex - 1)}${props.value.slice(props.caretIndex)}`,
+    const possibleCaretIndex = caretIndex - 1
+    onAmountChange(
+      `${amountDisplay.slice(0, caretIndex - 1)}${amountDisplay.slice(caretIndex)}`,
       possibleCaretIndex >= 0 ? possibleCaretIndex : 0,
     )
   }

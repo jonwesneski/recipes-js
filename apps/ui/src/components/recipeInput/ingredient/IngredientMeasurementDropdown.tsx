@@ -4,13 +4,11 @@ import {
   measurementUnitsAbbreviated,
   type MeasurementUnitType,
 } from '@src/utils/measurements'
+import { useIngredientRow } from './IngredientRowProvider'
 
-interface IngredientMeasurementDropdownProps {
-  onClick: (_value: MeasurementUnitType) => void
-}
-export const IngredientMeasurementDropdown = (
-  props: IngredientMeasurementDropdownProps,
-) => {
+export const IngredientMeasurementDropdown = () => {
+  const { onMeasurementChange } = useIngredientRow()
+
   return (
     <div className="grid grid-cols-4 gap-3">
       {Object.keys(measurementUnitsAbbreviated).map((m) => {
@@ -20,10 +18,10 @@ export const IngredientMeasurementDropdown = (
             className="border px-1 bg-text text-background hover:underline"
             role="button"
             tabIndex={0}
-            onClick={() => props.onClick(m as MeasurementUnitType)}
+            onClick={() => onMeasurementChange(m as MeasurementUnitType)}
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
-                props.onClick(m as MeasurementUnitType)
+                onMeasurementChange(m as MeasurementUnitType)
               }
             }}
           >
