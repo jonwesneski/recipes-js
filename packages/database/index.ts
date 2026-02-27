@@ -1,2 +1,2 @@
-export * from './generated/prisma';
+export * from './generated/prisma/client';
 export * from './src/client';

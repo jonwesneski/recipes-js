@@ -19,7 +19,7 @@ describe('HealthCheckController (e2e)', () => {
   let diskStorageIndicator: DiskHealthIndicator;
   const { createTestingModule } = createTestingFixtures();
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture = await createTestingModule();
 
     app = moduleFixture.createNestApplication();
@@ -32,7 +32,7 @@ describe('HealthCheckController (e2e)', () => {
     await app.init();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
