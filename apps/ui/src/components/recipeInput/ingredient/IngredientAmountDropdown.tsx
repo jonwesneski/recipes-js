@@ -193,16 +193,16 @@ export const IngredientAmountDropdown = () => {
         8
       </button>
       <button
-        aria-label="decimal"
-        disabled={hasFraction}
+        aria-label="fraction"
+        disabled={hasDecimal}
         type="button"
         className={mergeCss(
           'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'bg-text/50 text-background/75': hasFraction },
+          { 'bg-text/50 text-background/75': !atLeastOneDigit },
         )}
-        onClick={handleOnDecimal}
+        onClick={handleOnFraction}
       >
-        .
+        /
       </button>
       <button
         aria-label="2 denominator"
@@ -250,18 +250,17 @@ export const IngredientAmountDropdown = () => {
       >
         7
       </button>
-
       <button
-        aria-label="fraction"
-        disabled={hasDecimal}
+        aria-label="decimal"
+        disabled={hasFraction}
         type="button"
         className={mergeCss(
           'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'bg-text/50 text-background/75': !atLeastOneDigit },
+          { 'bg-text/50 text-background/75': hasFraction },
         )}
-        onClick={handleOnFraction}
+        onClick={handleOnDecimal}
       >
-        /
+        .
       </button>
       <button
         aria-label="1-denominator"

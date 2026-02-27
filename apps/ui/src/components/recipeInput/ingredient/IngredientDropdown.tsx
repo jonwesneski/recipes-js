@@ -38,13 +38,16 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
     }
   }, [])
 
-  const moveIndex = (index: number) => {
-    if (!dropdownMode) return
-    const currentIndex = dropDownModes.indexOf(dropdownMode)
+  const getDropdownModeNeighbor = (index: 1 | -1) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- when this component is rendered it shouldn't be null
+    const currentIndex = dropDownModes.indexOf(dropdownMode!)
     const newIndex =
       (currentIndex + index + dropDownModes.length) % dropDownModes.length
-    onModeChange(dropDownModes[newIndex])
+    return dropDownModes[newIndex]
   }
+
+  const previousMode = getDropdownModeNeighbor(-1)
+  const nextMode = getDropdownModeNeighbor(1)
 
   return (
     <div
@@ -82,18 +85,18 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
       </div>
       <div className="flex gap-2 pt-2">
         <button
-          className="block flex-1 bg-text text-background"
+          className="block flex-1 bg-text text-background text-left px-2"
           type="button"
-          onClick={() => moveIndex(-1)}
+          onClick={() => onModeChange(previousMode)}
         >
-          &lt;
+          <span className="font-bold">&lt;</span> {previousMode}
         </button>
         <button
-          className="block flex-1 bg-text text-background"
+          className="block flex-1 bg-text text-background text-right px-2"
           type="button"
-          onClick={() => moveIndex(1)}
+          onClick={() => onModeChange(nextMode)}
         >
-          &gt;
+          {nextMode} <span className="font-bold">&gt;</span>
         </button>
       </div>
     </div>

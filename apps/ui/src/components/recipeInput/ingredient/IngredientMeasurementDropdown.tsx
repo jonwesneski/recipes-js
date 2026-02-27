@@ -25,7 +25,7 @@ export const IngredientMeasurementDropdown = () => {
               }
             }}
           >
-            <abbr title={m}>
+            <abbr className="no-underline" title={m}>
               {measurementUnitsAbbreviated[m as MeasurementUnitType]}
             </abbr>
           </div>

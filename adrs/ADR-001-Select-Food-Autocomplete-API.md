@@ -74,7 +74,18 @@ We need to implement a food/ingredient/cooking autocomplete feature in our UI ap
   - The free tier has strict limitations on usage.
   - The autocomplete functionality is not as straightforward as others.
 
-### 4. TheMealDB
+  ### 4. Datamuse
+
+- **Pros:**
+  - Offers a search endpoint that can be used for autocomplete.
+  - Has lots of parameters to help with your search.
+  - Response is small.
+  - No api key to manage.
+- **Cons:**
+  - Has strict limitations on usage.
+  - No guarantee of a food specicic response even if you pass food specific words in parameter.
+
+### 5. TheMealDB
 
 - **Pros:**
   - Completely free to use with no API key required.
@@ -84,7 +95,7 @@ We need to implement a food/ingredient/cooking autocomplete feature in our UI ap
   - Not specifically designed for autocomplete; requires more handling for search functionality.
   - Limited in terms of ingredient-specific data compared to others.
 
-### 5. FoodAPI
+### 6. FoodAPI
 
 - **Pros:**
   - Simple and easy to use, with a focus on food-related data.

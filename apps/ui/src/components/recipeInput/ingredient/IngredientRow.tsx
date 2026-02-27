@@ -46,15 +46,6 @@ const getCaretPosition = (element: HTMLTextAreaElement) => {
   return position
 }
 
-const setCaretColumn = (element: HTMLTextAreaElement, column: number) => {
-  const line = element.value
-    .split(' ')
-    .filter((_, i) => i <= column)
-    .join(' ')
-  const selectionIndex = element.value.indexOf(line) + line.length
-  element.setSelectionRange(selectionIndex, selectionIndex)
-}
-
 const determineDropdownPosition = (isMd: boolean) => {
   const result: { x?: number; y?: number } = { x: 0, y: isMd ? 30 : -260 }
   return result
@@ -90,7 +81,7 @@ export const IngredientRow = forwardRef<
   IIngriedientRowProps
 >((props, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const caretIndexRef = useRef(0)
+  const caretIndexRef = useRef<number | null>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [dropdownMode, setDropdownMode] = useState<DropdownMode | null>(null)
   const { width, breakpointPxs } = useMediaQuery()
@@ -117,11 +108,16 @@ export const IngredientRow = forwardRef<
   }))
 
   useLayoutEffect(() => {
-    if (textareaRef.current && document.activeElement === textareaRef.current) {
+    if (
+      caretIndexRef.current !== null &&
+      textareaRef.current &&
+      document.activeElement === textareaRef.current
+    ) {
       textareaRef.current.setSelectionRange(
         caretIndexRef.current,
         caretIndexRef.current,
       )
+      caretIndexRef.current = null
     }
   })
 
@@ -129,10 +125,9 @@ export const IngredientRow = forwardRef<
 
   const handleOnModeChange = (mode: DropdownMode) => {
     if (textareaRef.current) {
-      setCaretColumn(
-        textareaRef.current,
-        dropDownModes.findIndex((m) => m === mode),
-      )
+      const column = dropDownModes.findIndex((m) => m === mode)
+      const parts = textareaRef.current.value.split(' ')
+      caretIndexRef.current = parts.slice(0, column + 1).join(' ').length
     }
     setDropdownMode(mode)
   }
@@ -232,8 +227,6 @@ export const IngredientRow = forwardRef<
 
   const handleFocused = (): void => {
     setIsFocused(true)
-    caretIndexRef.current =
-      textareaRef.current?.selectionStart ?? props.value.length
     setDropdownMode(_determineDropdownMode())
   }
 
@@ -241,7 +234,7 @@ export const IngredientRow = forwardRef<
     <IngredientRowProvider
       value={{
         ingredient: currentIngredientString,
-        caretIndex: caretIndexRef.current,
+        caretIndex: textareaRef.current?.selectionStart ?? 0,
         dropdownMode,
         onAmountChange: handleAmountOnChange,
         onMeasurementChange: handleMeasurementOnChange,
