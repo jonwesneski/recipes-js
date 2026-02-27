@@ -45,7 +45,7 @@ export const MultiSelect = (props: IMultiSelectProps) => {
           multiValueLabel: () => 'ml-1',
           multiValueRemove: () => 'text-gray-500 hover:text-gray-700 ml-1',
         }}
-        menuPortalTarget={document.body}
+        menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
       />
       <Label
         htmlFor={props.id}

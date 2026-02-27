@@ -138,7 +138,12 @@ export class UserRepository {
         if (
           !(error instanceof PrismaClientKnownRequestError) ||
           error.code !== 'P2025' ||
-          !(error.meta?.cause as string).includes("UserCustomDailyNutrition'.")
+          !(
+            error.meta?.relation === 'UserCustomDailyNutrition' ||
+            (error.meta?.cause as string | undefined)?.includes(
+              "UserCustomDailyNutrition'.",
+            )
+          )
         ) {
           throw error;
         } else if (i === attempts.length - 1) {

@@ -32,7 +32,11 @@ describe('RecipesController (e2e)', () => {
   let token: string;
   let token2: string;
 
-  beforeEach(async () => {
+  /**
+   *  Need to keep these as beforeAll or I will
+   *  run into max db connection reached issue
+   * */
+  beforeAll(async () => {
     const moduleFixture = await createTestingModule();
 
     app = moduleFixture.createNestApplication();
@@ -74,7 +78,7 @@ describe('RecipesController (e2e)', () => {
     await app.init();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close();
   });
 

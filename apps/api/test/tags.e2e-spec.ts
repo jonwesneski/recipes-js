@@ -13,7 +13,7 @@ describe('TagsController (e2e)', () => {
   let prismaService: PrismaService;
   const { createTestingModule } = createTestingFixtures();
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture = await createTestingModule();
 
     app = moduleFixture.createNestApplication();
@@ -24,7 +24,7 @@ describe('TagsController (e2e)', () => {
     await app.init();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
