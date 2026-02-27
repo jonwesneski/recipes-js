@@ -26,7 +26,7 @@ const createUniqueIngredient = (
   const uniqueIngredients: UniqueIngredientsType = {}
   Object.values(ingredients).forEach((ing) => {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- not true
-    if (uniqueIngredients[ing.name.value]) {
+    if (!uniqueIngredients[ing.name.value]) {
       uniqueIngredients[ing.name.value] = {
         ...determineUsersAmountUnit(
           ing.amount.value,

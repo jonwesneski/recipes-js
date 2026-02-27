@@ -502,6 +502,8 @@ export const createRecipeStore = (
             imageSrc,
             isPublic,
             metadata,
+            ingredients,
+            stepIds,
             ...recipe
           } = get();
           /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
@@ -510,10 +512,10 @@ export const createRecipeStore = (
             ...recipe,
             isPublic: true, // TODO: handle making public and private
             base64Image: imageSrc?.split(',')[1] ?? null,
-            steps: recipe.stepIds.map((s) => {
+            steps: stepIds.map((s) => {
               return {
                 ingredients: recipe.steps[s].ingredientIds.map((i) =>
-                  toCreateIngredientDto(recipe.ingredients[i]),
+                  toCreateIngredientDto(ingredients[i]),
                 ),
                 instruction: recipe.steps[s].instruction,
                 base64Image: recipe.steps[s].imageUrl?.split(',')[1] ?? null,
