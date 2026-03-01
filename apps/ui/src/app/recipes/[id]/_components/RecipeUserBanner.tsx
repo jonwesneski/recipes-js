@@ -49,7 +49,7 @@ export const RecipeUserBanner = () => {
           </p>
         </div>
       </div>
-      <div>
+      <div className="flex gap-3">
         {userId ? (
           <BookmarkButton
             recipeId={id}
