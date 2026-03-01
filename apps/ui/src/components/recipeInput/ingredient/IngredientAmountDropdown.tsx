@@ -14,11 +14,7 @@ export const IngredientAmountDropdown = () => {
   const hasFraction = amountDisplay.includes('/')
   const hasWhole = spaceIndex !== -1
   const wholePart = hasWhole ? amountDisplay.slice(0, spaceIndex) : ''
-  const fractionPart = hasWhole
-    ? amountDisplay.slice(spaceIndex + 1)
-    : hasFraction
-      ? amountDisplay
-      : ''
+  const fractionPart = hasFraction ? amountDisplay.slice(spaceIndex + 1) : ''
 
   const handleFractionPreset = (fraction: string) => {
     if (fractionPart === fraction) {
