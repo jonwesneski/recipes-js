@@ -1,5 +1,7 @@
 export * from './BookmarkButton';
 export * from './CopyUrlButton';
+export * from './DeleteButton';
+export * from './EditButton';
 export * from './FollowButton';
 export * from './MainLayout';
 export * from './navigation';
