@@ -22,7 +22,7 @@ const IngredientList = (props: IngredientListProps) => {
   const { showModal } = useCustomModal()
   const { ingredientIds, ingredients } = useRecipeStepIngredientsStore(
     props.stepId,
-  ) // subscribe to ingredient changes
+  )
 
   const handleOnShowConversions = (
     e: React.MouseEvent,
@@ -38,7 +38,10 @@ const IngredientList = (props: IngredientListProps) => {
           <ModalMeasurementConversions
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it is not null
             unitType={ingredient.unit.value! as MeasurementUnitType}
-            amount={roundToDecimal(ingredient.amount.value * props.scaleFactor, 2)}
+            amount={roundToDecimal(
+              ingredient.amount.value * props.scaleFactor,
+              2,
+            )}
             name={ingredient.name.value}
           />
         ),

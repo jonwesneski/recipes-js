@@ -166,6 +166,10 @@ export class RecipesService {
     return recipeData as RecipeUpdateType;
   }
 
+  async deleteRecipe(id: string, userId: string): Promise<void> {
+    await this.recipeRepository.delete(id, userId);
+  }
+
   async bookmarkRecipe(
     recipeId: string,
     userId: string,
