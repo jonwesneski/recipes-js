@@ -368,6 +368,12 @@ export class RecipeRepository {
     });
   }
 
+  async delete(id: string, userId: string) {
+    await this.prisma.recipe.delete({
+      where: { id, userId },
+    });
+  }
+
   async bookmark(recipeId: string, userId: string, bookmark: boolean) {
     if (bookmark) {
       const recipe = await this.prisma.recipe.findUnique({

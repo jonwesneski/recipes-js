@@ -1,10 +1,14 @@
 import type { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode } from 'react'
-import { mergeCss } from '../utils'
+import { type ClassValue, mergeCss } from '../utils'
 
 export type ButtonProps = Omit<
   DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
-  'style'
-> & { variant?: 'default' | 'opposite'; children: ReactNode }
+  'style' | 'className'
+> & {
+  variant?: 'default' | 'opposite'
+  children: ReactNode
+  className?: ClassValue
+}
 export const Button = ({
   type = 'button',
   variant = 'default',

@@ -1,13 +1,13 @@
 'use client'
 
 import { useUsersControllerFollowUserV1 } from '@repo/codegen/users'
-import { TextButton } from '@repo/design-system'
+import { type ClassValue, mergeCss, TextButton } from '@repo/design-system'
 import { useState } from 'react'
 
 interface IFollowButtonProps {
+  className?: ClassValue
   userFollowId: string
   amIFollowing: boolean
-  //onToggle?: (_value: boolean) => void
 }
 export const FollowButton = (props: IFollowButtonProps) => {
   const [amIFollowing, setAmIFollowing] = useState<boolean | undefined>(
@@ -29,7 +29,7 @@ export const FollowButton = (props: IFollowButtonProps) => {
 
   return (
     <TextButton
-      className="w-28"
+      className={mergeCss('w-28', props.className)}
       text={amIFollowing ? 'unfollow' : 'follow'}
       onClick={handleFollowClick}
     />

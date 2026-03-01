@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   NotFoundException,
@@ -126,6 +127,20 @@ export class RecipesController {
       throwIfConflict(error);
       throw error;
     }
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
+  @UseGuards(JwtGuard)
+  async deleteRecipe(
+    @Param('id') id: string,
+    // TODO: can't get this to work in jest
+    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
+    @Req() req: Request,
+  ): Promise<void> {
+    const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
+    await this.recipesService.deleteRecipe(id, token.sub);
   }
 
   @Put(':id/bookmark')

@@ -37,13 +37,16 @@ export const RecipeUserBanner = () => {
             </Link>
             {typeof user.amIFollowing === 'boolean' ? (
               <FollowButton
+                className="ml-1.5"
                 userFollowId={user.id}
                 amIFollowing={user.amIFollowing}
               />
             ) : null}
           </div>
-          <span className="mr-2 font-bold">on:</span>
-          <span>{isoDateToLocale(createdAt)}</span>
+          <p className="mr-2">
+            <span className="font-bold">on:</span>{' '}
+            <span>{isoDateToLocale(createdAt)}</span>
+          </p>
         </div>
       </div>
       <div>
