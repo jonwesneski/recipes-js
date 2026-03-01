@@ -462,6 +462,41 @@ describe('RecipesController (e2e)', () => {
     });
   });
 
+  describe(`DELETE ${basePath}/:id`, () => {
+    const createRecipeForDelete = async (): Promise<RecipeResponse> => {
+      const sampleRecipe = makeCreateDto({ name: uuidv4() });
+      const response = await request(app.getHttpServer())
+        .post(basePath)
+        .set('Authorization', `Bearer ${token}`)
+        .send(sampleRecipe)
+        .expect(201);
+      return response.body as RecipeResponse;
+    };
+
+    it('delete own recipe', async () => {
+      const recipe = await createRecipeForDelete();
+
+      await request(app.getHttpServer())
+        .delete(`${basePath}/${recipe.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(204);
+
+      // testing not found here; so no need for another test
+      await request(app.getHttpServer())
+        .get(`${basePath}/${recipe.id}`)
+        .expect(404);
+    });
+
+    it('delete recipe owned by another user', async () => {
+      const recipe = await createRecipeForDelete();
+
+      await request(app.getHttpServer())
+        .delete(`${basePath}/${recipe.id}`)
+        .set('Authorization', `Bearer ${token2}`)
+        .expect(404);
+    });
+  });
+
   describe(`PUT ${basePath}/:id/bookmark`, () => {
     const bookmarkPath = () => `${basePath}/${recipe1.id}/bookmark`;
 

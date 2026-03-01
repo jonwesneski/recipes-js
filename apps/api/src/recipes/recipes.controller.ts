@@ -140,7 +140,12 @@ export class RecipesController {
     @Req() req: Request,
   ): Promise<void> {
     const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
-    await this.recipesService.deleteRecipe(id, token.sub);
+    try {
+      await this.recipesService.deleteRecipe(id, token.sub);
+    } catch (error) {
+      throwIfNotFound(error);
+      throw error;
+    }
   }
 
   @Put(':id/bookmark')
