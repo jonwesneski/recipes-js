@@ -3,6 +3,7 @@ import {
   getAiControllerRecipesSearchV1ResponseMock,
   getAiMock,
 } from '@repo/codegen/mswAi';
+import { getAuthMock } from '@repo/codegen/mswAuth';
 import { getHealthCheckMock } from '@repo/codegen/mswHealthCheck';
 import {
   getRecipesControllerRecipesListV1MockHandler,
@@ -70,4 +71,5 @@ export default [
   ...getTagsMock(),
   getAiControllerRecipesSearchV1MockHandler(aiRecipesList),
   ...getAiMock(),
+  ...getAuthMock(),
 ];

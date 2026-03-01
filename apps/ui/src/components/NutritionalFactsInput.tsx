@@ -16,7 +16,7 @@ interface INutritionalFactsInputProps {
 export const NutritionalFactsInput = (props: INutritionalFactsInputProps) => {
   const handleNutritionalFactChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    nf: string,
+    nf: keyof NutritionalFactsResponse,
   ) => {
     const value =
       event.target.value !== '' ? parseInt(event.target.value) : null
@@ -27,22 +27,20 @@ export const NutritionalFactsInput = (props: INutritionalFactsInputProps) => {
 
   return (
     <>
-      {Object.keys(nutritionalFactsConst).map((nf) => {
+      {(
+        Object.keys(nutritionalFactsConst) as (keyof NutritionalFactsResponse)[]
+      ).map((nf) => {
         const [name, unit] = getNameAndUnit(nf)
         return (
           <TextLabel
+            className="text-right"
             key={nf}
             name={nf}
             isRequired={false}
             label={`${name} (${unit})`}
             type="number"
-            dir="rtl"
             onChange={(e) => handleNutritionalFactChange(e, nf)}
-            value={
-              props.nutritionalFacts?.[
-                nf as keyof NutritionalFactsResponse
-              ]?.toString() ?? ''
-            }
+            value={props.nutritionalFacts?.[nf]?.toString() ?? ''}
           />
         )
       })}

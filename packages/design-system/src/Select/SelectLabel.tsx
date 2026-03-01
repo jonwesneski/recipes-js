@@ -34,7 +34,7 @@ export const SelectLabel = (props: SelectLabelProps) => {
       <select
         ref={ref}
         className={mergeCss(
-          'px-2 py-2 align-text-bottom border-2 focus:border-[3px] focus:outline-none focus:transform focus:origin-left focus:scale-x-105 focus:scale-y-110',
+          'px-2 py-2 align-text-bottom border-2 focus:border-[3px] focus:outline-none focus:transform focus:origin-left focus:scale-x-105 focus:scale-y-110 [color-scheme:light_dark]',
           props.className,
         )}
         value={props.value ?? (!props.isRequired ? '' : props.value)}
