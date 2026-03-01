@@ -87,26 +87,24 @@ export const StepInput = forwardRef<StepInputHandle, StepInputProps>(
     }
 
     return (
-      <div data-testid="step-row" className="mb-5">
-        <h3 className="font-bold">step {props.stepNumber}.</h3>
-        <div ref={stepRef} className="step-container">
-          <IngredientsTextArea
-            ref={ingredientsRef}
-            className="flex-1"
-            stepId={props.stepId}
-            stepNumber={props.stepNumber}
-            onResize={handleOnResize}
-            onPaste={handleOnIngredientsPaste}
-          />
-          <InstructionsTextArea
-            ref={instructionsRef}
-            className="flex-1"
-            stepId={props.stepId}
-            stepNumber={props.stepNumber}
-            onResize={handleOnResize}
-            onPaste={handleOnInstructionsPaste}
-          />
-        </div>
+      <div ref={stepRef}>
+        <IngredientsTextArea
+          ref={ingredientsRef}
+          className="flex-1"
+          stepId={props.stepId}
+          stepNumber={props.stepNumber}
+          onResize={handleOnResize}
+          onPaste={handleOnIngredientsPaste}
+        />
+        <InstructionsTextArea
+          ref={instructionsRef}
+          className="flex-1"
+          stepId={props.stepId}
+          stepNumber={props.stepNumber}
+          onResize={handleOnResize}
+          onPaste={handleOnInstructionsPaste}
+        />
+
         <div className="mx-auto">
           <PhotoInput
             id={`step-photo-${props.stepNumber}`}

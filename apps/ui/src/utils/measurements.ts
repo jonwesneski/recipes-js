@@ -358,41 +358,36 @@ export const determineUsersAmountUnit = (
 
   const _isMetric = isMetric(unit);
   if (userPreference === MeasurementFormat.imperial && _isMetric) {
-    // Get the amount that is closest to 1 in imperial units
-    const imperialConversions = getConversions(amount, unit).imperial;
-    let nextClosest = Infinity;
-    let closestUnit = 'cups';
-    let closestAmount = Infinity;
-    for (const conversion of imperialConversions) {
-      const absValue = Math.abs(conversion.value - 1);
-      if (absValue < nextClosest) {
-        nextClosest = absValue;
-        closestAmount = conversion.value;
-        closestUnit = conversion.label;
-      }
-    }
-    return {
-      amount: closestAmount,
-      unit: closestUnit,
-    };
+    return getGoodChoiceUnit(getConversions(amount, unit).imperial);
   } else if (userPreference === MeasurementFormat.metric && !_isMetric) {
-    // Get the amount that is closest to 1 in metric units
-    const metricConversions = getConversions(amount, unit).metric;
-    let nextClosest = Infinity;
-    let closestUnit = 'grams';
-    let closestAmount = Infinity;
-    for (const conversion of metricConversions) {
-      const absValue = Math.abs(conversion.value - 1);
-      if (absValue < nextClosest) {
-        nextClosest = absValue;
-        closestAmount = conversion.value;
-        closestUnit = conversion.label;
-      }
-    }
-    return {
-      amount: closestAmount,
-      unit: closestUnit,
-    };
+    return getGoodChoiceUnit(getConversions(amount, unit).metric);
   }
   return { amount, unit: getLabel(unit, amount) };
+};
+
+/**
+ * Get the amount that is:
+ *  closest to 1 AND greater than 0.1
+ * @param conversions - the list of conversions
+ * @param defaultClosestUnit - the default unit if nothing was found
+ * @returns
+ */
+const getGoodChoiceUnit = (
+  conversions: ConversionOption<VolumeUnit | WeightUnit>[],
+) => {
+  let nextClosest = Infinity;
+  let closestAmount = conversions[0].value;
+  let closestUnit = conversions[0].label;
+  for (const conversion of conversions) {
+    const absValue = Math.abs(conversion.value - 1);
+    if (conversion.value >= 0.1 && absValue < nextClosest) {
+      nextClosest = absValue;
+      closestAmount = conversion.value;
+      closestUnit = conversion.label;
+    }
+  }
+  return {
+    amount: closestAmount,
+    unit: closestUnit,
+  };
 };

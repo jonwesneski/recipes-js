@@ -224,9 +224,18 @@ export const createRecipeStore = (
         removeStep: (stepId: string) => {
           set((state) => {
             const stepIds = state.stepIds.filter((id) => id !== stepId);
+            const removedIngredientIds = state.steps[stepId].ingredientIds;
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
             delete state.steps[stepId];
-            return { stepIds, steps: { ...state.steps } };
+            removedIngredientIds.forEach((id) => {
+              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
+              delete state.ingredients[id];
+            });
+            return {
+              stepIds,
+              steps: { ...state.steps },
+              ingredients: { ...state.ingredients },
+            };
           });
         },
         addIngredient: (stepId: string) => {
