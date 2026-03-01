@@ -18,7 +18,9 @@ export const StepList = () => {
       !lastIngredient.amount.value &&
       !lastIngredient.unit.value &&
       !lastIngredient.name.value
-    return isLastIngredientEmpty && !lastStep.instruction?.length
+    return (
+      isLastIngredientEmpty && !lastStep.instruction?.length && !state.imageSrc
+    )
   })
   const addStep = useRecipeStore((state) => state.addStep)
   const removeStep = useRecipeStore((state) => state.removeStep)
