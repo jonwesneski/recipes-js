@@ -1,6 +1,8 @@
 'use client'
 
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
 import IngredientList from './IngredientList'
+import { ViewPhotoButton } from './ViewPhotoButton'
 
 interface IStepProps {
   stepNumber: number
@@ -9,6 +11,7 @@ interface IStepProps {
   scaleFactor: number
 }
 export const Step = (props: IStepProps) => {
+  const imageSrc = useRecipeStore((state) => state.steps[props.stepId].imageUrl)
   return (
     <>
       <h2 className="font-bold">step {props.stepNumber}:</h2>
@@ -20,6 +23,11 @@ export const Step = (props: IStepProps) => {
         />
 
         <p className="mt-4 md:mt-0">{props.instruction}</p>
+        {imageSrc ? (
+          <div className="flex justify-end">
+            <ViewPhotoButton photoUrl={imageSrc} />
+          </div>
+        ) : null}
       </article>
     </>
   )

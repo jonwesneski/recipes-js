@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom'
+import { ModalType } from './modal-store'
 import { useModalStore } from './modal-store-provider'
 
 export function useCustomModal() {
@@ -6,14 +7,14 @@ export function useCustomModal() {
 
   const showModal = <T extends object>(
     id: string,
-    blocking: boolean,
+    modalProps: Pick<ModalType, 'blocking' | 'backgroundGrayedOut'>,
     Component: React.ComponentType<T>,
     props: T,
   ) => {
     const modalRoot = document.getElementById('modal-root')
     if (!modalRoot) throw new Error('Root node not found. Cannot render modal.')
     const portal = createPortal(
-      blocking ? (
+      modalProps.blocking ? (
         <Component {...props} />
       ) : (
         <div className="pointer-events-auto">
@@ -22,11 +23,11 @@ export function useCustomModal() {
       ),
       modalRoot,
     )
-    if (blocking) {
+    if (modalProps.blocking) {
       // Prevent scrolling while modal is up
       document.body.style.overflow = 'hidden'
     }
-    addModal({ id, portal, blocking })
+    addModal({ id, portal, ...modalProps })
   }
 
   const closeModal = () => {

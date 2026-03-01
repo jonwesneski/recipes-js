@@ -11,8 +11,9 @@ export const ModalRoot = () => {
       id="modal-root"
       className={mergeCss('fixed z-10 inset-0', {
         hidden: !modal,
-        'bg-background-see-through': modal?.blocking === true,
-        'bg-transparent pointer-events-none': modal?.blocking === false,
+        'bg-background-see-through': modal?.backgroundGrayedOut === true,
+        'bg-transparent': modal?.backgroundGrayedOut === false,
+        'pointer-events-none': modal?.blocking === false,
       })}
     >
       {modal?.portal}

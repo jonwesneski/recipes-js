@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { useModalStore } from './modal-store-provider'
 import { useCustomModal } from './useCustomModal'
 
 interface ModalCenteredProps {
@@ -10,8 +11,11 @@ export const ModalCentered = (props: ModalCenteredProps) => {
   const divRef = useRef<HTMLDivElement>(null)
 
   const { closeModal } = useCustomModal()
+  const blocking = useModalStore((state) => state.modal?.blocking ?? false)
 
   useEffect(() => {
+    if (blocking) return
+
     const handleClickOutside = (event: MouseEvent) => {
       if (divRef.current && !divRef.current.contains(event.target as Node)) {
         closeModal()
@@ -23,14 +27,14 @@ export const ModalCentered = (props: ModalCenteredProps) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [closeModal])
+  }, [closeModal, blocking])
 
   return (
     <div
       ref={divRef}
       className="shadow-2xl border-2 p-5 pointer-events-auto top-1/2 left-1/2 outline-hidden"
       style={{
-        position: 'inherit',
+        position: 'fixed',
         transform: 'translate(-50%, -50%)',
       }}
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- I think I need it

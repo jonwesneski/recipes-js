@@ -1,10 +1,11 @@
 import type { ReactPortal } from 'react';
 import { createStore } from 'zustand/vanilla';
 
-type ModalType = {
+export type ModalType = {
   id: string;
   portal: ReactPortal;
   blocking: boolean;
+  backgroundGrayedOut: boolean;
 };
 export type ModalsState = {
   modals: ModalType[];

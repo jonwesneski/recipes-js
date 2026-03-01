@@ -7,10 +7,12 @@ import { RecipeDurations } from './RecipeDurations'
 import { RecipeIngredientsOverview } from './RecipeIngredientsOverview'
 import { RecipeUserBanner } from './RecipeUserBanner'
 import { StepList } from './StepList'
+import { ViewPhotoButton } from './ViewPhotoButton'
 
 export const RecipePage = () => {
   const name = useRecipeStore((state) => state.name)
   const description = useRecipeStore((state) => state.description)
+  const imageSrc = useRecipeStore((state) => state.imageSrc)
 
   return (
     <div className="relative m-auto max-w-[800px]">
@@ -22,6 +24,11 @@ export const RecipePage = () => {
       <hr className="my-6 h-1 bg-text border-none" />
       <RecipeUserBanner />
       <p className="my-12 text-center">{description}</p>
+      {imageSrc ? (
+        <div className="flex justify-end">
+          <ViewPhotoButton photoUrl={imageSrc} />
+        </div>
+      ) : null}
       <RecipeIngredientsOverview className="my-5" />
       <RecipeDurations />
       <StepList />

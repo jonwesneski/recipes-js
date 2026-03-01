@@ -1,6 +1,6 @@
 'use client'
 
-import BookmarkIcon from '@public/bookmark.svg'
+import BookmarkIcon from '@public/bookmarkIcon.svg'
 import { IconButton } from '@repo/design-system'
 import { useBookmark } from '@src/hooks/useBookmark'
 import type { Svg } from '@src/types/svg'
