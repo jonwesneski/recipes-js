@@ -3,312 +3,68 @@
 import { mergeCss } from '@repo/design-system'
 import { useIngredientRow } from './IngredientRowProvider'
 
+const FRACTION_PRESETS = ['1/2', '1/3', '2/3', '1/4', '3/4', '1/8'] as const
+
 export const IngredientAmountDropdown = () => {
-  const { ingredient, caretIndex, onAmountChange } = useIngredientRow()
+  const { ingredient, onAmountChange } = useIngredientRow()
   const amountDisplay = ingredient.amount.display
 
+  const hasDecimal = amountDisplay.includes('.')
   const spaceIndex = amountDisplay.indexOf(' ')
-  const decimalIndex = amountDisplay.indexOf('.')
-  const fractionIndex = amountDisplay.indexOf('/')
-  const hasSpace = spaceIndex !== -1
-  const hasDecimal = decimalIndex !== -1
-  const hasFraction = fractionIndex !== -1
-  const isWhole = !hasDecimal && !hasFraction
-  const atLeastOneDigit = !isNaN(Number(amountDisplay[0]))
-  const enableDenominatorZero =
-    hasDecimal || (hasFraction && Boolean(amountDisplay[fractionIndex + 1]))
+  const hasFraction = amountDisplay.includes('/')
+  const hasWhole = spaceIndex !== -1
+  const wholePart = hasWhole ? amountDisplay.slice(0, spaceIndex) : ''
+  const fractionPart = hasWhole
+    ? amountDisplay.slice(spaceIndex + 1)
+    : hasFraction
+      ? amountDisplay
+      : ''
 
-  const _addCharacter = (char: string) => {
-    onAmountChange(
-      `${amountDisplay.slice(0, caretIndex)}${char}${amountDisplay.slice(caretIndex)}`,
-      caretIndex + 1,
-    )
-  }
-
-  const _removeCharacter = () => {
-    const possibleCaretIndex = caretIndex - 1
-    onAmountChange(
-      `${amountDisplay.slice(0, caretIndex - 1)}${amountDisplay.slice(caretIndex)}`,
-      possibleCaretIndex >= 0 ? possibleCaretIndex : 0,
-    )
-  }
-
-  const handleOnNumber = (value: string) => {
-    _addCharacter(value)
-  }
-
-  const handleOnSpace = () => {
-    if (!hasSpace && !hasDecimal && !hasFraction) {
-      _addCharacter(' ')
+  const handleFractionPreset = (fraction: string) => {
+    if (fractionPart === fraction) {
+      const newDisplay = wholePart ? `${wholePart} ` : ''
+      onAmountChange(newDisplay, newDisplay.length)
+      return
     }
+    const newDisplay = wholePart ? `${wholePart} ${fraction}` : fraction
+    onAmountChange(newDisplay, newDisplay.length)
   }
 
-  const handleOnDecimal = () => {
-    if (!hasDecimal && !hasFraction) {
-      _addCharacter('.')
-    }
-  }
-
-  const handleOnFraction = () => {
-    if (!hasFraction && !hasDecimal) {
-      _addCharacter('/')
-    }
+  const handleReset = () => {
+    onAmountChange('', 0)
   }
 
   return (
-    <div className="grid grid-cols-6 gap-[2px] bg-text p-[2px] w-full">
-      {/* Row 1 */}
+    <div className="grid grid-cols-3 gap-[2px] bg-text p-[2px] w-full">
+      {FRACTION_PRESETS.map((fraction) => {
+        const isActive = fractionPart === fraction
+        return (
+          <button
+            key={fraction}
+            aria-label={fraction}
+            aria-pressed={isActive}
+            type="button"
+            disabled={hasDecimal}
+            className={mergeCss(
+              'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
+              {
+                'bg-background text-text font-semibold': isActive,
+                'text-text/25': hasDecimal,
+              },
+            )}
+            onClick={() => handleFractionPreset(fraction)}
+          >
+            {fraction}
+          </button>
+        )
+      })}
       <button
-        aria-label="1"
+        aria-label="reset amount"
         type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('1')}
+        className="col-span-3 bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        onClick={handleReset}
       >
-        1
-      </button>
-      <button
-        aria-label="3"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('3')}
-      >
-        3
-      </button>
-      <button
-        aria-label="6"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('6')}
-      >
-        6
-      </button>
-      <button
-        aria-label="0"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('0')}
-      >
-        0
-      </button>
-      <button
-        aria-label="backspace"
-        type="button"
-        className={mergeCss(
-          'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'bg-text/50 text-background/75': !atLeastOneDigit },
-        )}
-        onClick={_removeCharacter}
-      >
-        ⌫
-      </button>
-      <button
-        aria-label="4 denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('4')}
-      >
-        4
-      </button>
-
-      {/* Row 2 */}
-      <button
-        aria-label="2"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('2')}
-      >
-        2
-      </button>
-      <button
-        aria-label="5"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('5')}
-      >
-        5
-      </button>
-      <button
-        aria-label="9"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('9')}
-      >
-        9
-      </button>
-      <button
-        aria-label="space"
-        type="button"
-        className={mergeCss(
-          'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'bg-text/50 text-background/75': !atLeastOneDigit },
-        )}
-        onClick={handleOnSpace}
-      >
-        ␣
-      </button>
-      <button
-        aria-label="3 denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('3')}
-      >
-        3
-      </button>
-      <button
-        aria-label="7 denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('7')}
-      >
-        7
-      </button>
-
-      {/* Row 3 */}
-      <button
-        aria-label="4"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('4')}
-      >
-        4
-      </button>
-      <button
-        aria-label="8"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('8')}
-      >
-        8
-      </button>
-      <button
-        aria-label="fraction"
-        disabled={hasDecimal}
-        type="button"
-        className={mergeCss(
-          'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'bg-text/50 text-background/75': !atLeastOneDigit },
-        )}
-        onClick={handleOnFraction}
-      >
-        /
-      </button>
-      <button
-        aria-label="2 denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('2')}
-      >
-        2
-      </button>
-      <button
-        aria-label="6 denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('6')}
-      >
-        6
-      </button>
-      <button
-        aria-label="6 denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('9')}
-      >
-        9
-      </button>
-
-      {/* Row 4 */}
-      <button
-        aria-label="7"
-        type="button"
-        className="h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        onClick={() => handleOnNumber('7')}
-      >
-        7
-      </button>
-      <button
-        aria-label="decimal"
-        disabled={hasFraction}
-        type="button"
-        className={mergeCss(
-          'bg-text text-background h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'bg-text/50 text-background/75': hasFraction },
-        )}
-        onClick={handleOnDecimal}
-      >
-        .
-      </button>
-      <button
-        aria-label="1-denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('1')}
-      >
-        1
-      </button>
-      <button
-        aria-label="5 denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('5')}
-      >
-        5
-      </button>
-      <button
-        aria-label="8 denominator"
-        disabled={isWhole}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': isWhole },
-        )}
-        onClick={() => handleOnNumber('8')}
-      >
-        8
-      </button>
-      <button
-        aria-label="0 denomitator"
-        disabled={!enableDenominatorZero}
-        type="button"
-        className={mergeCss(
-          'h-12 flex items-center justify-center text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500',
-          { 'text-text/25': !enableDenominatorZero },
-        )}
-        onClick={() => handleOnNumber('0')}
-      >
-        0
+        Reset
       </button>
     </div>
   )
