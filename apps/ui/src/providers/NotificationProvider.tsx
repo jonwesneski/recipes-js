@@ -30,6 +30,7 @@ export const NotificationProvider = ({
   const { id: userId } = useUserStore()
   const { showModal, closeModal } = useCustomModal()
   const router = useRouter()
+  const isMsw = process.env.NEXT_PUBLIC_ENABLE_MSW === 'true'
   // eslint-disable-next-line no-undef-init -- it can be uninitialized
   let socket: Socket | undefined = undefined
 
@@ -53,7 +54,7 @@ export const NotificationProvider = ({
   }
 
   useEffect(() => {
-    if (userId) {
+    if (userId && !isMsw) {
       socket = io(process.env.NEXT_PUBLIC_API_URL, {
         transports: ['websocket'],
       })
