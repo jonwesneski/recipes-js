@@ -204,13 +204,21 @@ export const createRecipeStore = (
             return { bookmarked: state.bookmarked };
           }),
         addStep: () => {
-          const id = crypto.randomUUID();
+          const step = createStep();
           set((state) => ({
             steps: {
               ...state.steps,
-              [id]: { imageUrl: null, ingredientIds: [], instruction: null },
+              [step.stepId]: {
+                imageUrl: step.imageUrl,
+                ingredientIds: step.ingredientIds,
+                instruction: step.instruction,
+              },
             },
-            stepIds: [...state.stepIds, id],
+            ingredients: {
+              ...state.ingredients,
+              ...step.ingredients,
+            },
+            stepIds: [...state.stepIds, step.stepId],
           }));
         },
         removeStep: (stepId: string) => {
@@ -294,16 +302,14 @@ export const createRecipeStore = (
                 state.ingredients[
                   state.steps[existingStepId].ingredientIds[0]
                 ] = newIngredients[0];
-                for (let j = 1; j < newIngredients.length; i++) {
+                for (let j = 1; j < newIngredients.length; j++) {
                   const newId = crypto.randomUUID();
                   state.ingredients[newId] = newIngredients[j];
                   state.steps[existingStepId].ingredientIds.push(newId);
                 }
               } else {
-                // First empty/existing Step
-                if (Number.isNaN(insertAtIndex)) {
-                  insertAtIndex = stepIdIndex + i;
-                }
+                // Empty/existing Step — always update so new steps are inserted after the last processed existing step
+                insertAtIndex = stepIdIndex + i;
                 newIngredients.forEach((ing) => {
                   const newId = crypto.randomUUID();
                   state.ingredients[newId] = ing;
@@ -316,14 +322,19 @@ export const createRecipeStore = (
             insertAtIndex = Number.isNaN(insertAtIndex)
               ? state.stepIds.length - 1
               : insertAtIndex;
-            state.stepIds.splice(insertAtIndex + 1, 0, ...newStepIds);
 
             lastInsertStepId = newStepIds.at(-1) ?? lastInsertStepId;
+
+            const newStepIdsArray = [
+              ...state.stepIds.slice(0, insertAtIndex + 1),
+              ...newStepIds,
+              ...state.stepIds.slice(insertAtIndex + 1),
+            ];
 
             return {
               ingredients: { ...state.ingredients },
               steps: { ...state.steps },
-              stepIds: [...state.stepIds],
+              stepIds: newStepIdsArray,
             };
           });
           return lastInsertStepId;
@@ -439,10 +450,8 @@ export const createRecipeStore = (
                   newStep.ingredients[defaultIngredientId];
                 newStepIds.push(newStep.stepId);
               } else {
-                // First empty/existing
-                if (Number.isNaN(insertAtIndex)) {
-                  insertAtIndex = stepIdIndex + i;
-                }
+                // Empty/existing — always update so new steps are inserted after the last processed existing step
+                insertAtIndex = stepIdIndex + i;
                 state.steps[existingStepId].instruction = instructionsList[i];
               }
             }
@@ -451,11 +460,20 @@ export const createRecipeStore = (
             insertAtIndex = Number.isNaN(insertAtIndex)
               ? state.stepIds.length - 1
               : insertAtIndex;
-            state.stepIds.splice(insertAtIndex + 1, 0, ...newStepIds);
 
             lastInsertStepId = newStepIds.at(-1) ?? lastInsertStepId;
 
-            return { steps: { ...state.steps }, stepIds: [...state.stepIds] };
+            const newStepIdsArray = [
+              ...state.stepIds.slice(0, insertAtIndex + 1),
+              ...newStepIds,
+              ...state.stepIds.slice(insertAtIndex + 1),
+            ];
+
+            return {
+              ingredients: { ...state.ingredients },
+              steps: { ...state.steps },
+              stepIds: newStepIdsArray,
+            };
           });
           return lastInsertStepId;
         },
