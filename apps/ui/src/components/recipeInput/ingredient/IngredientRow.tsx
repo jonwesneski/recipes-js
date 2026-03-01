@@ -234,7 +234,6 @@ export const IngredientRow = forwardRef<
     <IngredientRowProvider
       value={{
         ingredient: currentIngredientString,
-        caretIndex: textareaRef.current?.selectionStart ?? 0,
         dropdownMode,
         onAmountChange: handleAmountOnChange,
         onMeasurementChange: handleMeasurementOnChange,

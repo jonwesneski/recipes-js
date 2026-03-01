@@ -125,7 +125,7 @@ export const IngredientsTextArea = forwardRef<
         <IngredientRow
           key={id}
           ingredientId={id}
-          htmlFor={`step ${props.stepNumber} ingredients`}
+          htmlFor={`step-${props.stepNumber}-ingredients`}
           label={i === 0 ? 'ingredients' : undefined}
           ref={(element) => {
             if (element) {

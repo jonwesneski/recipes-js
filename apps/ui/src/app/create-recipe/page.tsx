@@ -19,8 +19,12 @@ const Page = () => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
+    const submitter = (event.nativeEvent as SubmitEvent)
+      .submitter as HTMLButtonElement | null
+    const isPublic = submitter?.value === 'public'
+
     mutate(
-      { data: makeCreateDto() },
+      { data: makeCreateDto(isPublic) },
       {
         onSuccess: (data) => {
           router.push(`/recipes/${data.id}`)
@@ -35,9 +39,17 @@ const Page = () => {
   }
 
   return (
-    <form className="flex flex-col px-3" onSubmit={handleSubmit}>
+    <form className="px-3" onSubmit={handleSubmit}>
       <RecipeInput />
-      <TextButton className="mt-3 mx-auto block" text="submit" type="submit" />
+      <div className="mt-3 flex justify-center gap-3">
+        <TextButton text="save public" type="submit" value="public" />
+        <TextButton
+          variant="opposite"
+          text="save private"
+          type="submit"
+          value="private"
+        />
+      </div>
     </form>
   )
 }

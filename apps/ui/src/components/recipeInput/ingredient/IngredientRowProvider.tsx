@@ -7,7 +7,6 @@ import { type DropdownMode } from './IngredientDropdown'
 
 export type IngredientRowType = {
   ingredient: NormalizedIngredient
-  caretIndex: number
   dropdownMode: DropdownMode | null
   onAmountChange: (_value: string, _newCaretIndex: number) => void
   onMeasurementChange: (_value: MeasurementUnitType) => void

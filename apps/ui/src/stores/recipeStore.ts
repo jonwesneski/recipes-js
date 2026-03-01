@@ -86,7 +86,7 @@ export type RecipeActions = {
   setProteins: (_value: ProteinType[]) => void;
   setDifficultyLevel: (_value: DifficultyLevelType | null) => void;
   setTags: (_value: string[]) => void;
-  makeCreateDto: () => CreateRecipeDto;
+  makeCreateDto: (_isPublic: boolean) => CreateRecipeDto;
   makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
   makeGenerateCategoriesDto: () => GenerateCategoriesDto;
   setErrors: (_data: BadRequestRecipeResponse) => void;
@@ -519,7 +519,7 @@ export const createRecipeStore = (
         setDifficultyLevel: (difficultyLevel: DifficultyLevelType | null) =>
           set(() => ({ difficultyLevel })),
         setTags: (tags: string[]) => set(() => ({ tags })),
-        makeCreateDto: () => {
+        makeCreateDto: (isPublic: boolean) => {
           /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
           const {
             id,
@@ -527,7 +527,6 @@ export const createRecipeStore = (
             updatedAt,
             user,
             imageSrc,
-            isPublic,
             metadata,
             ingredients,
             stepIds,
@@ -537,7 +536,7 @@ export const createRecipeStore = (
 
           return {
             ...recipe,
-            isPublic: true, // TODO: handle making public and private
+            isPublic,
             base64Image: imageSrc?.split(',')[1] ?? null,
             steps: stepIds.map((s) => {
               return {
