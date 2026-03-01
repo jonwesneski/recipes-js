@@ -8,7 +8,20 @@ import { StepInput, type StepInputHandle } from './StepInput'
 
 export const StepList = () => {
   const stepIds = useRecipeStore((state) => state.stepIds)
+  const isLastStepEmpty = useRecipeStore((state) => {
+    const lastStep = state.steps[state.stepIds[state.stepIds.length - 1]]
+    const lastIngredient =
+      state.ingredients[
+        lastStep.ingredientIds[lastStep.ingredientIds.length - 1]
+      ]
+    const isLastIngredientEmpty =
+      !lastIngredient.amount.value &&
+      !lastIngredient.unit.value &&
+      !lastIngredient.name.value
+    return isLastIngredientEmpty && !lastStep.instruction?.length
+  })
   const addStep = useRecipeStore((state) => state.addStep)
+  const removeStep = useRecipeStore((state) => state.removeStep)
 
   const itemRefs = useRef<Map<string, StepInputHandle>>(new Map())
 
@@ -53,19 +66,30 @@ export const StepList = () => {
         const stepNumber = index + 1
         return (
           <Fragment key={stepId}>
-            <StepInput
-              ref={(element) => {
-                if (element) {
-                  itemRefs.current.set(stepId, element)
-                } else {
-                  itemRefs.current.delete(stepId)
-                }
-              }}
-              stepId={stepId}
-              stepNumber={stepNumber}
-              onFocusStepIngredients={handleOnFocusStepIngredients}
-              onFocusStepInstructions={handleOnFocusStepInstructions}
-            />
+            <div data-testid="step-row" className="mb-5">
+              <div className="flex justify-between items-center my-3">
+                <h3 className="font-bold">step {stepNumber}.</h3>
+                <TextButton
+                  className="float-right"
+                  disabled={stepIds.length === 1}
+                  text={`remove step ${stepNumber}`}
+                  onClick={() => removeStep(stepId)}
+                />
+              </div>
+              <StepInput
+                ref={(element) => {
+                  if (element) {
+                    itemRefs.current.set(stepId, element)
+                  } else {
+                    itemRefs.current.delete(stepId)
+                  }
+                }}
+                stepId={stepId}
+                stepNumber={stepNumber}
+                onFocusStepIngredients={handleOnFocusStepIngredients}
+                onFocusStepInstructions={handleOnFocusStepInstructions}
+              />
+            </div>
             {index < stepIds.length - 1 && <hr className="mt-5" />}
           </Fragment>
         )
@@ -74,6 +98,7 @@ export const StepList = () => {
       <TextButton
         className="float-right mt-3"
         text="add step"
+        disabled={isLastStepEmpty}
         onClick={handleOnAddClick}
       />
     </>

@@ -15,7 +15,7 @@ export const Button = ({
       {...props}
       type={type}
       className={mergeCss(
-        'px-2 py-1 border-2 font-semibold hover:underline cursor-pointer hover:scale-105 transition-transform duration-300 ease-in-out transform',
+        'px-2 py-1 border-2 font-semibold transition-transform duration-300 ease-in-out transform',
         {
           'bg-(--text)': variant === 'default',
           'text-(--background)': variant === 'default',
@@ -23,6 +23,7 @@ export const Button = ({
           'bg-(--background)': variant === 'opposite',
           'text-(--text)': variant === 'opposite',
           'custom-shadow-opposite': variant === 'opposite',
+          'hover:underline cursor-pointer hover:scale-105': !props.disabled,
         },
         props.className,
       )}
