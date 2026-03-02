@@ -32,7 +32,7 @@ const IngredientList = (props: IngredientListProps) => {
     if (ingredient.unit.value !== null) {
       showModal(
         ModalMeasurementConversions.name,
-        { blocking: false, backgroundGrayedOut: true },
+        { backgroundGrayedOut: true, disableScrolling: true },
         () => (
           <ModalMeasurementConversions
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- it is not null

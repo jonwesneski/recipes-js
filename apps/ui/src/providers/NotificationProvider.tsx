@@ -42,7 +42,7 @@ export const NotificationProvider = ({
     navigationUrl,
     durationMs = 5000,
   }: ToastParams) => {
-    showModal(toastId, { blocking: false, backgroundGrayedOut: false }, Toast, {
+    showModal(toastId, {}, Toast, {
       title,
       message,
       type,

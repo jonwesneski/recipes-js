@@ -2,32 +2,42 @@ import { createPortal } from 'react-dom'
 import { ModalType } from './modal-store'
 import { useModalStore } from './modal-store-provider'
 
+type CustomModalProps = Partial<
+  Pick<ModalType, 'blocking' | 'backgroundGrayedOut'>
+> & {
+  disableScrolling?: boolean
+}
 export function useCustomModal() {
   const { addModal, removeModal } = useModalStore((state) => state)
 
   const showModal = <T extends object>(
     id: string,
-    modalProps: Pick<ModalType, 'blocking' | 'backgroundGrayedOut'>,
+    modalProps: CustomModalProps = {},
     Component: React.ComponentType<T>,
-    props: T,
+    componentProps: T,
   ) => {
+    const {
+      disableScrolling = false,
+      blocking = false,
+      backgroundGrayedOut = false,
+    } = modalProps
     const modalRoot = document.getElementById('modal-root')
     if (!modalRoot) throw new Error('Root node not found. Cannot render modal.')
     const portal = createPortal(
-      modalProps.blocking ? (
-        <Component {...props} />
+      blocking ? (
+        <Component {...componentProps} />
       ) : (
         <div className="pointer-events-auto">
-          <Component {...props} />
+          <Component {...componentProps} />
         </div>
       ),
       modalRoot,
     )
-    if (modalProps.blocking) {
+    if (blocking || disableScrolling) {
       // Prevent scrolling while modal is up
       document.body.style.overflow = 'hidden'
     }
-    addModal({ id, portal, ...modalProps })
+    addModal({ id, portal, blocking, backgroundGrayedOut })
   }
 
   const closeModal = () => {
