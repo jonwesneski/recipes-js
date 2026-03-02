@@ -42,6 +42,7 @@ export const NotificationProvider = ({
     navigationUrl,
     durationMs = 5000,
   }: ToastParams) => {
+    // passing as Toast since it is being used in useEffect
     showModal(toastId, {}, Toast, {
       title,
       message,
