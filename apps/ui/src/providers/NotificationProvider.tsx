@@ -42,8 +42,8 @@ export const NotificationProvider = ({
     navigationUrl,
     durationMs = 5000,
   }: ToastParams) => {
-    const blocking = false
-    showModal(toastId, blocking, Toast, {
+    // passing as Toast since it is being used in useEffect
+    showModal(toastId, {}, Toast, {
       title,
       message,
       type,

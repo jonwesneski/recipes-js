@@ -135,7 +135,8 @@
       "steps": [
         {
           "instruction": "Preheat oven to 350F and grease a 9x13 inch baking dish",
-          "ingredients": []
+          "ingredients": [],
+          "imageUrl": "https://d2ivn22ne8jqbo.cloudfront.net/example-step-1.jpg"
         },
         {
           "instruction": "Mix the dry ingredients together in a bowl",
@@ -158,7 +159,8 @@
               "isFraction": false,
               "unit": "teaspoons"
             }
-          ]
+          ],
+          "imageUrl": "https://d2ivn22ne8jqbo.cloudfront.net/example-step-2.jpg"
         },
         {
           "instruction": "Wait around, maybe watch that show you always wanted to watch",

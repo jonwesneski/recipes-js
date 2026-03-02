@@ -16,7 +16,7 @@ export const useMediaQuery = () => {
       ? (window.visualViewport?.width ?? window.innerWidth)
       : breakpointPxs.md;
 
-  const [width, setWidth] = useState<number>(getCurrentWidth);
+  const [width, setWidth] = useState<number>(breakpointPxs.md);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
