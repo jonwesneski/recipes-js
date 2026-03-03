@@ -1,8 +1,14 @@
 {
   "extends": "@repo/typescript-config/nestjs.json",
   "compilerOptions": {
-    "allowImportingTsExtensions": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "paths": {
+      "@src/*": ["./src/*"]
+    },
     "noEmit": false
   },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "build", "coverage"],
   "references": [{ "path": "tsconfig.test.json" }]
 }
