@@ -1,29 +1,14 @@
 {
+  "extends": "@repo/typescript-config/nestjs.json",
   "compilerOptions": {
-    "module": "node16",
-    "moduleResolution": "node16",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2023",
-    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "paths": {
       "@src/*": ["./src/*"]
     },
-    "isolatedModules": true,
-    "incremental": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "allowImportingTsExtensions": false,
+    "strictPropertyInitialization": false,
+    "noEmit": false
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "build", "coverage"],

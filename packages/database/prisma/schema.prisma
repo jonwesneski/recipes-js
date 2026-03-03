@@ -386,9 +386,10 @@ model RecipeBookmark {
 model NutritionalFacts {
   id                       String                    @id @default(cuid())
   caloriesInKcal           Int?
-  totalFatInG              Int?
   saturatedFatInG          Int?
   transFatInG              Int?
+  polyunsaturatedFatInG    Int?
+  monounsaturatedFatInG    Int?
   cholesterolInMg          Int?
   sodiumInMg               Int?
   carbohydratesInG         Int?

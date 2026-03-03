@@ -63,7 +63,13 @@ export const nutritionalFactsDeclaration /*: FunctionDeclaration*/ = {
       magnesiumInMg: {
         type: 'number',
       },
+      monounsaturatedFatInG: {
+        type: 'number',
+      },
       niacinInMg: {
+        type: 'number',
+      },
+      polyunsaturatedFatInG: {
         type: 'number',
       },
       potassiumInMg: {
@@ -82,9 +88,6 @@ export const nutritionalFactsDeclaration /*: FunctionDeclaration*/ = {
         type: 'number',
       },
       thiaminInMg: {
-        type: 'number',
-      },
-      totalFatInG: {
         type: 'number',
       },
       transFatInG: {
