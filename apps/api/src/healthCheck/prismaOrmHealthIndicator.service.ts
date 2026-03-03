@@ -13,7 +13,7 @@ export class PrismaOrmHealthIndicatorService extends HealthIndicatorService {
       await this.prismaService.$queryRaw`SELECT 1`;
       return this.check(databaseName).up();
     } catch (e) {
-      return this.check(databaseName).down(e);
+      return this.check(databaseName).down((e as Error).message);
     }
   }
 }

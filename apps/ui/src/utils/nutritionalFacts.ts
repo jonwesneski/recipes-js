@@ -3,7 +3,6 @@ import { camelCaseToSpaces } from './stringHelpers';
 
 export const nutritionalFactsConst: NutritionalFactsDto = {
   proteinInG: null,
-  totalFatInG: null,
   carbohydratesInG: null,
   fiberInG: null,
   sugarInG: null,
@@ -11,6 +10,8 @@ export const nutritionalFactsConst: NutritionalFactsDto = {
   cholesterolInMg: null,
   saturatedFatInG: null,
   transFatInG: null,
+  polyunsaturatedFatInG: null,
+  monounsaturatedFatInG: null,
   potassiumInMg: null,
   vitaminAInIU: null,
   vitaminCInMg: null,

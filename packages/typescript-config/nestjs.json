@@ -12,7 +12,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": "./",
     "types": ["jest", "node"],
     "paths": {
       "@src/*": ["./src/*"]

@@ -11,16 +11,16 @@ import {
 } from '@repo/database';
 import { type RecipeMinimalType, type RecipeType } from '@repo/nest-shared';
 import { PaginationResponse } from '@src/common/common.responses';
-import { OmitPrismaFieldsEntity } from '@src/common/utilityTypes';
+import {
+  OmitPrismaFieldsDto,
+  OmitPrismaFieldsEntity,
+} from '@src/common/utilityTypes';
 
 export class NutritionalFactsResponse
-  implements
-    OmitPrismaFieldsEntity<Prisma.NutritionalFactsCreateInput, 'recipe'>
+  implements OmitPrismaFieldsDto<Prisma.NutritionalFactsModel, 'recipeId'>
 {
   @ApiProperty({ type: Number, nullable: true })
   proteinInG: number | null;
-  @ApiProperty({ type: Number, nullable: true })
-  totalFatInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
   carbohydratesInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
@@ -35,6 +35,10 @@ export class NutritionalFactsResponse
   saturatedFatInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
   transFatInG: number | null;
+  @ApiProperty({ type: Number, nullable: true })
+  polyunsaturatedFatInG: number | null;
+  @ApiProperty({ type: Number, nullable: true })
+  monounsaturatedFatInG: number | null;
   @ApiProperty({ type: Number, nullable: true })
   potassiumInMg: number | null;
   @ApiProperty({ type: Number, nullable: true })

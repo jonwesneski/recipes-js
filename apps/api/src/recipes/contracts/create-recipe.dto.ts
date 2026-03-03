@@ -44,11 +44,6 @@ export class NutritionalFactsDto
   @Min(0)
   @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
-  totalFatInG: number | null;
-  @IsNumber()
-  @Min(0)
-  @IsNullable()
-  @ApiProperty({ type: Number, nullable: true })
   carbohydratesInG: number | null;
   @IsNumber()
   @Min(0)
@@ -80,6 +75,16 @@ export class NutritionalFactsDto
   @IsNullable()
   @ApiProperty({ type: Number, nullable: true })
   transFatInG: number | null;
+  @IsNumber()
+  @Min(0)
+  @IsNullable()
+  @ApiProperty({ type: Number, nullable: true })
+  polyunsaturatedFatInG: number | null;
+  @IsNumber()
+  @Min(0)
+  @IsNullable()
+  @ApiProperty({ type: Number, nullable: true })
+  monounsaturatedFatInG: number | null;
   @IsNumber()
   @Min(0)
   @IsNullable()

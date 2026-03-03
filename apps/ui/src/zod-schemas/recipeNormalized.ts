@@ -27,7 +27,6 @@ const MeasurementUnitSchema = z.enum([
 
 const NutritionalFactsInputSchema = z.object({
   proteinInG: z.number().nullable(),
-  totalFatInG: z.number().nullable(),
   carbohydratesInG: z.number().nullable(),
   fiberInG: z.number().nullable(),
   sugarInG: z.number().nullable(),
@@ -35,8 +34,8 @@ const NutritionalFactsInputSchema = z.object({
   cholesterolInMg: z.number().nullable(),
   saturatedFatInG: z.number().nullable(),
   transFatInG: z.number().nullable(),
-  //   polyunsaturatedFatInG: z.number().nullable(),
-  //   monounsaturatedFatInG: z.number().nullable(),
+  polyunsaturatedFatInG: z.number().nullable(),
+  monounsaturatedFatInG: z.number().nullable(),
   calciumInMg: z.number().nullable(),
   ironInMg: z.number().nullable(),
   potassiumInMg: z.number().nullable(),

@@ -123,7 +123,7 @@ export class AuthController {
         </html>
       `);
     } catch (err) {
-      res.status(500).send({ success: false, message: err.message });
+      res.status(500).send({ success: false, message: (err as Error).message });
     }
   }
 }
