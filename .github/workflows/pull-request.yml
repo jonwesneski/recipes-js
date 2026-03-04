@@ -50,10 +50,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      # - name: Lint
-      #   run: pnpm ci:lint
+      - name: Lint
+        run: pnpm ci:lint
 
       - name: Build
         run: pnpm build
