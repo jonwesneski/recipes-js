@@ -32,7 +32,7 @@ export const RecipePage = () => {
       <RecipeIngredientsOverview className="my-5" />
       <RecipeDurations />
       <StepList />
-      <NutritionalFacts className="my-28" />
+      <NutritionalFacts className="my-28 mx-auto" />
     </div>
   )
 }
