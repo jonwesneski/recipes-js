@@ -4,7 +4,14 @@
   "tasks": {
     "build": {
       "dependsOn": ["^@repo/database#build", "^@repo/nest-shared#build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "passThroughEnv": [
+        "KAFKA_BROKER_URLS",
+        "KAFKA_KEY",
+        "KAFKA_SECRET",
+        "KAFKA_CLIENT_ID",
+        "KAFKA_CONSUMER_GROUP_ID"
+      ]
     },
     "ci:lint": {
       "dependsOn": ["^@repo/nest-shared#build"]
