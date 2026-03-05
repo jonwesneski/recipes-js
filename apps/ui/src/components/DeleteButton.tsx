@@ -39,7 +39,6 @@ export const DeleteRecipeButton = (props: IDeleteRecipeButtonProps) => {
   const handleOnClick = () => {
     showModal(
       'Delete Recipe',
-      { blocking: true, backgroundGrayedOut: true },
       () => (
         <ModalQuestion
           question="are you sure you want to delete this recipe?"
@@ -50,6 +49,7 @@ export const DeleteRecipeButton = (props: IDeleteRecipeButtonProps) => {
         />
       ),
       {},
+      { blocking: true, backgroundGrayedOut: true },
     )
   }
 

@@ -5,6 +5,9 @@
     "build": {
       "dependsOn": ["^@repo/database#build", "^@repo/nest-shared#build"],
       "outputs": ["dist/**"]
+    },
+    "ci:lint": {
+      "dependsOn": ["^@repo/nest-shared#build"]
     }
   }
 }

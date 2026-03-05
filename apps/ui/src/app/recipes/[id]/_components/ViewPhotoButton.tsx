@@ -19,9 +19,9 @@ export const ViewPhotoButton = (props: IViewPhotoButtonProps) => {
   const handleOnClick = () => {
     showModal(
       ModalPhoto.name,
-      { backgroundGrayedOut: true, disableScrolling: true },
       () => <ModalPhoto photoUrl={props.photoUrl} onClose={closeModal} />,
       {},
+      { backgroundGrayedOut: true, disableScrolling: true },
     )
   }
 

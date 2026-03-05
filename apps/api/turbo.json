@@ -17,6 +17,9 @@
         "^@repo/nest-shared#build"
       ],
       "outputs": ["swagger.json"]
+    },
+    "ci:lint": {
+      "dependsOn": ["^@repo/nest-shared#build"]
     }
   }
 }
