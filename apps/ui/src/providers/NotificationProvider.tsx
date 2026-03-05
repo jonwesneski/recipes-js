@@ -43,14 +43,19 @@ export const NotificationProvider = ({
     durationMs = 5000,
   }: ToastParams) => {
     // passing as Toast since it is being used in useEffect
-    showModal(toastId, {}, Toast, {
-      title,
-      message,
-      type,
-      onClose: closeModal,
-      onClick: navigationUrl ? () => router.push(navigationUrl) : undefined,
-      duration: durationMs,
-    })
+    showModal(
+      toastId,
+      Toast,
+      {
+        title,
+        message,
+        type,
+        onClose: closeModal,
+        onClick: navigationUrl ? () => router.push(navigationUrl) : undefined,
+        duration: durationMs,
+      },
+      {},
+    )
   }
 
   useEffect(() => {

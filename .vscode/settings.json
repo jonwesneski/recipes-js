@@ -10,5 +10,8 @@
   },
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "json.schemaDownload.trustedDomains": {
+    "https://turborepo.com/schema.json": true
   }
 }

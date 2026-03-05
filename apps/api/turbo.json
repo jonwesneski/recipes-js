@@ -8,7 +8,16 @@
         "^@repo/zod-schemas#build",
         "^@repo/nest-shared#build"
       ],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "passThroughEnv": [
+        "SWAGGER_ONLY",
+        "JWT_SECRET",
+        "REFRESH_JWT_SECRET",
+        "REFRESH_JWT_EXPIRE_IN",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_SECRET",
+        "GOOGLE_CALLBACK_URL"
+      ]
     },
     "swagger:only": {
       "dependsOn": [
@@ -17,6 +26,9 @@
         "^@repo/nest-shared#build"
       ],
       "outputs": ["swagger.json"]
+    },
+    "ci:lint": {
+      "dependsOn": ["^@repo/nest-shared#build"]
     }
   }
 }

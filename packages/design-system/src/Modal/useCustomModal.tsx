@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import { ModalType } from './modal-store'
+import { type ModalType } from './modal-store'
 import { useModalStore } from './modal-store-provider'
 
 type CustomModalProps = Partial<
@@ -12,9 +12,9 @@ export function useCustomModal() {
 
   const showModal = <T extends object>(
     id: string,
-    modalProps: CustomModalProps = {},
     Component: React.ComponentType<T>,
     componentProps: T,
+    modalProps: CustomModalProps = {},
   ) => {
     const {
       disableScrolling = false,

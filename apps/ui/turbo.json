@@ -5,6 +5,9 @@
     "build": {
       "dependsOn": ["^@repo/codegen#build", "^@repo/design-system#build"],
       "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "ci:lint": {
+      "dependsOn": ["^@repo/codegen#build", "^@repo/design-system#build"]
     }
   }
 }
