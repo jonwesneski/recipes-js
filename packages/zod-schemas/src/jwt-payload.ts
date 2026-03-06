@@ -7,3 +7,4 @@ export const jwtGoogleSchema = z.object({
 });
 
 export type JwtGoogleType = z.infer<typeof jwtGoogleSchema>;
+export type PartialJwtGoogleType = Partial<JwtGoogleType>;

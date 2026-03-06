@@ -3,18 +3,23 @@ import { JwtGoogleType } from '@repo/zod-schemas';
 import { Request } from 'express';
 import { jwtDecode } from 'jwt-decode';
 
-export const JwtDecodedHeader = createParamDecorator(
-  (ctx: ExecutionContext) => {
+export const JwtDecoded = createParamDecorator(
+  (required: boolean = true, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<Request>();
-    return parseHelper(request);
+    try {
+      return parseHelper(request);
+    } catch (e) {
+      if (required === false) {
+        return {};
+      }
+      throw e;
+    }
   },
 );
 
-// TODO: not sure how to mock JwtDecodedHeader in jest; so using this for now
 export const parseHelper = (request: Request): JwtGoogleType => {
   let accessToken: string | undefined = request.cookies['access_token'];
   if (!accessToken) {
-    //  Keeping for postman
     const headerValue: string = request.headers.authorization ?? '';
     accessToken = headerValue.replace('Bearer ', '');
   }

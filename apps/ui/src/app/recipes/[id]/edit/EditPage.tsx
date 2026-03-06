@@ -4,22 +4,25 @@ import type { PatchRecipeDto } from '@repo/codegen/model'
 import { useRecipesControllerUpdateRecipeV1 } from '@repo/codegen/recipes'
 import { TextButton } from '@repo/design-system'
 import { RecipeInput } from '@src/components/recipeInput'
+import { useRecipeStore } from '@src/providers/recipe-store-provider'
+import { useRouter } from 'next/navigation'
 
 const EditPage = () => {
+  const id = useRecipeStore((state) => state.id)
   const { mutate } = useRecipesControllerUpdateRecipeV1({
     mutation: { retry: false },
   })
+  const router = useRouter()
 
   const handleSubmit = () => {
     mutate(
+      // todo: need to implement makeGeneratePatchDto
       { id: '', data: {} as PatchRecipeDto },
       {
-        onSuccess: () => undefined,
+        onSuccess: () => router.push(`/recipes/${id}`),
         onError: () => undefined,
       },
     )
-
-    window.history.replaceState(null, '', '/recipes')
   }
 
   return (
