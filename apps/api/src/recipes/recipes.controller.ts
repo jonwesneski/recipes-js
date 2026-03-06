@@ -11,7 +11,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -22,10 +21,10 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { BookmarkOwnerError } from '@repo/nest-shared';
+import type { JwtGoogleType, PartialJwtGoogleType } from '@repo/zod-schemas';
 import { JwtGuard } from '@src/auth/guards';
 import { throwIfConflict, throwIfNotFound } from '@src/common';
-import { parseHelper } from '@src/common/header.decorators';
-import { type Request } from 'express';
+import { JwtDecoded } from '@src/common/header.decorators';
 import {
   BadRequestRecipeResponse,
   CreateRecipeDto,
@@ -65,24 +64,17 @@ export class RecipesController {
   })
   @ApiParam({ name: 'id', type: String, description: 'id of recipe' })
   async recipe(
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
+    @JwtDecoded(false) jwtDecoded: PartialJwtGoogleType,
     @Param('id') id: string,
-    @Req() request: Request,
     @Query() query: GetRecipeDto,
   ): Promise<RecipeResponse> {
-    let userId: string | undefined;
     const byOwner = query.byOwner;
-    try {
-      userId = parseHelper(request).sub;
-    } catch {
-      if (byOwner) {
-        throw new NotFoundException();
-      }
+    if (byOwner && !jwtDecoded.sub) {
+      throw new NotFoundException();
     }
 
     try {
-      return await this.recipesService.getRecipe(id, byOwner, userId);
+      return await this.recipesService.getRecipe(id, byOwner, jwtDecoded.sub);
     } catch (error) {
       throwIfNotFound(error);
       throw error;
@@ -95,14 +87,11 @@ export class RecipesController {
   @ApiBadRequestResponse({ type: BadRequestRecipeResponse })
   @UseGuards(JwtGuard)
   async createRecipe(
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
+    @JwtDecoded() jwtDecoded: JwtGoogleType,
     @Body() body: CreateRecipeDto,
-    @Req() req: Request,
   ): Promise<RecipeResponse> {
     try {
-      const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
-      return await this.recipesService.createRecipe(token.sub, body);
+      return await this.recipesService.createRecipe(jwtDecoded.sub, body);
     } catch (error) {
       throwIfConflict(error, `Recipe with name "${body.name}" already exists.`);
       throw error;
@@ -115,14 +104,11 @@ export class RecipesController {
   @UseGuards(JwtGuard)
   async updateRecipe(
     @Param('id') id: string,
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
+    @JwtDecoded() jwtDecoded: JwtGoogleType,
     @Body() body: PatchRecipeDto,
-    @Req() req: Request,
   ): Promise<RecipeResponse> {
-    const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
     try {
-      return await this.recipesService.updateRecipe(token.sub, id, body);
+      return await this.recipesService.updateRecipe(jwtDecoded.sub, id, body);
     } catch (error) {
       throwIfConflict(error);
       throw error;
@@ -135,13 +121,10 @@ export class RecipesController {
   @UseGuards(JwtGuard)
   async deleteRecipe(
     @Param('id') id: string,
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
-    @Req() req: Request,
+    @JwtDecoded() jwtDecoded: JwtGoogleType,
   ): Promise<void> {
-    const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
     try {
-      await this.recipesService.deleteRecipe(id, token.sub);
+      await this.recipesService.deleteRecipe(id, jwtDecoded.sub);
     } catch (error) {
       throwIfNotFound(error);
       throw error;
@@ -156,14 +139,11 @@ export class RecipesController {
   @UseGuards(JwtGuard)
   async bookmarkRecipe(
     @Param('id') id: string,
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
+    @JwtDecoded() jwtDecoded: JwtGoogleType,
     @Body() body: PutBookmarkRecipeDto,
-    @Req() req: Request,
   ) {
-    const token = parseHelper(req); // Using since JwtDecodedHeader is not working in jest
     try {
-      return await this.recipesService.bookmarkRecipe(id, token.sub, body);
+      return await this.recipesService.bookmarkRecipe(id, jwtDecoded.sub, body);
     } catch (error) {
       if (error instanceof BookmarkOwnerError) {
         throw new BadRequestException(error.message);

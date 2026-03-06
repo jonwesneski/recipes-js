@@ -8,15 +8,14 @@ import {
   Patch,
   Put,
   Query,
-  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiNoContentResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import type { JwtGoogleType, PartialJwtGoogleType } from '@repo/zod-schemas';
 import { JwtGuard } from '@src/auth/guards';
 import { BaseQueryDto, throwIfNotFound } from '@src/common';
-import { parseHelper } from '@src/common/header.decorators';
-import { type Request } from 'express';
+import { JwtDecoded } from '@src/common/header.decorators';
 import { PatchUserDto } from './contracts';
 import { PutFollowUserDto } from './contracts/follow-user.dto';
 import {
@@ -42,13 +41,10 @@ export class UsersController {
   })
   @UseGuards(JwtGuard)
   async userAccount(
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
-    @Req() req: Request,
+    @JwtDecoded() jwtDecoded: JwtGoogleType,
   ): Promise<UserAccountResponse> {
     try {
-      const token = parseHelper(req);
-      return await this.usersService.getUserAccount(token.sub);
+      return await this.usersService.getUserAccount(jwtDecoded.sub);
     } catch (error) {
       throwIfNotFound(error);
       throw error;
@@ -62,19 +58,11 @@ export class UsersController {
   })
   @ApiParam({ name: 'id', type: String, description: 'id of user' })
   async user(
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
-    @Req() req: Request,
+    @JwtDecoded(false) jwtDecoded: PartialJwtGoogleType,
     @Param('id') id: string,
   ): Promise<UserPublicResponse> {
     try {
-      let requestedUser: string | undefined;
-      try {
-        requestedUser = parseHelper(req).sub;
-      } catch {
-        // ignore
-      }
-      return await this.usersService.getUser(id, requestedUser);
+      return await this.usersService.getUser(id, jwtDecoded.sub);
     } catch (error) {
       throwIfNotFound(error);
       throw error;
@@ -88,13 +76,10 @@ export class UsersController {
   })
   @UseGuards(JwtGuard)
   async updateUserAccount(
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
-    @Req() req: Request,
+    @JwtDecoded() jwtDecoded: JwtGoogleType,
     @Body(ValidationPipe, new PatchDtoValidationPipe()) body: PatchUserDto,
   ): Promise<UserAccountResponse> {
-    const id = parseHelper(req).sub;
-    return await this.usersService.updateUserAccount(id, body);
+    return await this.usersService.updateUserAccount(jwtDecoded.sub, body);
   }
 
   @Get(':id/followings')
@@ -125,13 +110,10 @@ export class UsersController {
   })
   @UseGuards(JwtGuard)
   async followUser(
-    // TODO: can't get this to work in jest
-    //@JwtDecodedHeader() jwtDecodedHeader: JwtGoogleType,
-    @Req() req: Request,
+    @JwtDecoded() jwtDecoded: JwtGoogleType,
     @Param('id') id: string,
     @Body() body: PutFollowUserDto,
   ) {
-    const token = parseHelper(req);
-    await this.usersService.followUser(id, token.sub, body.follow);
+    await this.usersService.followUser(id, jwtDecoded.sub, body.follow);
   }
 }

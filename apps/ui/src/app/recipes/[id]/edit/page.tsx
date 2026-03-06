@@ -6,7 +6,7 @@ import { RecipeStoreProvider } from '@src/providers/recipe-store-provider'
 import { getAccessToken } from '@src/utils/getAccessToken'
 import { transformRecipeToNormalized } from '@src/zod-schemas/recipeNormalized'
 import { notFound } from 'next/navigation'
-import EditPage from './_page'
+import EditPage from './EditPage'
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const token = await getAccessToken()
