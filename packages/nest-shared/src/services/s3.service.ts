@@ -50,4 +50,22 @@ export class S3Service {
       throw err;
     }
   }
+
+  async deleteFiles(fileUrls: string[]) {
+    const params = {
+      Bucket: this._s3BucketName,
+      Delete: {
+        Objects: fileUrls.map((imageUrl) => ({
+          Key: imageUrl.replace(this._cloudFrontBaseUrl, ''),
+        })),
+      },
+    };
+    try {
+      await this._s3.deleteObjects(params);
+      this.logger.log(`Files deleted successfully`);
+    } catch (err) {
+      this.logger.error(`Error deleting files: ${JSON.stringify(err)}`);
+      throw err;
+    }
+  }
 }

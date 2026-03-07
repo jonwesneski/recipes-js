@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   ImageReviewProcessorService,
@@ -6,6 +6,7 @@ import {
   RecipeRepository,
   type RecipeType,
   RecipeUpdateType,
+  S3Service,
 } from '@repo/nest-shared';
 import { KafkaProducerService } from '@src/common';
 import { recipesDtoToQueryParams } from '@src/common/transforms';
@@ -22,6 +23,8 @@ import { GetRecipesDto } from './contracts/get-recipes.dto';
 
 @Injectable()
 export class RecipesService {
+  private readonly logger = new Logger(RecipesService.name);
+
   private readonly useKafka: boolean;
   constructor(
     private readonly configService: ConfigService,
@@ -29,6 +32,7 @@ export class RecipesService {
     private readonly imageReviewProcessorService: ImageReviewProcessorService,
     private readonly kafkaProducerService: KafkaProducerService,
     private readonly notificationsService: NotificationsService,
+    private readonly s3Service: S3Service,
   ) {
     this.useKafka = this.configService.get<boolean>('USE_KAFKA', false);
   }
@@ -64,7 +68,9 @@ export class RecipesService {
     );
 
     await this.processImages(data, recipe);
-    void this.notificationsService.recipeAdded(userId, recipe).catch(() => {});
+    void this.notificationsService
+      .recipeAdded(userId, recipe)
+      .catch((e) => this.logger.error(JSON.stringify(e)));
 
     return recipe;
   }
@@ -124,7 +130,6 @@ export class RecipesService {
                 {
                   recipeId: recipe.id,
                   stepId: recipe.steps[i].id,
-                  stepIndex: i,
                   base64Image: step.base64Image,
                 },
               );
@@ -147,10 +152,18 @@ export class RecipesService {
         this.transformToRecipeUpdateType(data),
       );
 
-    await this.processImages(data, recipe);
-    // TODO: delete images at deletedStepImageUrls from storage
+    void this.processImages(data, recipe).catch((e) =>
+      this.logger.error(JSON.stringify(e)),
+    );
+    void this.deleteImages(deletedStepImageUrls).catch((e) =>
+      this.logger.error(JSON.stringify(e)),
+    );
 
     return recipe;
+  }
+
+  private async deleteImages(deletedStepImageUrls: string[]) {
+    await this.s3Service.deleteFiles(deletedStepImageUrls);
   }
 
   private transformToRecipeUpdateType(data: PatchRecipeDto): RecipeUpdateType {

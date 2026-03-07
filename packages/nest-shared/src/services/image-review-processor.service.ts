@@ -80,7 +80,7 @@ export class ImageReviewProcessorService {
       const s3BucketKeyName = this.makeBucketKeyName(
         userId,
         recipeStepMessage.recipeId,
-        recipeStepMessage.stepIndex,
+        recipeStepMessage.stepId,
       );
       const s3ImageUrl = await this.s3Service.uploadFile(
         s3BucketKeyName,
@@ -94,10 +94,10 @@ export class ImageReviewProcessorService {
     }
   }
 
-  makeBucketKeyName(userId: string, id: string, stepIndex?: number) {
+  makeBucketKeyName(userId: string, id: string, stepId?: string) {
     let s3BucketKeyName = `${userId}/${id}`;
-    if (stepIndex !== undefined) {
-      s3BucketKeyName += `/step-${stepIndex}.jpg`;
+    if (stepId !== undefined) {
+      s3BucketKeyName += `/step-${stepId}.jpg`;
     } else {
       s3BucketKeyName += `/main.jpg`;
     }

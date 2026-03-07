@@ -609,6 +609,7 @@ describe('RecipesController (e2e)', () => {
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- not concerned in tests
           const ids: string[] = res.body.steps.map((s: StepResponse) => s.id);
           expect(ids).toHaveLength(2);
           expect(ids).toContain(step0.id);

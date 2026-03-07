@@ -335,19 +335,17 @@ export class RecipeRepository {
                                                 where: { id: ing.id },
                                                 update: {
                                                   displayOrder: k,
-                                                  amount: ing.amount as number,
+                                                  amount: ing.amount,
                                                   unit: ing.unit,
-                                                  name: ing.name as string,
-                                                  isFraction:
-                                                    ing.isFraction as boolean,
+                                                  name: ing.name,
+                                                  isFraction: ing.isFraction,
                                                 },
                                                 create: {
                                                   displayOrder: k,
-                                                  amount: ing.amount as number,
+                                                  amount: ing.amount,
                                                   unit: ing.unit,
-                                                  name: ing.name as string,
-                                                  isFraction:
-                                                    ing.isFraction as boolean,
+                                                  name: ing.name,
+                                                  isFraction: ing.isFraction,
                                                 },
                                               })),
                                             createMany: {
@@ -356,11 +354,10 @@ export class RecipeRepository {
                                                 .filter(({ ing }) => !ing.id)
                                                 .map(({ ing, k }) => ({
                                                   displayOrder: k,
-                                                  amount: ing.amount as number,
+                                                  amount: ing.amount,
                                                   unit: ing.unit,
-                                                  name: ing.name as string,
-                                                  isFraction:
-                                                    ing.isFraction as boolean,
+                                                  name: ing.name,
+                                                  isFraction: ing.isFraction,
                                                 })),
                                             },
                                           }
@@ -374,15 +371,13 @@ export class RecipeRepository {
                               instruction: s.instruction ?? null,
                               ingredients: {
                                 createMany: {
-                                  data: (s.ingredients ?? []).map(
-                                    (ing, k) => ({
-                                      displayOrder: k,
-                                      amount: ing.amount as number,
-                                      unit: ing.unit,
-                                      name: ing.name as string,
-                                      isFraction: ing.isFraction as boolean,
-                                    }),
-                                  ),
+                                  data: (s.ingredients ?? []).map((ing, k) => ({
+                                    displayOrder: k,
+                                    amount: ing.amount,
+                                    unit: ing.unit,
+                                    name: ing.name,
+                                    isFraction: ing.isFraction,
+                                  })),
                                 },
                               },
                             },
@@ -398,10 +393,10 @@ export class RecipeRepository {
                               createMany: {
                                 data: (s.ingredients ?? []).map((ing, k) => ({
                                   displayOrder: k,
-                                  amount: ing.amount as number,
+                                  amount: ing.amount,
                                   unit: ing.unit,
-                                  name: ing.name as string,
-                                  isFraction: ing.isFraction as boolean,
+                                  name: ing.name,
+                                  isFraction: ing.isFraction,
                                 })),
                               },
                             },
