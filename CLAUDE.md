@@ -11,6 +11,60 @@ This is a pnpm monorepo. Key apps and packages:
 
 ---
 
+## API — PATCH /v1/recipes/:id (step update semantics)
+
+### Key files
+
+- `packages/nest-shared/src/repositories/recipes/recipe.repository.ts` — `updateRecipe()` method
+- `packages/nest-shared/src/repositories/recipes/types.ts` — `RecipeUpdateType`, `StepUpdateType`
+- `apps/api/src/recipes/contracts/patch-recipe.dto.ts` — `PatchRecipeDto`, `PatchStepDto`
+- `apps/api/src/recipes/contracts/recipes.response.ts` — `StepResponse` (includes `displayOrder`)
+- `apps/api/src/recipes/recipes.service.ts` — `transformToRecipeUpdateType()`
+
+### Patch semantics
+
+**Top-level recipe fields:** Any field omitted from the payload is left unchanged. `null` sets the DB column to null where the schema allows it.
+
+**Step deletion (`deleteStepIds?: string[]`):**
+
+- Explicitly lists step IDs to delete (along with their ingredients).
+- The response includes `deletedStepImageUrls` for the caller to clean up storage (currently a TODO in `recipes.service.ts`).
+- Omit or send `[]` to delete nothing.
+
+**Steps array (`steps?: PatchStepDto[]`):**
+
+- **Omit `steps` entirely** → steps are not touched at all.
+- **Include `steps`** → upserts existing steps (by `id`) and creates new steps (no `id`). Does **not** implicitly delete any steps — use `deleteStepIds` to delete.
+- **Empty `steps: []`** → no-op (no steps to create or update).
+
+**Per-step update (existing step, has `id`):**
+
+| Field | Omitted | Provided |
+|---|---|---|
+| `instruction` | left unchanged | updated to the new value |
+| `ingredients` | left unchanged | replaced entirely (see below) |
+| `displayOrder` | falls back to array index in payload | set to the explicit value |
+
+**Per-step ingredients (when `ingredients` is provided):** Same add/remove/update semantics as steps — existing ingredients whose `id` is absent from the array are deleted; new ingredients (no `id`) are created; existing ones (with `id`) are updated. `displayOrder` is always the ingredient's index within its step's array.
+
+### `displayOrder` contract
+
+- `displayOrder` is returned in `StepResponse` and must be sent back in PATCH payloads when you want to preserve or reorder steps explicitly.
+- If `displayOrder` is omitted for a step in the payload, it defaults to the step's **index in the payload array**.
+- The DB enforces `@@unique([recipeId, displayOrder])` on `Step`. The repository handles reordering safely by first moving all kept steps to unique negative temporary values (guaranteed collision-free since real values are always ≥ 0), then running the main upsert to assign final values.
+
+### Transaction structure (`updateRecipe`)
+
+Everything runs inside a single Prisma interactive transaction (`$transaction`):
+
+1. Collect image URLs of steps in `deleteStepIds` (for storage cleanup by caller).
+2. Move steps-with-ids in the `steps` payload to negative temporary `displayOrder` values to avoid unique constraint violations during reorder.
+3. Single `tx.recipe.update()` with nested `deleteMany` (for `deleteStepIds`) / `upsert` / `create` for steps, ingredients, tags, equipments, and nutritionalFacts.
+
+**Do not** attempt to use `$executeRaw` with `ANY(array)` or `Prisma.join` inside interactive transactions with the `@prisma/adapter-pg` driver — the pg adapter does not support it and throws error `42703`. Use Prisma query API methods instead.
+
+---
+
 ## UI (`apps/ui`)
 
 All references to the UI in this section refer to `apps/ui`.

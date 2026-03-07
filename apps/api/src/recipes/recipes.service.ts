@@ -140,13 +140,15 @@ export class RecipesService {
     id: string,
     data: PatchRecipeDto,
   ): Promise<RecipeType> {
-    const recipe = await this.recipeRepository.updateRecipe(
-      userId,
-      id,
-      this.transformToRecipeUpdateType(data),
-    );
+    const { recipe, deletedStepImageUrls } =
+      await this.recipeRepository.updateRecipe(
+        userId,
+        id,
+        this.transformToRecipeUpdateType(data),
+      );
 
     await this.processImages(data, recipe);
+    // TODO: delete images at deletedStepImageUrls from storage
 
     return recipe;
   }
@@ -158,8 +160,10 @@ export class RecipesService {
     if (steps) {
       recipeData['steps'] = steps.map((s) => ({
         id: s.id,
+        displayOrder: s.displayOrder,
         instruction: s.instruction,
         ingredients: s.ingredients,
+        deleteIngredientIds: s.deleteIngredientIds,
       }));
     }
 

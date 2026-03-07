@@ -96,7 +96,7 @@ export class StepResponse
   implements
     Omit<
       Prisma.StepUncheckedCreateWithoutRecipeInput,
-      'displayOrder' | 'ingredients' | 'instructions'
+      'ingredients' | 'instructions'
     >
 {
   @ApiProperty()
@@ -105,6 +105,8 @@ export class StepResponse
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
+  @ApiProperty()
+  displayOrder: number;
   @ApiProperty({ type: String, nullable: true })
   instruction: string | null;
   @ApiProperty({ type: [IngredientResponse] })

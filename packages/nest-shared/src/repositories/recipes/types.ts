@@ -48,7 +48,7 @@ export const RecipeInclude = {
           omit: { stepId: true, displayOrder: true },
         },
       },
-      omit: { recipeId: true, displayOrder: true },
+      omit: { recipeId: true },
     },
     nutritionalFacts: {
       omit: {
@@ -154,11 +154,11 @@ type StepUpdateType = Prisma.StepGetPayload<{
     createdAt: true;
     updatedAt: true;
     recipeId: true;
-    displayOrder: true;
     imageUrl: true;
   };
 }> & {
   ingredients: IngredientUpdateType[];
+  deleteIngredientIds?: string[];
 };
 
 type _RecipeUpdateType = Prisma.RecipeGetPayload<{
@@ -200,4 +200,4 @@ type DeepOptionalUndefined<T, A> = {
 export type RecipeUpdateType = DeepOptionalUndefined<
   _RecipeUpdateType,
   IngredientUpdateType
->;
+> & { deleteStepIds?: string[] };

@@ -56,6 +56,11 @@ export class PatchStepDto
   @IsNotEmpty()
   @ApiProperty({ type: String, required: false })
   id?: string;
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @ApiProperty({ type: Number, required: false })
+  displayOrder?: number;
   @IsString()
   @IsOptional()
   @ApiProperty({ type: String, required: false })
@@ -68,6 +73,11 @@ export class PatchStepDto
   @ApiProperty({ type: [PatchIngredientDto] })
   @Type(() => PatchIngredientDto)
   ingredients?: PatchIngredientDto[];
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String], required: false })
+  deleteIngredientIds?: string[];
   @IsOptional()
   @IsString()
   @ApiProperty({ type: String, nullable: true })
@@ -119,6 +129,11 @@ export class PatchRecipeDto
   @ApiProperty({ type: [PatchStepDto], required: false })
   @Type(() => PatchStepDto)
   steps?: PatchStepDto[];
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String], required: false })
+  deleteStepIds?: string[];
   @IsOptional()
   @ValidateNested()
   @Type(() => NutritionalFactsDto)
