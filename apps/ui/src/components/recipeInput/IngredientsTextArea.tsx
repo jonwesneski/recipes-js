@@ -7,11 +7,11 @@ import { withRetry } from '@src/utils/withRetry'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { IngredientRow, type IngredientRowHandle } from './ingredient'
 
-const placeholder = `0.5 cups fresh basil
-1 1/4 cups peanuts
-3 eggs
-1 ounce salt`
-const placeholderSplit = placeholder.split('\n')
+// const placeholder = `0.5 cups fresh basil
+// 1 1/4 cups peanuts
+// 3 eggs
+// 1 ounce salt`
+// const placeholderSplit = placeholder.split('\n')
 
 export interface IngredientsTextAreaHandle {
   focusLast: () => void
@@ -134,7 +134,7 @@ export const IngredientsTextArea = forwardRef<
               itemRefs.current.delete(id)
             }
           }}
-          placeholder={placeholderSplit[i]}
+          //placeholder={placeholderSplit[i]}
           value={ingredientDisplayString(ingredients[id])}
           error={
             ingredients[id].amount.errors?.[0] ??
