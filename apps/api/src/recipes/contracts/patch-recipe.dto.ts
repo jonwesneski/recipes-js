@@ -63,8 +63,8 @@ export class PatchStepDto
   displayOrder?: number;
   @IsString()
   @IsOptional()
-  @ApiProperty({ type: String, required: false })
-  instruction?: string;
+  @ApiProperty({ type: String, nullable: true, required: false })
+  instruction?: string | null;
   @IsArray()
   @IsOptional()
   @ArrayNotEmpty()
@@ -80,7 +80,8 @@ export class PatchStepDto
   deleteIngredientIds?: string[];
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String, nullable: true })
+  @IsNotEmpty()
+  @ApiProperty({ type: String, nullable: true, required: false })
   base64Image?: string | null;
 }
 
@@ -109,7 +110,7 @@ export class PatchRecipeDto
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, nullable: true, required: false })
   base64Image?: string;
   @IsInt()
   @IsOptional()

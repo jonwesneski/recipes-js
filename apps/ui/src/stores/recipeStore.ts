@@ -9,6 +9,7 @@ import type {
   GenerateNutritionalFactsDto,
   MealType,
   NutritionalFactsResponse,
+  PatchRecipeDto,
   ProteinType,
   RecipeResponseServingUnit,
 } from '@repo/codegen/model';
@@ -41,6 +42,8 @@ export type RecipeState = Omit<NormalizedRecipe, 'imageUrl'> & {
     isValid: boolean;
     errors: BadRequestRecipeResponse;
     scaleFactor: FactorType;
+    deleteStepIds: string[];
+    deleteIngredientIds: Record<RecipeState['stepIds'][number], string[]>;
   };
 };
 
@@ -87,6 +90,7 @@ export type RecipeActions = {
   setDifficultyLevel: (_value: DifficultyLevelType | null) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: (_isPublic: boolean) => CreateRecipeDto;
+  makePatchDto: (_isPublic: boolean) => PatchRecipeDto;
   makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
   makeGenerateCategoriesDto: () => GenerateCategoriesDto;
   setErrors: (_data: BadRequestRecipeResponse) => void;
@@ -188,6 +192,8 @@ export const createRecipeStore = (
           isValid: false,
           errors: {},
           scaleFactor: 1,
+          deleteStepIds: [],
+          deleteIngredientIds: {},
         },
         setName: (name: string) => set(() => ({ name })),
         setDescription: (description: string) => set(() => ({ description })),
@@ -223,6 +229,10 @@ export const createRecipeStore = (
         },
         removeStep: (stepId: string) => {
           set((state) => {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
+            delete state.metadata.deleteIngredientIds[stepId];
+            state.metadata.deleteStepIds.push(stepId);
+
             const stepIds = state.stepIds.filter((id) => id !== stepId);
             const removedIngredientIds = state.steps[stepId].ingredientIds;
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
@@ -350,6 +360,12 @@ export const createRecipeStore = (
         },
         removeIngredient: (stepId: string, id: string) => {
           set((state) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- not unnecessary
+            if (!state.metadata.deleteIngredientIds[stepId]) {
+              state.metadata.deleteIngredientIds[stepId] = [];
+            }
+            state.metadata.deleteIngredientIds[stepId].push(id);
+
             // Right now I want at least one indredientId even if it is empty
             // I may try to handle this differently in the future though
             if (state.steps[stepId].ingredientIds.length > 1) {
@@ -547,6 +563,42 @@ export const createRecipeStore = (
                 base64Image: recipe.steps[s].imageUrl?.split(',')[1] ?? null,
               };
             }),
+          };
+        },
+        makePatchDto: (isPublic: boolean) => {
+          /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
+          const {
+            id,
+            createdAt,
+            updatedAt,
+            user,
+            imageSrc,
+            metadata,
+            ingredients,
+            stepIds,
+            ...recipe
+          } = get();
+          /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
+
+          return {
+            ...recipe,
+            isPublic,
+            base64Image: imageSrc?.split(',')[1] ?? null,
+            steps: stepIds.map((s) => {
+              return {
+                ingredients: recipe.steps[s].ingredientIds.map((i) => ({
+                  id: i,
+                  ...toCreateIngredientDto(ingredients[i]),
+                })),
+                instruction: recipe.steps[s].instruction,
+                base64Image: recipe.steps[s].imageUrl?.split(',')[1] ?? null,
+                deleteIngredientIds:
+                  metadata.deleteIngredientIds[s] ?? undefined,
+              };
+            }),
+            deleteStepIds: metadata.deleteStepIds.length
+              ? metadata.deleteStepIds
+              : undefined,
           };
         },
         makeGenerateNutritionalFactsDto: () => {

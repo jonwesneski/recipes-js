@@ -434,7 +434,12 @@ describe('RecipesController (e2e)', () => {
           {
             id: originalStep.id,
             ingredients: [
-              { name: 'New Ingredient', amount: 50, isFraction: false, unit: 'grams' },
+              {
+                name: 'New Ingredient',
+                amount: 50,
+                isFraction: false,
+                unit: 'grams',
+              },
             ],
             deleteIngredientIds: [originalIngredientId],
           },
@@ -523,8 +528,6 @@ describe('RecipesController (e2e)', () => {
       })),
     });
 
-    // ── Requirement: omit steps field → steps are untouched ──────────────────
-
     it('omitting steps field leaves steps unchanged', async () => {
       const response = await createRecipe();
       const originalStepId = response.steps[0].id;
@@ -542,9 +545,6 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    // ── Requirement: empty array → delete all steps ───────────────────────────
-    // Note: requires removing @ArrayNotEmpty() from PatchRecipeDto.steps
-
     it('deleteStepIds deletes all steps', async () => {
       const response = await createRecipe();
 
@@ -561,8 +561,6 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    // ── Requirement: add a new step (no id) alongside existing steps ──────────
-
     it('adds a new step to existing recipe', async () => {
       const response = await createRecipe();
       const originalStepId = response.steps[0].id;
@@ -573,7 +571,12 @@ describe('RecipesController (e2e)', () => {
           {
             instruction: 'Brand new step',
             ingredients: [
-              { name: 'New Ingredient', amount: 50, isFraction: false, unit: 'grams' },
+              {
+                name: 'New Ingredient',
+                amount: 50,
+                isFraction: false,
+                unit: 'grams',
+              },
             ],
           },
         ],
@@ -592,13 +595,10 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    // ── Requirement: delete a specific step by not including it ───────────────
-
     it('deletes a specific step while keeping others', async () => {
       const recipe = await createRecipe3Steps();
       const [step0, step1, step2] = recipe.steps;
 
-      // Delete step1 explicitly; keep first and third
       const editRecipe: PatchRecipeDto = {
         steps: [{ id: step0.id }, { id: step2.id }],
         deleteStepIds: [step1.id],
@@ -617,13 +617,10 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    // ── Requirement: reorder steps ────────────────────────────────────────────
-
     it('reorders steps based on explicit displayOrder', async () => {
       const recipe = await createRecipe3Steps();
       const [step0, step1, step2] = recipe.steps;
 
-      // Reverse order via explicit displayOrder
       const editRecipe: PatchRecipeDto = {
         steps: [
           { id: step2.id, displayOrder: 0 },
@@ -645,8 +642,6 @@ describe('RecipesController (e2e)', () => {
           expect(res.body.steps[2].displayOrder).toBe(2);
         });
     });
-
-    // ── Requirement: mix add + update + delete in one request ─────────────────
 
     it('handles adding, updating, and deleting steps in one request', async () => {
       const recipe = await createRecipe3Steps();
@@ -686,16 +681,15 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    // ── Requirement: partial step update — only instruction ───────────────────
-
     it('partial step update: only instruction changes, ingredients are preserved', async () => {
       const response = await createRecipe();
       const originalStep = response.steps[0];
       const originalIngredientId = originalStep.ingredients[0].id;
 
-      // Send only id + instruction; no ingredients field
       const editRecipe: PatchRecipeDto = {
-        steps: [{ id: originalStep.id, instruction: 'Only instruction changed' }],
+        steps: [
+          { id: originalStep.id, instruction: 'Only instruction changed' },
+        ],
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${response.id}`)
@@ -706,25 +700,29 @@ describe('RecipesController (e2e)', () => {
           const step: StepResponse = res.body.steps[0];
           expect(step.id).toBe(originalStep.id);
           expect(step.instruction).toBe('Only instruction changed');
-          expect(step.ingredients).toHaveLength(originalStep.ingredients.length);
+          expect(step.ingredients).toHaveLength(
+            originalStep.ingredients.length,
+          );
           expect(step.ingredients[0].id).toBe(originalIngredientId);
         });
     });
-
-    // ── Requirement: partial step update — only ingredients ───────────────────
 
     it('partial step update: only ingredients change, instruction is preserved', async () => {
       const response = await createRecipe();
       const originalStep = response.steps[0];
       const originalInstruction = originalStep.instruction;
 
-      // Send only id + ingredients + deleteIngredientIds; no instruction field
       const editRecipe: PatchRecipeDto = {
         steps: [
           {
             id: originalStep.id,
             ingredients: [
-              { name: 'Replaced Ingredient', amount: 99, isFraction: false, unit: 'grams' },
+              {
+                name: 'Replaced Ingredient',
+                amount: 99,
+                isFraction: false,
+                unit: 'grams',
+              },
             ],
             deleteIngredientIds: originalStep.ingredients.map((i) => i.id),
           },
@@ -744,8 +742,6 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    // ── Requirement: step with only id field preserves all its content ─────────
-
     it('step with only id field leaves that step fully unchanged', async () => {
       const response = await createRecipe();
       const originalStep = response.steps[0];
@@ -762,25 +758,26 @@ describe('RecipesController (e2e)', () => {
           const step: StepResponse = res.body.steps[0];
           expect(step.id).toBe(originalStep.id);
           expect(step.instruction).toBe(originalStep.instruction);
-          expect(step.ingredients).toHaveLength(originalStep.ingredients.length);
+          expect(step.ingredients).toHaveLength(
+            originalStep.ingredients.length,
+          );
           expect(step.ingredients[0].id).toBe(originalStep.ingredients[0].id);
         });
     });
-
-    // ── Requirement: displayOrder reflects array position after mixed ops ──────
 
     it('displayOrder matches explicit value after add and delete', async () => {
       const recipe = await createRecipe3Steps();
       const [step0, _step1, step2] = recipe.steps;
 
-      // Drop step1, insert a new step between step2 and step0 using explicit displayOrders
       const editRecipe: PatchRecipeDto = {
         steps: [
           { id: step2.id, displayOrder: 0 },
           {
             displayOrder: 1,
             instruction: 'Inserted step',
-            ingredients: [{ name: 'X', amount: 1, isFraction: false, unit: 'grams' }],
+            ingredients: [
+              { name: 'X', amount: 1, isFraction: false, unit: 'grams' },
+            ],
           },
           { id: step0.id, displayOrder: 2 },
         ],
@@ -823,7 +820,6 @@ describe('RecipesController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(204);
 
-      // testing not found here; so no need for another test
       await request(app.getHttpServer())
         .get(`${basePath}/${recipe.id}`)
         .expect(404);
