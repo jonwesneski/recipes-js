@@ -9,6 +9,10 @@ import { useIngredientRow } from './IngredientRowProvider'
 export const dropDownModes = ['amount', 'measurement', 'name'] as const
 export type DropdownMode = (typeof dropDownModes)[number]
 
+const placeholderAmounts = ['3', '2 1/2', '0.25', '1/4'] as const
+const placeholderMeasurements = ['cups', 'pounds', 'liters'] as const
+const placeholderNames = ['onion', 'ice cream', 'soy sauce'] as const
+
 const transformMap: Record<DropdownMode, string> = {
   amount: 'translateX(0)',
   measurement: 'translateX(calc(-100% - 10px))',
@@ -63,6 +67,42 @@ export const IngredientDropdown = (props: IngredientDropdownProps) => {
       }}
       className={mergeCss('border', props.className)}
     >
+      <div className="pl-2 pb-2">
+        <span className="font-bold">e.g.:</span>{' '}
+        <span
+          className={mergeCss('text-muted', {
+            'text-text font-bold': dropdownMode === 'amount',
+          })}
+        >
+          {
+            placeholderAmounts[
+              Math.floor(Math.random() * placeholderAmounts.length)
+            ]
+          }
+        </span>{' '}
+        <span
+          className={mergeCss('text-muted', {
+            'text-text font-bold': dropdownMode === 'measurement',
+          })}
+        >
+          {
+            placeholderMeasurements[
+              Math.floor(Math.random() * placeholderMeasurements.length)
+            ]
+          }
+        </span>{' '}
+        <span
+          className={mergeCss('text-muted', {
+            'text-text font-bold': dropdownMode === 'name',
+          })}
+        >
+          {
+            placeholderNames[
+              Math.floor(Math.random() * placeholderNames.length)
+            ]
+          }
+        </span>
+      </div>
       <div
         style={{
           display: 'flex',
