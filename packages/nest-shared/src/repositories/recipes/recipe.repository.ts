@@ -305,37 +305,42 @@ export class RecipeRepository {
           ...(updateSteps.length > 0 || addSteps.length > 0
             ? {
                 upsert: [...updateSteps, ...addSteps].map((s) => {
+                  const isUpdate = 'id' in s;
                   return {
-                    where: { id: 'id' in s ? s.id : '' },
+                    where: { id: isUpdate ? s.id : '' },
                     update: {
                       displayOrder: s.displayOrder,
                       ...(s.instruction !== undefined
                         ? { instruction: s.instruction }
                         : {}),
-                      ...(s.ingredients !== undefined
-                        ? {
+                      ...(!isUpdate || s.ingredients === undefined
+                        ? {}
+                        : {
                             ingredients: this.buildIngredientOps(
                               s.ingredients as IngredientOperationsType,
                             ),
-                          }
-                        : {}),
+                          }),
                     },
                     create: {
                       displayOrder: s.displayOrder,
                       instruction: s.instruction ?? null,
-                      ingredients: {
-                        createMany: {
-                          data: (
-                            (s.ingredients ?? []) as IngredientAddType[]
-                          ).map((ing) => ({
-                            displayOrder: ing.displayOrder,
-                            amount: ing.amount,
-                            unit: ing.unit,
-                            name: ing.name,
-                            isFraction: ing.isFraction,
-                          })),
-                        },
-                      },
+                      ...(isUpdate
+                        ? {}
+                        : {
+                            ingredients: {
+                              createMany: {
+                                data: (
+                                  (s.ingredients ?? []) as IngredientAddType[]
+                                ).map((ing) => ({
+                                  displayOrder: ing.displayOrder,
+                                  amount: ing.amount,
+                                  unit: ing.unit,
+                                  name: ing.name,
+                                  isFraction: ing.isFraction,
+                                })),
+                              },
+                            },
+                          }),
                     },
                   };
                 }),
