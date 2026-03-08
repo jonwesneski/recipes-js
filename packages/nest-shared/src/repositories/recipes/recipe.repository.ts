@@ -242,169 +242,116 @@ export class RecipeRepository {
     id: string,
     data: RecipeUpdateType,
   ): Promise<{ recipe: RecipeType; deletedStepImageUrls: string[] }> {
-    const {
-      tags,
-      steps,
-      equipments,
-      nutritionalFacts,
-      deleteStepIds,
-      ...scalarData
-    } = data;
+    const { tags, steps, equipments, nutritionalFacts, ...scalarData } = data;
 
     return await this.prisma.$transaction(async (tx) => {
       let deletedStepImageUrls: string[] = [];
-
-      // Collect image URLs for explicitly deleted steps so caller can clean up storage
-      if (deleteStepIds && deleteStepIds.length > 0) {
-        const stepsToDelete = await tx.step.findMany({
-          where: { recipeId: id, id: { in: deleteStepIds } },
-          select: { imageUrl: true },
-        });
-        deletedStepImageUrls = stepsToDelete
-          .map((s) => s.imageUrl)
-          .filter((url): url is string => url !== null);
-      }
+      let stepsWriteData:
+        | {
+            deleteMany?: { id: { in: string[] } };
+            upsert?: object[];
+            create?: object[];
+          }
+        | undefined = undefined;
 
       if (steps !== undefined) {
-        const keptStepIds = steps
-          .map((s) => s.id)
-          .filter((stepId): stepId is string => !!stepId);
+        const removeIds = steps.remove ?? [];
+        const updateSteps = steps.update ?? [];
+        const addSteps = steps.add ?? [];
 
-        // Move kept steps to unique negative displayOrders so the subsequent
-        // upsert can freely reassign positions without hitting the
-        // @@unique([recipeId, displayOrder]) constraint. Negative values are
-        // guaranteed free since all real displayOrders are >= 0.
-        if (keptStepIds.length > 0) {
+        // Collect image URLs for steps being removed
+        if (removeIds.length > 0) {
+          const stepsToDelete = await tx.step.findMany({
+            where: { recipeId: id, id: { in: removeIds } },
+            select: { imageUrl: true },
+          });
+          deletedStepImageUrls = stepsToDelete
+            .map((s) => s.imageUrl)
+            .filter((url): url is string => url !== null);
+        }
+
+        // Move update steps to negative displayOrders to avoid same-request
+        // conflicts (e.g. swapping two steps' positions). Untouched steps keep
+        // their positions — conflicts with them are the caller's responsibility.
+        if (updateSteps.length > 0) {
           await Promise.all(
-            keptStepIds.map((stepId, i) =>
+            updateSteps.map((s, i) =>
               tx.step.update({
-                where: { id: stepId },
+                where: { id: s.id },
                 data: { displayOrder: -(i + 1) },
               }),
             ),
           );
         }
+
+        // Same negative trick for ingredient updates within each updated step.
+        for (const s of updateSteps) {
+          if (!s.ingredients?.update?.length) continue;
+          await Promise.all(
+            s.ingredients.update.map((ing, k) =>
+              tx.ingredient.update({
+                where: { id: ing.id },
+                data: { displayOrder: -(k + 1) },
+              }),
+            ),
+          );
+        }
+
+        stepsWriteData = {
+          ...(removeIds.length > 0
+            ? { deleteMany: { id: { in: removeIds } } }
+            : {}),
+          ...(updateSteps.length > 0
+            ? {
+                upsert: updateSteps.map((s) => ({
+                  where: { id: s.id },
+                  update: {
+                    displayOrder: s.displayOrder,
+                    ...(s.instruction !== undefined
+                      ? { instruction: s.instruction }
+                      : {}),
+                    ...(s.ingredients !== undefined
+                      ? { ingredients: this.buildIngredientOps(s.ingredients) }
+                      : {}),
+                  },
+                  // create branch is a Prisma-required fallback; update steps
+                  // should always exist in the DB
+                  create: {
+                    displayOrder: s.displayOrder,
+                    instruction: s.instruction ?? null,
+                  },
+                })),
+              }
+            : {}),
+          ...(addSteps.length > 0
+            ? {
+                create: addSteps.map((s) => ({
+                  displayOrder: s.displayOrder,
+                  instruction: s.instruction ?? null,
+                  ingredients: {
+                    createMany: {
+                      data: (s.ingredients ?? []).map((ing) => ({
+                        displayOrder: ing.displayOrder,
+                        amount: ing.amount,
+                        unit: ing.unit,
+                        name: ing.name,
+                        isFraction: ing.isFraction,
+                      })),
+                    },
+                  },
+                })),
+              }
+            : {}),
+        };
       }
 
       const recipe = (await tx.recipe.update({
         where: { id, user: { id: userId } },
         data: {
           ...scalarData,
-          ...(steps !== undefined || (deleteStepIds && deleteStepIds.length > 0)
-            ? {
-                steps: {
-                  // Explicitly delete steps by id
-                  ...(deleteStepIds && deleteStepIds.length > 0
-                    ? { deleteMany: { id: { in: deleteStepIds } } }
-                    : {}),
-                  ...(steps !== undefined
-                    ? {
-                        // Existing steps: update only provided fields; displayOrder from payload or array index
-                        upsert: steps
-                          .map((s, i) => ({ s, i }))
-                          .filter(({ s }) => !!s.id)
-                          .map(({ s, i }) => ({
-                            where: { id: s.id },
-                            update: {
-                              displayOrder: s.displayOrder ?? i,
-                              ...(s.instruction !== undefined
-                                ? { instruction: s.instruction }
-                                : {}),
-                              // Only touch ingredients when explicitly provided
-                              ...(s.ingredients !== undefined ||
-                              (s.deleteIngredientIds &&
-                                s.deleteIngredientIds.length > 0)
-                                ? {
-                                    ingredients: {
-                                      // Explicitly delete ingredients by id
-                                      ...(s.deleteIngredientIds &&
-                                      s.deleteIngredientIds.length > 0
-                                        ? {
-                                            deleteMany: {
-                                              id: { in: s.deleteIngredientIds },
-                                            },
-                                          }
-                                        : {}),
-                                      // Preserve original index as displayOrder for both paths
-                                      ...(s.ingredients !== undefined
-                                        ? {
-                                            upsert: s.ingredients
-                                              .map((ing, k) => ({ ing, k }))
-                                              .filter(({ ing }) => !!ing.id)
-                                              .map(({ ing, k }) => ({
-                                                where: { id: ing.id },
-                                                update: {
-                                                  displayOrder: k,
-                                                  amount: ing.amount,
-                                                  unit: ing.unit,
-                                                  name: ing.name,
-                                                  isFraction: ing.isFraction,
-                                                },
-                                                create: {
-                                                  displayOrder: k,
-                                                  amount: ing.amount,
-                                                  unit: ing.unit,
-                                                  name: ing.name,
-                                                  isFraction: ing.isFraction,
-                                                },
-                                              })),
-                                            createMany: {
-                                              data: s.ingredients
-                                                .map((ing, k) => ({ ing, k }))
-                                                .filter(({ ing }) => !ing.id)
-                                                .map(({ ing, k }) => ({
-                                                  displayOrder: k,
-                                                  amount: ing.amount,
-                                                  unit: ing.unit,
-                                                  name: ing.name,
-                                                  isFraction: ing.isFraction,
-                                                })),
-                                            },
-                                          }
-                                        : {}),
-                                    },
-                                  }
-                                : {}),
-                            },
-                            create: {
-                              displayOrder: s.displayOrder ?? i,
-                              instruction: s.instruction ?? null,
-                              ingredients: {
-                                createMany: {
-                                  data: (s.ingredients ?? []).map((ing, k) => ({
-                                    displayOrder: k,
-                                    amount: ing.amount,
-                                    unit: ing.unit,
-                                    name: ing.name,
-                                    isFraction: ing.isFraction,
-                                  })),
-                                },
-                              },
-                            },
-                          })),
-                        // New steps (no id): displayOrder from payload or array position
-                        create: steps
-                          .map((s, i) => ({ s, i }))
-                          .filter(({ s }) => !s.id)
-                          .map(({ s, i }) => ({
-                            displayOrder: s.displayOrder ?? i,
-                            instruction: s.instruction ?? null,
-                            ingredients: {
-                              createMany: {
-                                data: (s.ingredients ?? []).map((ing, k) => ({
-                                  displayOrder: k,
-                                  amount: ing.amount,
-                                  unit: ing.unit,
-                                  name: ing.name,
-                                  isFraction: ing.isFraction,
-                                })),
-                              },
-                            },
-                          })),
-                      }
-                    : {}),
-                },
-              }
+
+          ...(stepsWriteData !== undefined
+            ? { steps: stepsWriteData as any }
             : {}),
           ...(equipments !== undefined
             ? {
@@ -441,6 +388,65 @@ export class RecipeRepository {
 
       return { recipe: this.transformRecipe(recipe), deletedStepImageUrls };
     });
+  }
+
+  private buildIngredientOps(ingredients: {
+    add?: {
+      displayOrder: number;
+      amount: number;
+      isFraction: boolean;
+      unit: string | null;
+      name: string;
+    }[];
+    update?: {
+      id: string;
+      displayOrder: number;
+      amount: number;
+      isFraction: boolean;
+      unit: string | null;
+      name: string;
+    }[];
+    remove?: string[];
+  }) {
+    return {
+      ...(ingredients.remove?.length
+        ? { deleteMany: { id: { in: ingredients.remove } } }
+        : {}),
+      ...(ingredients.update?.length
+        ? {
+            upsert: ingredients.update.map((ing) => ({
+              where: { id: ing.id },
+              update: {
+                displayOrder: ing.displayOrder,
+                amount: ing.amount,
+                unit: ing.unit,
+                name: ing.name,
+                isFraction: ing.isFraction,
+              },
+              create: {
+                displayOrder: ing.displayOrder,
+                amount: ing.amount,
+                unit: ing.unit,
+                name: ing.name,
+                isFraction: ing.isFraction,
+              },
+            })),
+          }
+        : {}),
+      ...(ingredients.add?.length
+        ? {
+            createMany: {
+              data: ingredients.add.map((ing) => ({
+                displayOrder: ing.displayOrder,
+                amount: ing.amount,
+                unit: ing.unit,
+                name: ing.name,
+                isFraction: ing.isFraction,
+              })),
+            },
+          }
+        : {}),
+    };
   }
 
   async addImageToRecipe(id: string, imageUrl: string) {

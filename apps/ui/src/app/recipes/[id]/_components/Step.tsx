@@ -11,7 +11,7 @@ interface IStepProps {
   scaleFactor: number
 }
 export const Step = (props: IStepProps) => {
-  const imageSrc = useRecipeStore((state) => state.steps[props.stepId].imageUrl)
+  const imageSrc = useRecipeStore((state) => state.steps[props.stepId].imageSrc)
   return (
     <>
       <h2 className="font-bold">step {props.stepNumber}:</h2>

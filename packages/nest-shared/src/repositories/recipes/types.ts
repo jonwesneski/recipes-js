@@ -139,26 +139,40 @@ export type RecipeCreateType = Prisma.RecipeGetPayload<{
   };
 }> & { steps: StepCreateType[]; tags: string[]; equipments: string[] };
 
-type IngredientUpdateType = Prisma.IngredientGetPayload<{
+export type IngredientAddType = Prisma.IngredientGetPayload<{
   omit: {
     id: true;
     stepId: true;
-    displayOrder: true;
     createdAt: true;
     updatedAt: true;
   };
-}> & { id?: string };
+}>;
 
-type StepUpdateType = Prisma.StepGetPayload<{
-  omit: {
-    createdAt: true;
-    updatedAt: true;
-    recipeId: true;
-    imageUrl: true;
-  };
-}> & {
-  ingredients: IngredientUpdateType[];
-  deleteIngredientIds?: string[];
+export type IngredientUpdateType = IngredientAddType & { id: string };
+
+export type IngredientOperationsType = {
+  add?: IngredientAddType[];
+  update?: IngredientUpdateType[];
+  remove?: string[];
+};
+
+export type StepAddType = {
+  displayOrder: number;
+  instruction?: string | null;
+  ingredients?: IngredientAddType[];
+};
+
+export type StepUpdateType = {
+  id: string;
+  displayOrder: number;
+  instruction?: string | null;
+  ingredients?: IngredientOperationsType;
+};
+
+export type StepOperationsType = {
+  add?: StepAddType[];
+  update?: StepUpdateType[];
+  remove?: string[];
 };
 
 type _RecipeUpdateType = Prisma.RecipeGetPayload<{
@@ -179,7 +193,7 @@ type _RecipeUpdateType = Prisma.RecipeGetPayload<{
     updatedAt: true;
     imageUrl: true;
   };
-}> & { steps: StepUpdateType[]; tags: string[]; equipments: string[] };
+}> & { tags: string[]; equipments: string[] };
 
 type DeepOptionalUndefined<T, A> = {
   [K in keyof T]?: T[K] extends string[] // If it's a string[], keep as string[]
@@ -199,5 +213,7 @@ type DeepOptionalUndefined<T, A> = {
 
 export type RecipeUpdateType = DeepOptionalUndefined<
   _RecipeUpdateType,
-  IngredientUpdateType
-> & { deleteStepIds?: string[] };
+  never
+> & {
+  steps?: StepOperationsType;
+};
