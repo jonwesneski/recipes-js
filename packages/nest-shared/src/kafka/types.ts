@@ -12,7 +12,6 @@ export type NewRecipeMessageType = {
 export type NewRecipeStepMessageType = {
   recipeId: string;
   stepId: string;
-  stepIndex: number;
   base64Image: string;
 };
 

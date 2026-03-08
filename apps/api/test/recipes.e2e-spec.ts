@@ -9,7 +9,6 @@ import { configureApp } from '@src/common';
 import {
   CreateRecipeDto,
   PatchRecipeDto,
-  PatchStepDto,
   RecipeResponse,
   StepResponse,
 } from '@src/recipes/contracts';
@@ -312,7 +311,6 @@ describe('RecipesController (e2e)', () => {
   describe(`PATCH ${basePath}/:id`, () => {
     const createRecipe = async (): Promise<RecipeResponse> => {
       const sampleRecipe = makeCreateDto({ name: uuidv4() });
-
       const response = await request(app.getHttpServer())
         .post(basePath)
         .set('Authorization', `Bearer ${token}`)
@@ -321,29 +319,41 @@ describe('RecipesController (e2e)', () => {
       return response.body as RecipeResponse;
     };
 
-    const stepEntityToDto = (
-      entity: StepResponse[],
-      newSteps?: PatchStepDto[],
-    ): PatchStepDto[] => {
-      const updated: PatchStepDto[] = entity.map((s) => {
-        return {
-          instruction: s.instruction || undefined,
-          ingredients: s.ingredients.map((i) => {
-            return {
-              id: i.id,
-              name: i.name,
-              amount: i.amount,
-              isFraction: false,
-              unit: i.unit,
-            };
-          }),
-        };
-      });
-      if (newSteps) {
-        updated.push(...newSteps);
-      }
+    // ── Helpers for multi-step tests ──────────────────────────────────────────
 
-      return updated;
+    const createRecipe3Steps = async (): Promise<RecipeResponse> => {
+      const sampleRecipe = makeCreateDto({
+        name: uuidv4(),
+        steps: [
+          {
+            instruction: 'Step 1',
+            ingredients: [
+              { name: 'Ing 1', amount: 1, isFraction: false, unit: 'grams' },
+            ],
+            base64Image: null,
+          },
+          {
+            instruction: 'Step 2',
+            ingredients: [
+              { name: 'Ing 2', amount: 2, isFraction: false, unit: 'cups' },
+            ],
+            base64Image: null,
+          },
+          {
+            instruction: 'Step 3',
+            ingredients: [
+              { name: 'Ing 3', amount: 3, isFraction: false, unit: 'liters' },
+            ],
+            base64Image: null,
+          },
+        ],
+      });
+      const response = await request(app.getHttpServer())
+        .post(basePath)
+        .set('Authorization', `Bearer ${token}`)
+        .send(sampleRecipe)
+        .expect(201);
+      return response.body as RecipeResponse;
     };
 
     it('update top recipe fields', async () => {
@@ -377,12 +387,29 @@ describe('RecipesController (e2e)', () => {
         });
     });
 
-    it('replace an existing step', async () => {
+    it('steps.remove + steps.add replaces a step with a new one', async () => {
       const response = await createRecipe();
+      const originalStep = response.steps[0];
 
-      const steps = [...response.steps];
       const editRecipe: PatchRecipeDto = {
-        steps: stepEntityToDto(steps),
+        steps: {
+          remove: [originalStep.id],
+          add: [
+            {
+              displayOrder: 0,
+              instruction: 'Replaced step',
+              ingredients: [
+                {
+                  displayOrder: 0,
+                  name: 'New Ing',
+                  amount: 1,
+                  isFraction: false,
+                  unit: 'grams',
+                },
+              ],
+            },
+          ],
+        },
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${response.id}`)
@@ -390,27 +417,37 @@ describe('RecipesController (e2e)', () => {
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
-          expect(res.body.steps[0].id).not.toBe(response.steps[0].id);
+          expect(res.body.steps).toHaveLength(1);
+          expect(res.body.steps[0].id).not.toBe(originalStep.id);
+          expect(res.body.steps[0].instruction).toBe('Replaced step');
         });
     });
 
-    it('add another ingredient to step', async () => {
+    it('steps.update.ingredients.add appends an ingredient to an existing step', async () => {
       const response = await createRecipe();
+      const originalStep = response.steps[0];
+      const originalIngredientId = originalStep.ingredients[0].id;
 
-      const steps = [...response.steps];
       const editRecipe: PatchRecipeDto = {
-        steps: stepEntityToDto(steps, [
-          {
-            ingredients: [
-              {
-                name: 'New Ingredient',
-                amount: 50,
-                isFraction: false,
-                unit: 'grams',
+        steps: {
+          update: [
+            {
+              id: originalStep.id,
+              displayOrder: 0,
+              ingredients: {
+                add: [
+                  {
+                    displayOrder: 1,
+                    name: 'Extra Ingredient',
+                    amount: 50,
+                    isFraction: false,
+                    unit: 'grams',
+                  },
+                ],
               },
-            ],
-          },
-        ]),
+            },
+          ],
+        },
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${response.id}`)
@@ -418,20 +455,46 @@ describe('RecipesController (e2e)', () => {
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
-          expect(res.body.steps[0].id).not.toBe(response.steps[0].id);
+          const step: StepResponse = res.body.steps[0];
+          expect(step.id).toBe(originalStep.id);
+          expect(step.ingredients).toHaveLength(2);
+
+          expect(
+            step.ingredients.some((i) => i.id === originalIngredientId),
+          ).toBe(true);
+
+          expect(
+            step.ingredients.some((i) => i.name === 'Extra Ingredient'),
+          ).toBe(true);
         });
     });
 
-    it('re-create ingredients to existing step', async () => {
+    it('steps.update.ingredients.add + remove replaces ingredients on an existing step', async () => {
       const response = await createRecipe();
+      const originalStep = response.steps[0];
+      const originalIngredientId = originalStep.ingredients[0].id;
 
-      const steps = [...response.steps];
-      steps[0].ingredients[0].id = undefined as unknown as string;
-      steps[0].ingredients[0].name = 'New Ingredient';
-      steps[0].ingredients[0].amount = 50;
-      steps[0].ingredients[0].unit = 'grams';
       const editRecipe: PatchRecipeDto = {
-        steps: stepEntityToDto(steps),
+        steps: {
+          update: [
+            {
+              id: originalStep.id,
+              displayOrder: 0,
+              ingredients: {
+                add: [
+                  {
+                    displayOrder: 0,
+                    name: 'New Ingredient',
+                    amount: 50,
+                    isFraction: false,
+                    unit: 'grams',
+                  },
+                ],
+                remove: [originalIngredientId],
+              },
+            },
+          ],
+        },
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${response.id}`)
@@ -439,25 +502,333 @@ describe('RecipesController (e2e)', () => {
         .send(editRecipe)
         .expect(200)
         .expect((res) => {
-          expect(res.body.steps[0].id).not.toBe(response.steps[0].id);
+          const step: StepResponse = res.body.steps[0];
+          expect(step.id).toBe(originalStep.id);
+          expect(step.ingredients).toHaveLength(1);
+          expect(step.ingredients[0].name).toBe('New Ingredient');
+          expect(step.ingredients[0].id).not.toBe(originalIngredientId);
         });
     });
 
-    it.skip('replace with empty steps', async () => {
-      // TODO: Thinking about making empty steps not allowed; maybe throw a 400
-      // should i handle at prisma level or at controller level?
+    it('empty steps.add array is invalid', async () => {
+      const response = await createRecipe();
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${response.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ steps: { add: [] } })
+        .expect(400);
+    });
+
+    it('omitting steps field leaves steps unchanged', async () => {
+      const response = await createRecipe();
+      const originalStepId = response.steps[0].id;
+
+      const editRecipe: PatchRecipeDto = { name: 'renamed only' };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${response.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.name).toBe('renamed only');
+          expect(res.body.steps).toHaveLength(1);
+          expect(res.body.steps[0].id).toBe(originalStepId);
+        });
+    });
+
+    it('steps.remove deletes all steps', async () => {
       const response = await createRecipe();
 
       const editRecipe: PatchRecipeDto = {
-        steps: [],
+        steps: { remove: response.steps.map((s) => s.id) },
       };
       return request(app.getHttpServer())
         .patch(`${basePath}/${response.id}`)
         .set('Authorization', `Bearer ${token}`)
         .send(editRecipe)
-        .expect(400)
+        .expect(200)
         .expect((res) => {
-          expect(res.body).toBeDefined();
+          expect(res.body.steps).toHaveLength(0);
+        });
+    });
+
+    it('steps.add appends a new step while keeping existing ones', async () => {
+      const response = await createRecipe();
+      const originalStepId = response.steps[0].id;
+
+      const editRecipe: PatchRecipeDto = {
+        steps: {
+          add: [
+            {
+              displayOrder: 1,
+              instruction: 'Brand new step',
+              ingredients: [
+                {
+                  displayOrder: 0,
+                  name: 'New Ingredient',
+                  amount: 50,
+                  isFraction: false,
+                  unit: 'grams',
+                },
+              ],
+            },
+          ],
+        },
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${response.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.steps).toHaveLength(2);
+          expect(res.body.steps[0].id).toBe(originalStepId);
+          expect(res.body.steps[1].instruction).toBe('Brand new step');
+          expect(res.body.steps[1].id).toBeDefined();
+          expect(res.body.steps[1].id).not.toBe(originalStepId);
+        });
+    });
+
+    it('steps.remove deletes a specific step while keeping others', async () => {
+      const recipe = await createRecipe3Steps();
+      const [step0, step1, step2] = recipe.steps;
+
+      const editRecipe: PatchRecipeDto = {
+        steps: { remove: [step1.id] },
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${recipe.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- not concerned in tests
+          const ids: string[] = res.body.steps.map((s: StepResponse) => s.id);
+          expect(ids).toHaveLength(2);
+          expect(ids).toContain(step0.id);
+          expect(ids).toContain(step2.id);
+          expect(ids).not.toContain(step1.id);
+        });
+    });
+
+    it('steps.update reorders steps based on explicit displayOrder', async () => {
+      const recipe = await createRecipe3Steps();
+      const [step0, step1, step2] = recipe.steps;
+
+      const editRecipe: PatchRecipeDto = {
+        steps: {
+          update: [
+            { id: step2.id, displayOrder: 0 },
+            { id: step1.id, displayOrder: 1 },
+            { id: step0.id, displayOrder: 2 },
+          ],
+        },
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${recipe.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.steps[0].id).toBe(step2.id);
+          expect(res.body.steps[0].displayOrder).toBe(0);
+          expect(res.body.steps[1].id).toBe(step1.id);
+          expect(res.body.steps[1].displayOrder).toBe(1);
+          expect(res.body.steps[2].id).toBe(step0.id);
+          expect(res.body.steps[2].displayOrder).toBe(2);
+        });
+    });
+
+    it('handles steps.add, steps.update, and steps.remove in one request', async () => {
+      const recipe = await createRecipe3Steps();
+      const [step0, step1, step2] = recipe.steps;
+
+      const editRecipe: PatchRecipeDto = {
+        steps: {
+          update: [
+            { id: step2.id, displayOrder: 0 },
+            {
+              id: step0.id,
+              displayOrder: 1,
+              instruction: 'Updated instruction',
+            },
+          ],
+          add: [
+            {
+              displayOrder: 2,
+              instruction: 'Brand new step',
+              ingredients: [
+                {
+                  displayOrder: 0,
+                  name: 'New Ing',
+                  amount: 1,
+                  isFraction: false,
+                  unit: 'grams',
+                },
+              ],
+            },
+          ],
+          remove: [step1.id],
+        },
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${recipe.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          const steps: StepResponse[] = res.body.steps;
+          expect(steps).toHaveLength(3);
+          expect(steps[0].id).toBe(step2.id);
+          expect(steps[0].displayOrder).toBe(0);
+          expect(steps[1].id).toBe(step0.id);
+          expect(steps[1].displayOrder).toBe(1);
+          expect(steps[1].instruction).toBe('Updated instruction');
+          expect(steps[2].displayOrder).toBe(2);
+          expect(steps[2].instruction).toBe('Brand new step');
+
+          expect(steps.map((s) => s.id)).not.toContain(step1.id);
+        });
+    });
+
+    it('partial step update: only instruction changes, ingredients are preserved', async () => {
+      const response = await createRecipe();
+      const originalStep = response.steps[0];
+      const originalIngredientId = originalStep.ingredients[0].id;
+
+      const editRecipe: PatchRecipeDto = {
+        steps: {
+          update: [
+            {
+              id: originalStep.id,
+              displayOrder: 0,
+              instruction: 'Only instruction changed',
+            },
+          ],
+        },
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${response.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          const step: StepResponse = res.body.steps[0];
+          expect(step.id).toBe(originalStep.id);
+          expect(step.instruction).toBe('Only instruction changed');
+          expect(step.ingredients).toHaveLength(
+            originalStep.ingredients.length,
+          );
+          expect(step.ingredients[0].id).toBe(originalIngredientId);
+        });
+    });
+
+    it('partial step update: only ingredients change via add+remove, instruction is preserved', async () => {
+      const response = await createRecipe();
+      const originalStep = response.steps[0];
+      const originalInstruction = originalStep.instruction;
+
+      const editRecipe: PatchRecipeDto = {
+        steps: {
+          update: [
+            {
+              id: originalStep.id,
+              displayOrder: 0,
+              ingredients: {
+                add: [
+                  {
+                    displayOrder: 0,
+                    name: 'Replaced Ingredient',
+                    amount: 99,
+                    isFraction: false,
+                    unit: 'grams',
+                  },
+                ],
+                remove: originalStep.ingredients.map((i) => i.id),
+              },
+            },
+          ],
+        },
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${response.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          const step: StepResponse = res.body.steps[0];
+          expect(step.id).toBe(originalStep.id);
+          expect(step.instruction).toBe(originalInstruction);
+          expect(step.ingredients).toHaveLength(1);
+          expect(step.ingredients[0].name).toBe('Replaced Ingredient');
+        });
+    });
+
+    it('step with only id in steps.update leaves that step fully unchanged', async () => {
+      const response = await createRecipe();
+      const originalStep = response.steps[0];
+
+      const editRecipe: PatchRecipeDto = {
+        steps: { update: [{ id: originalStep.id, displayOrder: 0 }] },
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${response.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          const step: StepResponse = res.body.steps[0];
+          expect(step.id).toBe(originalStep.id);
+          expect(step.instruction).toBe(originalStep.instruction);
+          expect(step.ingredients).toHaveLength(
+            originalStep.ingredients.length,
+          );
+          expect(step.ingredients[0].id).toBe(originalStep.ingredients[0].id);
+        });
+    });
+
+    it('displayOrder matches explicit value after steps.add, steps.update and steps.remove', async () => {
+      const recipe = await createRecipe3Steps();
+      const [step0, step1, step2] = recipe.steps;
+
+      const editRecipe: PatchRecipeDto = {
+        steps: {
+          update: [
+            { id: step2.id, displayOrder: 0 },
+            { id: step0.id, displayOrder: 2 },
+          ],
+          add: [
+            {
+              displayOrder: 1,
+              instruction: 'Inserted step',
+              ingredients: [
+                {
+                  displayOrder: 0,
+                  name: 'X',
+                  amount: 1,
+                  isFraction: false,
+                  unit: 'grams',
+                },
+              ],
+            },
+          ],
+          remove: [step1.id],
+        },
+      };
+      return request(app.getHttpServer())
+        .patch(`${basePath}/${recipe.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(editRecipe)
+        .expect(200)
+        .expect((res) => {
+          const steps: StepResponse[] = res.body.steps;
+          expect(steps).toHaveLength(3);
+          expect(steps[0].id).toBe(step2.id);
+          expect(steps[0].displayOrder).toBe(0);
+          expect(steps[1].instruction).toBe('Inserted step');
+          expect(steps[1].displayOrder).toBe(1);
+          expect(steps[2].id).toBe(step0.id);
+          expect(steps[2].displayOrder).toBe(2);
         });
     });
   });
@@ -481,7 +852,6 @@ describe('RecipesController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(204);
 
-      // testing not found here; so no need for another test
       await request(app.getHttpServer())
         .get(`${basePath}/${recipe.id}`)
         .expect(404);

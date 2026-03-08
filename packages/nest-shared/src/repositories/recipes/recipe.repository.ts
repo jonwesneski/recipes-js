@@ -241,114 +241,209 @@ export class RecipeRepository {
     userId: string,
     id: string,
     data: RecipeUpdateType,
-  ): Promise<RecipeType> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- todo will handle later
-    const { tags, ...remainingData } = data;
+  ): Promise<{ recipe: RecipeType; deletedStepImageUrls: string[] }> {
+    const { tags, steps, equipments, nutritionalFacts, ...scalarData } = data;
 
-    const recipe = await this.prisma.recipe.update({
-      where: {
-        id,
-        user: { id: userId },
-      },
-      data: {
-        ...remainingData,
-        steps: {
-          deleteMany: {
-            id: {
-              notIn: remainingData.steps
-                ?.map((s) => s.id)
-                .filter((id) => id !== undefined),
-            },
-          },
-          upsert: remainingData.steps
-            ?.filter((s) => s.id)
-            .map((s, i) => {
-              return {
+    return await this.prisma.$transaction(async (tx) => {
+      let deletedStepImageUrls: string[] = [];
+      let stepsWriteData:
+        | {
+            deleteMany?: { id: { in: string[] } };
+            upsert?: object[];
+          }
+        | undefined = undefined;
+
+      if (steps !== undefined) {
+        const removeIds = steps.remove ?? [];
+        const updateSteps = steps.update ?? [];
+        const addSteps = steps.add ?? [];
+
+        // Collect image URLs for steps being removed
+        if (removeIds.length > 0) {
+          const stepsToDelete = await tx.step.findMany({
+            where: { recipeId: id, id: { in: removeIds } },
+            select: { imageUrl: true },
+          });
+          deletedStepImageUrls = stepsToDelete
+            .map((s) => s.imageUrl)
+            .filter((url): url is string => url !== null);
+        }
+
+        // Move update steps to negative displayOrders to avoid same-request
+        // conflicts (e.g. swapping two steps' positions). Untouched steps keep
+        // their positions — conflicts with them are the caller's responsibility.
+        if (updateSteps.length > 0) {
+          await Promise.all(
+            updateSteps.map((s, i) =>
+              tx.step.update({
                 where: { id: s.id },
-                update: {
-                  displayOrder: i,
-                  ...s,
-                  ingredients: {
-                    deleteMany: {
-                      id: {
-                        notIn: s.ingredients
-                          ? s.ingredients
-                              .map((ing) => ing.id)
-                              .filter((id) => id !== undefined)
-                          : [],
+                data: { displayOrder: -(i + 1) },
+              }),
+            ),
+          );
+        }
+
+        // Same negative trick for ingredient updates within each updated step.
+        for (const s of updateSteps) {
+          if (!s.ingredients?.update?.length) continue;
+          await Promise.all(
+            s.ingredients.update.map((ing, k) =>
+              tx.ingredient.update({
+                where: { id: ing.id },
+                data: { displayOrder: -(k + 1) },
+              }),
+            ),
+          );
+        }
+
+        stepsWriteData = {
+          ...(removeIds.length > 0
+            ? { deleteMany: { id: { in: removeIds } } }
+            : {}),
+          ...(updateSteps.length > 0 || addSteps.length > 0
+            ? {
+                upsert: [...updateSteps, ...addSteps].map((s) => {
+                  const isUpdate = 'id' in s;
+                  return {
+                    where: { id: isUpdate ? s.id : '' },
+                    update: {
+                      displayOrder: s.displayOrder,
+                      ...(s.instruction !== undefined
+                        ? { instruction: s.instruction }
+                        : {}),
+                      ...(!isUpdate || s.ingredients === undefined
+                        ? {}
+                        : {
+                            ingredients: this.buildIngredientOps(s.ingredients),
+                          }),
+                    },
+                    create: {
+                      displayOrder: s.displayOrder,
+                      instruction: s.instruction ?? null,
+                      ...(isUpdate
+                        ? {}
+                        : {
+                            ingredients: {
+                              createMany: {
+                                data: (s.ingredients ?? []).map((ing) => ({
+                                  displayOrder: ing.displayOrder,
+                                  amount: ing.amount,
+                                  unit: ing.unit,
+                                  name: ing.name,
+                                  isFraction: ing.isFraction,
+                                })),
+                              },
+                            },
+                          }),
+                    },
+                  };
+                }),
+              }
+            : {}),
+        };
+      }
+
+      const recipe = (await tx.recipe.update({
+        where: { id, user: { id: userId } },
+        data: {
+          ...scalarData,
+          ...(stepsWriteData !== undefined
+            ? { steps: stepsWriteData as any }
+            : {}),
+          ...(equipments !== undefined
+            ? {
+                equipments: {
+                  deleteMany: { name: { notIn: equipments } },
+                  connectOrCreate: equipments.map((name) => ({
+                    where: { name },
+                    create: { name },
+                  })),
+                },
+              }
+            : {}),
+          ...(nutritionalFacts !== undefined && nutritionalFacts !== null
+            ? { nutritionalFacts: { update: nutritionalFacts } }
+            : {}),
+          ...(tags !== undefined
+            ? {
+                recipeTags: {
+                  deleteMany: {},
+                  create: tags.map((tag) => ({
+                    tag: {
+                      connectOrCreate: {
+                        where: { name: tag },
+                        create: { name: tag },
                       },
                     },
-                    upsert: s.ingredients
-                      ? s.ingredients
-                          .filter((ing) => ing.id)
-                          .map((ing, k) => {
-                            return {
-                              where: { id: ing.id },
-                              update: { ...ing, displayOrder: k },
-                              create: { ...ing, displayOrder: k },
-                            };
-                          })
-                      : [],
-                  },
-                },
-                create: {
-                  displayOrder: i,
-                  ...s,
-                  ingredients: {
-                    createMany: {
-                      data: s.ingredients
-                        ? s.ingredients
-                            .filter((ing) => !ing.id)
-                            .map((ing, k) => ({
-                              displayOrder: k,
-                              ...ing,
-                            }))
-                        : [],
-                    },
-                  },
-                },
-              };
-            }),
-          create: remainingData.steps
-            ?.filter((s) => !s.id)
-            .map((step, i) => ({
-              displayOrder: i,
-              instruction: step.instruction,
-              ingredients: {
-                createMany: {
-                  data: step.ingredients
-                    ? step.ingredients.map((ingredient, k) => {
-                        return {
-                          displayOrder: k,
-                          amount: ingredient.amount,
-                          unit: ingredient.unit,
-                          name: ingredient.name,
-                        };
-                      })
-                    : [],
-                },
-              },
-            })),
-        },
-        // TODO: handle below
-        equipments: {
-          ...(remainingData.equipments
-            ? {
-                deleteMany: {
-                  name: {
-                    notIn: remainingData.equipments,
-                  },
+                  })),
                 },
               }
             : {}),
         },
-        nutritionalFacts: {},
-        //recipeTags: {},
-      },
-      ...RecipeInclude,
-    });
+        ...RecipeInclude,
+      })) as unknown as RecipePrismaType;
 
-    return this.transformRecipe(recipe);
+      return { recipe: this.transformRecipe(recipe), deletedStepImageUrls };
+    });
+  }
+
+  private buildIngredientOps(ingredients: {
+    add?: {
+      displayOrder: number;
+      amount: number;
+      isFraction: boolean;
+      unit: string | null;
+      name: string;
+    }[];
+    update?: {
+      id: string;
+      displayOrder: number;
+      amount: number;
+      isFraction: boolean;
+      unit: string | null;
+      name: string;
+    }[];
+    remove?: string[];
+  }) {
+    return {
+      ...(ingredients.remove?.length
+        ? { deleteMany: { id: { in: ingredients.remove } } }
+        : {}),
+      ...(ingredients.update?.length
+        ? {
+            upsert: ingredients.update.map((ing) => ({
+              where: { id: ing.id },
+              update: {
+                displayOrder: ing.displayOrder,
+                amount: ing.amount,
+                unit: ing.unit,
+                name: ing.name,
+                isFraction: ing.isFraction,
+              },
+              create: {
+                displayOrder: ing.displayOrder,
+                amount: ing.amount,
+                unit: ing.unit,
+                name: ing.name,
+                isFraction: ing.isFraction,
+              },
+            })),
+          }
+        : {}),
+      ...(ingredients.add?.length
+        ? {
+            createMany: {
+              data: ingredients.add.map((ing) => ({
+                displayOrder: ing.displayOrder,
+                amount: ing.amount,
+                unit: ing.unit,
+                name: ing.name,
+                isFraction: ing.isFraction,
+              })),
+            },
+          }
+        : {}),
+    };
   }
 
   async addImageToRecipe(id: string, imageUrl: string) {

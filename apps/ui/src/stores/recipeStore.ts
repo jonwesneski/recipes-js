@@ -9,6 +9,7 @@ import type {
   GenerateNutritionalFactsDto,
   MealType,
   NutritionalFactsResponse,
+  PatchRecipeDto,
   ProteinType,
   RecipeResponseServingUnit,
 } from '@repo/codegen/model';
@@ -33,14 +34,13 @@ import { createStore } from 'zustand/vanilla';
 import { applyMiddleware } from './middleware';
 
 export type FactorType = 0.5 | 1 | 1.5 | 2 | 4;
-export type RecipeState = Omit<NormalizedRecipe, 'imageUrl'> & {
-  // This can be base64 (new/edited) or a URL (view)
-  imageSrc: string | null;
-
+export type RecipeState = NormalizedRecipe & {
   metadata: {
     isValid: boolean;
     errors: BadRequestRecipeResponse;
     scaleFactor: FactorType;
+    deleteStepIds: string[];
+    deleteIngredientIds: Record<RecipeState['stepIds'][number], string[]>;
   };
 };
 
@@ -87,6 +87,7 @@ export type RecipeActions = {
   setDifficultyLevel: (_value: DifficultyLevelType | null) => void;
   setTags: (_value: string[]) => void;
   makeCreateDto: (_isPublic: boolean) => CreateRecipeDto;
+  makePatchDto: (_isPublic: boolean) => PatchRecipeDto;
   makeGenerateNutritionalFactsDto: () => GenerateNutritionalFactsDto[];
   makeGenerateCategoriesDto: () => GenerateCategoriesDto;
   setErrors: (_data: BadRequestRecipeResponse) => void;
@@ -112,7 +113,7 @@ const createStep = (options?: {
 
   return {
     stepId,
-    imageUrl: null,
+    imageSrc: null,
     instruction: options?.instruction ?? null,
     ingredientIds,
     ingredients,
@@ -131,7 +132,7 @@ export const defaultInitState: NormalizedRecipe = {
     imageUrl: '',
   },
   description: null,
-  imageUrl: null,
+  imageSrc: null,
   preparationTimeInMinutes: null,
   cookingTimeInMinutes: null,
   equipments: [],
@@ -139,7 +140,7 @@ export const defaultInitState: NormalizedRecipe = {
   bookmarked: undefined,
   steps: {
     [defaultStep.stepId]: {
-      imageUrl: defaultStep.imageUrl,
+      imageSrc: defaultStep.imageSrc,
       ingredientIds: defaultStep.ingredientIds,
       instruction: defaultStep.instruction,
     },
@@ -163,7 +164,6 @@ let isValid = true;
 export const createRecipeStore = (
   initState: NormalizedRecipe = defaultInitState,
 ) => {
-  const { imageUrl, ...rest } = initState;
   return createStore<RecipeStore>()(
     applyMiddleware<RecipeStore>({
       afterMiddlware: (_, _set, get) => {
@@ -182,12 +182,13 @@ export const createRecipeStore = (
          * check intialState (loop through Object.keys()) against state
          * Then I will only send what fields actually changed during an update/edit
          */
-        ...structuredClone(rest),
-        imageSrc: imageUrl ?? null,
+        ...structuredClone(initState),
         metadata: {
           isValid: false,
           errors: {},
           scaleFactor: 1,
+          deleteStepIds: [],
+          deleteIngredientIds: {},
         },
         setName: (name: string) => set(() => ({ name })),
         setDescription: (description: string) => set(() => ({ description })),
@@ -209,7 +210,7 @@ export const createRecipeStore = (
             steps: {
               ...state.steps,
               [step.stepId]: {
-                imageUrl: step.imageUrl,
+                imageSrc: step.imageSrc,
                 ingredientIds: step.ingredientIds,
                 instruction: step.instruction,
               },
@@ -223,6 +224,13 @@ export const createRecipeStore = (
         },
         removeStep: (stepId: string) => {
           set((state) => {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
+            delete state.metadata.deleteIngredientIds[stepId];
+            // Only track for deletion if this is a backend-persisted step
+            if (state.steps[stepId].id) {
+              state.metadata.deleteStepIds.push(stepId);
+            }
+
             const stepIds = state.stepIds.filter((id) => id !== stepId);
             const removedIngredientIds = state.steps[stepId].ingredientIds;
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- deleting dynamic key
@@ -297,7 +305,7 @@ export const createRecipeStore = (
                 state.steps[newStep.stepId] = {
                   instruction: newStep.instruction,
                   ingredientIds: newStep.ingredientIds,
-                  imageUrl: newStep.imageUrl,
+                  imageSrc: newStep.imageSrc,
                 };
                 newStep.ingredientIds.forEach((id) => {
                   state.ingredients[id] = newStep.ingredients[id];
@@ -350,6 +358,16 @@ export const createRecipeStore = (
         },
         removeIngredient: (stepId: string, id: string) => {
           set((state) => {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- not unnecessary
+            const backendId = state.ingredients[id]?.id;
+            if (backendId) {
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- not unnecessary
+              if (!state.metadata.deleteIngredientIds[stepId]) {
+                state.metadata.deleteIngredientIds[stepId] = [];
+              }
+              state.metadata.deleteIngredientIds[stepId].push(backendId);
+            }
+
             // Right now I want at least one indredientId even if it is empty
             // I may try to handle this differently in the future though
             if (state.steps[stepId].ingredientIds.length > 1) {
@@ -452,7 +470,7 @@ export const createRecipeStore = (
                 state.steps[newStep.stepId] = {
                   instruction: newStep.instruction,
                   ingredientIds: newStep.ingredientIds,
-                  imageUrl: newStep.imageUrl,
+                  imageSrc: newStep.imageSrc,
                 };
                 const defaultIngredientId = Object.keys(newStep.ingredients)[0];
                 state.ingredients[defaultIngredientId] =
@@ -488,7 +506,7 @@ export const createRecipeStore = (
         },
         setStepImage: (stepId: string, image: string | null) =>
           set((state) => {
-            state.steps[stepId].imageUrl = image;
+            state.steps[stepId].imageSrc = image;
 
             return { steps: { ...state.steps } };
           }),
@@ -544,9 +562,107 @@ export const createRecipeStore = (
                   toCreateIngredientDto(ingredients[i]),
                 ),
                 instruction: recipe.steps[s].instruction,
-                base64Image: recipe.steps[s].imageUrl?.split(',')[1] ?? null,
+                base64Image: recipe.steps[s].imageSrc?.split(',')[1] ?? null,
               };
             }),
+          };
+        },
+        makePatchDto: (isPublic: boolean) => {
+          /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
+          const {
+            id,
+            createdAt,
+            updatedAt,
+            user,
+            imageSrc,
+            metadata,
+            ingredients,
+            stepIds,
+            ...recipe
+          } = get();
+          /* eslint-enable @typescript-eslint/no-unused-vars, no-unused-vars -- unpacking unused vars */
+
+          const addSteps = [];
+          const updateSteps = [];
+
+          for (const [stepIndex, s] of stepIds.entries()) {
+            const step = recipe.steps[s];
+            const backendStepId = step.id;
+
+            const addIngredients = [];
+            const updateIngredients = [];
+            const removeIngredients = metadata.deleteIngredientIds[s] ?? [];
+
+            for (const [ingIndex, i] of step.ingredientIds.entries()) {
+              const ing = ingredients[i];
+              const dto = toCreateIngredientDto(ing);
+              if (ing.id) {
+                updateIngredients.push({
+                  id: ing.id,
+                  displayOrder: ingIndex,
+                  ...dto,
+                });
+              } else {
+                addIngredients.push({ displayOrder: ingIndex, ...dto });
+              }
+            }
+
+            const ingredientOps =
+              addIngredients.length > 0 ||
+              updateIngredients.length > 0 ||
+              removeIngredients.length > 0
+                ? {
+                    ...(addIngredients.length > 0 && { add: addIngredients }),
+                    ...(updateIngredients.length > 0 && {
+                      update: updateIngredients,
+                    }),
+                    ...(removeIngredients.length > 0 && {
+                      remove: removeIngredients,
+                    }),
+                  }
+                : undefined;
+
+            if (backendStepId) {
+              updateSteps.push({
+                id: backendStepId,
+                displayOrder: stepIndex,
+                instruction: step.instruction,
+                // Delete or check for new image; not passing url
+                base64Image:
+                  step.imageSrc === null
+                    ? null
+                    : (step.imageSrc.split(',')[1] ?? undefined),
+                ...(ingredientOps && { ingredients: ingredientOps }),
+              });
+            } else {
+              addSteps.push({
+                displayOrder: stepIndex,
+                instruction: step.instruction,
+                base64Image: step.imageSrc?.split(',')[1] ?? null,
+                ingredients:
+                  addIngredients.length > 0 ? addIngredients : undefined,
+              });
+            }
+          }
+
+          const removeSteps = metadata.deleteStepIds;
+
+          const stepsOps =
+            addSteps.length > 0 ||
+            updateSteps.length > 0 ||
+            removeSteps.length > 0
+              ? {
+                  ...(addSteps.length > 0 && { add: addSteps }),
+                  ...(updateSteps.length > 0 && { update: updateSteps }),
+                  ...(removeSteps.length > 0 && { remove: removeSteps }),
+                }
+              : undefined;
+
+          return {
+            ...recipe,
+            isPublic,
+            base64Image: imageSrc?.split(',')[1] ?? null,
+            ...(stepsOps && { steps: stepsOps }),
           };
         },
         makeGenerateNutritionalFactsDto: () => {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   ImageReviewProcessorService,
@@ -6,15 +6,14 @@ import {
   RecipeRepository,
   type RecipeType,
   RecipeUpdateType,
+  S3Service,
 } from '@repo/nest-shared';
 import { KafkaProducerService } from '@src/common';
 import { recipesDtoToQueryParams } from '@src/common/transforms';
 import { NotificationsService } from '@src/notifications/notifications.service';
 import {
   CreateRecipeDto,
-  CreateStepDto,
   PatchRecipeDto,
-  PatchStepDto,
   RecipeListResponse,
 } from './contracts';
 import { PutBookmarkRecipeDto } from './contracts/bookmark-recipe.dto';
@@ -22,6 +21,8 @@ import { GetRecipesDto } from './contracts/get-recipes.dto';
 
 @Injectable()
 export class RecipesService {
+  private readonly logger = new Logger(RecipesService.name);
+
   private readonly useKafka: boolean;
   constructor(
     private readonly configService: ConfigService,
@@ -29,6 +30,7 @@ export class RecipesService {
     private readonly imageReviewProcessorService: ImageReviewProcessorService,
     private readonly kafkaProducerService: KafkaProducerService,
     private readonly notificationsService: NotificationsService,
+    private readonly s3Service: S3Service,
   ) {
     this.useKafka = this.configService.get<boolean>('USE_KAFKA', false);
   }
@@ -63,14 +65,29 @@ export class RecipesService {
       this.transformToRecipeCreateType(data),
     );
 
-    await this.processImages(data, recipe);
-    void this.notificationsService.recipeAdded(userId, recipe).catch(() => {});
+    const stepsWithImages: { stepId: string; base64Image: string }[] =
+      data.steps
+        .map((step, i) => ({
+          stepId: recipe.steps[i].id,
+          base64Image: step.base64Image ?? '',
+        }))
+        .filter((s) => s.base64Image && s.stepId);
+    void this.processImages({
+      userId,
+      recipeId: recipe.id,
+      steps: stepsWithImages,
+    }).catch((e) => this.logger.error(JSON.stringify(e)));
+
+    void this.notificationsService
+      .recipeAdded(userId, recipe)
+      .catch((e) => this.logger.error(JSON.stringify(e)));
 
     return recipe;
   }
 
   private transformToRecipeCreateType(data: CreateRecipeDto): RecipeCreateType {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- do not base64Image here
+    // Do not send base64Image to the repository
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- needed
     const { base64Image, ...remaingData } = data;
     const { steps, ...recipeData } = remaingData;
     recipeData['steps'] = steps.map((s) => ({
@@ -80,56 +97,47 @@ export class RecipesService {
     return recipeData as RecipeCreateType;
   }
 
-  private async processImages(
-    data: CreateRecipeDto | PatchRecipeDto,
-    recipe: RecipeType,
-  ) {
+  private async processImages(params: {
+    userId: string;
+    recipeId: string;
+    base64Image?: string;
+    steps: { stepId: string; base64Image: string }[];
+  }) {
     if (this.useKafka) {
       await Promise.all([
-        data.base64Image
+        params.base64Image
           ? this.kafkaProducerService.sendMessage('new_recipe_image', {
-              key: recipe.user.id,
+              key: params.userId,
               value: JSON.stringify({
-                recipeId: recipe.id,
-                base64Image: data.base64Image,
+                recipeId: params.recipeId,
+                base64Image: params.base64Image,
               }),
             })
           : undefined,
-        ...(data.steps ?? []).map(
-          (step: CreateStepDto | PatchStepDto, i: number) =>
-            this.kafkaProducerService.sendMessage('new_recipe_step_image', {
-              key: recipe.user.id,
-              value: JSON.stringify({
-                recipeId: recipe.id,
-                stepId: recipe.steps[i].id,
-                stepIndex: i,
-                base64Image: step.base64Image,
-              }),
+        ...params.steps.map(({ stepId, base64Image }) =>
+          this.kafkaProducerService.sendMessage('new_recipe_step_image', {
+            key: params.userId,
+            value: JSON.stringify({
+              recipeId: params.recipeId,
+              stepId,
+              base64Image,
             }),
+          }),
         ),
       ]);
     } else {
       await Promise.all([
-        data.base64Image
-          ? this.imageReviewProcessorService.processRecipeImage(
-              recipe.user.id,
-              { recipeId: recipe.id, base64Image: data.base64Image },
-            )
+        params.base64Image
+          ? this.imageReviewProcessorService.processRecipeImage(params.userId, {
+              recipeId: params.recipeId,
+              base64Image: params.base64Image,
+            })
           : undefined,
-        ...(data.steps ?? []).map(
-          (step: CreateStepDto | PatchStepDto, i: number) => {
-            if (step.base64Image) {
-              return this.imageReviewProcessorService.processRecipeStepImage(
-                recipe.user.id,
-                {
-                  recipeId: recipe.id,
-                  stepId: recipe.steps[i].id,
-                  stepIndex: i,
-                  base64Image: step.base64Image,
-                },
-              );
-            }
-          },
+        ...params.steps.map(({ stepId, base64Image }) =>
+          this.imageReviewProcessorService.processRecipeStepImage(
+            params.userId,
+            { recipeId: params.recipeId, stepId, base64Image },
+          ),
         ),
       ]);
     }
@@ -140,30 +148,46 @@ export class RecipesService {
     id: string,
     data: PatchRecipeDto,
   ): Promise<RecipeType> {
-    const recipe = await this.recipeRepository.updateRecipe(
-      userId,
-      id,
-      this.transformToRecipeUpdateType(data),
-    );
+    const { recipe, deletedStepImageUrls } =
+      await this.recipeRepository.updateRecipe(
+        userId,
+        id,
+        this.transformToRecipeUpdateType(data),
+      );
 
-    await this.processImages(data, recipe);
+    const stepsWithImages: { stepId: string; base64Image: string }[] = (
+      data.steps?.update ?? []
+    )
+      .filter((s) => !!s.base64Image)
+      .map((s) => ({ stepId: s.id, base64Image: s.base64Image! }));
+    void this.processImages({
+      userId,
+      recipeId: id,
+      steps: stepsWithImages,
+    }).catch((e) => this.logger.error(JSON.stringify(e)));
+
+    void this.deleteImages(deletedStepImageUrls).catch((e) =>
+      this.logger.error(JSON.stringify(e)),
+    );
 
     return recipe;
   }
 
-  private transformToRecipeUpdateType(data: PatchRecipeDto): RecipeUpdateType {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- do not base64Image here
-    const { base64Image, ...remaingData } = data;
-    const { steps, ...recipeData } = remaingData;
-    if (steps) {
-      recipeData['steps'] = steps.map((s) => ({
-        id: s.id,
-        instruction: s.instruction,
-        ingredients: s.ingredients,
-      }));
-    }
+  private async deleteImages(deletedStepImageUrls: string[]) {
+    await this.s3Service.deleteFiles(deletedStepImageUrls);
+  }
 
-    return recipeData as RecipeUpdateType;
+  private transformToRecipeUpdateType(data: PatchRecipeDto): RecipeUpdateType {
+    // Do not send base64Image to the repository
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- needed
+    const { base64Image, ...remainingData } = data;
+    remainingData.steps?.add?.forEach((s) => {
+      s.base64Image = undefined;
+    });
+    remainingData.steps?.update?.forEach((s) => {
+      s.base64Image = undefined;
+    });
+    return remainingData as RecipeUpdateType;
   }
 
   async deleteRecipe(id: string, userId: string): Promise<void> {

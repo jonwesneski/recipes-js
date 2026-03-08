@@ -108,7 +108,7 @@ export const StepInput = forwardRef<StepInputHandle, StepInputProps>(
         <div className="mx-auto">
           <PhotoInput
             id={`step-photo-${props.stepNumber}`}
-            imageSrc={step.imageUrl}
+            imageSrc={step.imageSrc}
             label="step photo"
             isRequired={false}
             onCameraClick={handleOnCameraClick}

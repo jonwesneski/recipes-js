@@ -53,7 +53,8 @@ const NutritionalFactsInputSchema = z.object({
 });
 
 const IngredientInputSchema = z.object({
-  id: z.string().optional(),
+  id: z.string(),
+  displayOrder: z.number(),
   amount: z.number(),
   isFraction: z.boolean(),
   unit: MeasurementUnitSchema.nullable(),
@@ -62,6 +63,7 @@ const IngredientInputSchema = z.object({
 
 const StepInputSchema = z.object({
   id: z.string(),
+  displayOrder: z.number(),
   instruction: z.string().nullable(),
   imageUrl: z.string().nullable(),
   ingredients: z.array(IngredientInputSchema),
@@ -104,6 +106,7 @@ const RecipeInputSchema = z.object({
 const NormalizedNutritionalFactsSchema = NutritionalFactsInputSchema;
 
 const NormalizedIngredientSchema = z.object({
+  id: z.string().optional(),
   amount: z.object({
     display: z.string(),
     value: IngredientInputSchema.shape.amount,
@@ -125,7 +128,7 @@ const NormalizedIngredientSchema = z.object({
 const NormalizedStepSchema = z.object({
   id: z.string().optional(),
   instruction: z.string().nullable(),
-  imageUrl: z.string().nullable(),
+  imageSrc: z.string().nullable(),
   ingredientIds: z.array(z.string()),
 });
 
@@ -139,7 +142,7 @@ const NormalizedRecipeSchema = z.object({
   description: z.string().nullable(),
   preparationTimeInMinutes: z.number().nullable(),
   cookingTimeInMinutes: z.number().nullable(),
-  imageUrl: z.string().nullable(),
+  imageSrc: z.string().nullable(),
   equipments: z.array(z.string()),
   stepIds: z.array(z.string()),
   servings: z.number().nullable(),
@@ -173,11 +176,9 @@ export const transformRecipeToNormalized = (
   > = {};
 
   validated.steps.forEach((step) => {
-    const stepId = `step-${validated.id}-${step.id}`;
-
-    const ingredientIds = step.ingredients.map((ing, ingIndex) => {
-      const ingredientId = `ing-${stepId}-${ingIndex}`;
-      ingredientsRecord[ingredientId] = {
+    const ingredientIds = step.ingredients.map((ing) => {
+      ingredientsRecord[ing.id] = {
+        id: ing.id,
         amount: {
           value: ing.amount,
           display: determineAmountFormat(
@@ -197,13 +198,14 @@ export const transformRecipeToNormalized = (
           display: ing.name,
         },
       };
-      return ingredientId;
+      return ing.id;
     });
 
-    stepsRecord[stepId] = {
-      id: stepId,
+    stepsRecord[step.id] = {
+      id: step.id,
       instruction: step.instruction,
-      imageUrl: step.imageUrl,
+      imageSrc: step.imageUrl,
+      // Use ingredientId ordering to maintain displayOrder
       ingredientIds,
     };
   });
@@ -217,9 +219,10 @@ export const transformRecipeToNormalized = (
     description: validated.description,
     preparationTimeInMinutes: validated.preparationTimeInMinutes,
     cookingTimeInMinutes: validated.cookingTimeInMinutes,
-    imageUrl: validated.imageUrl,
+    imageSrc: validated.imageUrl,
     equipments: validated.equipments,
-    stepIds: Object.keys(stepsRecord),
+    // use stepIds ordering to maintain displayOrder
+    stepIds: validated.steps.map((s) => s.id),
     servings: validated.servings,
     servingAmount: validated.servingAmount,
     servingUnit: validated.servingUnit,

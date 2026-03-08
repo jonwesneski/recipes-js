@@ -18,15 +18,11 @@ import {
 } from 'class-validator';
 import { NutritionalFactsDto } from './create-recipe.dto';
 
-export class PatchIngredientDto
-  implements
-    OmitPrismaFieldsDto<Prisma.IngredientCreateInput, 'step' | 'displayOrder'>
-{
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  id?: string;
+export class AddIngredientDto {
+  @IsInt()
+  @Min(0)
+  @ApiProperty({ type: Number })
+  displayOrder: number;
   @IsNumber()
   @Min(0)
   @ApiProperty({ type: Number })
@@ -44,34 +40,109 @@ export class PatchIngredientDto
   name: string;
 }
 
-export class PatchStepDto
-  implements
-    OmitPrismaFieldsDto<
-      Prisma.StepUncheckedCreateWithoutRecipeInput,
-      'displayOrder' | 'recipeId' | 'ingredients' | 'instructions'
-    >
-{
-  @IsOptional()
+export class UpdateIngredientDto extends AddIngredientDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ type: String, required: false })
-  id?: string;
+  @ApiProperty({ type: String })
+  id: string;
+}
+
+export class IngredientOperationsDto {
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => AddIngredientDto)
+  @ApiProperty({ type: [AddIngredientDto], required: false })
+  add?: AddIngredientDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateIngredientDto)
+  @ApiProperty({ type: [UpdateIngredientDto], required: false })
+  update?: UpdateIngredientDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String], required: false })
+  remove?: string[];
+}
+
+export class AddStepDto {
+  @IsInt()
+  @Min(0)
+  @ApiProperty({ type: Number })
+  displayOrder: number;
   @IsString()
   @IsOptional()
-  @ApiProperty({ type: String, required: false })
-  instruction?: string;
+  @ApiProperty({ type: String, nullable: true, required: false })
+  instruction?: string | null;
   @IsArray()
   @IsOptional()
   @ArrayNotEmpty()
-  @ValidateNested()
-  @Type(() => PatchIngredientDto)
-  @ApiProperty({ type: [PatchIngredientDto] })
-  @Type(() => PatchIngredientDto)
-  ingredients?: PatchIngredientDto[];
+  @ValidateNested({ each: true })
+  @Type(() => AddIngredientDto)
+  @ApiProperty({ type: [AddIngredientDto], required: false })
+  ingredients?: AddIngredientDto[];
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String, nullable: true })
+  @IsNotEmpty()
+  @ApiProperty({ type: String, nullable: true, required: false })
   base64Image?: string | null;
+}
+
+export class UpdateStepDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  id: string;
+  @IsInt()
+  @Min(0)
+  @ApiProperty({ type: Number })
+  displayOrder: number;
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ type: String, nullable: true, required: false })
+  instruction?: string | null;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => IngredientOperationsDto)
+  @ApiProperty({ type: IngredientOperationsDto, required: false })
+  ingredients?: IngredientOperationsDto;
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: String, nullable: true, required: false })
+  base64Image?: string | null;
+}
+
+export class StepOperationsDto {
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => AddStepDto)
+  @ApiProperty({ type: [AddStepDto], required: false })
+  add?: AddStepDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateStepDto)
+  @ApiProperty({ type: [UpdateStepDto], required: false })
+  update?: UpdateStepDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  @ApiProperty({ type: [String], required: false })
+  remove?: string[];
 }
 
 export class PatchRecipeDto
@@ -99,7 +170,7 @@ export class PatchRecipeDto
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, nullable: true, required: false })
   base64Image?: string;
   @IsInt()
   @IsOptional()
@@ -112,13 +183,10 @@ export class PatchRecipeDto
   @ApiProperty({ type: Number, nullable: true, required: false })
   cookingTimeInMinutes?: number | null;
   @IsOptional()
-  @IsArray()
-  @ArrayNotEmpty()
   @ValidateNested()
-  @Type(() => PatchStepDto)
-  @ApiProperty({ type: [PatchStepDto], required: false })
-  @Type(() => PatchStepDto)
-  steps?: PatchStepDto[];
+  @Type(() => StepOperationsDto)
+  @ApiProperty({ type: StepOperationsDto, required: false })
+  steps?: StepOperationsDto;
   @IsOptional()
   @ValidateNested()
   @Type(() => NutritionalFactsDto)
