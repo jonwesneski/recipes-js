@@ -7,6 +7,8 @@ import {
 } from '../../services/prisma.service';
 import { BookmarkOwnerError } from './exceptions';
 import {
+  type IngredientAddType,
+  type IngredientOperationsType,
   PublicRecipesSearch,
   type RecipeCreateType,
   RecipeInclude,
@@ -250,7 +252,6 @@ export class RecipeRepository {
         | {
             deleteMany?: { id: { in: string[] } };
             upsert?: object[];
-            create?: object[];
           }
         | undefined = undefined;
 
@@ -301,45 +302,43 @@ export class RecipeRepository {
           ...(removeIds.length > 0
             ? { deleteMany: { id: { in: removeIds } } }
             : {}),
-          ...(updateSteps.length > 0
+          ...(updateSteps.length > 0 || addSteps.length > 0
             ? {
-                upsert: updateSteps.map((s) => ({
-                  where: { id: s.id },
-                  update: {
-                    displayOrder: s.displayOrder,
-                    ...(s.instruction !== undefined
-                      ? { instruction: s.instruction }
-                      : {}),
-                    ...(s.ingredients !== undefined
-                      ? { ingredients: this.buildIngredientOps(s.ingredients) }
-                      : {}),
-                  },
-                  // create branch is a Prisma-required fallback; update steps
-                  // should always exist in the DB
-                  create: {
-                    displayOrder: s.displayOrder,
-                    instruction: s.instruction ?? null,
-                  },
-                })),
-              }
-            : {}),
-          ...(addSteps.length > 0
-            ? {
-                create: addSteps.map((s) => ({
-                  displayOrder: s.displayOrder,
-                  instruction: s.instruction ?? null,
-                  ingredients: {
-                    createMany: {
-                      data: (s.ingredients ?? []).map((ing) => ({
-                        displayOrder: ing.displayOrder,
-                        amount: ing.amount,
-                        unit: ing.unit,
-                        name: ing.name,
-                        isFraction: ing.isFraction,
-                      })),
+                upsert: [...updateSteps, ...addSteps].map((s) => {
+                  return {
+                    where: { id: 'id' in s ? s.id : '' },
+                    update: {
+                      displayOrder: s.displayOrder,
+                      ...(s.instruction !== undefined
+                        ? { instruction: s.instruction }
+                        : {}),
+                      ...(s.ingredients !== undefined
+                        ? {
+                            ingredients: this.buildIngredientOps(
+                              s.ingredients as IngredientOperationsType,
+                            ),
+                          }
+                        : {}),
                     },
-                  },
-                })),
+                    create: {
+                      displayOrder: s.displayOrder,
+                      instruction: s.instruction ?? null,
+                      ingredients: {
+                        createMany: {
+                          data: (
+                            (s.ingredients ?? []) as IngredientAddType[]
+                          ).map((ing) => ({
+                            displayOrder: ing.displayOrder,
+                            amount: ing.amount,
+                            unit: ing.unit,
+                            name: ing.name,
+                            isFraction: ing.isFraction,
+                          })),
+                        },
+                      },
+                    },
+                  };
+                }),
               }
             : {}),
         };
@@ -349,7 +348,6 @@ export class RecipeRepository {
         where: { id, user: { id: userId } },
         data: {
           ...scalarData,
-
           ...(stepsWriteData !== undefined
             ? { steps: stepsWriteData as any }
             : {}),
