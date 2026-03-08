@@ -45,7 +45,7 @@ export const RecipeInclude = {
       orderBy: { displayOrder: 'asc' },
       include: {
         ingredients: {
-          omit: { stepId: true, displayOrder: true },
+          omit: { stepId: true },
         },
       },
       omit: { recipeId: true },

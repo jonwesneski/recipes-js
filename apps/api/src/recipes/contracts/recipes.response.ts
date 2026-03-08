@@ -70,11 +70,7 @@ export class NutritionalFactsResponse
 }
 
 export class IngredientResponse
-  implements
-    OmitPrismaFieldsEntity<
-      Prisma.IngredientCreateInput,
-      'step' | 'displayOrder'
-    >
+  implements OmitPrismaFieldsEntity<Prisma.IngredientCreateInput, 'step'>
 {
   @ApiProperty()
   id: string;
@@ -82,6 +78,8 @@ export class IngredientResponse
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
+  @ApiProperty()
+  displayOrder: number;
   @ApiProperty({ type: Number })
   amount: number;
   @ApiProperty()
