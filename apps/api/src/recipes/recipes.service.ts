@@ -65,7 +65,19 @@ export class RecipesService {
       this.transformToRecipeCreateType(data),
     );
 
-    await this.processImages(data, recipe);
+    const stepsWithImages: { stepId: string; base64Image: string }[] =
+      data.steps
+        .map((step, i) => ({
+          stepId: recipe.steps[i].id,
+          base64Image: step.base64Image ?? '',
+        }))
+        .filter((s) => s.base64Image && s.stepId);
+    void this.processImages({
+      userId,
+      recipeId: recipe.id,
+      steps: stepsWithImages,
+    }).catch((e) => this.logger.error(JSON.stringify(e)));
+
     void this.notificationsService
       .recipeAdded(userId, recipe)
       .catch((e) => this.logger.error(JSON.stringify(e)));
@@ -74,7 +86,8 @@ export class RecipesService {
   }
 
   private transformToRecipeCreateType(data: CreateRecipeDto): RecipeCreateType {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- do not base64Image here
+    // Do not send base64Image to the repository
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- needed
     const { base64Image, ...remaingData } = data;
     const { steps, ...recipeData } = remaingData;
     recipeData['steps'] = steps.map((s) => ({
@@ -84,57 +97,46 @@ export class RecipesService {
     return recipeData as RecipeCreateType;
   }
 
-  private async processImages(
-    data: CreateRecipeDto | PatchRecipeDto,
-    recipe: RecipeType,
-  ) {
-    // For CreateRecipeDto: steps is a flat array, match by index.
-    // For PatchRecipeDto: steps is StepOperationsDto; only process update steps
-    // (they have known IDs). Add steps' IDs aren't available here.
-    const stepsWithImages: { stepId: string; base64Image: string }[] =
-      Array.isArray(data.steps)
-        ? data.steps
-            .map((step, i) => ({
-              stepId: recipe.steps[i]?.id ?? '',
-              base64Image: step.base64Image ?? '',
-            }))
-            .filter((s) => s.base64Image && s.stepId)
-        : ((data as PatchRecipeDto).steps?.update ?? [])
-            .filter(
-              (s): s is typeof s & { base64Image: string } => !!s.base64Image,
-            )
-            .map((s) => ({ stepId: s.id, base64Image: s.base64Image }));
-
+  private async processImages(params: {
+    userId: string;
+    recipeId: string;
+    base64Image?: string;
+    steps: { stepId: string; base64Image: string }[];
+  }) {
     if (this.useKafka) {
       await Promise.all([
-        data.base64Image
+        params.base64Image
           ? this.kafkaProducerService.sendMessage('new_recipe_image', {
-              key: recipe.user.id,
+              key: params.userId,
               value: JSON.stringify({
-                recipeId: recipe.id,
-                base64Image: data.base64Image,
+                recipeId: params.recipeId,
+                base64Image: params.base64Image,
               }),
             })
           : undefined,
-        ...stepsWithImages.map(({ stepId, base64Image }) =>
+        ...params.steps.map(({ stepId, base64Image }) =>
           this.kafkaProducerService.sendMessage('new_recipe_step_image', {
-            key: recipe.user.id,
-            value: JSON.stringify({ recipeId: recipe.id, stepId, base64Image }),
+            key: params.userId,
+            value: JSON.stringify({
+              recipeId: params.recipeId,
+              stepId,
+              base64Image,
+            }),
           }),
         ),
       ]);
     } else {
       await Promise.all([
-        data.base64Image
-          ? this.imageReviewProcessorService.processRecipeImage(
-              recipe.user.id,
-              { recipeId: recipe.id, base64Image: data.base64Image },
-            )
+        params.base64Image
+          ? this.imageReviewProcessorService.processRecipeImage(params.userId, {
+              recipeId: params.recipeId,
+              base64Image: params.base64Image,
+            })
           : undefined,
-        ...stepsWithImages.map(({ stepId, base64Image }) =>
+        ...params.steps.map(({ stepId, base64Image }) =>
           this.imageReviewProcessorService.processRecipeStepImage(
-            recipe.user.id,
-            { recipeId: recipe.id, stepId, base64Image },
+            params.userId,
+            { recipeId: params.recipeId, stepId, base64Image },
           ),
         ),
       ]);
@@ -153,9 +155,17 @@ export class RecipesService {
         this.transformToRecipeUpdateType(data),
       );
 
-    void this.processImages(data, recipe).catch((e) =>
-      this.logger.error(JSON.stringify(e)),
-    );
+    const stepsWithImages: { stepId: string; base64Image: string }[] = (
+      data.steps?.update ?? []
+    )
+      .filter((s) => !!s.base64Image)
+      .map((s) => ({ stepId: s.id, base64Image: s.base64Image! }));
+    void this.processImages({
+      userId,
+      recipeId: id,
+      steps: stepsWithImages,
+    }).catch((e) => this.logger.error(JSON.stringify(e)));
+
     void this.deleteImages(deletedStepImageUrls).catch((e) =>
       this.logger.error(JSON.stringify(e)),
     );
@@ -168,8 +178,15 @@ export class RecipesService {
   }
 
   private transformToRecipeUpdateType(data: PatchRecipeDto): RecipeUpdateType {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- do not send base64Image to the repository
+    // Do not send base64Image to the repository
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- needed
     const { base64Image, ...remainingData } = data;
+    remainingData.steps?.add?.forEach((s) => {
+      s.base64Image = undefined;
+    });
+    remainingData.steps?.update?.forEach((s) => {
+      s.base64Image = undefined;
+    });
     return remainingData as RecipeUpdateType;
   }
 

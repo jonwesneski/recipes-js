@@ -164,7 +164,6 @@ let isValid = true;
 export const createRecipeStore = (
   initState: NormalizedRecipe = defaultInitState,
 ) => {
-  // const { imageUrl, ...rest } = initState;
   return createStore<RecipeStore>()(
     applyMiddleware<RecipeStore>({
       afterMiddlware: (_, _set, get) => {
@@ -184,7 +183,6 @@ export const createRecipeStore = (
          * Then I will only send what fields actually changed during an update/edit
          */
         ...structuredClone(initState),
-        // imageSrc: imageUrl ?? null,
         metadata: {
           isValid: false,
           errors: {},
