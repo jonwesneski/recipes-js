@@ -7,8 +7,6 @@ import {
 } from '../../services/prisma.service';
 import { BookmarkOwnerError } from './exceptions';
 import {
-  type IngredientAddType,
-  type IngredientOperationsType,
   PublicRecipesSearch,
   type RecipeCreateType,
   RecipeInclude,
@@ -316,9 +314,7 @@ export class RecipeRepository {
                       ...(!isUpdate || s.ingredients === undefined
                         ? {}
                         : {
-                            ingredients: this.buildIngredientOps(
-                              s.ingredients as IngredientOperationsType,
-                            ),
+                            ingredients: this.buildIngredientOps(s.ingredients),
                           }),
                     },
                     create: {
@@ -329,9 +325,7 @@ export class RecipeRepository {
                         : {
                             ingredients: {
                               createMany: {
-                                data: (
-                                  (s.ingredients ?? []) as IngredientAddType[]
-                                ).map((ing) => ({
+                                data: (s.ingredients ?? []).map((ing) => ({
                                   displayOrder: ing.displayOrder,
                                   amount: ing.amount,
                                   unit: ing.unit,
