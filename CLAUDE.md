@@ -16,8 +16,8 @@ This is a pnpm monorepo. Key apps and packages:
 ### Key files
 
 - `packages/nest-shared/src/repositories/recipes/recipe.repository.ts` — `updateRecipe()` method
-- `packages/nest-shared/src/repositories/recipes/types.ts` — `RecipeUpdateType`, `StepUpdateType`
-- `apps/api/src/recipes/contracts/patch-recipe.dto.ts` — `PatchRecipeDto`, `PatchStepDto`
+- `packages/nest-shared/src/repositories/recipes/types.ts` — `RecipeUpdateType`, `StepUpdateType`, `StepAddType`
+- `apps/api/src/recipes/contracts/patch-recipe.dto.ts` — `PatchRecipeDto`, `StepOperationsDto`, `AddStepDto`, `UpdateStepDto`
 - `apps/api/src/recipes/contracts/recipes.response.ts` — `StepResponse` (includes `displayOrder`)
 - `apps/api/src/recipes/recipes.service.ts` — `transformToRecipeUpdateType()`
 
@@ -25,41 +25,63 @@ This is a pnpm monorepo. Key apps and packages:
 
 **Top-level recipe fields:** Any field omitted from the payload is left unchanged. `null` sets the DB column to null where the schema allows it.
 
-**Step deletion (`deleteStepIds?: string[]`):**
-
-- Explicitly lists step IDs to delete (along with their ingredients).
-- The response includes `deletedStepImageUrls` for the caller to clean up storage (currently a TODO in `recipes.service.ts`).
-- Omit or send `[]` to delete nothing.
-
-**Steps array (`steps?: PatchStepDto[]`):**
+**Steps (`steps?: StepOperationsDto`):**
 
 - **Omit `steps` entirely** → steps are not touched at all.
-- **Include `steps`** → upserts existing steps (by `id`) and creates new steps (no `id`). Does **not** implicitly delete any steps — use `deleteStepIds` to delete.
-- **Empty `steps: []`** → no-op (no steps to create or update).
+- `steps` is an object with three optional sub-arrays: `add`, `update`, `remove`.
 
-**Per-step update (existing step, has `id`):**
+```ts
+steps?: {
+  add?:    AddStepDto[];     // new steps to create
+  update?: UpdateStepDto[];  // existing steps to update (identified by id)
+  remove?: string[];         // step IDs to delete (along with their ingredients)
+}
+```
+
+**`steps.add` — creating new steps:**
+
+- Each entry requires `displayOrder: number`.
+- `instruction` and `ingredients` are optional.
+- `ingredients` within an add step are always created fresh (no `id`).
+
+**`steps.update` — updating existing steps:**
 
 | Field | Omitted | Provided |
 |---|---|---|
 | `instruction` | left unchanged | updated to the new value |
-| `ingredients` | left unchanged | replaced entirely (see below) |
-| `displayOrder` | falls back to array index in payload | set to the explicit value |
+| `ingredients` | left unchanged | full add/update/remove ops applied (see below) |
+| `displayOrder` | **required** — must always be provided | set to the explicit value |
 
-**Per-step ingredients (when `ingredients` is provided):** Same add/remove/update semantics as steps — existing ingredients whose `id` is absent from the array are deleted; new ingredients (no `id`) are created; existing ones (with `id`) are updated. `displayOrder` is always the ingredient's index within its step's array.
+**`steps.remove` — deleting steps:**
+
+- Explicitly lists step IDs to delete (along with their ingredients).
+- The service collects image URLs of removed steps for storage cleanup.
+- Omit or send `[]` to delete nothing.
+
+**Per-step ingredients (`ingredients?: IngredientOperationsDto`):**
+
+```ts
+ingredients?: {
+  add?:    AddIngredientDto[];     // new ingredients (displayOrder required)
+  update?: UpdateIngredientDto[];  // existing ingredients (id + displayOrder required)
+  remove?: string[];               // ingredient IDs to delete
+}
+```
+
+`displayOrder` is **required** on both `AddIngredientDto` and `UpdateIngredientDto`.
 
 ### `displayOrder` contract
 
-- `displayOrder` is returned in `StepResponse` and must be sent back in PATCH payloads when you want to preserve or reorder steps explicitly.
-- If `displayOrder` is omitted for a step in the payload, it defaults to the step's **index in the payload array**.
-- The DB enforces `@@unique([recipeId, displayOrder])` on `Step`. The repository handles reordering safely by first moving all kept steps to unique negative temporary values (guaranteed collision-free since real values are always ≥ 0), then running the main upsert to assign final values.
+- `displayOrder` is returned in `StepResponse` and `IngredientResponse` and must be sent back explicitly in PATCH payloads — there is no defaulting to array index.
+- The DB enforces `@@unique([recipeId, displayOrder])` on `Step` and `@@unique([stepId, displayOrder])` on `Ingredient`. The repository handles same-request reorders safely by first moving all update targets to unique negative temporary values (guaranteed collision-free since real values are always ≥ 0), then running the main upsert.
 
 ### Transaction structure (`updateRecipe`)
 
 Everything runs inside a single Prisma interactive transaction (`$transaction`):
 
-1. Collect image URLs of steps in `deleteStepIds` (for storage cleanup by caller).
-2. Move steps-with-ids in the `steps` payload to negative temporary `displayOrder` values to avoid unique constraint violations during reorder.
-3. Single `tx.recipe.update()` with nested `deleteMany` (for `deleteStepIds`) / `upsert` / `create` for steps, ingredients, tags, equipments, and nutritionalFacts.
+1. Collect image URLs of steps in `steps.remove` (for storage cleanup by caller).
+2. Move `steps.update` entries to negative temporary `displayOrder` values to avoid unique constraint violations during reorder. Same trick applied to `ingredients.update` entries within each updated step.
+3. Single `tx.recipe.update()` with nested `deleteMany` (for `steps.remove`) and `upsert` (for both `steps.update` and `steps.add` combined — add entries use `where: { id: randomUUID() }` to force the create branch) for steps, plus ingredient ops, tags, equipments, and nutritionalFacts.
 
 **Do not** attempt to use `$executeRaw` with `ANY(array)` or `Prisma.join` inside interactive transactions with the `@prisma/adapter-pg` driver — the pg adapter does not support it and throws error `42703`. Use Prisma query API methods instead.
 
@@ -91,6 +113,7 @@ Defined in `apps/ui/src/zod-schemas/recipeNormalized.ts`.
 
 ```ts
 {
+  id?: string           // backend ingredient UUID — present for backend-loaded ingredients, absent for new ones
   amount: { display: string; value: number; errors?: string[] }
   isFraction: boolean
   unit:   { display: string; value: MeasurementUnitType | null; errors?: string[] }
@@ -129,7 +152,7 @@ Ingredients are stored in Zustand (in `apps/ui/src/stores/recipeStore.ts`) as a 
 ingredients: Record<string, NormalizedIngredient>
 ```
 
-IDs are generated when a recipe is normalized on load (e.g. `"ing-step-{recipeId}-{stepId}-{index}"`).
+For backend-loaded recipes, step store keys are the backend step UUIDs and ingredient store keys are the backend ingredient UUIDs. New steps/ingredients added in the UI use `crypto.randomUUID()` as their store key and carry no `id`/`backendId` field, so `makePatchDto` routes them to the `steps.add` / `ingredients.add` arrays.
 
 **Store actions for ingredient updates:**
 
